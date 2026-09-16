@@ -6,8 +6,6 @@ Turn scanned invoices, receipts and contracts into validated JSON.
 
 Runs locally · Every number cites its source
 
----
-
 ## Quick start
 
 You need [Ollama](https://ollama.com) running with a text and a vision model
