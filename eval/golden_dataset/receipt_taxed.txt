@@ -1,0 +1,20 @@
+Northgate Hardware — Receipt
+
+Store #0142
+Cashier: Marcus
+Date: 2026-04-17
+
+PAINT ROLLER       8.99
+DROP CLOTH         12.50
+MASKING TAPE 2PK   6.25
+WOOD SCREWS 100CT  4.75
+COUPON            -2.00
+
+            SUBTOTAL     30.49
+            TAX 7.250 %   2.21
+            TOTAL        32.70
+
+Payment Method: Card
+Change Due: 0.00
+
+Thank you for your purchase!

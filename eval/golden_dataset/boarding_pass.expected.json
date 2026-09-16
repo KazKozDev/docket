@@ -1,0 +1,11 @@
+{
+  "doc_type": "boarding_pass",
+  "passenger_name": "GARCIA/MARIA MS",
+  "booking_reference": "X4H2QP",
+  "flight_number": "IB3241",
+  "departure_airport": "BCN",
+  "arrival_airport": "LHR",
+  "seat": "12C",
+  "gate": "B24",
+  "_note": "The document type the target deployment actually runs on. Validated on controlled vocabularies (IATA codes, record locator) rather than arithmetic."
+}

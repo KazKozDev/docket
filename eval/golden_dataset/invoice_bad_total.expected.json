@@ -1,0 +1,13 @@
+{
+  "doc_type": "invoice",
+  "invoice_number": "INV-2026-0955",
+  "issue_date": "2026-09-05",
+  "due_date": "2026-09-20",
+  "vendor_name": "FlourWorks Ltd.",
+  "customer_name": "Riverside Bakery",
+  "subtotal": 246.0,
+  "tax_amount": 24.6,
+  "total_amount": 500.0,
+  "currency": "GBP",
+  "_expect_validation_error_field": "total_amount"
+}

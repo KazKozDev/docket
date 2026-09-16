@@ -1,0 +1,16 @@
+Corner Bean Coffee — Receipt
+
+Cashier: Priya
+Date: 2026-09-10
+
+Items:
+- Flat white       4.50
+- Almond croissant  3.25
+
+Subtotal shown as items above.
+Tendered: 10.00
+Total: 7.75
+Change Due: 2.25
+Payment Method: Card
+
+Thank you for your purchase!

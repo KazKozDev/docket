@@ -1,0 +1,18 @@
+INVOICE
+
+Invoice #: INV-2026-0955
+Issue Date: 2026-09-05
+Due Date: 2026-09-20
+
+Bill To: Riverside Bakery
+Vendor: FlourWorks Ltd.
+Vendor Tax ID: GB-991-2287
+
+Line Items:
+1. Bread flour 25kg, qty 8, unit price 22.00, total 176.00
+2. Yeast packs, qty 20, unit price 3.50, total 70.00
+
+Subtotal: 246.00
+Tax: 24.60
+Amount Due: 500.00
+Currency: GBP

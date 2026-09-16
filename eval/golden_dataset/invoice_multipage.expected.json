@@ -1,0 +1,13 @@
+{
+  "doc_type": "invoice",
+  "invoice_number": "INV-2026-1188",
+  "issue_date": "2026-06-02",
+  "due_date": "2026-07-02",
+  "vendor_name": "Northgate Aviation Supplies Ltd.",
+  "customer_name": "Iberia Mantenimiento S.A.",
+  "subtotal": 2600.0,
+  "tax_amount": 546.0,
+  "total_amount": 3146.0,
+  "currency": "GBP",
+  "_note": "Two-page PDF whose line-item table continues onto page 2 and whose totals only appear there. Every other fixture is single-page, so nothing tested that page 1 alone is not enough."
+}

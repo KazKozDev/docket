@@ -1,0 +1,8 @@
+{
+  "doc_type": "receipt",
+  "merchant_name": "Corner Bean Coffee",
+  "transaction_date": "2026-09-10",
+  "total_amount": 7.75,
+  "payment_method": "Card",
+  "_note": "synthetic rendered-text image, exercises the Tesseract OCR fallback path (not the PDF text layer)"
+}

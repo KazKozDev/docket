@@ -1,0 +1,18 @@
+INVOICE
+
+Invoice #: INV-2026-0731
+Issue Date: 2026-08-01
+Due Date: 2026-08-31
+
+Bill To: Northwind Traders
+Vendor: Acme Supply Co.
+Vendor Tax ID: US-77-4412200
+
+Line Items:
+1. Steel brackets, qty 40, unit price 12.50, total 500.00
+2. Packing crates, qty 10, unit price 30.00, total 300.00
+
+Subtotal: 800.00
+Tax: 64.00
+Amount Due: 864.00
+Currency: USD

@@ -1,0 +1,15 @@
+SERVICES AGREEMENT
+
+This Services Agreement ("Agreement") is entered into as of 2026-03-01
+by and between Vertex Consulting LLC ("Party A") and Meridian Retail Inc.
+("Party B").
+
+WHEREAS Party A provides software consulting services, and Party B wishes
+to engage Party A for such services, the parties hereby agree as follows:
+
+1. Party A shall deliver monthly infrastructure audits.
+2. Party A shall provide a dedicated support engineer during business hours.
+3. Party B shall pay Party A within 30 days of invoice.
+
+This Agreement is effective as of 2026-03-01 and expires on 2027-03-01.
+Governing Law: State of New York.

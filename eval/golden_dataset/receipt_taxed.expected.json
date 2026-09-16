@@ -1,0 +1,10 @@
+{
+  "doc_type": "receipt",
+  "merchant_name": "Northgate Hardware",
+  "transaction_date": "2026-04-17",
+  "subtotal": 30.49,
+  "tax_amount": 2.21,
+  "total_amount": 32.7,
+  "payment_method": "Card",
+  "_note": "covers a receipt that charges sales tax. The other two receipt fixtures are the same untaxed coffee receipt, which is why a missing tax field on the Receipt schema passed the whole golden set while falsely flagging every real retail receipt."
+}

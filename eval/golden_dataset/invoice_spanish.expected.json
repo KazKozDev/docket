@@ -1,0 +1,13 @@
+{
+  "doc_type": "invoice",
+  "invoice_number": "FAC-2026-0042",
+  "issue_date": "2026-03-15",
+  "due_date": "2026-04-15",
+  "vendor_name": "Talleres Montjuïc S.A.",
+  "customer_name": "Aerolíneas del Sur S.L.",
+  "subtotal": 1234.56,
+  "tax_amount": 259.26,
+  "total_amount": 1493.82,
+  "currency": "EUR",
+  "_note": "European number format (1.234,56) and Spanish vocabulary. Before amounts.py this document's amounts parsed as 1.23 and 25926.0."
+}

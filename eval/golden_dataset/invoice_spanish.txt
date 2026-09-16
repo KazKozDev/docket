@@ -1,0 +1,20 @@
+FACTURA
+
+Número de factura: FAC-2026-0042
+Fecha: 2026-03-15
+Fecha de vencimiento: 2026-04-15
+
+Cliente: Aerolíneas del Sur S.L.
+Proveedor: Talleres Montjuïc S.A.
+NIF: A28015865
+
+Conceptos:
+1. Revisión de equipos de tierra, 8 h, 95,00/h, total 760,00
+2. Repuestos hidráulicos, 3 ud, 158,19/ud, total 474,56
+
+Base imponible:      1.234,56
+IVA 21%:               259,26
+Descuento:               0,00
+Importe total:       1.493,82
+
+Moneda: EUR

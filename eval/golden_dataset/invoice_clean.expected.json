@@ -1,0 +1,12 @@
+{
+  "doc_type": "invoice",
+  "invoice_number": "INV-2026-0731",
+  "issue_date": "2026-08-01",
+  "due_date": "2026-08-31",
+  "vendor_name": "Acme Supply Co.",
+  "customer_name": "Northwind Traders",
+  "subtotal": 800.0,
+  "tax_amount": 64.0,
+  "total_amount": 864.0,
+  "currency": "USD"
+}

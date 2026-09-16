@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+
+      - name: Install docket
+        run: pip install -e ".[dev]"
+
+      - name: Run tests
+        run: pytest -v
+        env:
+          # Every test in this repo is LLM-free by design (see README) —
+          # there's no Ollama server in CI, and there shouldn't need to be.
+          DOCKET_REVIEW_QUEUE: /tmp/docket-ci-review-queue.jsonl
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t docket:ci .

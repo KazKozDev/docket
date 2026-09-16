@@ -1,0 +1,740 @@
+from datetime import date
+
+from docket.schemas import Contract, Invoice, LineItem, Receipt, ReceiptItem
+from docket.validate import validate
+
+
+def test_invoice_totals_match_no_issues():
+    inv = Invoice(
+        invoice_number="INV-001",
+        issue_date=date(2026, 1, 1),
+        due_date=date(2026, 1, 31),
+        vendor_name="Acme Corp",
+        vendor_tax_id="US-123456",
+        customer_name="Wile E. Coyote",
+        line_items=[
+            LineItem(description="Widget", quantity=2, unit_price=50.0, total=100.0)
+        ],
+        subtotal=100.0,
+        tax_amount=10.0,
+        total_amount=110.0,
+    )
+    assert validate(inv) == []
+
+
+def test_invoice_total_mismatch_is_flagged():
+    inv = Invoice(
+        invoice_number="INV-002",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Wile E. Coyote",
+        subtotal=100.0,
+        tax_amount=10.0,
+        total_amount=999.0,  # wrong on purpose
+    )
+    issues = validate(inv)
+    assert any(i.field == "total_amount" for i in issues)
+
+
+def test_invoice_due_before_issue_is_flagged():
+    inv = Invoice(
+        invoice_number="INV-003",
+        issue_date=date(2026, 2, 1),
+        due_date=date(2026, 1, 1),  # before issue_date
+        vendor_name="Acme Corp",
+        customer_name="Wile E. Coyote",
+        subtotal=50.0,
+        total_amount=50.0,
+    )
+    issues = validate(inv)
+    assert any(i.field == "due_date" for i in issues)
+
+
+def test_receipt_items_sum_mismatch_is_flagged():
+    rec = Receipt(
+        merchant_name="Corner Store",
+        transaction_date=date(2026, 1, 1),
+        items=[
+            ReceiptItem(description="Coffee", price=3.5),
+            ReceiptItem(description="Bagel", price=2.5),
+        ],
+        total_amount=100.0,  # wrong on purpose
+    )
+    issues = validate(rec)
+    assert any(i.field == "items" for i in issues)
+
+
+def test_taxed_receipt_is_not_falsely_flagged():
+    """Line items are pre-tax. Comparing them straight to the total flags
+    every receipt that charges sales tax — reproduced on a real Walmart
+    receipt whose own arithmetic (93.62 + 4.59 = 98.21) was perfect.
+    """
+    rec = Receipt(
+        merchant_name="Walmart",
+        transaction_date=date(2017, 7, 28),
+        items=[
+            ReceiptItem(description="PET TOY", price=90.70),
+            ReceiptItem(description="DOG TREAT", price=2.92),
+        ],
+        subtotal=93.62,
+        tax_amount=4.59,
+        total_amount=98.21,
+    )
+    assert validate(rec) == []
+
+
+def test_taxed_receipt_without_a_printed_subtotal_backs_the_tax_out():
+    rec = Receipt(
+        merchant_name="Corner Store",
+        transaction_date=date(2026, 1, 1),
+        items=[ReceiptItem(description="Coffee", price=10.00)],
+        tax_amount=0.75,
+        total_amount=10.75,
+    )
+    assert validate(rec) == []
+
+
+def test_receipt_subtotal_plus_tax_must_equal_total():
+    rec = Receipt(
+        merchant_name="Corner Store",
+        transaction_date=date(2026, 1, 1),
+        subtotal=93.62,
+        tax_amount=4.59,
+        total_amount=120.00,  # wrong on purpose
+    )
+    issues = validate(rec)
+    assert any(i.field == "total_amount" for i in issues)
+
+
+def test_untaxed_receipt_still_validates():
+    rec = Receipt(
+        merchant_name="Corner Bean Coffee",
+        transaction_date=date(2026, 9, 10),
+        items=[
+            ReceiptItem(description="Flat white", price=4.50),
+            ReceiptItem(description="Croissant", price=3.25),
+        ],
+        total_amount=7.75,
+    )
+    assert validate(rec) == []
+
+
+def test_invoice_valid_iban_has_no_issue():
+    inv = Invoice(
+        invoice_number="INV-004",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Wile E. Coyote",
+        vendor_iban="DE89370400440532013000",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert not any(i.field == "vendor_iban" for i in issues)
+
+
+def test_invoice_bad_iban_checksum_is_flagged():
+    inv = Invoice(
+        invoice_number="INV-005",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Wile E. Coyote",
+        vendor_iban="DE89370400440532013100",  # transposed digits
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert any(i.field == "vendor_iban" and i.severity == "error" for i in issues)
+
+
+def test_invoice_bad_vat_checksum_is_flagged():
+    inv = Invoice(
+        invoice_number="INV-006",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Wile E. Coyote",
+        vendor_vat_number="DE136695975",  # wrong check digit
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert any(i.field == "vendor_vat_number" and i.severity == "error" for i in issues)
+
+
+def test_invoice_unverifiable_vat_country_is_a_warning():
+    inv = Invoice(
+        invoice_number="INV-007",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Wile E. Coyote",
+        vendor_vat_number="JP12345678901",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert any(
+        i.field == "vendor_vat_number" and i.severity == "warning" for i in issues
+    )
+
+
+def test_invoice_valid_french_vat_has_no_issue():
+    inv = Invoice(
+        invoice_number="INV-008",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Michelin",
+        customer_name="Customer",
+        vendor_vat_number="FR40303265045",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert not any(i.field == "vendor_vat_number" for i in issues)
+
+
+def test_invoice_bad_french_vat_checksum_is_error():
+    inv = Invoice(
+        invoice_number="INV-009",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Michelin",
+        customer_name="Customer",
+        vendor_vat_number="FR40303265046",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert any(i.field == "vendor_vat_number" and i.severity == "error" for i in issues)
+
+
+def test_invoice_us_iban_informs_about_non_iban_system():
+    inv = Invoice(
+        invoice_number="INV-US-01",
+        issue_date=date(2026, 1, 1),
+        vendor_name="US Vendor",
+        customer_name="Customer",
+        vendor_iban="US12345678901234567890",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    iban_issue = next(i for i in issues if i.field == "vendor_iban")
+    assert "does not use IBAN" in iban_issue.message
+    assert iban_issue.severity == "error"
+
+
+def test_invoice_valid_us_ein_has_no_issue():
+    inv = Invoice(
+        invoice_number="INV-US-02",
+        issue_date=date(2026, 1, 1),
+        vendor_name="US Corp",
+        customer_name="Customer",
+        vendor_tax_id="12-3456789",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert not any(i.field == "vendor_tax_id" for i in issues)
+
+
+def test_invoice_invalid_us_ein_is_flagged():
+    inv = Invoice(
+        invoice_number="INV-US-03",
+        issue_date=date(2026, 1, 1),
+        vendor_name="US Corp",
+        customer_name="Customer",
+        vendor_tax_id="00-3456789",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert any(
+        i.field == "vendor_tax_id" and "US EIN" in i.message and i.severity == "error"
+        for i in issues
+    )
+
+
+def test_invoice_valid_ca_bn_has_no_issue():
+    inv = Invoice(
+        invoice_number="INV-CA-01",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Canadian Corp",
+        customer_name="Customer",
+        vendor_tax_id="123456782 RT 0001",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert not any(i.field == "vendor_tax_id" for i in issues)
+
+
+def test_invoice_invalid_ca_bn_is_flagged():
+    inv = Invoice(
+        invoice_number="INV-CA-02",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Canadian Corp",
+        customer_name="Customer",
+        vendor_tax_id="123456783 RT 0001",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert any(
+        i.field == "vendor_tax_id"
+        and "Canadian BN" in i.message
+        and i.severity == "error"
+        for i in issues
+    )
+
+
+def test_invoice_valid_brazil_cnpj_has_no_issue():
+    inv = Invoice(
+        invoice_number="INV-BR-01",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Brazil Corp",
+        customer_name="Customer",
+        vendor_tax_id="11.222.333/0001-81",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert not any(i.field == "vendor_tax_id" for i in issues)
+
+
+def test_invoice_invalid_brazil_cnpj_is_flagged():
+    inv = Invoice(
+        invoice_number="INV-BR-02",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Brazil Corp",
+        customer_name="Customer",
+        vendor_tax_id="11.222.333/0001-82",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert any(
+        i.field == "vendor_tax_id"
+        and "Brazilian CNPJ" in i.message
+        and i.severity == "error"
+        for i in issues
+    )
+
+
+def test_contract_same_party_is_flagged():
+    c = Contract(
+        contract_title="Services Agreement",
+        parties_a=["Acme Corp"],
+        parties_b=["ACME CORP"],
+        effective_date=date(2026, 1, 1),
+    )
+    issues = validate(c)
+    assert any(i.field == "parties_b" for i in issues)
+
+
+def test_invoice_with_discount_totals_correctly_has_no_issues():
+    inv = Invoice(
+        invoice_number="#001",
+        issue_date=date(2025, 10, 1),
+        due_date=date(2025, 10, 30),
+        vendor_name="Your Company",
+        customer_name="Client's Company Name",
+        subtotal=5300.0,
+        tax_amount=530.0,
+        discount_amount=371.0,
+        total_amount=5459.0,
+    )
+    assert validate(inv) == []
+
+
+def test_contract_expiration_before_effective_is_flagged():
+    c = Contract(
+        contract_title="Services Agreement",
+        parties_a=["Acme Corp"],
+        parties_b=["Wile E. Coyote"],
+        effective_date=date(2026, 6, 1),
+        expiration_date=date(2026, 1, 1),
+        key_obligations=["Deliver widgets monthly"],
+    )
+    issues = validate(c)
+    assert any(i.field == "expiration_date" for i in issues)
+
+
+def test_line_item_quantity_times_price_must_equal_line_total():
+    """A garbled unit price is invisible to every other check: the line
+    total, subtotal and grand total all still agree with each other.
+    """
+    inv = Invoice(
+        invoice_number="INV-008",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Wile E. Coyote",
+        line_items=[
+            LineItem(description="Item 2", quantity=1, unit_price=180.0, total=150.0)
+        ],
+        subtotal=150.0,
+        total_amount=150.0,
+    )
+    issues = validate(inv)
+    assert any(i.field == "line_items[0]" and i.severity == "error" for i in issues)
+
+
+def test_consistent_line_items_pass():
+    inv = Invoice(
+        invoice_number="INV-009",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Wile E. Coyote",
+        line_items=[
+            LineItem(description="Item 1", quantity=2, unit_price=100.0, total=200.0),
+            LineItem(description="Item 3", quantity=2, unit_price=300.0, total=600.0),
+        ],
+        subtotal=800.0,
+        total_amount=800.0,
+    )
+    assert validate(inv) == []
+
+
+VLM_COLUMN_TEXT = (
+    "SUB TOTAL\n$1250\nTAX (21%)\n$262\nDISCOUNT\n$0\nSHIPPING\n$0\nTOTAL AMOUNT\n$1512"
+)
+
+
+def _invoice(**overrides) -> Invoice:
+    fields = dict(
+        invoice_number="1254",
+        issue_date=date(2023, 10, 5),
+        vendor_name="Invoice Fly",
+        customer_name="Sam Altman",
+        subtotal=1250.0,
+        tax_amount=262.0,
+        total_amount=1512.0,
+    )
+    fields.update(overrides)
+    return Invoice(**fields)
+
+
+CONTRACT_TEXT = """SERVICES AGREEMENT
+
+This Services Agreement is entered into as of 2026-03-01 by and between
+Vertex Consulting LLC ("Party A") and Meridian Retail Inc. ("Party B").
+
+Governing Law: State of Delaware.
+This Agreement expires on 2027-03-01.
+"""
+
+
+def _contract(**overrides) -> Contract:
+    fields = dict(
+        contract_title="Services Agreement",
+        parties_a=["Vertex Consulting LLC"],
+        parties_b=["Meridian Retail Inc."],
+        effective_date=date(2026, 3, 1),
+        expiration_date=date(2027, 3, 1),
+        governing_law="State of Delaware",
+        key_obligations=["deliver monthly reports"],
+    )
+    fields.update(overrides)
+    return Contract(**fields)
+
+
+def test_contract_grounded_in_the_text_passes():
+    assert validate(_contract(), CONTRACT_TEXT) == []
+
+
+def test_invented_party_name_is_flagged():
+    """A contract has no arithmetic to contradict a made-up party, so the
+    only check left is whether the string is actually on the page.
+    """
+    issues = validate(_contract(parties_b=["Globex Corporation"]), CONTRACT_TEXT)
+    assert any(
+        i.field.startswith("parties_b") and i.severity == "error" for i in issues
+    )
+
+
+def test_party_name_punctuation_differences_are_tolerated():
+    # "Meridian Retail Inc" vs the document's "Meridian Retail Inc." is a
+    # rewrite, not a hallucination.
+    assert validate(_contract(parties_b=["Meridian Retail Inc"]), CONTRACT_TEXT) == []
+
+
+def test_date_written_in_another_format_is_still_found():
+    text = CONTRACT_TEXT.replace("2026-03-01", "1 March 2026")
+    issues = validate(_contract(), text)
+    assert not any(i.field == "effective_date" for i in issues)
+
+
+def test_date_absent_from_the_document_is_a_warning_not_an_error():
+    """Contracts spell dates out in prose often enough that a miss is worth
+    a human's glance, not an assertion that the extraction is wrong.
+    """
+    issues = validate(_contract(effective_date=date(2026, 7, 4)), CONTRACT_TEXT)
+    assert any(i.field == "effective_date" and i.severity == "warning" for i in issues)
+
+
+def test_invoice_date_far_in_the_future_is_flagged():
+    # Reproduces a real hallucination: garbled OCR of the date line produced
+    # "2036-01-01", which no other rule can contradict.
+    inv = Invoice(
+        invoice_number="1254",
+        issue_date=date(2036, 1, 1),
+        vendor_name="Invoice Fly",
+        customer_name="Sam Altman",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv)
+    assert any(i.field == "issue_date" and "future" in i.message for i in issues)
+
+
+def test_implausibly_old_date_is_flagged():
+    inv = Invoice(
+        invoice_number="X",
+        issue_date=date(1887, 5, 1),
+        vendor_name="Acme",
+        customer_name="Bob",
+        subtotal=10.0,
+        total_amount=10.0,
+    )
+    issues = validate(inv)
+    assert any(i.field == "issue_date" for i in issues)
+
+
+def test_a_long_contract_term_is_not_flagged():
+    # A 30-year lease is normal; the range check must not punish it.
+    c = _contract(expiration_date=date(2056, 3, 1))
+    issues = validate(c, CONTRACT_TEXT)
+    assert not any(
+        i.field == "expiration_date" and i.severity == "error" for i in issues
+    )
+
+
+def test_redacted_party_is_reported_as_redacted_not_as_missing():
+    """A real CUAD contract redacts one party to "[ * * * ]". The model
+    transcribed that faithfully — the field is unusable, but claiming the
+    string isn't in the document would be false; it's there five times.
+    """
+    text = 'This Agreement is between [ * * * ] (the "Provider") and Vertex Consulting LLC.'
+    c = _contract(
+        parties_a=["[ * * * ]"],
+        parties_b=["Vertex Consulting LLC"],
+        governing_law=None,
+        effective_date=date(2026, 3, 1),
+        expiration_date=None,
+    )
+    issues = validate(c, text)
+    party_issues = [i for i in issues if i.field.startswith("parties_a")]
+    assert party_issues and "redact" in party_issues[0].message
+    assert "does not appear" not in party_issues[0].message
+
+
+def test_same_company_written_two_ways_is_flagged():
+    """ "Acme Corp" and "Acme Corporation" are one counterparty. Comparing
+    the raw strings says otherwise, which lets a contract with itself pass.
+    """
+    text = "This Agreement is between Acme Corp and Acme Corporation, effective 2026-03-01."
+    c = _contract(
+        parties_a=["Acme Corp"],
+        parties_b=["Acme Corporation"],
+        governing_law=None,
+        expiration_date=None,
+    )
+    issues = validate(c, text)
+    assert any("same entity" in i.message and i.severity == "error" for i in issues)
+
+
+def test_parent_and_subsidiary_is_a_warning_not_an_error():
+    # A parent contracting with its own subsidiary is unusual but legitimate,
+    # so this is worth a look rather than a verdict.
+    text = "Between Iberia S.A. and Iberia Mantenimiento S.A., effective 2026-03-01."
+    c = _contract(
+        parties_a=["Iberia S.A."],
+        parties_b=["Iberia Mantenimiento S.A."],
+        governing_law=None,
+        expiration_date=None,
+    )
+    issues = validate(c, text)
+    assert any(i.severity == "warning" and "share a name" in i.message for i in issues)
+
+
+def test_genuinely_different_companies_pass():
+    assert validate(_contract(), CONTRACT_TEXT) == []
+
+
+def test_two_counterparties_on_one_side_are_kept_separate():
+    """Reproduces a real CUAD contract: two entities are jointly one side.
+    With a single string the model could only concatenate them, producing a
+    name that appears nowhere in the document.
+    """
+    text = (
+        "Services Agreement, by and between Vertex Consulting LLC (the 'Provider'), "
+        "and TELCOSTAR PTE, LTD. and Ability Computer Ltd (each and both 'Recipient'), "
+        "effective 2026-03-01."
+    )
+    c = _contract(
+        parties_a=["Vertex Consulting LLC"],
+        parties_b=["TELCOSTAR PTE, LTD.", "Ability Computer Ltd"],
+        governing_law=None,
+        expiration_date=None,
+    )
+    assert validate(c, text) == []
+
+
+def test_an_empty_side_is_flagged():
+    c = _contract(parties_b=[], governing_law=None, expiration_date=None)
+    issues = validate(c, CONTRACT_TEXT)
+    assert any(i.field == "parties_b" and "no party named" in i.message for i in issues)
+
+
+# --- source citations -------------------------------------------------------
+# These replace sixteen tests of a keyword search that had to be told, one
+# document at a time, every place a money word can appear without being that
+# field's amount: a tax ID, a column header, "Total excluding VAT", a "GST #"
+# in footer boilerplate, the word "discount" inside a product name. The check
+# below asks the model to point at its source and then verifies the pointer,
+# which needs no vocabulary in any language.
+
+TIMETREX_TEXT = """\
+1 Bronze Support Package (5hrs, 10% discount) 449.95 1 449.95 H
+Sub-Total: USD $5,749.90
+HST: USD $689.99
+Shipping: USD $16.86
+Total: USD $6,456.75
+invoice you are agreeing to the TimeTrex Terms of Use. GST #:
+845942671
+"""
+
+
+def _sourced(**overrides) -> Invoice:
+    fields = dict(
+        invoice_number="16KLBPMO",
+        issue_date=date(2012, 10, 29),
+        vendor_name="TimeTrex",
+        customer_name="John Doe",
+        subtotal=5749.90,
+        tax_amount=689.99,
+        shipping_amount=16.86,
+        total_amount=6456.75,
+        field_locations={
+            "subtotal": {"page": 1, "quote": "Sub-Total: USD $5,749.90"},
+            "tax_amount": {"page": 1, "quote": "HST: USD $689.99"},
+            "shipping_amount": {"page": 1, "quote": "Shipping: USD $16.86"},
+            "total_amount": {"page": 1, "quote": "Total: USD $6,456.75"},
+        },
+    )
+    fields.update(overrides)
+    return Invoice(**fields)
+
+
+def test_a_correctly_cited_invoice_is_clean():
+    """The real TimeTrex invoice. The keyword search reported a tax of
+    845942671 (the GST registration number in the footer) and a discount of
+    1.00 (a row number inside a product description). Neither field is
+    searched for any more — the citation is.
+    """
+    assert validate(_sourced(), TIMETREX_TEXT) == []
+
+
+def test_a_tax_label_it_has_never_heard_of_still_works():
+    # "HST" was in no keyword list, so the old search walked straight past
+    # the real tax line. The model reads the label; we check the number.
+    issues = validate(_sourced(tax_amount=42.00), TIMETREX_TEXT)
+    assert any(i.field == "tax_amount" and "689.99" in i.message for i in issues)
+
+
+def test_an_invented_citation_is_caught():
+    inv = _sourced(
+        field_locations={"tax_amount": {"page": 1, "quote": "Sales Tax: USD $999.00"}}
+    )
+    issues = validate(inv, TIMETREX_TEXT)
+    assert any(
+        i.field == "tax_amount" and "does not appear" in i.message for i in issues
+    )
+
+
+def test_a_value_that_contradicts_its_own_citation_is_caught():
+    """The failure this exists for: the model cites the real line and then
+    reports a different number, because it silently "corrected" the document.
+    """
+    inv = _sourced(
+        tax_amount=480.00,
+        field_locations={"tax_amount": {"page": 1, "quote": "Sales Tax: USD 450.00"}},
+    )
+    issues = validate(
+        inv, "Subtotal: USD 8000.00\nSales Tax: USD 450.00\nTotal: USD 8,480.00"
+    )
+    assert any(i.field == "tax_amount" and "450.00" in i.message for i in issues)
+
+
+def test_punctuation_and_spacing_differences_are_tolerated():
+    inv = _sourced(
+        field_locations={"tax_amount": {"page": 1, "quote": "HST:  USD  $689.99"}}
+    )
+    assert not any(i.field == "tax_amount" for i in validate(inv, TIMETREX_TEXT))
+
+
+def test_uncited_fields_are_not_invented_problems():
+    # The document states no discount, so the model cites none, so there is
+    # nothing to verify — and nothing to falsely report.
+    assert validate(_sourced(field_locations={}), TIMETREX_TEXT) == []
+
+
+def test_european_amounts_in_citations():
+    text = "Base imponible 1.234,56\nIVA 21% 259,26\nImporte total 1.493,82"
+    inv = _sourced(
+        subtotal=1234.56,
+        tax_amount=259.26,
+        shipping_amount=0.0,
+        total_amount=1493.82,
+        field_locations={
+            "tax_amount": {"page": 1, "quote": "IVA 21% 259,26"},
+            "total_amount": {"page": 1, "quote": "Importe total 1.493,82"},
+        },
+    )
+    assert validate(inv, text) == []
+
+
+def test_page_aware_input_requires_material_field_locations():
+    issues = validate(_sourced(), "[PAGE 1]\n" + TIMETREX_TEXT)
+    assert any(
+        issue.field == "invoice_number" and "source-region" in issue.message
+        for issue in issues
+    )
+
+
+def test_a_non_iban_is_reported_as_absent_not_as_a_bad_checksum():
+    """A blank template still reading "[IBAN code]" is not an IBAN with a
+    typo — saying so sends a reviewer hunting for a digit that isn't there.
+    """
+    inv = _sourced(vendor_iban="[IBAN code]")
+    issues = validate(inv, TIMETREX_TEXT)
+    iban = [i for i in issues if i.field == "vendor_iban"]
+    assert iban and "is not an IBAN" in iban[0].message
+    assert "mod-97" not in iban[0].message
+
+
+def test_a_real_iban_with_a_bad_digit_still_says_checksum():
+    inv = _sourced(vendor_iban="DE89370400440532013100")
+    issues = validate(inv, TIMETREX_TEXT)
+    iban = [i for i in issues if i.field == "vendor_iban"]
+    assert iban and "mod-97" in iban[0].message
+
+
+def test_a_derived_value_is_a_warning_not_an_error():
+    """One real invoice printed "Total excl. VAT 372.00" and "Total incl.
+    VAT 450.12" and no VAT line at all, so the tax could only be computed.
+    Absence of a source is worth recording, not worth queueing a correct
+    extraction for a human.
+    """
+    text = "[PAGE 1]\nTotal excl. VAT 372.00\nTotal incl. VAT 450.12"
+    inv = _sourced(
+        subtotal=372.00,
+        tax_amount=78.12,
+        shipping_amount=0.0,
+        total_amount=450.12,
+        field_locations={
+            "subtotal": {"page": 1, "quote": "Total excl. VAT 372.00"},
+            "total_amount": {"page": 1, "quote": "Total incl. VAT 450.12"},
+        },
+    )
+    issues = validate(inv, text)
+    derived = [i for i in issues if i.field == "tax_amount"]
+    assert derived and derived[0].severity == "warning"
+    assert "derived rather than read" in derived[0].message

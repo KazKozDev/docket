@@ -1,0 +1,16 @@
+BOARDING PASS / TARJETA DE EMBARQUE
+
+Passenger / Pasajero:  GARCIA/MARIA MS
+Booking ref:           X4H2QP
+
+Flight / Vuelo:        IB3241
+From:  BCN  Barcelona El Prat
+To:    LHR  London Heathrow
+
+Departure:   2026-05-14 08:35
+Boarding:    08:05
+Gate:        B24
+Seat:        12C
+Class:       Economy
+
+Please be at the gate 20 minutes before departure.
