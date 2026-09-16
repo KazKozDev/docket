@@ -2,15 +2,9 @@
 
 Turn scanned invoices, receipts and contracts into validated JSON.
 
-```bash
-git clone https://github.com/KazKozDev/docket.git
-cd docket
-pip install -e .
-```
-
 ![Extracting fields from a Spanish invoice and validating the totals](<!-- TODO(user): absolute URL; see recording spec below -->)
 
-Runs on Ollama · Every number cites its source · MIT licensed
+Runs locally · Every number cites its source · MIT licensed
 
 ---
 
