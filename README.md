@@ -3,6 +3,8 @@
 Turn scanned invoices, receipts and contracts into validated JSON.
 
 ```bash
+git clone https://github.com/KazKozDev/docket.git
+cd docket
 pip install -e .
 ```
 
@@ -19,6 +21,8 @@ pulled, and Tesseract on PATH (`brew install tesseract`, `apt install
 tesseract-ocr`).
 
 ```bash
+git clone https://github.com/KazKozDev/docket.git
+cd docket
 pip install -e .
 cp .env.example .env
 ```
@@ -150,7 +154,7 @@ Full list in `src/docket/config.py`; `LANGFUSE_PUBLIC_KEY` and
 ### From source
 
 ```bash
-git clone <!-- TODO(user): repository URL — no git remote is configured -->
+git clone https://github.com/KazKozDev/docket.git
 cd docket && python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 ```
@@ -170,7 +174,7 @@ The image installs Tesseract and talks to Ollama on the host.
 ### Development
 
 ```bash
-pytest                                # 209 tests, none need a running Ollama
+pytest                                # 224 tests, none need a running Ollama
 python eval/run_eval.py               # accuracy, P/R/F1, latency on the golden set
 python eval/benchmark_methods.py      # the rules vs TF-IDF vs LLM comparison
 ```
@@ -183,10 +187,8 @@ python eval/benchmark_methods.py      # the rules vs TF-IDF vs LLM comparison
 
 ![macOS](https://img.shields.io/badge/macOS-333?style=flat-square&logo=apple&logoColor=fff) ![Linux](https://img.shields.io/badge/Linux-333?style=flat-square&logo=linux&logoColor=fff)
 
-![Python](https://img.shields.io/badge/Python-3.10+-333?style=flat-square&logo=python&logoColor=fff) [![License](https://img.shields.io/badge/License-MIT-333?style=flat-square)](LICENSE)
-<!-- TODO(user): add the CI badge once a git remote exists:
-     [![Tests](https://github.com/{owner}/{repo}/actions/workflows/ci.yml/badge.svg)](https://github.com/{owner}/{repo}/actions) -->
+![Python](https://img.shields.io/badge/Python-3.10+-333?style=flat-square&logo=python&logoColor=fff) [![License](https://img.shields.io/badge/License-MIT-333?style=flat-square)](LICENSE) [![Tests](https://github.com/KazKozDev/docket/actions/workflows/ci.yml/badge.svg)](https://github.com/KazKozDev/docket/actions)
 
-[License](LICENSE) <!-- TODO(user): add Issues + LinkedIn links once the repo has a remote -->
+[Issues](https://github.com/KazKozDev/docket/issues) · [License](LICENSE)
 
 </div>
