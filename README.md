@@ -2,7 +2,7 @@
 
 Turn scanned invoices, receipts and contracts into validated JSON.
 
-![Extracting fields from a Spanish invoice and validating the totals](<!-- TODO(user): absolute URL; see recording spec below -->)
+<img width="1653" height="961" alt="demo" src="https://github.com/user-attachments/assets/86355d41-34a7-4201-9699-0fd62080c488" />
 
 Runs locally · Every number cites its source · MIT licensed
 
