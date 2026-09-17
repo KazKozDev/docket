@@ -1,12 +1,12 @@
-# docket — invoice and receipt data extraction with OCR and LLMs
+# docket — local document AI, invoice & receipt OCR parser with LLMs
 
-Turn scanned invoices, receipts and contracts into validated JSON.
+Turn scanned invoices, receipts, and contracts into structured, validated JSON using local OCR and vision-language models.
 
 <img width="1653" height="961" alt="demo" src="https://github.com/user-attachments/assets/86355d41-34a7-4201-9699-0fd62080c488" />
 
-Runs locally · Every number cites its source
+Runs locally with Ollama · Pydantic schemas · Grounded citations · Zero hallucinations
 
-## Quick start
+## Quick start: local invoice & receipt parsing
 
 You need [Ollama](https://ollama.com) running with a text and a vision model
 pulled, and Tesseract on PATH (`brew install tesseract`, `apt install
@@ -19,7 +19,7 @@ pip install -e .
 cp .env.example .env
 ```
 
-Point it at a document. Classification, extraction and validation all run
+Point it at a document. Intelligent document classification, OCR extraction, and validation all run
 locally against whichever models `.env` names.
 
 ```bash
@@ -42,9 +42,9 @@ python -m docket.cli eval/golden_dataset/invoice_spanish.txt
 The process exits non-zero when validation fails, so it drops into a shell
 pipeline as-is.
 
-## Extract structured fields from an invoice or receipt
+## Structured data extraction with Pydantic schemas
 
-Each document type has a Pydantic schema, and the model fills it under a JSON
+Each document type has a strict Pydantic schema, and the model fills it under a JSON
 Schema contract rather than being asked nicely for JSON. A result that fails
 validation is sent back to the model with the error attached.
 
@@ -57,7 +57,7 @@ streamlit run app.py             # browser UI with a document preview
 European and American number conventions are both parsed, so `1.234,56` and
 `1,234.56` read as the same amount. Keyword rules cover English and Spanish.
 
-## Send uncertain documents to human review
+## Human-in-the-loop (HITL) review queue for flagged documents
 
 Low classification confidence, a failed extraction or an error-severity
 validation issue routes the document to a review queue instead of a database.
@@ -77,7 +77,7 @@ doc_9479a6b321e02ab6de25  pending  invoice
 That document prints `Amount Due: 500.00` while its own subtotal and tax add up
 to 270.60. Nothing silently reconciles it.
 
-## Run document extraction as an HTTP service
+## Document AI REST API with FastAPI and async worker
 
 ```bash
 DOCKET_API_KEY=secret uvicorn api:app
@@ -87,18 +87,20 @@ curl -H "Authorization: Bearer secret" -F file=@invoice.pdf localhost:8000/proce
 `POST /process` runs synchronously; `POST /jobs` queues and returns 202 with a
 job id for `GET /jobs/{id}`. `GET /review-queue` lists what is waiting for a
 person, and `/review-queue/{id}/original` returns the document that produced it.
-Interactive docs at `/docs`.
+Interactive OpenAPI docs at `/docs`.
 
-## How it works
+## Pipeline architecture: hybrid OCR, classification, and validation
 
 Text comes from the cheapest source that works: a PDF text layer if there is
-one, Tesseract for scans, and a vision model only when OCR confidence is low or
+one, Tesseract for scans, and a Vision-Language Model (VLM) only when OCR confidence is low or
 a cheap text model judges the scan unusable. Classification tries keyword rules,
 then a TF-IDF model, then an LLM — each tier runs only because the last was not
 confident. Extraction fills a Pydantic schema and cites, for every number, the
-line it was read from. Validation is deterministic and never calls a model: it
-checks arithmetic, date ranges, IBAN mod-97 and VAT check digits, and that each
-cited line exists and contains the number claimed.
+verbatim line it was read from.
+
+Validation is completely deterministic and never calls a model: it
+checks arithmetic, date ranges, IBAN mod-97 (ISO 7064 across Europe & Brazil), VAT check digits (all 27 EU member states, UK, Switzerland, Norway), national tax IDs (US EIN, Canadian BN, Brazilian CNPJ/CPF), and asserts that each
+cited line exists and contains the number claimed. Detailed flow in [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ```
 document → text layer / OCR / VLM → classify → extract + cite → validate → JSON or review
