@@ -181,6 +181,6 @@ python eval/benchmark_methods.py      # the rules vs TF-IDF vs LLM comparison
 
 ![Python](https://img.shields.io/badge/Python-3.10+-333?style=flat-square&logo=python&logoColor=fff) [![License](https://img.shields.io/badge/License-MIT-333?style=flat-square)](LICENSE) [![Tests](https://github.com/KazKozDev/docket/actions/workflows/ci.yml/badge.svg)](https://github.com/KazKozDev/docket/actions)
 
-[Issues](https://github.com/KazKozDev/docket/issues) · [License](LICENSE)
+[Issues](https://github.com/KazKozDev/docket/issues) · [ARCHITECTURE](docs/ARCHITECTURE.md) · [LICENSE](LICENSE) · [LinkedIn](https://www.linkedin.com/in/kazkozdev/)
 
 </div>
