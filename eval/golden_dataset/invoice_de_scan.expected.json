@@ -1,0 +1,93 @@
+{
+  "doc_type": "invoice",
+  "invoice_number": "RE-2026-1187",
+  "issue_date": "2026-07-14",
+  "due_date": "2026-08-13",
+  "seller.name": "Nordlicht Bürobedarf GmbH",
+  "buyer.name": "Hansa Logistik AG",
+  "seller.tax_ids[0].value": "DE136695976",
+  "subtotal": 617.0,
+  "tax_amount": 117.23,
+  "total_amount": 734.23,
+  "currency": "EUR",
+  "payment_account.iban": "DE89370400440532013000",
+  "_schema": "invoice",
+  "_line_items": [
+    {
+      "description": "Kopierpapier A4, 500 Blatt",
+      "quantity": 40,
+      "total": 196.0
+    },
+    {
+      "description": "Toner schwarz TN-2420",
+      "quantity": 6,
+      "total": 351.0
+    },
+    {
+      "description": "Ordner breit, blau",
+      "quantity": 25,
+      "total": 70.0
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Pos.",
+          "Beschreibung",
+          "Menge",
+          "Einzelpreis",
+          "Betrag"
+        ],
+        [
+          "1",
+          "Kopierpapier A4, 500 Blatt",
+          "40",
+          "4,90",
+          "196,00"
+        ],
+        [
+          "2",
+          "Toner schwarz TN-2420",
+          "6",
+          "58,50",
+          "351,00"
+        ],
+        [
+          "3",
+          "Ordner breit, blau",
+          "25",
+          "2,80",
+          "70,00"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "RECHNUNG",
+    "Nordlicht Bürobedarf GmbH",
+    "Speicherstraße 8",
+    "28195 Bremen",
+    "USt-IdNr.: DE136695976",
+    "Rechnungsnummer: RE-2026-1187",
+    "Rechnungsdatum: 14.07.2026",
+    "Fällig am: 13.08.2026",
+    "Kundennummer: K-40217",
+    "Rechnungsempfänger:",
+    "Hansa Logistik AG",
+    "Am Kaiser-Kai 3",
+    "20457 Hamburg",
+    "Pos. Beschreibung Menge Einzelpreis Betrag",
+    "1 Kopierpapier A4, 500 Blatt 40 4,90 196,00",
+    "2 Toner schwarz TN-2420 6 58,50 351,00",
+    "3 Ordner breit, blau 25 2,80 70,00",
+    "Zwischensumme: 617,00 EUR",
+    "USt. 19 %: 117,23 EUR",
+    "Gesamtbetrag: 734,23 EUR",
+    "Zahlbar innerhalb von 30 Tagen ohne Abzug.",
+    "Bankverbindung: Commerzbank Bremen",
+    "IBAN: DE89 3704 0044 0532 0130 00  BIC: COBADEFFXXX"
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py"
+}

@@ -1,0 +1,80 @@
+{
+  "doc_type": "delivery_note",
+  "delivery_note_number": "DN-30918",
+  "delivery_date": "2026-01-22",
+  "supplier.name": "Contoso Lab Supplies Ltd",
+  "recipient.name": "University of Westbrook",
+  "total_packages": 3,
+  "received_by": "J. Okafor",
+  "_schema": "delivery_note",
+  "_line_items": [
+    {
+      "description": "Pipette tips 200 ul, rack",
+      "quantity": 20
+    },
+    {
+      "description": "Glass beaker 250 ml",
+      "quantity": 48
+    },
+    {
+      "description": "Nitrile gloves L, box",
+      "quantity": 10
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Code",
+          "Description",
+          "Ordered",
+          "Delivered",
+          "Unit"
+        ],
+        [
+          "PT-200",
+          "Pipette tips 200 ul, rack",
+          "20",
+          "20",
+          "rack"
+        ],
+        [
+          "BK-250",
+          "Glass beaker 250 ml",
+          "60",
+          "48",
+          "pcs"
+        ],
+        [
+          "NG-L",
+          "Nitrile gloves L, box",
+          "10",
+          "10",
+          "box"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "DELIVERY NOTE",
+    "Contoso Lab Supplies Ltd",
+    "Unit 4, Beacon Park",
+    "Leeds LS11 5QE",
+    "Delivery Note No: DN-30918",
+    "Delivery Date: 22/01/2026",
+    "Your order: PO-5521",
+    "Deliver to:",
+    "University of Westbrook",
+    "Chemistry Department, Goods In",
+    "Westbrook WB2 7LN",
+    "Code Description Ordered Delivered Unit",
+    "PT-200 Pipette tips 200 ul, rack 20 20 rack",
+    "BK-250 Glass beaker 250 ml 60 48 pcs",
+    "NG-L Nitrile gloves L, box 10 10 box",
+    "Packages: 3",
+    "Backorder: 12 x BK-250 to follow",
+    "Received by: J. Okafor"
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py"
+}

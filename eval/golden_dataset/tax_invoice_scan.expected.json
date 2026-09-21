@@ -1,0 +1,83 @@
+{
+  "doc_type": "tax_invoice",
+  "invoice_number": "TI-88213",
+  "issue_date": "2026-05-19",
+  "seller.name": "Blue Gum Hardware Pty Ltd",
+  "buyer.name": "Harbourside Cafe Pty Ltd",
+  "subtotal": 1175.0,
+  "tax_amount": 117.5,
+  "total_amount": 1292.5,
+  "currency": "AUD",
+  "_schema": "tax_invoice",
+  "_line_items": [
+    {
+      "description": "Timber decking 90x19 (m)",
+      "quantity": 120,
+      "total": 780.0
+    },
+    {
+      "description": "Deck screws, box of 500",
+      "quantity": 4,
+      "total": 128.0
+    },
+    {
+      "description": "Decking stain 4L",
+      "quantity": 3,
+      "total": 267.0
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Item",
+          "Qty",
+          "Unit Price",
+          "Amount"
+        ],
+        [
+          "Timber decking 90x19 (m)",
+          "120",
+          "6.50",
+          "780.00"
+        ],
+        [
+          "Deck screws, box of 500",
+          "4",
+          "32.00",
+          "128.00"
+        ],
+        [
+          "Decking stain 4L",
+          "3",
+          "89.00",
+          "267.00"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "TAX INVOICE",
+    "Blue Gum Hardware Pty Ltd",
+    "14 Wattle Avenue",
+    "Newcastle NSW 2300",
+    "ABN 51 824 753 556",
+    "Tax Invoice No: TI-88213",
+    "Date of Issue: 19/05/2026",
+    "Customer ID: HC-0093",
+    "Invoice to:",
+    "Harbourside Cafe Pty Ltd",
+    "2 Wharf Road",
+    "Newcastle NSW 2300",
+    "Item Qty Unit Price Amount",
+    "Timber decking 90x19 (m) 120 6.50 780.00",
+    "Deck screws, box of 500 4 32.00 128.00",
+    "Decking stain 4L 3 89.00 267.00",
+    "Subtotal (excl. GST): $1,175.00",
+    "GST 10%: $117.50",
+    "Total (incl. GST): $1,292.50",
+    "All prices in Australian dollars (AUD)."
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py"
+}

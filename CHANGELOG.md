@@ -119,6 +119,30 @@ each stage; see the Breaking changes list.
   and `Party` gains `contact_name`; both are optional.
 
 ### Added
+- Golden dataset for every one of the 14 built-in schemas: 16 rendered
+  scans (JPEG, seeded noise, low-res/rotated/multipage variants) with
+  ground-truth text, tables, line items and fields (`eval/golden_dataset/`,
+  `eval/build_golden.py`), plus `eval/metrics.py` grading: word
+  precision/recall/F1, table-cell accuracy, greedy one-to-one line-item
+  matching, identifier normalization for grouped values.
+- Reproducible OCR and pipeline benchmark (`eval/benchmark_ocr.py`):
+  Tesseract vs. PaddleOCR mobile/medium, OCR-only runs (word F1, table
+  cells, latency) and full-pipeline runs (document success, field accuracy,
+  line-item precision/recall, table cells, mean/median seconds, VLM fallback
+  share, LLM calls, review counts) over the golden and real-sample scans,
+  with environment and versions recorded; results in
+  `eval/results/ocr_benchmark.json`. `--no-layout-markers` runs the pipeline
+  with plain text serialization for the layout-marker comparison: no
+  measurable difference on this set (both Paddle configs identical on
+  every document, Tesseract ±2 marginal scans, all within run-to-run
+  noise), so the markers stay on by default for hard tables, not for a
+  claimed accuracy gain.
+- Extraction-stability benchmark (`eval/benchmark_variance.py`): the same
+  document N times at temperature 0, per-field agreement. The receipt_taxed
+  coupon case is identical across 10 runs (15/15 fields).
+- `eval/benchmark_methods.py` now records classification confidence
+  (mean, split by correctness, confidently-wrong count) beside accuracy and
+  latency.
 - Layout model (`docket.layout`): `BoundingBox`, `WordToken`, `TextLine`,
   `TextBlock`, `Column`, `TableCell`, `Table`, `PageLayout`,
   `DocumentLayout`, with normalized 0..1 coordinates and each page's
@@ -221,9 +245,20 @@ each stage; see the Breaking changes list.
 - With 14 built-in schemas instead of 8 the TF-IDF tier is confident less
   often: 19 of 34 held-out sentences (none confidently wrong), and the rules
   tier's confidence (a share of all matched weight) is lower when a text
-  matches several schemas. Not yet measured on the eval sets.
+  matches several schemas. Measured on the eval sets
+  (`eval/results/benchmark_methods.json`, 10 labeled text documents): rules,
+  TF-IDF and LLM tiers all classify 10/10 correctly (TF-IDF was 8/10 before the
+  expansion), at mean confidences 0.79 / 0.55 / 0.98 with zero confidently
+  wrong answers; on the 33 scanned documents classification is 30-31/33 per
+  OCR backend (the misses are SROIE retail receipts, not new-type confusion).
 
 ### Fixed
+- Receipt validation demanded mutually exclusive coupon layouts: a coupon
+  printed above the SUBTOTAL (the stated subtotal already has the discount
+  applied, `receipt_taxed`) failed both the items-sum rule and the
+  total-balancing rule no matter what the extraction said. Both rules now
+  accept either printed layout and flag only when neither closes; a wrong
+  total still fails under both.
 - `docket forensics` crashed with `NameError` whenever it found an empty
   template or an alteration; it now exits 2.
 - `.env.example` said thinking made extraction 18x slower; the recorded

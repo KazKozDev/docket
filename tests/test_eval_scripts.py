@@ -72,3 +72,73 @@ def test_readme_only_advertises_scripts_that_exist():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     for name in set(re.findall(r"python eval/([\w./-]+\.py)", readme)):
         assert (ROOT / "eval" / name).exists(), f"README runs a missing script: {name}"
+
+
+def test_golden_dataset_covers_every_builtin_schema():
+    import json
+
+    sys.path.insert(0, str(ROOT / "src"))
+    from docket.catalog import list_schemas
+
+    golden = ROOT / "eval" / "golden_dataset"
+    types = {json.loads(p.read_text(encoding="utf-8")).get("doc_type") for p in golden.glob("*.expected.json")}
+    builtin = {s.schema_id for s in list_schemas() if s.builtin}
+    assert builtin <= types, sorted(builtin - types)
+
+
+def test_golden_scans_have_complete_ground_truth():
+    import json
+
+    golden = ROOT / "eval" / "golden_dataset"
+    # receipt_scan predates the generator and has no text or table ground truth.
+    scans = sorted(p for p in golden.glob("*_scan.expected.json") if p.name != "receipt_scan.expected.json")
+    assert len(scans) >= 16
+    for path in scans:
+        expected = json.loads(path.read_text(encoding="utf-8"))
+        document = [p for p in golden.glob(path.name.replace(".expected.json", ".*")) if p != path]
+        assert len(document) == 1, path.name
+        assert expected["_text"] and expected["doc_type"] == expected["_schema"]
+        for table in expected["_tables"]:
+            assert table["page"] >= 1 and all(len(r) == len(table["cells"][0]) for r in table["cells"])
+        printed = " ".join(expected["_text"])
+        for item in expected["_line_items"]:
+            assert item["description"] in printed, (path.name, item["description"])
+
+
+def test_line_item_precision_only_grades_documents_with_markup():
+    """Real samples have no line-item ground truth, so extracted items there
+    are neither right nor wrong — counting them as false positives cut the
+    reported precision in half. Precision must only look at graded docs.
+    """
+    import sys
+
+    sys.path.insert(0, str(ROOT / "eval"))
+    from benchmark_ocr import summarize
+
+    def row(extracted, expected):
+        return {"seconds": 1.0, "acquire_seconds": 0.5, "fields": {"correct": 1, "total": 1},
+                "line_items": {"correct": min(extracted, expected), "extracted": extracted, "expected": expected},
+                "table_cells": {"matched": 0, "expected": 0}, "pages": 1, "vlm_pages": 0,
+                "escalated_to_vlm": False, "llm_calls": 1, "needs_review": False, "success": True,
+                "status": "succeeded"}
+
+    s = summarize([row(2, 3), row(7, 0)])  # second doc: real sample, ungraded
+    assert s["line_items"]["precision"] == 1.0
+    assert s["line_items"]["recall"] == round(2 / 3, 4)
+    assert s["line_items"]["documents_graded"] == 1
+
+
+def test_variance_summary_counts_missing_fields_as_disagreement():
+    import sys
+
+    sys.path.insert(0, str(ROOT / "eval"))
+    from benchmark_variance import summarize_variance
+
+    runs = [{"status": "succeeded", "needs_review": False, "seconds": 1.0,
+             "extracted": {"total_amount": 32.7, "discount_amount": 2.0}},
+            {"status": "succeeded", "needs_review": False, "seconds": 1.0,
+             "extracted": {"total_amount": 32.7}}]
+    s = summarize_variance(runs)
+    assert s["agreement"] == 0.5  # total_amount agrees, discount_amount missing in run 2
+    assert s["per_field"]["total_amount"]["values"] == [[32.7, 2]]
+

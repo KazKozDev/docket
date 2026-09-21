@@ -145,8 +145,9 @@ boxes. Pure geometry, no keywords:
 Serialization writes lines in reading order, with `[TABLE n: R rows x C
 columns]` and `[COLUMN n]` marker lines.
 
-Known limits — the heuristics were checked on synthetic layouts and a few
-real scans, not measured on an annotated table/column benchmark:
+Known limits — measured on the annotated golden scans (`eval/benchmark_ocr.py`:
+word F1 0.905 Tesseract / 0.994 Paddle mobile, table-cell accuracy 0.62 /
+0.90 on 242 expected cells), not on third-party benchmarks:
 
 - A table cell that wraps onto a second line becomes its own row (or breaks
   the table run); it is not merged back into the cell above.
@@ -327,7 +328,12 @@ Validation never calls a model. It executes deterministic arithmetic and mathema
 - **VAT / Sales Tax**: Algorithmic check-digit verification across all 27 EU member states, the UK, Switzerland, and Norway.
 - **Americas Tax IDs**: Modulo-11 CNPJ/CPF checks for Brazil, Luhn mod-10 checks for Canadian Business Numbers (BN), and prefix verification for US EINs.
 - **B2B Invoicing**: Validates customer tax IDs, ISO 9362 SWIFT/BIC codes, SKU and unit of measure on line items, and mathematical cross-checks tax rate percentage against subtotal and tax amounts.
-- **Receipts & Expenses**: Validates retail/restaurant balancing `subtotal + tax + tip - discount == total_amount`, line item pricing `quantity * unit_price == price`, merchant tax IDs (VAT and national), and 4-digit payment card format.
+- **Receipts & Expenses**: Validates retail/restaurant balancing
+  `subtotal + tax + tip - discount == total_amount`, line item pricing
+  `quantity * unit_price == price`, merchant tax IDs (VAT and national), and
+  4-digit payment card format. Coupons print above the SUBTOTAL (stated
+  subtotal already discounted) or below it, so the items-sum and balancing
+  rules accept either layout and flag only when neither closes.
 - **Bank Statements**: Validates balance equation `opening_balance + total_deposits - total_withdrawals == closing_balance`, sums of transaction deposits and withdrawals, running balance continuity across consecutive transaction entries, and bank IBAN check digits.
 - **Acceptance Acts**: Validates services completion `subtotal + tax == total_amount`, line item pricing `quantity * unit_price == total`, distinct counterparties (customer != contractor), tax ID formats for customer and contractor, and warns if `claims_waived` is false.
 - **Waybills / Consignment Notes (CMR, ТОРГ-12)**: Validates physical logistics balancing: sum of item quantities vs `total_quantity`, sum of gross weights vs `total_gross_weight_kg`, line item pricing `quantity * unit_price == price`, distinct consignor and consignee, and carrier tracking.

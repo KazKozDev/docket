@@ -1,0 +1,77 @@
+{
+  "doc_type": "waybill",
+  "waybill_number": "CMR-558201",
+  "waybill_date": "2026-02-17",
+  "shipper_name": "Baltic Timber UAB",
+  "consignee_name": "Holzwerk Süd GmbH",
+  "carrier_name": "TransEuro Freight Sp. z o.o.",
+  "vehicle_number": "WX 4821K",
+  "total_packages": 12,
+  "total_gross_weight_kg": 2770.0,
+  "_schema": "waybill",
+  "_line_items": [
+    {
+      "description": "Pine boards 25x100 mm",
+      "quantity": 180
+    },
+    {
+      "description": "Birch plywood 18 mm",
+      "quantity": 60
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Goods",
+          "Packages",
+          "Quantity",
+          "Unit",
+          "Gross kg"
+        ],
+        [
+          "Pine boards 25x100 mm",
+          "8",
+          "180",
+          "pcs",
+          "1,450"
+        ],
+        [
+          "Birch plywood 18 mm",
+          "4",
+          "60",
+          "sheets",
+          "1,320"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "CMR CONSIGNMENT NOTE",
+    "No. CMR-558201",
+    "Date: 17.02.2026",
+    "1. Sender:",
+    "Baltic Timber UAB",
+    "Pramonės g. 12, LT-50300 Kaunas, Lithuania",
+    "2. Consignee:",
+    "Holzwerk Süd GmbH",
+    "Industriestraße 7, 86150 Augsburg, Germany",
+    "16. Carrier:",
+    "TransEuro Freight Sp. z o.o.",
+    "Vehicle: WX 4821K",
+    "3. Place of delivery:",
+    "Augsburg, Germany",
+    "4. Taking over: Kaunas, 17.02.2026",
+    "Goods Packages Quantity Unit Gross kg",
+    "Pine boards 25x100 mm 8 180 pcs 1,450",
+    "Birch plywood 18 mm 4 60 sheets 1,320",
+    "Total packages: 12",
+    "Total gross weight: 2,770 kg",
+    "Signature of sender",
+    "Baltic Timber UAB",
+    "Signature of carrier",
+    "TransEuro Freight"
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py"
+}

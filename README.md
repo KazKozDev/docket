@@ -238,8 +238,27 @@ On macOS, double-clicking `start.command` sets everything up and opens the UI.
 ```bash
 pytest                                # no test needs a running LLM
 python eval/run_eval.py               # accuracy, P/R/F1, latency on the golden set
-python eval/benchmark_methods.py      # rules vs TF-IDF vs LLM comparison
+python eval/benchmark_methods.py      # rules vs TF-IDF vs LLM comparison (incl. confidence)
+python eval/benchmark_ocr.py         # Tesseract vs Paddle (OCR-only + full pipeline) on the scans
+python eval/benchmark_variance.py     # extraction stability: same document 10 times
 ```
+
+Measured on the 33 labeled scans (golden + real samples; JSON with every
+document in `eval/results/`):
+
+| OCR backend          | word F1 | table cells | docs ok | fields | items F1 | median s |
+|----------------------|---------|-------------|---------|--------|----------|----------|
+| Tesseract            | 0.905   | 0.620       | 22/33   | 0.916  | 0.989    | 6.4      |
+| Paddle (mobile)      | 0.994   | 0.897       | 27/33   | 0.927  | 0.989    | 10.6     |
+| Paddle (medium)      | 0.986   | 0.839       | 27/33   | 0.927  | 0.989    | 22.7     |
+
+Word F1 / table cells are OCR-only (16 golden scans with text and table
+truth); docs ok counts correct classification plus every graded field right;
+"median s" is the full pipeline per document. Extraction is deterministic at
+temperature 0: 10 runs of the coupon receipt produce 15/15 identical fields.
+Dropping the `[TABLE]` / `[COLUMN]` serialization markers changes nothing
+measurable (identical outcomes for Paddle, ±2 marginal scans for Tesseract) —
+the gain of layout serialization is for hard tables, not this set.
 
 </details>
 

@@ -54,7 +54,10 @@ def _values_match(got, expected) -> bool:
         except (TypeError, ValueError):
             return False
     if isinstance(expected, str) and isinstance(got, str):
-        return got.strip().lower() == expected.strip().lower()
+        if got.strip().lower() == expected.strip().lower():
+            return True
+        # Identifiers printed in groups ("CH93 0076 2011 ...") are the same value.
+        return not any(c.isspace() for c in expected.strip()) and "".join(got.split()).lower() == expected.strip().lower()
     return got == expected
 
 
@@ -155,3 +158,88 @@ def error_breakdown(rows: list[dict]) -> dict[str, int]:
             for row in rows
         ),
     }
+
+
+# ---- OCR benchmark: raw text, tables, line items ----------------------------------------------
+
+
+def _norm(text: str) -> str:
+    return " ".join(str(text).split()).casefold()
+
+
+def word_scores(recognized: list[str], truth_lines: list[str]) -> dict[str, float | int]:
+    """Order-insensitive word precision/recall/F1 of an OCR reading against the
+    printed lines. Engines order columns and table cells differently, so a
+    bag of words is the fair comparison; a word counts only if spelled exactly
+    (case-insensitively), punctuation included."""
+    from collections import Counter
+
+    got = Counter(_norm(w) for w in recognized if w.strip())
+    want = Counter(_norm(w) for line in truth_lines for w in line.split())
+    hit = sum((got & want).values())
+    precision = hit / sum(got.values()) if got else 0.0
+    recall = hit / sum(want.values()) if want else 0.0
+    f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+    return {"precision": round(precision, 4), "recall": round(recall, 4), "f1": round(f1, 4),
+            "words": sum(want.values())}
+
+
+def table_cell_matches(detected: list[list[list[str]]], expected: list[list[str]]) -> int:
+    """Expected cells found at the same row and column of the best-matching
+    detected table (allowing the detected grid to start up to two rows
+    earlier or later, e.g. a title row taken in or a header row missed)."""
+    want = [[_norm(c) for c in row] for row in expected]
+    best = 0
+    for grid in detected:
+        have = [[_norm(c) for c in row] for row in grid]
+        for offset in range(-2, 3):
+            hits = 0
+            for r, row in enumerate(want):
+                rr = r + offset
+                if not 0 <= rr < len(have):
+                    continue
+                hits += sum(1 for c, cell in enumerate(row) if c < len(have[rr]) and cell and have[rr][c] == cell)
+            best = max(best, hits)
+    return best
+
+
+def expected_cells(expected: list[list[str]]) -> int:
+    return sum(1 for row in expected for cell in row if cell.strip())
+
+
+def line_item_scores(extracted: list[dict], expected: list[dict]) -> dict[str, int]:
+    """Greedy one-to-one matching of extracted to expected line items. An item
+    is correct when its description matches (similarity >= 0.8 after
+    normalization) and every numeric field the golden item lists is equal
+    within 0.01. Items use the canonical names description / quantity /
+    total (see SchemaSpec.line_items)."""
+    from difflib import SequenceMatcher
+
+    unused = list(range(len(extracted)))
+    correct = 0
+    for want in expected:
+        for i in unused:
+            got = extracted[i]
+            ratio = SequenceMatcher(None, _norm(got.get("description") or ""), _norm(want["description"])).ratio()
+            if ratio < 0.8:
+                continue
+            numbers_ok = True
+            for key, value in want.items():
+                if key == "description":
+                    continue
+                try:
+                    numbers_ok &= abs(float(got.get(key)) - float(value)) <= 0.01
+                except (TypeError, ValueError):
+                    numbers_ok = False
+            if numbers_ok:
+                correct += 1
+                unused.remove(i)
+                break
+    return {"correct": correct, "extracted": len(extracted), "expected": len(expected)}
+
+
+def prf(correct: int, produced: int, expected: int) -> dict[str, float]:
+    precision = correct / produced if produced else 0.0
+    recall = correct / expected if expected else 0.0
+    f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+    return {"precision": round(precision, 4), "recall": round(recall, 4), "f1": round(f1, 4)}

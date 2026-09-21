@@ -1,0 +1,85 @@
+{
+  "doc_type": "invoice",
+  "invoice_number": "A-2026/0457",
+  "issue_date": "2026-05-09",
+  "due_date": "2026-06-08",
+  "seller.name": "Distribuciones Albufera S.L.",
+  "buyer.name": "Hostal Mar Menor S.L.",
+  "seller.tax_ids[0].value": "B96999545",
+  "subtotal": 1278.0,
+  "tax_amount": 268.38,
+  "total_amount": 1546.38,
+  "currency": "EUR",
+  "_schema": "invoice",
+  "_line_items": [
+    {
+      "description": "Sábanas algodón 150 cm",
+      "quantity": 30,
+      "total": 555.0
+    },
+    {
+      "description": "Toallas de baño",
+      "quantity": 60,
+      "total": 435.0
+    },
+    {
+      "description": "Albornoz talla única",
+      "quantity": 12,
+      "total": 288.0
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Concepto",
+          "Cant.",
+          "Precio",
+          "Importe"
+        ],
+        [
+          "Sábanas algodón 150 cm",
+          "30",
+          "18,50",
+          "555,00"
+        ],
+        [
+          "Toallas de baño",
+          "60",
+          "7,25",
+          "435,00"
+        ],
+        [
+          "Albornoz talla única",
+          "12",
+          "24,00",
+          "288,00"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "FACTURA",
+    "Distribuciones Albufera S.L.",
+    "Calle de Colón 27",
+    "46004 Valencia",
+    "CIF: B96999545",
+    "Factura n.º: A-2026/0457",
+    "Fecha: 09/05/2026",
+    "Vencimiento: 08/06/2026",
+    "Cliente:",
+    "Hostal Mar Menor S.L.",
+    "Avenida del Puerto 5",
+    "30740 San Pedro del Pinatar",
+    "Concepto Cant. Precio Importe",
+    "Sábanas algodón 150 cm 30 18,50 555,00",
+    "Toallas de baño 60 7,25 435,00",
+    "Albornoz talla única 12 24,00 288,00",
+    "Base imponible: 1.278,00 €",
+    "IVA 21 %: 268,38 €",
+    "Total factura: 1.546,38 €",
+    "Forma de pago: transferencia a 30 días."
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py; low-resolution, noisy scan"
+}

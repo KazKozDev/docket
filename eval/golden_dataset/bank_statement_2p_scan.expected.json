@@ -1,0 +1,181 @@
+{
+  "doc_type": "bank_statement",
+  "bank_name": "Alpine Cantonal Bank",
+  "account_holder": "Keller & Frei GmbH",
+  "account_iban": "CH9300762011623852957",
+  "statement_period_start": "2026-06-01",
+  "statement_period_end": "2026-06-30",
+  "currency": "CHF",
+  "opening_balance": 12450.0,
+  "closing_balance": 10851.5,
+  "total_deposits": 10553.15,
+  "total_withdrawals": 12151.65,
+  "_schema": "bank_statement",
+  "_line_items": [
+    {
+      "description": "Customer payment Weber AG",
+      "total": 4800.0
+    },
+    {
+      "description": "Rent June, office Seefeld",
+      "total": -2350.0
+    },
+    {
+      "description": "Swisscom invoice 06/26",
+      "total": -189.9
+    },
+    {
+      "description": "Customer payment Brunner & Co",
+      "total": 2150.0
+    },
+    {
+      "description": "Salaries June",
+      "total": -7900.0
+    },
+    {
+      "description": "Card purchase Digitec",
+      "total": -412.35
+    },
+    {
+      "description": "Customer payment Lindt Services",
+      "total": 3600.0
+    },
+    {
+      "description": "AHV contributions Q2",
+      "total": -1275.4
+    },
+    {
+      "description": "Bank fees June",
+      "total": -24.0
+    },
+    {
+      "description": "Interest",
+      "total": 3.15
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Date",
+          "Description",
+          "Debit",
+          "Credit",
+          "Balance"
+        ],
+        [
+          "02.06.2026",
+          "Customer payment Weber AG",
+          "",
+          "4,800.00",
+          "17,250.00"
+        ],
+        [
+          "03.06.2026",
+          "Rent June, office Seefeld",
+          "2,350.00",
+          "",
+          "14,900.00"
+        ],
+        [
+          "08.06.2026",
+          "Swisscom invoice 06/26",
+          "189.90",
+          "",
+          "14,710.10"
+        ],
+        [
+          "12.06.2026",
+          "Customer payment Brunner & Co",
+          "",
+          "2,150.00",
+          "16,860.10"
+        ],
+        [
+          "15.06.2026",
+          "Salaries June",
+          "7,900.00",
+          "",
+          "8,960.10"
+        ],
+        [
+          "18.06.2026",
+          "Card purchase Digitec",
+          "412.35",
+          "",
+          "8,547.75"
+        ]
+      ]
+    },
+    {
+      "page": 2,
+      "cells": [
+        [
+          "Date",
+          "Description",
+          "Debit",
+          "Credit",
+          "Balance"
+        ],
+        [
+          "22.06.2026",
+          "Customer payment Lindt Services",
+          "",
+          "3,600.00",
+          "12,147.75"
+        ],
+        [
+          "25.06.2026",
+          "AHV contributions Q2",
+          "1,275.40",
+          "",
+          "10,872.35"
+        ],
+        [
+          "29.06.2026",
+          "Bank fees June",
+          "24.00",
+          "",
+          "10,848.35"
+        ],
+        [
+          "30.06.2026",
+          "Interest",
+          "",
+          "3.15",
+          "10,851.50"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "Alpine Cantonal Bank",
+    "Account Statement",
+    "Account holder: Keller & Frei GmbH",
+    "Bahnhofstrasse 21",
+    "8001 Zürich",
+    "IBAN: CH93 0076 2011 6238 5295 7",
+    "Period: 01.06.2026 - 30.06.2026",
+    "Currency: CHF",
+    "Opening balance 01.06.2026: 12,450.00",
+    "Date Description Debit Credit Balance",
+    "02.06.2026 Customer payment Weber AG 4,800.00 17,250.00",
+    "03.06.2026 Rent June, office Seefeld 2,350.00 14,900.00",
+    "08.06.2026 Swisscom invoice 06/26 189.90 14,710.10",
+    "12.06.2026 Customer payment Brunner & Co 2,150.00 16,860.10",
+    "15.06.2026 Salaries June 7,900.00 8,960.10",
+    "18.06.2026 Card purchase Digitec 412.35 8,547.75",
+    "Continued on page 2",
+    "Alpine Cantonal Bank - Account Statement - page 2",
+    "Date Description Debit Credit Balance",
+    "22.06.2026 Customer payment Lindt Services 3,600.00 12,147.75",
+    "25.06.2026 AHV contributions Q2 1,275.40 10,872.35",
+    "29.06.2026 Bank fees June 24.00 10,848.35",
+    "30.06.2026 Interest 3.15 10,851.50",
+    "Total debits: 12,151.65",
+    "Total credits: 10,553.15",
+    "Closing balance 30.06.2026: 10,851.50"
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py; two-page scanned PDF, no text layer"
+}
