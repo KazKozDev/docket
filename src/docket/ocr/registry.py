@@ -30,6 +30,7 @@ BackendFactory = Callable[[OcrSettings], OcrBackend]
 _BUILTIN: dict[str, str] = {
     "pdf_text": "docket.ocr.pdftext:PDFTextBackend",
     "tesseract": "docket.ocr.tesseract:TesseractBackend",
+    "paddle": "docket.ocr.paddle:PaddleOCRBackend",
     "vlm": "docket.ocr.vlm:VlmBackend",
 }
 _REGISTRY: dict[str, Union[str, BackendFactory]] = dict(_BUILTIN)

@@ -72,6 +72,7 @@ A backend implements `OcrBackend` (`name`, `capabilities`, `availability()`,
 |---|---|---|---|---|---|
 | `pdf_text` | PDF text layer (pdfplumber) | – | yes | ruled (drawn borders) + aligned | glyph matrices |
 | `tesseract` | rendered page (`image_to_data`) | yes | yes | aligned | OSD |
+| `paddle` (optional extra) | rendered page, PaddleOCR 3.x | per line | yes | engine table pipeline (opt-in) + aligned | orientation classifier |
 | `vlm` | rendered page, vision LLM | – | – | – | – |
 
 Backends are looked up by name in a registry; plugins register through the
@@ -80,6 +81,24 @@ straight to `process_document(ocr_backend=...)`. A backend named explicitly
 that cannot run (binary missing, language data missing, extra not installed)
 is a configuration error raised before any page is read, with the reason and
 an install hint. `auto` takes the first installed of `tesseract`, `paddle`.
+
+### PaddleOCR
+
+`pip install "docket-idp[paddle]"`; `import docket` never imports it. Words
+come from PaddleOCR's per-token boxes (`return_word_box`), joined at
+whitespace; PaddleOCR scores lines, so each word carries its line's score,
+and page confidence uses the same character-weighted definition as
+Tesseract. `DOCKET_PADDLE_MODEL=mobile` (default) loads PP-OCRv5 mobile
+detection + recognition; `medium` lets PaddleOCR pick its default for the
+language (PP-OCRv6 medium for Latin scripts). One model reads one script
+family, so `DOCKET_OCR_LANGUAGES` must stay within Latin, East Slavic,
+Cyrillic, Greek, Arabic, Korean or CJK — `en,ru` is refused at startup.
+`DOCKET_PADDLE_TABLES=true` runs `TableRecognitionPipelineV2` on the OCR
+result already computed; its cell boxes become `detection="backend"` tables.
+Models download once to `~/.paddlex/official_models`; docket disables
+PaddleX's model-hoster connectivity probe so cached models load offline.
+Observed limit: the orientation classifier left a sparse page (three text
+lines) turned 90° uncorrected, where Tesseract OSD corrected it.
 
 ### Per-page chain
 

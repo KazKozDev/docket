@@ -73,8 +73,11 @@ OCR_DETECT_ROTATION = os.getenv("DOCKET_OCR_DETECT_ROTATION", "true").lower() in
     "true",
     "yes",
 }
-# Compute device for PaddleOCR ("cpu", "gpu", "gpu:0").
+# PaddleOCR: compute device ("cpu", "gpu", "gpu:0"), model size ("mobile" or
+# "medium"), and whether to run its table-structure pipeline.
 PADDLE_DEVICE = os.getenv("DOCKET_PADDLE_DEVICE", "cpu")
+PADDLE_MODEL = os.getenv("DOCKET_PADDLE_MODEL", "mobile").strip().lower()
+PADDLE_TABLES = os.getenv("DOCKET_PADDLE_TABLES", "false").lower() in {"1", "true", "yes"}
 # Tesseract page-segmentation mode and PDF render resolution. PSM 3 = fully
 # automatic; a dense table scan may read better at PSM 6 / higher DPI.
 TESSERACT_PSM = os.getenv("DOCKET_TESSERACT_PSM", "3")

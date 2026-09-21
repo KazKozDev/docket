@@ -82,6 +82,8 @@ def ocr_options(
         dpi=config.OCR_DPI,
         detect_rotation=config.OCR_DETECT_ROTATION,
         tesseract_psm=config.TESSERACT_PSM,
+        paddle_model=config.PADDLE_MODEL,
+        paddle_tables=config.PADDLE_TABLES,
     )
     return AcquisitionOptions(
         backend=backend if backend is not None else config.OCR_BACKEND,
