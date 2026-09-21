@@ -18,7 +18,7 @@ import re
 from pdfplumber.utils import extract_words
 
 from .. import config
-from ..layout import CellHint, PageLayout, RawWord, TableHint, build_page
+from ..layout import PageLayout, RawWord, TableHint, build_page, cells_from_boxes
 from .base import BackendStatus, Capabilities, OcrBackend, OcrError
 from .source import PageSource
 
@@ -79,26 +79,7 @@ def _table_hints(plumber_page, turn: int, w: float, h: float) -> list[TableHint]
         cells = [_turn(*c, turn, w, h) for c in table.cells if c]
         if not cells:
             continue
-        xs = sorted({round(v, 1) for c in cells for v in (c[0], c[2])})
-        ys = sorted({round(v, 1) for c in cells for v in (c[1], c[3])})
-        hint_cells = []
-        for c in cells:
-            col0, col1 = xs.index(round(c[0], 1)), xs.index(round(c[2], 1))
-            row0, row1 = ys.index(round(c[1], 1)), ys.index(round(c[3], 1))
-            hint_cells.append(
-                CellHint(
-                    row=row0,
-                    column=col0,
-                    row_span=max(1, row1 - row0),
-                    column_span=max(1, col1 - col0),
-                    x0=c[0], y0=c[1], x1=c[2], y1=c[3],
-                )
-            )
-        # Edge indices count boundaries, not cells: renumber densely.
-        rows = sorted({c.row for c in hint_cells})
-        cols = sorted({c.column for c in hint_cells})
-        for cell in hint_cells:
-            cell.row, cell.column = rows.index(cell.row), cols.index(cell.column)
+        hint_cells = cells_from_boxes(cells, tolerance=0.5)
         # A table with one row or one column is a box around text, not a table.
         if len({c.row for c in hint_cells}) < 2 or len({c.column for c in hint_cells}) < 2:
             continue

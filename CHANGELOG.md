@@ -61,6 +61,12 @@ each stage; see the Breaking changes list.
 - Rotation: Tesseract OSD for scans (`DOCKET_OCR_DETECT_ROTATION`), glyph
   matrices for rotated PDF pages. Multi-frame TIFFs are read as multipage.
 - A PDF text layer made of unmapped `(cid:N)` glyphs is treated as unusable.
+- PaddleOCR backend (`paddle`), optional via `pip install "docket-idp[paddle]"`:
+  word boxes, line confidence, orientation correction, and PaddleOCR's table
+  structure pipeline (`DOCKET_PADDLE_TABLES`). `DOCKET_PADDLE_DEVICE`,
+  `DOCKET_PADDLE_MODEL` (`mobile` / `medium`). The base install and
+  `import docket` never need PaddleOCR; selecting it without the extra is a
+  configuration error naming the install command.
 - `docket --ocr-backend`, `--ocr-fallback`, `--no-ocr-fallback`,
   `--ocr-languages`, `--list-ocr-backends`; `GET /ocr-backends`.
 

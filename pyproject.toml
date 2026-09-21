@@ -51,6 +51,14 @@ api = [
 tracing = [
     "langfuse>=2.0",
 ]
+# PaddleOCR backend (`--ocr-backend paddle`), including its table-structure
+# pipeline. Heavy (PaddlePaddle + models downloaded on first use), so never
+# part of the base install.
+paddle = [
+    "paddlepaddle>=3.0,<4",
+    "paddleocr>=3.0,<4",
+    "paddlex[ocr]>=3.0,<4",
+]
 all = [
     "docket-idp[api,tracing]",
 ]
@@ -91,4 +99,7 @@ docket = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "paddle: runs the real PaddleOCR engine (skipped when it is not installed)",
+]
 pythonpath = ["."]

@@ -105,6 +105,53 @@ class TableHint:
     detection: str = "ruled"
 
 
+def _cluster(values: list[float], tolerance: float) -> list[float]:
+    """Representative positions of values that lie within `tolerance` of
+    their neighbour (sorted); each cluster is represented by its mean."""
+    clusters: list[list[float]] = []
+    for v in sorted(values):
+        if clusters and v - clusters[-1][-1] <= tolerance:
+            clusters[-1].append(v)
+        else:
+            clusters.append([v])
+    return [sum(c) / len(c) for c in clusters]
+
+
+def cells_from_boxes(
+    boxes: list[tuple[float, float, float, float]], tolerance: float
+) -> list[CellHint]:
+    """Grid positions and spans for table cells known only by their boxes.
+
+    Cell edges closer than `tolerance` are one grid line; a cell spans the
+    grid lines between its edges. Rows and columns are numbered densely by
+    the cells that start there.
+    """
+    if not boxes:
+        return []
+    xs = _cluster([v for b in boxes for v in (b[0], b[2])], tolerance)
+    ys = _cluster([v for b in boxes for v in (b[1], b[3])], tolerance)
+
+    def nearest(lines: list[float], v: float) -> int:
+        return min(range(len(lines)), key=lambda k: abs(lines[k] - v))
+
+    cells = []
+    for x0, y0, x1, y1 in boxes:
+        c0, c1 = nearest(xs, x0), nearest(xs, x1)
+        r0, r1 = nearest(ys, y0), nearest(ys, y1)
+        cells.append(
+            CellHint(
+                row=r0, column=c0,
+                row_span=max(1, r1 - r0), column_span=max(1, c1 - c0),
+                x0=x0, y0=y0, x1=x1, y1=y1,
+            )
+        )
+    rows = sorted({c.row for c in cells})
+    cols = sorted({c.column for c in cells})
+    for cell in cells:
+        cell.row, cell.column = rows.index(cell.row), cols.index(cell.column)
+    return cells
+
+
 @dataclass
 class _Row:
     words: list[int]  # indices into the page's word list, left to right
@@ -699,4 +746,4 @@ def text_only_page(
     )
 
 
-__all__ = ["CellHint", "RawWord", "TableHint", "build_page", "text_only_page"]
+__all__ = ["CellHint", "RawWord", "TableHint", "build_page", "cells_from_boxes", "text_only_page"]

@@ -19,7 +19,7 @@ Register it with `docket.ocr.register_ocr_backend`, expose it through the
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, Literal
 
 from pydantic import BaseModel, Field
 
@@ -86,6 +86,14 @@ class OcrSettings(BaseModel):
         description="Words below this confidence neither count toward page confidence nor act as witnesses.",
     )
     tesseract_psm: str = "3"
+    paddle_model: Literal["mobile", "medium"] = Field(
+        default="mobile",
+        description="PaddleOCR model size: 'mobile' (PP-OCRv5 mobile) or 'medium' (PaddleOCR's default for the language).",
+    )
+    paddle_tables: bool = Field(
+        default=False,
+        description="Run PaddleOCR's table recognition pipeline for cell structure (extra models, slower).",
+    )
 
 
 class OcrBackend(ABC):

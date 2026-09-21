@@ -115,9 +115,10 @@ Set in the environment or `.env`. [`.env.example`](https://github.com/KazKozDev/
 | `DOCKET_LLM_BASE_URL` / `DOCKET_LLM_API_KEY` | OpenAI / unset | Endpoint and key for `openai`, e.g. `https://api.mistral.ai/v1` (EU-hosted) |
 | `DOCKET_TEXT_MODEL` / `DOCKET_VISION_MODEL` | `deepseek-v4.1-flash:cloud` | Models for extraction and for reading scans |
 | `OLLAMA_HOST` | `http://localhost:11434` | Where Ollama is listening |
-| `DOCKET_OCR_BACKEND` | `auto` | Primary OCR backend: `tesseract`, `auto`, or a plugin name |
+| `DOCKET_OCR_BACKEND` | `auto` | Primary OCR backend: `tesseract`, `paddle`, `auto`, or a plugin name |
 | `DOCKET_OCR_FALLBACKS` | `vlm` | Comma-separated backends tried when a page's reading is rejected |
 | `DOCKET_OCR_LANGUAGES` | `en` | ISO 639-1 codes, e.g. `en,de,fr,es,it` |
+| `DOCKET_PADDLE_DEVICE` / `DOCKET_PADDLE_MODEL` / `DOCKET_PADDLE_TABLES` | `cpu` / `mobile` / `false` | PaddleOCR device, model size (`mobile`, `medium`), table-structure pipeline |
 | `DOCKET_MIN_CONFIDENCE` | `0.55` | Classification confidence below which a document goes to review |
 | `DOCKET_REVIEW_QUEUE_ENABLED` | `true` | Write flagged documents to the file-based review queue |
 | `DOCKET_API_KEY` | unset | Bearer token the HTTP API requires when set |
@@ -138,6 +139,7 @@ Set in the environment or `.env`. [`.env.example`](https://github.com/KazKozDev/
 pip install docket-idp            # library + CLI
 pip install "docket-idp[api]"     # + HTTP service (docket-api)
 pip install "docket-idp[all]"     # + Langfuse tracing
+pip install "docket-idp[paddle]"  # + PaddleOCR backend (--ocr-backend paddle)
 ```
 
 From source:
