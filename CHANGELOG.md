@@ -8,9 +8,12 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
-Redesign in progress (layout-first model, pluggable OCR, schema catalog,
-batch processing, official e-invoice validation). This section grows with
-each stage; see the Breaking changes list.
+## [0.3.0] - 2026-09-21
+
+Layout-first redesign: a layout model shared by every OCR backend,
+pluggable engines with per-page fallback, a versioned schema catalog of 14
+built-in types, batch processing, official EN 16931 e-invoice validation,
+TOML configuration, and a measured golden-set benchmark.
 
 ### Breaking changes
 - `process()` is replaced by `process_document()`, which returns a
@@ -349,6 +352,7 @@ First packaged release.
   of the pipeline (a name collision introduced with `process_document`).
 - `docket <file> --export <format>` crashed because `PipelineResult` had no `document` attribute.
 
-[Unreleased]: https://github.com/KazKozDev/docket/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/KazKozDev/docket/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/KazKozDev/docket/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/KazKozDev/docket/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/KazKozDev/docket/releases/tag/v0.1.0
