@@ -1,0 +1,82 @@
+{
+  "doc_type": "receipt",
+  "merchant_name": "Greenleaf Market",
+  "transaction_date": "2026-08-21",
+  "subtotal": 17.07,
+  "tax_amount": 0.85,
+  "total_amount": 17.92,
+  "card_last_four": "4821",
+  "_schema": "receipt",
+  "_line_items": [
+    {
+      "description": "Organic bananas",
+      "quantity": 1,
+      "total": 2.39
+    },
+    {
+      "description": "Oat milk 1L",
+      "quantity": 2,
+      "total": 4.98
+    },
+    {
+      "description": "Sourdough loaf",
+      "quantity": 1,
+      "total": 4.5
+    },
+    {
+      "description": "Free-range eggs 12",
+      "quantity": 1,
+      "total": 5.2
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Item",
+          "Qty",
+          "Price"
+        ],
+        [
+          "Organic bananas",
+          "1",
+          "2.39"
+        ],
+        [
+          "Oat milk 1L",
+          "2",
+          "4.98"
+        ],
+        [
+          "Sourdough loaf",
+          "1",
+          "4.50"
+        ],
+        [
+          "Free-range eggs 12",
+          "1",
+          "5.20"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "GREENLEAF MARKET",
+    "221 Birch Lane, Madison WI 53703",
+    "Tel (608) 555-0142",
+    "Date: 08/21/2026   14:32",
+    "Receipt #: 0048-2291",
+    "Item Qty Price",
+    "Organic bananas 1 2.39",
+    "Oat milk 1L 2 4.98",
+    "Sourdough loaf 1 4.50",
+    "Free-range eggs 12 1 5.20",
+    "SUBTOTAL  17.07",
+    "TAX 5%     0.85",
+    "TOTAL     17.92",
+    "VISA ************4821",
+    "THANK YOU FOR SHOPPING LOCAL"
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py"
+}

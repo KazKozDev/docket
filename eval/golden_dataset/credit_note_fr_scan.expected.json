@@ -1,0 +1,72 @@
+{
+  "doc_type": "credit_note",
+  "credit_note_number": "AV-2026-031",
+  "issue_date": "2026-09-03",
+  "seller.name": "Atelier Lumière SARL",
+  "buyer.name": "Maison Verdier SA",
+  "seller.tax_ids[0].value": "FR40303265045",
+  "subtotal": 404.0,
+  "tax_amount": 80.8,
+  "total_amount": 484.8,
+  "currency": "EUR",
+  "_schema": "credit_note",
+  "_line_items": [
+    {
+      "description": "Lampe de bureau laiton",
+      "quantity": 2,
+      "total": 290.0
+    },
+    {
+      "description": "Abat-jour en lin",
+      "quantity": 3,
+      "total": 114.0
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Désignation",
+          "Qté",
+          "Prix unitaire",
+          "Montant HT"
+        ],
+        [
+          "Lampe de bureau laiton",
+          "2",
+          "145,00",
+          "290,00"
+        ],
+        [
+          "Abat-jour en lin",
+          "3",
+          "38,00",
+          "114,00"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "AVOIR",
+    "Atelier Lumière SARL",
+    "12 rue des Tanneurs",
+    "69002 Lyon",
+    "TVA : FR40303265045",
+    "Avoir n° : AV-2026-031",
+    "Date : 03/09/2026",
+    "Facture d'origine : FA-2026-512",
+    "Client :",
+    "Maison Verdier SA",
+    "45 boulevard Carnot",
+    "06400 Cannes",
+    "Motif : retour de marchandise",
+    "Désignation Qté Prix unitaire Montant HT",
+    "Lampe de bureau laiton 2 145,00 290,00",
+    "Abat-jour en lin 3 38,00 114,00",
+    "Total HT : 404,00 €",
+    "TVA 20 % : 80,80 €",
+    "Total TTC : 484,80 €"
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py"
+}

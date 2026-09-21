@@ -1,0 +1,76 @@
+{
+  "doc_type": "acceptance_act",
+  "act_number": "AA-2026-044",
+  "act_date": "2026-03-31",
+  "contract_reference": "SA-2025-117",
+  "customer_name": "Orion Retail LLC",
+  "contractor_name": "Pixelforge Studio LLC",
+  "subtotal": 6800.0,
+  "total_amount": 6800.0,
+  "currency": "USD",
+  "claims_waived": true,
+  "_schema": "acceptance_act",
+  "_line_items": [
+    {
+      "description": "UX research phase",
+      "quantity": 1,
+      "total": 3200.0
+    },
+    {
+      "description": "UI design, screens",
+      "quantity": 24,
+      "total": 3600.0
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "No.",
+          "Service",
+          "Qty",
+          "Price",
+          "Amount"
+        ],
+        [
+          "1",
+          "UX research phase",
+          "1",
+          "3,200.00",
+          "3,200.00"
+        ],
+        [
+          "2",
+          "UI design, screens",
+          "24",
+          "150.00",
+          "3,600.00"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "ACT OF ACCEPTANCE OF SERVICES",
+    "Act No. AA-2026-044",
+    "Date: 31 March 2026",
+    "Under Service Agreement No. SA-2025-117",
+    "Pixelforge Studio LLC (the \"Contractor\", Tax ID 84-3920175) has rendered and Orion Retail LLC (the",
+    "\"Customer\", Tax ID 27-5518043) has accepted the following services:",
+    "No. Service Qty Price Amount",
+    "1 UX research phase 1 3,200.00 3,200.00",
+    "2 UI design, screens 24 150.00 3,600.00",
+    "Subtotal: 6,800.00 USD",
+    "Sales tax: 0.00 USD",
+    "Total: 6,800.00 USD",
+    "The services were rendered in full and on time. The Customer has no claims regarding the scope,",
+    "quality or timing of the services.",
+    "Contractor:",
+    "Pixelforge Studio LLC",
+    "Marco Ruiz, CEO",
+    "Customer:",
+    "Orion Retail LLC",
+    "Dana Whitfield, COO"
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py"
+}

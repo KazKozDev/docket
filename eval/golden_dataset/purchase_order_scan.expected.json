@@ -1,0 +1,90 @@
+{
+  "doc_type": "purchase_order",
+  "po_number": "PO-7731",
+  "po_date": "2026-04-11",
+  "requested_delivery_date": "2026-04-25",
+  "buyer.name": "Riverside Clinic Ltd",
+  "supplier.name": "MedEquip Distribution BV",
+  "subtotal": 895.0,
+  "tax_amount": 187.95,
+  "total_amount": 1082.95,
+  "currency": "EUR",
+  "_schema": "purchase_order",
+  "_line_items": [
+    {
+      "description": "Nitrile gloves M, box of 100",
+      "quantity": 50,
+      "total": 390.0
+    },
+    {
+      "description": "FFP2 face masks, box of 20",
+      "quantity": 30,
+      "total": 375.0
+    },
+    {
+      "description": "Hand sanitizer 500 ml",
+      "quantity": 40,
+      "total": 130.0
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Item",
+          "Description",
+          "Qty",
+          "Unit Price",
+          "Line Total"
+        ],
+        [
+          "GL-100M",
+          "Nitrile gloves M, box of 100",
+          "50",
+          "7.80",
+          "390.00"
+        ],
+        [
+          "FM-FFP2",
+          "FFP2 face masks, box of 20",
+          "30",
+          "12.50",
+          "375.00"
+        ],
+        [
+          "HS-500",
+          "Hand sanitizer 500 ml",
+          "40",
+          "3.25",
+          "130.00"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "PURCHASE ORDER",
+    "Riverside Clinic Ltd",
+    "Purchasing Department",
+    "9 Mill Lane",
+    "Galway H91 X2K4",
+    "PO Number: PO-7731",
+    "Order Date: 11 April 2026",
+    "Delivery by: 25 April 2026",
+    "Currency: EUR",
+    "Supplier:",
+    "MedEquip Distribution BV",
+    "Industrieweg 40",
+    "3542 AD Utrecht, Netherlands",
+    "Item Description Qty Unit Price Line Total",
+    "GL-100M Nitrile gloves M, box of 100 50 7.80 390.00",
+    "FM-FFP2 FFP2 face masks, box of 20 30 12.50 375.00",
+    "HS-500 Hand sanitizer 500 ml 40 3.25 130.00",
+    "Subtotal: 895.00",
+    "VAT 21%: 187.95",
+    "Order Total: EUR 1,082.95",
+    "Payment terms: 30 days from receipt of goods and invoice.",
+    "Authorised by: Dr. Aoife Kelly"
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py"
+}

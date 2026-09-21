@@ -112,3 +112,42 @@ def test_error_breakdown_separates_failure_modes():
         "field_extraction_errors": 1,
         "unsafe_passes": 1,
     }
+
+
+def test_grouped_identifiers_match_their_compact_form():
+    from metrics import _values_match
+
+    assert _values_match("CH93 0076 2011 6238 5295 7", "CH9300762011623852957")
+    assert not _values_match("ANNAMARIA", "ANNA MARIA")
+
+
+def test_word_scores_are_order_insensitive_and_exact():
+    from metrics import word_scores
+
+    perfect = word_scores(["Total:", "12.00", "Invoice"], ["Invoice", "Total: 12.00"])
+    assert perfect["f1"] == 1.0 and perfect["words"] == 3
+    misread = word_scores(["Invoice", "Tota1:", "12.00", "extra"], ["Invoice", "Total: 12.00"])
+    assert misread["recall"] == round(2 / 3, 4) and misread["precision"] == 0.5
+
+
+def test_table_cells_allow_a_row_offset():
+    from metrics import expected_cells, table_cell_matches
+
+    expected = [["Item", "Qty"], ["Bolt", "10"], ["Nut", "5"]]
+    detected_with_title = [[["Parts list", ""], ["Item", "Qty"], ["Bolt", "10"], ["Nut", "S"]]]
+    assert expected_cells(expected) == 6
+    assert table_cell_matches(detected_with_title, expected) == 5
+    assert table_cell_matches([], expected) == 0
+
+
+def test_line_items_match_one_to_one():
+    from metrics import line_item_scores, prf
+
+    expected = [{"description": "Toner black", "quantity": 6, "total": 351.0},
+                {"description": "Paper A4", "quantity": 40, "total": 196.0}]
+    extracted = [{"description": "Paper A4", "quantity": 40, "total": 196.0},
+                 {"description": "Toner black TN", "quantity": 6, "total": 315.0},
+                 {"description": "Paper A4", "quantity": 40, "total": 196.0}]
+    scores = line_item_scores(extracted, expected)
+    assert scores == {"correct": 1, "extracted": 3, "expected": 2}
+    assert prf(1, 3, 2) == {"precision": 0.3333, "recall": 0.5, "f1": 0.4}

@@ -1,0 +1,85 @@
+{
+  "doc_type": "invoice",
+  "invoice_number": "INV-40912",
+  "issue_date": "2026-06-02",
+  "due_date": "2026-07-02",
+  "seller.name": "Summit Ridge Analytics LLC",
+  "buyer.name": "Cobalt Harbor Inc.",
+  "subtotal": 4900.0,
+  "tax_amount": 294.0,
+  "total_amount": 5194.0,
+  "currency": "USD",
+  "_schema": "invoice",
+  "_line_items": [
+    {
+      "description": "Data pipeline audit (hours)",
+      "quantity": 12,
+      "total": 1800.0
+    },
+    {
+      "description": "Dashboard build",
+      "quantity": 1,
+      "total": 2400.0
+    },
+    {
+      "description": "Training session",
+      "quantity": 2,
+      "total": 700.0
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Description",
+          "Qty",
+          "Rate",
+          "Amount"
+        ],
+        [
+          "Data pipeline audit (hours)",
+          "12",
+          "150.00",
+          "1,800.00"
+        ],
+        [
+          "Dashboard build",
+          "1",
+          "2,400.00",
+          "2,400.00"
+        ],
+        [
+          "Training session",
+          "2",
+          "350.00",
+          "700.00"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "INVOICE",
+    "Summit Ridge Analytics LLC",
+    "410 Alder Street, Suite 12",
+    "Portland, OR 97204",
+    "billing@summitridge.example",
+    "Invoice No: INV-40912",
+    "Invoice Date: June 2, 2026",
+    "Due Date: July 2, 2026",
+    "Terms: Net 30",
+    "Bill To:",
+    "Cobalt Harbor Inc.",
+    "88 Pier Road",
+    "Seattle, WA 98121",
+    "Description Qty Rate Amount",
+    "Data pipeline audit (hours) 12 150.00 1,800.00",
+    "Dashboard build 1 2,400.00 2,400.00",
+    "Training session 2 350.00 700.00",
+    "Subtotal: $4,900.00",
+    "Sales Tax (6%): $294.00",
+    "Total Due: $5,194.00",
+    "Please reference the invoice number with your payment."
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py; page scanned upside down"
+}

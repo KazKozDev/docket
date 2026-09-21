@@ -53,9 +53,15 @@ def _labeled_texts() -> list[tuple[str, str]]:
 
 
 def _bench_classifier(name: str, fn, pairs: list[tuple[str, str]]) -> dict:
+    """Accuracy and self-reported confidence of one tier over every labeled
+    document. Confidence is split by correctness: a tier that is unsure but
+    right is fine (the cascade can overrule it), a tier that is confidently
+    wrong is what poisons a pipeline."""
     correct = 0
     attempted = 0
     latencies = []
+    confidences: list[float] = []
+    wrong_confidences: list[float] = []
     for text, expected_type in pairs:
         start = time.perf_counter()
         result = fn(text)
@@ -65,7 +71,14 @@ def _bench_classifier(name: str, fn, pairs: list[tuple[str, str]]) -> dict:
         attempted += 1
         if result.doc_type == expected_type:
             correct += 1
+            confidences.append(result.confidence)
+        else:
+            wrong_confidences.append(result.confidence)
     n = len(pairs)
+
+    def _mean(xs: list[float]) -> float | None:
+        return round(statistics.mean(xs), 3) if xs else None
+
     return {
         "method": name,
         "n": n,
@@ -73,6 +86,10 @@ def _bench_classifier(name: str, fn, pairs: list[tuple[str, str]]) -> dict:
         "accuracy_on_answered": round(correct / attempted, 3) if attempted else None,
         "accuracy_on_all": round(correct / n, 3) if n else None,
         "mean_latency_ms": round(statistics.mean(latencies) * 1000, 1) if latencies else None,
+        "mean_confidence": _mean(confidences + wrong_confidences),
+        "confidence_when_correct": _mean(confidences),
+        "confidence_when_wrong": _mean(wrong_confidences),
+        "confidently_wrong": sum(1 for c in wrong_confidences if c >= 0.8),
     }
 
 
@@ -125,11 +142,12 @@ def main() -> None:
         _bench_classifier("tfidf", classify_tfidf, pairs),
         _bench_classifier("llm", lambda t: classify_llm(t), pairs),
     ]
-    print(f"{'method':<8} {'n':<4} {'answered':<9} {'acc(answered)':<14} {'acc(all)':<9} {'latency_ms'}")
+    print(f"{'method':<8} {'n':<4} {'answered':<9} {'acc(answered)':<14} {'acc(all)':<9} {'latency_ms':<11} {'conf':<6} {'conf(ok)':<9} {'conf(wrong)':<11} {'surely wrong'}")
     for r in rows:
         print(
             f"{r['method']:<8} {r['n']:<4} {r['answered']:<9} "
-            f"{r['accuracy_on_answered']!s:<14} {r['accuracy_on_all']!s:<9} {r['mean_latency_ms']}"
+            f"{r['accuracy_on_answered']!s:<14} {r['accuracy_on_all']!s:<9} {r['mean_latency_ms']!s:<11} "
+            f"{r['mean_confidence']!s:<6} {r['confidence_when_correct']!s:<9} {r['confidence_when_wrong']!s:<11} {r['confidently_wrong']}"
         )
 
     # Write the classification numbers before touching the models again, so
