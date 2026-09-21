@@ -17,7 +17,7 @@ jobs:
           cache: "pip"
 
       - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr tesseract-ocr-deu tesseract-ocr-fra tesseract-ocr-ita tesseract-ocr-rus
 
       - name: Install docket
         run: pip install -e ".[dev]"
@@ -44,7 +44,7 @@ jobs:
         run: |
           python -m venv /tmp/wheel-venv
           /tmp/wheel-venv/bin/pip install "$(ls dist/*.whl)[api]"
-          cd /tmp && /tmp/wheel-venv/bin/docket --list-formats
+          cd /tmp && /tmp/wheel-venv/bin/docket formats
           /tmp/wheel-venv/bin/python -c "import docket, docket.api; print(docket.__version__)"
       - name: OpenAPI spec is up to date
         run: |
