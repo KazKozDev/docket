@@ -1,223 +1,23 @@
 """Document-type classification: cheap keyword rules first, a TF-IDF model
 second, an LLM call only as a last resort when neither cheaper tier is
-confident. This is the three-way "pragmatic" split the job spec asks for
-explicitly — see the comparison table in the README for measured
-accuracy/latency/cost per tier.
+confident.
+
+Every tier reads the schema catalog: the rules use each schema's weighted
+keywords, TF-IDF trains on each schema's example sentences, and the LLM is
+shown each schema's description. A registered custom schema takes part in
+all three the moment it is registered.
 """
 from __future__ import annotations
 
 import re
 
-from . import config, doctypes
+from . import catalog, config
 from .classify_tfidf import classify_tfidf
 from .llm_client import LLMError, chat_json
-from .schemas import ClassificationResult, DocType
-
-# (doc_type, [weighted keyword patterns])
-#
-# Spanish and Catalan terms carry the same weights as their English
-# counterparts. Without them a "Factura" matched nothing, the TF-IDF tier is
-# trained on English, and every Spanish document fell through to the most
-# expensive tier — which is the opposite of the point of having tiers.
-_RULES: dict[DocType, list[tuple[re.Pattern, float]]] = {
-    DocType.INVOICE: [
-        (re.compile(r"\binvoice\b|\bfactura\b", re.I), 3.0),
-        (re.compile(r"\bbill to\b|\bfacturar a\b|\bcliente\b", re.I), 2.0),
-        (re.compile(r"\bamount due\b|\bimporte total\b|\btotal a pagar\b", re.I), 2.0),
-        (
-            re.compile(r"\bdue date\b|\bfecha de vencimiento\b|\bvencimiento\b", re.I),
-            1.0,
-        ),
-        (re.compile(r"\bpo number\b|\bpurchase order\b|\bpedido\b", re.I), 1.0),
-        (re.compile(r"\bbase imponible\b|\bn[úu]mero de factura\b", re.I), 2.0),
-    ],
-    DocType.RECEIPT: [
-        (
-            re.compile(r"\breceipt\b|\brecibo\b|\btique\b|\bticket de compra\b", re.I),
-            3.0,
-        ),
-        (
-            re.compile(
-                r"\bthank you for your purchase\b|\bgracias por su compra\b", re.I
-            ),
-            2.0,
-        ),
-        (re.compile(r"\bchange due\b|\bcambio\b|\bentregado\b", re.I), 2.0),
-        (re.compile(r"\bcashier\b|\bcajero?a?\b", re.I), 1.0),
-        (re.compile(r"\btender(ed)?\b|\befectivo\b", re.I), 1.0),
-    ],
-    DocType.BOARDING_PASS: [
-        (re.compile(r"\bboarding pass\b|\btarjeta de embarque\b", re.I), 3.0),
-        (re.compile(r"\bgate\b|\bpuerta de embarque\b", re.I), 2.0),
-        (re.compile(r"\bseat\b|\basiento\b", re.I), 2.0),
-        (re.compile(r"\bflight\b|\bvuelo\b", re.I), 2.0),
-        (
-            re.compile(r"\bboarding time\b|\bembarque\b|\bpnr\b|\bbooking ref", re.I),
-            1.0,
-        ),
-    ],
-    DocType.CONTRACT: [
-        (re.compile(r"\bagreement\b|\bcontrato\b|\bacuerdo\b", re.I), 3.0),
-        (re.compile(r"\bwhereas\b|\bexponen\b|\bmanifiestan\b", re.I), 2.0),
-        (re.compile(r"\bhereby agrees?\b|\bacuerdan\b|\bcl[áa]usulas\b", re.I), 2.0),
-        (
-            re.compile(
-                r"\bgoverning law\b|\blegislaci[óo]n aplicable\b|\bley aplicable\b",
-                re.I,
-            ),
-            2.0,
-        ),
-        (
-            re.compile(
-                r"\bparty of the first part\b|\bthe parties\b|\blas partes\b|\bde una parte\b",
-                re.I,
-            ),
-            1.0,
-        ),
-    ],
-    DocType.PURCHASE_ORDER: [
-        (
-            re.compile(
-                r"\bpurchase order\b|\border confirmation\b|\borden de compra\b", re.I
-            ),
-            3.0,
-        ),
-        (re.compile(r"\bpo number\b|\bn[úu]mero de pedido\b|\bpo #\b", re.I), 2.0),
-        (
-            re.compile(r"\bvendor\b|\bproveedor\b|\bship to\b|\bentregar en\b", re.I),
-            2.0,
-        ),
-        (re.compile(r"\brequisition\b|\border date\b|\bfecha de pedido\b", re.I), 1.0),
-    ],
-    DocType.BANK_STATEMENT: [
-        (
-            re.compile(
-                r"\bbank statement\b|\baccount statement\b|\bextracto bancario\b|\bвыписка\b",
-                re.I,
-            ),
-            3.0,
-        ),
-        (
-            re.compile(
-                r"\bopening balance\b|\bclosing balance\b|\bsaldo inicial\b|\bsaldo final\b",
-                re.I,
-            ),
-            2.0,
-        ),
-        (
-            re.compile(
-                r"\bdeposits?\b|\bwithdrawals?\b|\bmovimientos?\b|\btransacciones\b",
-                re.I,
-            ),
-            2.0,
-        ),
-        (
-            re.compile(
-                r"\bstatement period\b|\bper[íi]odo del extracto\b|\baccount number\b",
-                re.I,
-            ),
-            1.0,
-        ),
-    ],
-    DocType.ACCEPTANCE_ACT: [
-        (
-            re.compile(
-                r"\bacceptance act\b|\bact of acceptance\b|\bcertificate of acceptance\b|\bакт выполненных работ\b|\bакт приема\b",
-                re.I,
-            ),
-            3.0,
-        ),
-        (
-            re.compile(
-                r"\bservices rendered\b|\bservicios prestados\b|\btrabajos realizados\b|\bacta de recepci[óo]n\b",
-                re.I,
-            ),
-            2.0,
-        ),
-        (
-            re.compile(
-                r"\bno mutual claims\b|\bsin reclamaciones\b|\bпретензий не имеют\b|\bwork completed\b",
-                re.I,
-            ),
-            2.0,
-        ),
-        (
-            re.compile(
-                r"\bcontractor\b|\bcontratista\b|\bподрядчик\b|\bзаказчик\b", re.I
-            ),
-            1.0,
-        ),
-    ],
-    DocType.WAYBILL: [
-        (
-            re.compile(
-                r"\bwaybill\b|\bbill of lading\b|\bconsignment note\b|\bcmr\b|\bтоварная накладная\b|\bторг-12\b|\balbar[áa]n\b",
-                re.I,
-            ),
-            3.0,
-        ),
-        (
-            re.compile(
-                r"\bconsignee\b|\bconsignor\b|\bshipper\b|\bdestinatario\b|\bremitente\b|\bгрузополучатель\b",
-                re.I,
-            ),
-            2.0,
-        ),
-        (
-            re.compile(
-                r"\bgross weight\b|\bnet weight\b|\bpeso bruto\b|\bpeso neto\b|\bвес брутто\b",
-                re.I,
-            ),
-            2.0,
-        ),
-        (
-            re.compile(
-                r"\bcarrier\b|\btransportista\b|\bcarrier tracking\b|\bvehicle\b|\bveh[íi]culo\b",
-                re.I,
-            ),
-            1.0,
-        ),
-    ],
-}
-
-# The document's own name in the other main EU languages (German, French,
-# Italian, Dutch, Portuguese, Polish). Only the name, at the same weight as
-# "invoice"/"factura" above: it is the one cue that is both high-precision and
-# cheap to get right in every language. Anything subtler goes to the LLM.
-_EU_DOCUMENT_NAMES: dict[DocType, str] = {
-    DocType.INVOICE: r"rechnung|rechnungsnummer|facture|fattura|factuur|fatura|faktura",
-    DocType.RECEIPT: (
-        r"kassenbon|kassenbeleg|quittung|ticket de caisse|re[çc]u|scontrino|"
-        r"ricevuta|kassabon|kassabonnetje|tal[ãa]o|paragon"
-    ),
-    DocType.CONTRACT: r"vertrag|vereinbarung|contrat|contratto|overeenkomst|umowa",
-    DocType.PURCHASE_ORDER: (
-        r"bestellung|bon de commande|ordine d'acquisto|ordine di acquisto|"
-        r"inkooporder|bestelbon|nota de encomenda|zam[óo]wienie"
-    ),
-    DocType.BANK_STATEMENT: (
-        r"kontoauszug|relev[ée] de compte|relev[ée] bancaire|estratto conto|"
-        r"rekeningafschrift|extrato banc[áa]rio|wyci[ąa]g bankowy"
-    ),
-    DocType.ACCEPTANCE_ACT: (
-        r"abnahmeprotokoll|abnahmebescheinigung|proc[èe]s-verbal de r[ée]ception|"
-        r"verbale di collaudo|certificato di collaudo|opleveringsrapport|"
-        r"protocolo de aceita[çc][ãa]o|protok[óo][łl] odbioru"
-    ),
-    DocType.WAYBILL: (
-        r"frachtbrief|lettre de voiture|documento di trasporto|vrachtbrief|"
-        r"guia de transporte|list przewozowy"
-    ),
-    DocType.BOARDING_PASS: (
-        r"bordkarte|carte d'embarquement|carta d'imbarco|instapkaart|"
-        r"cart[ãa]o de embarque|karta pok[łl]adowa"
-    ),
-}
-for _doc_type, _names in _EU_DOCUMENT_NAMES.items():
-    _RULES[_doc_type].append((re.compile(rf"\b(?:{_names})\b", re.I), 3.0))
+from .schemas import ClassificationResult
 
 # If the top score isn't at least this many points clear of the runner-up,
-# the rules are ambiguous and we defer to the LLM instead of guessing.
+# the rules are ambiguous and we defer to the next tier instead of guessing.
 _CONFIDENCE_MARGIN = 2.0
 
 _LLM_PROMPT = """You classify business documents. Read the text below and
@@ -235,25 +35,16 @@ Text:
 
 
 def _llm_prompt(text: str) -> str:
-    types = doctypes.list_document_types()
-    choices = "|".join(f'"{t.name}"' for t in types) + '|"unknown"'
-    descriptions = "\n".join(f"- {t.name}: {t.description}" for t in types)
+    specs = catalog.list_schemas()
+    choices = "|".join(f'"{s.schema_id}"' for s in specs) + '|"unknown"'
+    descriptions = "\n".join(f"- {s.schema_id}: {s.description}" for s in specs)
     return _LLM_PROMPT.format(choices=choices, descriptions=descriptions, text=text)
 
 
-def _name(doc_type: DocType | str) -> str:
-    return doc_type.value if isinstance(doc_type, DocType) else doc_type
-
-
-def _score(text: str) -> dict[DocType | str, float]:
-    rules: dict[DocType | str, list[tuple[re.Pattern, float]]] = dict(_RULES)
-    for custom in doctypes.custom_document_types():
-        rules[custom.name] = list(custom.keywords)
-    scores: dict[DocType | str, float] = {dt: 0.0 for dt in rules}
-    for doc_type, patterns in rules.items():
-        for pattern, weight in patterns:
-            if pattern.search(text):
-                scores[doc_type] += weight
+def _score(text: str) -> dict[str, float]:
+    scores: dict[str, float] = {}
+    for spec in catalog.list_schemas():
+        scores[spec.schema_id] = sum(k.weight for k in spec.keywords if k.pattern.search(text))
     return scores
 
 
@@ -272,7 +63,7 @@ def classify_rules(text: str) -> ClassificationResult | None:
             doc_type=top_type,
             confidence=round(top_score / total, 2),
             method="rules",
-            scores={_name(k): v for k, v in scores.items()},
+            scores=scores,
         )
     return None
 
@@ -287,12 +78,12 @@ def classify_llm(text: str) -> ClassificationResult:
     results = [chat_json(_llm_prompt(chunk)) for chunk in chunks]
     if len(results) == 1:
         result = results[0]
-        doc_type = doctypes.parse_type(result.get("doc_type"))
+        doc_type = catalog.parse_type(result.get("doc_type"))
         confidence = float(result.get("confidence", 0.0))
     else:
-        votes: dict[DocType | str, float] = {}
+        votes: dict[str, float] = {}
         for result in results:
-            candidate = doctypes.parse_type(result.get("doc_type"))
+            candidate = catalog.parse_type(result.get("doc_type"))
             votes[candidate] = votes.get(candidate, 0.0) + float(
                 result.get("confidence", 0.0)
             )
@@ -303,7 +94,7 @@ def classify_llm(text: str) -> ClassificationResult:
         doc_type=doc_type,
         confidence=confidence,
         method="llm",
-        scores={_name(k): v for k, v in scores.items()},
+        scores=scores,
     )
 
 
@@ -320,11 +111,10 @@ def classify(text: str) -> ClassificationResult:
     if rules_result is not None:
         return rules_result
 
-    # The TF-IDF model was trained on the built-in types only. With custom
-    # types registered it would confidently file a delivery note as a
-    # waybill, so the cascade goes straight to the LLM, which is told
-    # about every registered type.
-    tfidf_result = None if doctypes.custom_document_types() else classify_tfidf(text)
+    # classify_tfidf answers None when some registered schema brought no
+    # example sentences: a model that has never seen a type would file it
+    # confidently under a neighbour, so the cascade goes to the LLM instead.
+    tfidf_result = classify_tfidf(text)
     if (
         tfidf_result is not None
         and tfidf_result.confidence >= config.TFIDF_CONFIDENCE_FLOOR
@@ -337,8 +127,5 @@ def classify(text: str) -> ClassificationResult:
         if tfidf_result is not None:
             return tfidf_result
         return ClassificationResult(
-            doc_type=DocType.UNKNOWN,
-            confidence=0.0,
-            method="unavailable",
-            scores={_name(k): v for k, v in _score(text).items()},
+            doc_type=catalog.UNKNOWN, confidence=0.0, method="unavailable", scores=_score(text)
         )

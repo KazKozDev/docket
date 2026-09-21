@@ -146,7 +146,7 @@ with col_result:
             backends = ", ".join(payload.report.backends_used)
             stage_log.append(f"Text acquired via **{backends}** ({len(payload.text)} chars) — {elapsed_so_far:.1f}s")
         elif stage == "classify":
-            stage_log.append(f"Classified as **{payload.type_name}** via {payload.method} — {elapsed_so_far:.1f}s")
+            stage_log.append(f"Classified as **{payload.doc_type}** via {payload.method} — {elapsed_so_far:.1f}s")
         elif stage == "extract":
             label = "schema validated" if payload is not None else "failed"
             stage_log.append(f"Extraction {label} — {elapsed_so_far:.1f}s")

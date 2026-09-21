@@ -14,7 +14,7 @@ from docket.export import (
     list_exporters,
     register_exporter,
 )
-from docket.schemas import Invoice
+from docket.catalog import Invoice
 
 from tests.test_export import sample_bank_statement, sample_invoice
 
@@ -59,7 +59,7 @@ def test_custom_exporter_can_be_registered(monkeypatch):
 
 
 def test_cli_lists_formats(capsys):
-    cli.main(["--list-formats"])
+    cli.main(["formats"])
     out = capsys.readouterr().out
     assert "xrechnung" in out and "ubl" in out
 
@@ -145,20 +145,20 @@ def test_cli_exports_extracted_document(monkeypatch, capsys):
 
     result = make_result(source="x.pdf", extracted=sample_invoice().model_dump(mode="json"))
     monkeypatch.setattr(cli, "process_document", lambda _path, _options: result)
-    cli.main(["x.pdf", "--export", "ubl"])
+    cli.main(["process", "x.pdf", "--export", "ubl"])
     assert "INV-2026-001" in capsys.readouterr().out
 
 
 def test_review_queue_can_be_disabled_per_call(monkeypatch, tmp_path):
     from docket import pipeline, review_queue
-    from docket.schemas import ClassificationResult, DocType
+    from docket.schemas import ClassificationResult
     from tests.factories import make_result, text_acquisition
 
     source = tmp_path / "x.txt"
     source.write_text("x")
     flagged = make_result(
         source=str(source),
-        classification=ClassificationResult(doc_type=DocType.INVOICE, confidence=0.1, method="rules"),
+        classification=ClassificationResult(doc_type="invoice", confidence=0.1, method="rules"),
         extracted=None,
     )
     monkeypatch.setattr(pipeline, "_acquire", lambda *a, **k: text_acquisition("x"))

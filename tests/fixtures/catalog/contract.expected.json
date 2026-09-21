@@ -1,0 +1,39 @@
+{
+  "contract_title": "Services Agreement",
+  "parties_a": [
+    "Brightline Analytics Ltd"
+  ],
+  "parties_b": [
+    "Harbor Logistics Inc"
+  ],
+  "effective_date": "2026-02-01",
+  "expiration_date": "2027-01-31",
+  "governing_law": "State of New York",
+  "contract_value": 48000.0,
+  "currency": "USD",
+  "payment_terms": "within 30 days of invoice",
+  "notice_period_days": 60,
+  "termination_for_convenience": true,
+  "signatories": [
+    "Maria Keller",
+    "Tom Reyes"
+  ],
+  "field_locations": {
+    "contract_title": {
+      "page": 1,
+      "quote": "SERVICES AGREEMENT"
+    },
+    "parties_a": {
+      "page": 1,
+      "quote": "between Brightline Analytics Ltd"
+    },
+    "parties_b": {
+      "page": 1,
+      "quote": "Harbor Logistics Inc"
+    },
+    "effective_date": {
+      "page": 1,
+      "quote": "effective from 2026-02-01"
+    }
+  }
+}

@@ -12,20 +12,28 @@ Requirements: Python 3.10+, Tesseract on PATH (`brew install tesseract` / `apt i
 
 ```bash
 pip install docket-idp
-docket invoice.pdf                       # JSON on stdout, exit code 2 if validation fails
-docket invoice.pdf --export xrechnung    # e-invoice XML on stdout
+docket process invoice.pdf                       # JSON result on stdout, exit code 2 if validation fails
+docket process invoice.pdf --export xrechnung    # e-invoice XML on stdout
+docket schemas list                              # every document type, with its version
 ```
 
 ```json
 {
-  "doc_type": "invoice",
-  "invoice_number": "FAC-2026-0042",
-  "issue_date": "2026-03-15",
-  "vendor_name": "Talleres Montjuïc S.A.",
-  "subtotal": 1234.56,
-  "tax_amount": 259.26,
-  "total_amount": 1493.82,
-  "currency": "EUR"
+  "status": "succeeded",
+  "document_type": "invoice",
+  "schema_id": "invoice",
+  "schema_version": "2.0",
+  "extracted": {
+    "invoice_number": "FAC-2026-0042",
+    "issue_date": "2026-03-15",
+    "seller": {"name": "Talleres Montjuïc S.A.", "tax_ids": [{"value": "A28015865", "scheme": "vat"}]},
+    "buyer": {"name": "Aerolíneas del Sur S.L."},
+    "subtotal": 1234.56,
+    "tax_amount": 259.26,
+    "total_amount": 1493.82,
+    "currency": "EUR"
+  },
+  "field_sources": {"total_amount": {"page": 1, "quote": "Total factura: 1.493,82 €", "bbox": {"x0": 0.62, "y0": 0.71, "x1": 0.89, "y1": 0.73}}}
 }
 ```
 
@@ -63,25 +71,35 @@ curl -H "Authorization: Bearer secret" -F file=@invoice.pdf localhost:8000/proce
 
 ## Document types
 
-Built in: invoice, receipt, contract, purchase order, bank statement, acceptance act, waybill, boarding pass. To add your own, write a Pydantic model and register it:
+A versioned catalog of 14 schemas (`docket schemas list`, `GET /schemas`):
+
+| Stable | Experimental (added in the catalog, not yet measured on real documents) |
+|---|---|
+| invoice 2.0, purchase order 2.0, receipt 1.1, contract 1.1, bank statement 1.1, acceptance act 1.1, waybill 1.1, boarding pass 1.1 | credit note, tax invoice, utility bill, delivery note, certificate of origin, ID document (printed text fields only — no biometrics or identity verification) |
+
+Invoice-family schemas share `Party`, `Address`, `TaxIdentifier`, `DocumentReference` and `BankAccount`; results saved under an older schema version are migrated when read (`docket.catalog.migrate`). `docket schemas show invoice` prints a schema's metadata, cited fields and export formats; `docket schemas json-schema invoice` its JSON Schema.
+
+To add your own, write a Pydantic model and register it:
 
 ```python
 from datetime import date
-from docket import CitedDocument, register_document_type
+from docket import CitedDocument, Party, SchemaSpec, keywords, register_schema
 
-class DeliveryNote(CitedDocument):       # CitedDocument adds page/quote citations
-    note_number: str
-    supplier_name: str
-    delivery_date: date
+class ParkingTicket(CitedDocument):      # CitedDocument adds page/quote citations
+    ticket_number: str
+    issuing_authority: Party
+    issue_date: date
+    fine: float
 
-register_document_type(
-    "delivery_note", DeliveryNote,
-    description="Delivery note / Lieferschein listing goods handed over",  # read by the LLM classifier
-    keywords=["delivery note", "lieferschein"],                             # free rules tier
-)
+register_schema(SchemaSpec(
+    schema_id="parking_ticket", version="1.0", model=ParkingTicket,
+    description="Parking ticket / Strafzettel for a parking offence",   # read by the LLM classifier
+    keywords=keywords("parking ticket", "strafzettel"),                  # free rules tier
+    cited_fields=("ticket_number", "issuing_authority.name", "fine"),
+))
 ```
 
-Registered types are classified, extracted, citation-checked and exported like the built-in ones. A model can also be used without registering it: `ProcessOptions(schema_model=DeliveryNote)`, or `docket file.pdf --schema mypkg.models:DeliveryNote`. `add_validator("invoice", fn)` adds your own rules to any type, and the `docket.document_types` entry point lets a separate package ship types. See [`examples/custom_document_type.py`](https://github.com/KazKozDev/docket/blob/master/examples/custom_document_type.py).
+Registered schemas are classified, extracted, citation-checked and exported like the built-in ones; give `examples=` sentences and the TF-IDF tier learns them too. A model can also be used without registering it: `ProcessOptions(schema_model=ParkingTicket)` or `docket process file.pdf --schema mypkg.models:ParkingTicket`. `add_validator("invoice", fn)` adds rules to any schema, and the `docket.schemas` entry point lets a separate package ship schemas. See [`examples/custom_document_type.py`](https://github.com/KazKozDev/docket/blob/master/examples/custom_document_type.py) and [`examples/schema_plugin/`](https://github.com/KazKozDev/docket/blob/master/examples/schema_plugin/).
 
 ## Export formats
 
@@ -94,7 +112,7 @@ Registered types are classified, extracted, citation-checked and exported like t
 | SAP IDoc / journal CSV | `sap-idoc`, `sap-csv` |
 | Xero, QuickBooks | `xero-csv`, `xero-json`, `quickbooks-iif`, `quickbooks-json` |
 
-Add your own with `register_exporter("my-erp", func, accepts=(Invoice,))` or the `docket.exporters` entry point. `docket --list-formats` shows everything available. Validate generated XML with the recipient's official validator (e.g. KoSIT for XRechnung) before going live.
+Add your own with `register_exporter("my-erp", func, accepts=(Invoice,))` or the `docket.exporters` entry point. `docket formats` shows everything available. Validate generated XML with the recipient's official validator (e.g. KoSIT for XRechnung) before going live.
 
 ## How it works
 
@@ -108,7 +126,7 @@ document → text layer / OCR / VLM → classify → extract + cite → validate
 - **Validation** never calls a model. It checks arithmetic, dates, IBAN mod-97, VAT check digits (all 27 EU states, UK, CH, NO), national tax IDs, and that every cited line exists and contains the claimed value. Contracts also get counterparty, grounding and risk checks (unlimited liability, auto-renewal, notice periods).
 - **Review**: low confidence, failed extraction or a validation error sends the document to a review queue that keeps the original and an audit history. Nothing is silently reconciled. An invoice whose `Amount Due: 500.00` disagrees with its own 270.60 subtotal and tax is flagged, not fixed.
 
-Also included: cross-document matching (invoice ↔ PO, three-way PO/waybill/invoice, invoice ↔ contract, receipt ↔ bank transactions) and a heuristic stamp, signature and alteration check (`docket file.pdf --forensics`). Details are in [ARCHITECTURE.md](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md).
+Also included: cross-document matching (invoice ↔ PO, three-way PO/waybill/invoice, invoice ↔ contract, receipt ↔ bank transactions) and a heuristic stamp, signature and alteration check (`docket forensics file.pdf`). Details are in [ARCHITECTURE.md](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md).
 
 ## Configuration
 

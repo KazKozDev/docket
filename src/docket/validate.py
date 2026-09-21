@@ -11,20 +11,22 @@ from __future__ import annotations
 import re
 from datetime import date
 
-from . import amounts, checksums, doctypes
-from .schemas import (
+
+from . import amounts, checksums
+from .catalog.common import Party
+from .catalog.models import (
     AcceptanceAct,
     BankStatement,
     BoardingPass,
     Contract,
-    DocType,
-    DocumentForensicReport,
+    CreditNote,
     Invoice,
     PurchaseOrder,
     Receipt,
-    ValidationIssue,
     Waybill,
 )
+from .catalog.registry import SchemaSpec, ValidationContext
+from .schemas import DocumentForensicReport, ValidationIssue
 
 _TAX_ID_RE = re.compile(r"^[A-Z0-9][A-Z0-9\-\.]{4,20}$", re.I)
 _BIC_RE = re.compile(r"^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$")
@@ -314,6 +316,23 @@ def _check_witness_contradicts(
     return issues
 
 
+def value_at(document, path: str):
+    """Value at a dotted field path ('seller.name', 'items[0].price'); None
+    where any step is missing."""
+    current = document
+    for part in path.split("."):
+        name, _, index = part.partition("[")
+        current = getattr(current, name, None)
+        if current is None:
+            return None
+        if index:
+            try:
+                current = current[int(index.rstrip("]"))]
+            except (IndexError, ValueError, TypeError):
+                return None
+    return current
+
+
 def _check_material_locations(
     document, raw_text: str, fields: tuple[str, ...]
 ) -> list[ValidationIssue]:
@@ -323,7 +342,7 @@ def _check_material_locations(
     issues: list[ValidationIssue] = []
     locations = getattr(document, "field_locations", None) or {}
     for field in fields:
-        value = getattr(document, field, None)
+        value = value_at(document, field)
         if value is None or value == "" or value == []:
             continue
         location = locations.get(field)
@@ -375,20 +394,62 @@ def _unconfirmed_vlm_issue() -> ValidationIssue:
     )
 
 
-def validate_invoice(
-    inv: Invoice,
-    raw_text: str | None = None,
-    witness_pages: list[str | None] | None = None,
-    vlm_unconfirmed: bool = False,
-) -> list[ValidationIssue]:
+def _check_party_ids(party: Party | None, prefix: str) -> list[ValidationIssue]:
+    """Checksums and formats of every tax identifier a party carries."""
     issues: list[ValidationIssue] = []
-    if vlm_unconfirmed:
+    if party is None:
+        return issues
+    for n, tax in enumerate(party.tax_ids):
+        field = f"{prefix}.tax_ids[{n}]"
+        value = tax.value
+        if tax.scheme == "vat":
+            vat_ok = checksums.validate_vat(value)
+            if vat_ok is False:
+                issues.append(
+                    ValidationIssue(
+                        field=field,
+                        message=(
+                            f"{value!r} fails its country's VAT checksum"
+                            if checksums.is_vat_shaped(value)
+                            else f"{value!r} is not a VAT number — the document states none for this party"
+                        ),
+                    )
+                )
+            elif vat_ok is None:
+                issues.append(
+                    ValidationIssue(
+                        field=field,
+                        message=(
+                            f"{value!r} — format looks plausible but no checksum algorithm is "
+                            "implemented for this country, so it isn't verified"
+                        ),
+                        severity="warning",
+                    )
+                )
+            continue
+        tax_ok, scheme = checksums.validate_tax_id(value)
+        if tax_ok is False:
+            issues.append(
+                ValidationIssue(field=field, message=f"{value!r} fails the {scheme} checksum or format")
+            )
+        elif tax_ok is None and not _TAX_ID_RE.match(value):
+            issues.append(
+                ValidationIssue(field=field, message=f"{value!r} doesn't look like a tax ID", severity="warning")
+            )
+    return issues
+
+
+def validate_billing(inv, ctx: ValidationContext) -> list[ValidationIssue]:
+    """Invoice, tax invoice and credit note: one set of rules, since they
+    share their structure (see catalog.models._Billing)."""
+    raw_text, witness_pages = ctx.raw_text, ctx.witness_pages
+    issues: list[ValidationIssue] = []
+    if ctx.vlm_unconfirmed:
         issues.append(_unconfirmed_vlm_issue())
 
-    if not inv.invoice_number.strip():
-        issues.append(
-            ValidationIssue(field="invoice_number", message="empty invoice number")
-        )
+    number_field = "credit_note_number" if isinstance(inv, CreditNote) else "invoice_number"
+    if not getattr(inv, number_field).strip():
+        issues.append(ValidationIssue(field=number_field, message=f"empty {number_field.replace('_', ' ')}"))
 
     if inv.due_date and inv.due_date < inv.issue_date:
         issues.append(
@@ -401,101 +462,50 @@ def validate_invoice(
     issues.extend(_check_date_range("issue_date", inv.issue_date, max_years_ahead=1))
     issues.extend(_check_date_range("due_date", inv.due_date, max_years_ahead=10))
 
-    if inv.vendor_tax_id:
-        tax_ok, scheme = checksums.validate_tax_id(inv.vendor_tax_id)
-        if tax_ok is False:
-            issues.append(
-                ValidationIssue(
-                    field="vendor_tax_id",
-                    message=f"{inv.vendor_tax_id!r} fails the {scheme} checksum or format",
-                    severity="error",
-                )
-            )
-        elif tax_ok is None and not _TAX_ID_RE.match(inv.vendor_tax_id):
-            issues.append(
-                ValidationIssue(
-                    field="vendor_tax_id",
-                    message=f"{inv.vendor_tax_id!r} doesn't look like a tax ID",
-                    severity="warning",
-                )
-            )
+    issues.extend(_check_party_ids(inv.seller, "seller"))
+    issues.extend(_check_party_ids(inv.buyer, "buyer"))
 
-    if inv.vendor_iban and not checksums.validate_iban(inv.vendor_iban):
+    account = inv.payment_account
+    if account is not None and account.iban and not checksums.validate_iban(account.iban):
         # Two different findings with two different remedies: a real IBAN
         # with a bad check digit means compare the digits, a string that was
         # never an IBAN means ask the vendor for the number. Reporting the
         # second as the first sends a reviewer looking for a typo that isn't
         # there — seen on a template whose IBAN field still read "[IBAN code]".
-        clean_iban = inv.vendor_iban.replace(" ", "").upper()
+        clean_iban = account.iban.replace(" ", "").upper()
         if clean_iban[:2] in checksums._NON_IBAN_COUNTRIES:
             message = (
-                f"{inv.vendor_iban!r} starts with country code {clean_iban[:2]!r}, but the "
+                f"{account.iban!r} starts with country code {clean_iban[:2]!r}, but the "
                 "United States / Canada does not use IBANs (use ABA Routing / Transit number instead)"
             )
-        elif checksums.is_iban_shaped(inv.vendor_iban):
-            message = f"{inv.vendor_iban!r} fails the IBAN mod-97 checksum"
+        elif checksums.is_iban_shaped(account.iban):
+            message = f"{account.iban!r} fails the IBAN mod-97 checksum"
         else:
             message = (
-                f"{inv.vendor_iban!r} is not an IBAN — the document states no usable "
+                f"{account.iban!r} is not an IBAN — the document states no usable "
                 f"account number for this vendor"
             )
-        issues.append(ValidationIssue(field="vendor_iban", message=message))
+        issues.append(ValidationIssue(field="payment_account.iban", message=message))
 
-    if inv.vendor_vat_number:
-        vat_ok = checksums.validate_vat(inv.vendor_vat_number)
-        if vat_ok is False:
-            issues.append(
-                ValidationIssue(
-                    field="vendor_vat_number",
-                    message=(
-                        f"{inv.vendor_vat_number!r} fails its country's VAT checksum"
-                        if checksums.is_vat_shaped(inv.vendor_vat_number)
-                        else f"{inv.vendor_vat_number!r} is not a VAT number — the document "
-                        f"states none for this vendor"
-                    ),
-                )
-            )
-        elif vat_ok is None:
-            issues.append(
-                ValidationIssue(
-                    field="vendor_vat_number",
-                    message=(
-                        f"{inv.vendor_vat_number!r} — format looks plausible but no checksum "
-                        "algorithm is implemented for this country, so it isn't verified"
-                    ),
-                    severity="warning",
-                )
-            )
-
-    if inv.customer_tax_id:
-        tax_ok, scheme = checksums.validate_tax_id(inv.customer_tax_id)
-        if tax_ok is False:
-            issues.append(
-                ValidationIssue(
-                    field="customer_tax_id",
-                    message=f"{inv.customer_tax_id!r} fails the {scheme} checksum or format",
-                    severity="error",
-                )
-            )
-        elif tax_ok is None and not _TAX_ID_RE.match(inv.customer_tax_id):
-            issues.append(
-                ValidationIssue(
-                    field="customer_tax_id",
-                    message=f"{inv.customer_tax_id!r} doesn't look like a tax ID",
-                    severity="warning",
-                )
-            )
-
-    if inv.vendor_bic:
-        clean_bic = inv.vendor_bic.replace(" ", "").upper()
+    if account is not None and account.bic:
+        clean_bic = account.bic.replace(" ", "").upper()
         if not _BIC_RE.match(clean_bic):
             issues.append(
                 ValidationIssue(
-                    field="vendor_bic",
-                    message=f"{inv.vendor_bic!r} is not a valid 8- or 11-character SWIFT/BIC code",
+                    field="payment_account.bic",
+                    message=f"{account.bic!r} is not a valid 8- or 11-character SWIFT/BIC code",
                     severity="warning",
                 )
             )
+
+    if _core_name(inv.seller.name) and _core_name(inv.seller.name) == _core_name(inv.buyer.name):
+        issues.append(
+            ValidationIssue(
+                field="buyer.name",
+                message="seller and buyer resolve to the same entity",
+                severity="warning",
+            )
+        )
 
     if inv.tax_rate_percent is not None:
         if inv.tax_rate_percent < 0 or inv.tax_rate_percent > 100:
@@ -561,20 +571,6 @@ def validate_invoice(
         )
 
     if raw_text is not None:
-        issues.extend(
-            _check_material_locations(
-                inv,
-                raw_text,
-                (
-                    "invoice_number",
-                    "issue_date",
-                    "vendor_name",
-                    "customer_name",
-                    "subtotal",
-                    "total_amount",
-                ),
-            )
-        )
         numeric_fields = {"subtotal": inv.subtotal, "total_amount": inv.total_amount}
         numeric_fields.update(
             {
@@ -618,12 +614,9 @@ def validate_invoice(
     return issues
 
 
-def validate_receipt(
-    rec: Receipt,
-    raw_text: str | None = None,
-    witness_pages: list[str | None] | None = None,
-    vlm_unconfirmed: bool = False,
-) -> list[ValidationIssue]:
+def validate_receipt(rec: Receipt, ctx: ValidationContext) -> list[ValidationIssue]:
+    raw_text = ctx.raw_text
+    witness_pages, vlm_unconfirmed = ctx.witness_pages, ctx.vlm_unconfirmed
     issues: list[ValidationIssue] = []
     if vlm_unconfirmed:
         issues.append(_unconfirmed_vlm_issue())
@@ -733,11 +726,6 @@ def validate_receipt(
             )
 
     if raw_text is not None:
-        issues.extend(
-            _check_material_locations(
-                rec, raw_text, ("merchant_name", "transaction_date", "total_amount")
-            )
-        )
         numeric_fields = {"total_amount": rec.total_amount}
         if rec.subtotal:
             numeric_fields["subtotal"] = rec.subtotal
@@ -1051,9 +1039,8 @@ def assess_contract_risks(c: Contract) -> list[str]:
     return risks
 
 
-def validate_contract(
-    c: Contract, raw_text: str | None = None
-) -> list[ValidationIssue]:
+def validate_contract(c: Contract, ctx: ValidationContext) -> list[ValidationIssue]:
+    raw_text = ctx.raw_text
     issues: list[ValidationIssue] = []
 
     for field, names in (("parties_a", c.parties_a), ("parties_b", c.parties_b)):
@@ -1190,13 +1177,6 @@ def validate_contract(
 
     if raw_text is not None:
         issues.extend(_check_contract_against_raw_text(c, raw_text))
-        issues.extend(
-            _check_material_locations(
-                c,
-                raw_text,
-                ("contract_title", "parties_a", "parties_b", "effective_date"),
-            )
-        )
 
     return issues
 
@@ -1206,9 +1186,8 @@ _FLIGHT_RE = re.compile(r"^[A-Z0-9]{2,3}\s?\d{1,4}[A-Z]?$")
 _PNR_RE = re.compile(r"^[A-Z0-9]{6}$")
 
 
-def validate_boarding_pass(
-    bp: BoardingPass, raw_text: str | None = None
-) -> list[ValidationIssue]:
+def validate_boarding_pass(bp: BoardingPass, ctx: ValidationContext) -> list[ValidationIssue]:
+    raw_text = ctx.raw_text
     """A boarding pass has no sums to reconcile, so the checks are all about
     controlled vocabularies: IATA station codes, a carrier-prefixed flight
     number, a six-character record locator. Those formats are exact, which
@@ -1276,27 +1255,12 @@ def validate_boarding_pass(
                         message=f"{value!r} does not appear in the document text",
                     )
                 )
-        issues.extend(
-            _check_material_locations(
-                bp,
-                raw_text,
-                (
-                    "passenger_name",
-                    "booking_reference",
-                    "flight_number",
-                    "departure_airport",
-                    "arrival_airport",
-                    "departure_datetime",
-                ),
-            )
-        )
 
     return issues
 
 
-def validate_purchase_order(
-    po: PurchaseOrder, raw_text: str | None = None
-) -> list[ValidationIssue]:
+def validate_purchase_order(po: PurchaseOrder, ctx: ValidationContext) -> list[ValidationIssue]:
+    raw_text = ctx.raw_text
     issues: list[ValidationIssue] = []
     if not po.po_number.strip():
         issues.append(
@@ -1304,27 +1268,21 @@ def validate_purchase_order(
                 field="po_number", message="empty PO number", severity="error"
             )
         )
-    if not po.vendor_name.strip():
-        issues.append(
-            ValidationIssue(
-                field="vendor_name", message="empty vendor name", severity="error"
-            )
-        )
-    if not po.customer_name.strip():
-        issues.append(
-            ValidationIssue(
-                field="customer_name", message="empty customer name", severity="error"
-            )
-        )
+    if not po.supplier.name.strip():
+        issues.append(ValidationIssue(field="supplier.name", message="empty supplier name"))
+    if not po.buyer.name.strip():
+        issues.append(ValidationIssue(field="buyer.name", message="empty buyer name"))
 
-    if _core_name(po.vendor_name) == _core_name(po.customer_name):
+    if _core_name(po.supplier.name) == _core_name(po.buyer.name):
         issues.append(
             ValidationIssue(
-                field="customer_name",
-                message="vendor and customer resolve to the same entity",
+                field="buyer.name",
+                message="supplier and buyer resolve to the same entity",
                 severity="error",
             )
         )
+    issues.extend(_check_party_ids(po.supplier, "supplier"))
+    issues.extend(_check_party_ids(po.buyer, "buyer"))
 
     issues.extend(_check_date_range("po_date", po.po_date, max_years_ahead=1))
 
@@ -1362,9 +1320,8 @@ def validate_purchase_order(
     return issues
 
 
-def validate_bank_statement(
-    stmt: BankStatement, raw_text: str | None = None
-) -> list[ValidationIssue]:
+def validate_bank_statement(stmt: BankStatement, ctx: ValidationContext) -> list[ValidationIssue]:
+    raw_text = ctx.raw_text
     issues: list[ValidationIssue] = []
 
     if not stmt.bank_name.strip():
@@ -1467,19 +1424,11 @@ def validate_bank_statement(
                     )
                 )
 
-    if raw_text is not None:
-        issues.extend(
-            _check_material_locations(
-                stmt, raw_text, ("bank_name", "account_holder", "closing_balance")
-            )
-        )
-
     return issues
 
 
-def validate_acceptance_act(
-    act: AcceptanceAct, raw_text: str | None = None
-) -> list[ValidationIssue]:
+def validate_acceptance_act(act: AcceptanceAct, ctx: ValidationContext) -> list[ValidationIssue]:
+    raw_text = ctx.raw_text
     issues: list[ValidationIssue] = []
 
     if not act.act_number.strip():
@@ -1575,17 +1524,11 @@ def validate_acceptance_act(
             )
         )
 
-    if raw_text is not None:
-        issues.extend(
-            _check_material_locations(
-                act, raw_text, ("customer_name", "contractor_name", "total_amount")
-            )
-        )
-
     return issues
 
 
-def validate_waybill(wb: Waybill, raw_text: str | None = None) -> list[ValidationIssue]:
+def validate_waybill(wb: Waybill, ctx: ValidationContext) -> list[ValidationIssue]:
+    raw_text = ctx.raw_text
     issues: list[ValidationIssue] = []
 
     if not wb.waybill_number.strip():
@@ -1673,19 +1616,16 @@ def validate_waybill(wb: Waybill, raw_text: str | None = None) -> list[Validatio
                         )
                     )
 
-    if raw_text is not None:
-        issues.extend(
-            _check_material_locations(
-                wb, raw_text, ("shipper_name", "consignee_name", "waybill_number")
-            )
-        )
-
     return issues
+
+
+# Document types that are only binding once signed and stamped.
+_EXECUTED_TYPES = {"contract", "acceptance_act", "waybill", "delivery_note", "certificate_of_origin"}
 
 
 def validate_forensic_report(
     report: DocumentForensicReport,
-    doc_type: DocType | None = None,
+    doc_type: str | None = None,
 ) -> list[ValidationIssue]:
     """Validate a document's physical execution, signatures, stamps, and alterations.
 
@@ -1701,7 +1641,7 @@ def validate_forensic_report(
     if report.is_empty_template:
         severity = (
             "error"
-            if doc_type in {DocType.CONTRACT, DocType.ACCEPTANCE_ACT, DocType.WAYBILL}
+            if doc_type in _EXECUTED_TYPES
             else "warning"
         )
         issues.append(
@@ -1712,10 +1652,7 @@ def validate_forensic_report(
             )
         )
 
-    if "MISSING_SIGNATURE" in report.risk_flags and doc_type in {
-        DocType.CONTRACT,
-        DocType.ACCEPTANCE_ACT,
-    }:
+    if "MISSING_SIGNATURE" in report.risk_flags and doc_type in {"contract", "acceptance_act"}:
         issues.append(
             ValidationIssue(
                 field="forensics.signatures",
@@ -1724,10 +1661,7 @@ def validate_forensic_report(
             )
         )
 
-    if "MISSING_STAMP" in report.risk_flags and doc_type in {
-        DocType.ACCEPTANCE_ACT,
-        DocType.WAYBILL,
-    }:
+    if "MISSING_STAMP" in report.risk_flags and doc_type in {"acceptance_act", "waybill", "certificate_of_origin"}:
         issues.append(
             ValidationIssue(
                 field="forensics.stamps",
@@ -1748,18 +1682,6 @@ def validate_forensic_report(
     return issues
 
 
-_VALIDATORS = {
-    Invoice: validate_invoice,
-    Receipt: validate_receipt,
-    Contract: validate_contract,
-    PurchaseOrder: validate_purchase_order,
-    BankStatement: validate_bank_statement,
-    AcceptanceAct: validate_acceptance_act,
-    Waybill: validate_waybill,
-    BoardingPass: validate_boarding_pass,
-}
-
-
 def validate(
     document,
     raw_text: str | None = None,
@@ -1768,28 +1690,36 @@ def validate(
     witness_pages: list[str | None] | None = None,
     vlm_unconfirmed: bool = False,
     forensic_report: DocumentForensicReport | None = None,
-    doc_type: "doctypes.DocumentType | None" = None,
+    spec: SchemaSpec | None = None,
 ) -> list[ValidationIssue]:
+    """Every deterministic check for one extracted document.
+
+    `spec` is the schema the document was extracted with; when omitted it is
+    looked up by the document's model. Citation checks run for the spec's
+    cited fields, then each of its validators, then forensic rules.
+    """
+    from .catalog import for_model
+
+    spec = spec or for_model(type(document))
+    if spec is None:
+        raise TypeError(f"{type(document).__name__} is not a registered schema; pass spec=")
     # Page identity comes from acquisition, never from whether OCR happened
     # to include a synthetic marker. Serialize the same 1-based page contract
     # used by extraction for every input format, including single images.
     if pages is not None:
-        raw_text = "\n".join(
-            f"[PAGE {number}]\n{text}" for number, text in enumerate(pages, 1)
-        )
-    validator = _VALIDATORS.get(type(document))
-    if validator is None:
-        if doc_type is None and doctypes.for_schema(type(document)) is None:
-            raise TypeError(f"No validator registered for {type(document)}")
-        issues = []  # a custom type: its checks all come from the registry
-    elif validator in (validate_invoice, validate_receipt):
-        issues = validator(document, raw_text, witness_pages, vlm_unconfirmed)
-    else:
-        issues = validator(document, raw_text)
-    issues.extend(doctypes.validate_extra(document, raw_text, doc_type))
-
+        raw_text = "\n".join(f"[PAGE {number}]\n{text}" for number, text in enumerate(pages, 1))
+    ctx = ValidationContext(
+        raw_text=raw_text,
+        pages=pages,
+        witness_pages=witness_pages,
+        vlm_unconfirmed=vlm_unconfirmed,
+        forensic_report=forensic_report,
+    )
+    issues: list[ValidationIssue] = []
+    if raw_text and spec.required_citations:
+        issues.extend(_check_material_locations(document, raw_text, spec.required_citations))
+    for validator in spec.validators:
+        issues.extend(validator(document, ctx) or [])
     if forensic_report is not None:
-        doc_type = getattr(document, "doc_type", None)
-        issues.extend(validate_forensic_report(forensic_report, doc_type))
-
+        issues.extend(validate_forensic_report(forensic_report, spec.schema_id))
     return issues

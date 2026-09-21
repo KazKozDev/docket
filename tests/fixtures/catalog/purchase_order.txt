@@ -1,0 +1,12 @@
+PURCHASE ORDER
+PO number: PO-7781
+Order date: 2026-06-15
+Buyer: Harbor Logistics Inc, 400 Pier Ave, Seattle WA
+Vendor: Pacific Pallet Co
+Ship to: Harbor Logistics Warehouse 3
+Standard pallet | 200 | 12.00 | 2400.00
+Pallet wrap roll | 50 | 8.00 | 400.00
+Subtotal: 2800.00
+Tax: 280.00
+Total: 3080.00 USD
+Payment terms: Net 30

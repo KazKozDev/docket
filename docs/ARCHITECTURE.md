@@ -28,7 +28,7 @@ Docket converts unstructured or semi-structured documents (invoices, receipts, c
                                            v
 +---------------------------------------------------------------------------------------+
 |                              Structured Extraction Tier                               |
-|   - Pydantic Schemas per document type (Invoice, Receipt, Contract, BoardingPass)     |
+|   - Versioned schema catalog: 14 built-in Pydantic schemas + registered ones          |
 |   - JSON Schema contract enforcement via local Ollama LLM                             |
 |   - Verbatim Source Citations (field_sources / field_locations)                       |
 +---------------------------------------------------------------------------------------+
@@ -201,29 +201,66 @@ told otherwise.
 
 ---
 
-## 3. Classification Tier
+## 3. Schema catalog
+
+`docket.catalog` holds every schema docket can extract, as `SchemaSpec`s
+keyed by `(schema_id, version)`:
+
+- **Spec**: model, version, display name, description (read by the LLM
+  classifier), status (`stable` / `experimental`), weighted keywords, TF-IDF
+  example sentences, cited field paths, validators `(document,
+  ValidationContext) -> issues`, and migrations.
+- **Shared blocks** (`catalog/common.py`): `Party`, `Address`,
+  `TaxIdentifier`, `Money`, `DocumentReference`, `BankAccount`, `LineItem`,
+  `Citation`, `CitedDocument`.
+- **Built-ins**: invoice 2.0 and purchase order 2.0 (parties as `Party`,
+  PO numbers as references), tax invoice and credit note (same billing
+  structure and rules as the invoice, plus their own), receipt / contract /
+  bank statement / acceptance act / waybill / boarding pass 1.1 (flat, as
+  before, minus `doc_type`), utility bill, delivery note, certificate of
+  origin and ID document 1.0. Fixtures and expected extractions for each are
+  in `tests/fixtures/catalog/`.
+- **Versions and migrations**: several versions of a schema can be
+  registered; the latest is the default and `--schema-version` /
+  `ProcessOptions.schema_version` pick another. A result keeps its
+  `schema_version`; reading `result.document` under a newer registration
+  runs the migration chain (all built-in 1.0 → current steps are automatic).
+- **Registration errors** are raised at registration: bad id or version,
+  duplicate, a model that can't be described as JSON Schema, a
+  `field_locations` that isn't `dict[str, Citation]`, cited paths the model
+  doesn't have, a model already registered under another id.
+- **Sources**: built-ins, `register_schema()`, the `docket.schemas` entry
+  point, and unregistered models passed as `schema_model` (id =
+  `module:Class`, no version).
+
+---
+
+## 4. Classification Tier
 
 Classification determines which Pydantic schema will govern extraction:
 
-1. **Keyword Rules**: Weighted patterns (English and Spanish cues, plus each document's own name in German, French, Italian, Dutch, Portuguese and Polish). If the top type leads the runner-up by a clear margin, it classifies immediately; confidence is the winner's share of all matched weight.
-2. **TF-IDF Classifier**: Word and character n-grams over a small embedded corpus of paraphrases in seven languages (EN, ES, DE, FR, IT, NL, PT) for every built-in type. If prediction confidence exceeds `DOCKET_TFIDF_CONFIDENCE_FLOOR`, it skips the LLM call entirely. Skipped when custom document types are registered, since it only knows the built-in ones.
+Every tier reads the schema catalog, so a registered schema takes part in all three.
+
+1. **Keyword Rules**: each schema's weighted `keywords` (English and Spanish cues, plus the document's own name in German, French, Italian, Dutch, Portuguese and Polish; the added schemas carry their names in the main EU languages). If the top schema leads the runner-up by 2 points, it classifies immediately; confidence is the winner's share of all matched weight. With 14 schemas more text matches several of them — a certificate of origin mentioning its invoice number scored 0.46 and went to review on classification confidence alone — so that share is lower than it was with 8.
+2. **TF-IDF Classifier**: word and character n-grams trained on each schema's `examples` (paraphrases in EN, ES, DE, FR, IT, NL, PT; 12–26 per built-in schema). Above `DOCKET_TFIDF_CONFIDENCE_FLOOR` it skips the LLM call. It is skipped when any registered schema brought no examples, because it would file that type under a neighbour. On the 34-sentence held-out set in `tests/test_classify_tfidf_multilingual.py` it is right 33 times, confident 19 times and never confidently wrong; on the clean bank-statement fixture it was confidently wrong (invoice, 0.71) — the rules tier answers first there.
 3. **LLM Fallback**: Invoked only when rule-based and TF-IDF classifiers cannot make a confident decision.
 
 ---
 
-## 4. Extraction & Verbatim Citations
+## 5. Extraction & Verbatim Citations
 
-- **JSON Schema Contracts**: The target schema is defined as a Pydantic model (`Invoice`, `Receipt`, `Contract`, `BoardingPass`, `PurchaseOrder`, `BankStatement`, `AcceptanceAct`, `Waybill`).
+- **JSON Schema Contracts**: The target schema is the Pydantic model of the selected catalog schema; its JSON Schema is the extraction contract.
+- **Nested citations**: `field_locations` keys are field paths (`seller.name`, `references[0].number`); validation and quote location follow them.
 - **Verbatim Evidence**: The model must provide verbatim quotes (`quote`, `page`) for extracted values.
 - **Multilingual Parsing**: Supports both European (`1.234,56 €`) and American (`$1,234.56`) numerical conventions.
 
 ---
 
-## 5. Deterministic Validation
+## 6. Deterministic Validation
 
 Validation never calls a model. It executes deterministic arithmetic and mathematical checksum algorithms:
 
-- **Totals & Line Items**: Verifies `subtotal + tax + shipping - discount == total_amount` within floating-point tolerance ($0.05$).
+- **Totals & Line Items**: Verifies `subtotal + tax + shipping - discount == total_amount` within 1 % of the stated amount (a relative tolerance, `validate._isclose`; at least 0.01). On a total of 1,100 a 10-unit discrepancy passes this check.
 - **IBAN**: ISO 7064 MOD 97-10 check digits for all European nations and Brazil. Identifies non-IBAN systems (US, Canada) and requests routing numbers instead.
 - **VAT / Sales Tax**: Algorithmic check-digit verification across all 27 EU member states, the UK, Switzerland, and Norway.
 - **Americas Tax IDs**: Modulo-11 CNPJ/CPF checks for Brazil, Luhn mod-10 checks for Canadian Business Numbers (BN), and prefix verification for US EINs.
@@ -237,7 +274,7 @@ Validation never calls a model. It executes deterministic arithmetic and mathema
 
 ---
 
-## 6. Human Review Queue
+## 7. Human Review Queue
 
 Documents that fail any error-level validation rule, fail extraction, or carry low classification confidence are routed to the Review Queue (`data/review_queue.jsonl`):
 
@@ -246,7 +283,7 @@ Documents that fail any error-level validation rule, fail extraction, or carry l
 
 ---
 
-## 7. Cross-Document Reconciliation & 3-Way Matching
+## 8. Cross-Document Reconciliation & 3-Way Matching
 
 Deterministic multi-document audits connect extracted records across the procurement and expense lifecycle:
 
@@ -269,7 +306,7 @@ Deterministic multi-document audits connect extracted records across the procure
 
 ---
 
-## 8. Accounting & e-Invoicing Export Tier
+## 9. Accounting & e-Invoicing Export Tier
 
 Extracted and validated records can be deterministically converted to corporate ERP and standard electronic invoicing formats without external cloud dependencies:
 
@@ -292,7 +329,7 @@ Extracted and validated records can be deterministically converted to corporate 
 
 ---
 
-## 9. Document Forensics (stamps, signatures, alterations)
+## 10. Document Forensics (stamps, signatures, alterations)
 
 `docket.forensics` is a pixel heuristic over Pillow and Tesseract, not a
 trained vision model. What it does, and deliberately does not do:

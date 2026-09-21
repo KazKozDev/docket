@@ -9,20 +9,9 @@ from __future__ import annotations
 
 from typing import Sequence
 
-from .schemas import (
-    BankTransaction,
-    Contract,
-    Discrepancy,
-    DiscrepancyType,
-    Invoice,
-    LineItem,
-    MatchingStatus,
-    MatchResult,
-    PurchaseOrder,
-    Receipt,
-    Waybill,
-    WaybillItem,
-)
+from .catalog.common import LineItem
+from .catalog.models import Contract, Invoice, PurchaseOrder, Receipt, Waybill, WaybillItem
+from .schemas import BankTransaction, Discrepancy, DiscrepancyType, MatchingStatus, MatchResult
 from .validate import _core_name, _isclose
 
 
@@ -87,32 +76,32 @@ def match_invoice_to_po(
         )
 
     # 3. Vendor and Customer Check
-    if _core_name(invoice.vendor_name) != _core_name(po.vendor_name):
+    if _core_name(invoice.seller.name) != _core_name(po.supplier.name):
         discrepancies.append(
             Discrepancy(
                 type=DiscrepancyType.PARTY_MISMATCH,
-                field="vendor_name",
-                expected=po.vendor_name,
-                actual=invoice.vendor_name,
+                field="seller.name",
+                expected=po.supplier.name,
+                actual=invoice.seller.name,
                 severity="error",
                 message=(
-                    f"Vendor mismatch: invoice vendor '{invoice.vendor_name}' "
-                    f"does not match PO vendor '{po.vendor_name}'"
+                    f"Vendor mismatch: invoice vendor '{invoice.seller.name}' "
+                    f"does not match PO vendor '{po.supplier.name}'"
                 ),
             )
         )
 
-    if _core_name(invoice.customer_name) != _core_name(po.customer_name):
+    if _core_name(invoice.buyer.name) != _core_name(po.buyer.name):
         discrepancies.append(
             Discrepancy(
                 type=DiscrepancyType.PARTY_MISMATCH,
-                field="customer_name",
-                expected=po.customer_name,
-                actual=invoice.customer_name,
+                field="buyer.name",
+                expected=po.buyer.name,
+                actual=invoice.buyer.name,
                 severity="error",
                 message=(
-                    f"Customer mismatch: invoice customer '{invoice.customer_name}' "
-                    f"does not match PO customer '{po.customer_name}'"
+                    f"Customer mismatch: invoice customer '{invoice.buyer.name}' "
+                    f"does not match PO customer '{po.buyer.name}'"
                 ),
             )
         )
@@ -258,18 +247,18 @@ def match_invoices_to_contract(
         total_billed += inv.total_amount
 
         # 1. Party Check
-        v_core = _core_name(inv.vendor_name)
-        c_core = _core_name(inv.customer_name)
+        v_core = _core_name(inv.seller.name)
+        c_core = _core_name(inv.buyer.name)
         if v_core not in contract_parties:
             discrepancies.append(
                 Discrepancy(
                     type=DiscrepancyType.PARTY_MISMATCH,
-                    field=f"invoices[{inv.invoice_number}].vendor_name",
+                    field=f"invoices[{inv.invoice_number}].seller.name",
                     expected=contract.parties_a,
-                    actual=inv.vendor_name,
+                    actual=inv.seller.name,
                     severity="error",
                     message=(
-                        f"Invoice {inv.invoice_number} vendor '{inv.vendor_name}' "
+                        f"Invoice {inv.invoice_number} vendor '{inv.seller.name}' "
                         f"is not a party to contract '{contract.contract_title}'"
                     ),
                 )
@@ -278,12 +267,12 @@ def match_invoices_to_contract(
             discrepancies.append(
                 Discrepancy(
                     type=DiscrepancyType.PARTY_MISMATCH,
-                    field=f"invoices[{inv.invoice_number}].customer_name",
+                    field=f"invoices[{inv.invoice_number}].buyer.name",
                     expected=contract.parties_b,
-                    actual=inv.customer_name,
+                    actual=inv.buyer.name,
                     severity="error",
                     message=(
-                        f"Invoice {inv.invoice_number} customer '{inv.customer_name}' "
+                        f"Invoice {inv.invoice_number} customer '{inv.buyer.name}' "
                         f"is not a party to contract '{contract.contract_title}'"
                     ),
                 )
@@ -525,40 +514,40 @@ def match_three_way(
     discrepancies: list[Discrepancy] = []
 
     # 1. Party Checks
-    po_vendor = _core_name(po.vendor_name)
+    po_vendor = _core_name(po.supplier.name)
     wb_shipper = _core_name(waybill.shipper_name)
-    inv_vendor = _core_name(invoice.vendor_name)
+    inv_vendor = _core_name(invoice.seller.name)
 
     if po_vendor != wb_shipper or po_vendor != inv_vendor:
         discrepancies.append(
             Discrepancy(
                 type=DiscrepancyType.PARTY_MISMATCH,
-                field="vendor_name",
-                expected=po.vendor_name,
-                actual=f"Waybill: '{waybill.shipper_name}', Invoice: '{invoice.vendor_name}'",
+                field="seller.name",
+                expected=po.supplier.name,
+                actual=f"Waybill: '{waybill.shipper_name}', Invoice: '{invoice.seller.name}'",
                 severity="error",
                 message=(
-                    f"Vendor mismatch across 3-way match: PO is '{po.vendor_name}', "
-                    f"Waybill shipper is '{waybill.shipper_name}', Invoice vendor is '{invoice.vendor_name}'"
+                    f"Vendor mismatch across 3-way match: PO is '{po.supplier.name}', "
+                    f"Waybill shipper is '{waybill.shipper_name}', Invoice vendor is '{invoice.seller.name}'"
                 ),
             )
         )
 
-    po_customer = _core_name(po.customer_name)
+    po_customer = _core_name(po.buyer.name)
     wb_consignee = _core_name(waybill.consignee_name)
-    inv_customer = _core_name(invoice.customer_name)
+    inv_customer = _core_name(invoice.buyer.name)
 
     if po_customer != wb_consignee or po_customer != inv_customer:
         discrepancies.append(
             Discrepancy(
                 type=DiscrepancyType.PARTY_MISMATCH,
-                field="customer_name",
-                expected=po.customer_name,
-                actual=f"Waybill: '{waybill.consignee_name}', Invoice: '{invoice.customer_name}'",
+                field="buyer.name",
+                expected=po.buyer.name,
+                actual=f"Waybill: '{waybill.consignee_name}', Invoice: '{invoice.buyer.name}'",
                 severity="error",
                 message=(
-                    f"Customer mismatch across 3-way match: PO is '{po.customer_name}', "
-                    f"Waybill consignee is '{waybill.consignee_name}', Invoice customer is '{invoice.customer_name}'"
+                    f"Customer mismatch across 3-way match: PO is '{po.buyer.name}', "
+                    f"Waybill consignee is '{waybill.consignee_name}', Invoice customer is '{invoice.buyer.name}'"
                 ),
             )
         )

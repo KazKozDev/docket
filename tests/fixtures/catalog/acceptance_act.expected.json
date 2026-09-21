@@ -1,0 +1,38 @@
+{
+  "act_number": "AA-2026-05",
+  "act_date": "2026-05-30",
+  "contract_reference": "SA-2026-01",
+  "customer_name": "Harbor Logistics Inc",
+  "contractor_name": "Brightline Analytics Ltd",
+  "items": [
+    {
+      "description": "data pipeline setup",
+      "quantity": 1,
+      "unit_price": 12000.0,
+      "total": 12000.0
+    }
+  ],
+  "subtotal": 12000.0,
+  "tax_amount": 0.0,
+  "total_amount": 12000.0,
+  "currency": "USD",
+  "claims_waived": true,
+  "signatories": [
+    "Tom Reyes",
+    "Maria Keller"
+  ],
+  "field_locations": {
+    "customer_name": {
+      "page": 1,
+      "quote": "Customer: Harbor Logistics Inc"
+    },
+    "contractor_name": {
+      "page": 1,
+      "quote": "Contractor: Brightline Analytics Ltd"
+    },
+    "total_amount": {
+      "page": 1,
+      "quote": "Total: 12000.00 USD"
+    }
+  }
+}

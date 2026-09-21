@@ -1,0 +1,58 @@
+{
+  "delivery_note_number": "LS-2026-0117",
+  "delivery_date": "2026-09-14",
+  "supplier": {
+    "name": "Holzwerk Bayern GmbH"
+  },
+  "recipient": {
+    "name": "Schreinerei Maier KG",
+    "address": {
+      "street": "Werkstraße 3",
+      "postal_code": "83022",
+      "city": "Rosenheim",
+      "country_code": "DE"
+    }
+  },
+  "references": [
+    {
+      "kind": "purchase_order",
+      "number": "PO-3390"
+    }
+  ],
+  "items": [
+    {
+      "description": "Eichenbretter 30 mm",
+      "sku": "EB-30",
+      "quantity_ordered": 40,
+      "quantity_delivered": 40,
+      "unit_of_measure": "Paletten"
+    },
+    {
+      "description": "Buchenleisten",
+      "sku": "BL-12",
+      "quantity_ordered": 100,
+      "quantity_delivered": 80,
+      "unit_of_measure": "Stück"
+    }
+  ],
+  "total_packages": 41,
+  "received_by": "J. Maier",
+  "field_locations": {
+    "delivery_note_number": {
+      "page": 1,
+      "quote": "Lieferschein-Nr.: LS-2026-0117"
+    },
+    "delivery_date": {
+      "page": 1,
+      "quote": "Lieferdatum: 2026-09-14"
+    },
+    "supplier.name": {
+      "page": 1,
+      "quote": "Lieferant: Holzwerk Bayern GmbH"
+    },
+    "recipient.name": {
+      "page": 1,
+      "quote": "Empfänger: Schreinerei Maier KG"
+    }
+  }
+}

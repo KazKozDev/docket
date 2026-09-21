@@ -21,10 +21,10 @@ from docket import (
     pipeline,
 )
 from docket import classify as classify_module, extract as extract_module
-from docket.doctypes import DocumentTypeError, load_schema
+from docket.catalog import SchemaError as DocumentTypeError, load_schema
 from docket.options import resolve
 from docket.result import DocumentStatus
-from docket.schemas import Invoice
+from docket.catalog import Invoice
 
 INVOICE_TEXT = (
     "INVOICE\nInvoice no: INV-7\nDate: 2026-03-02\nFrom: Acme GmbH\nTo: Beta SA\n"
@@ -36,8 +36,8 @@ def _invoice_payload(**overrides):
     payload = {
         "invoice_number": "INV-7",
         "issue_date": "2026-03-02",
-        "vendor_name": "Acme GmbH",
-        "customer_name": "Beta SA",
+        "seller": {"name": "Acme GmbH"},
+        "buyer": {"name": "Beta SA"},
         "currency": "EUR",
         "subtotal": 100.0,
         "tax_amount": 21.0,
@@ -45,8 +45,8 @@ def _invoice_payload(**overrides):
         "field_locations": {
             "invoice_number": {"page": 1, "quote": "Invoice no: INV-7"},
             "issue_date": {"page": 1, "quote": "Date: 2026-03-02"},
-            "vendor_name": {"page": 1, "quote": "From: Acme GmbH"},
-            "customer_name": {"page": 1, "quote": "To: Beta SA"},
+            "seller.name": {"page": 1, "quote": "From: Acme GmbH"},
+            "buyer.name": {"page": 1, "quote": "To: Beta SA"},
             "subtotal": {"page": 1, "quote": "Subtotal: 100.00"},
             "tax_amount": {"page": 1, "quote": "VAT: 21.00"},
             "total_amount": {"page": 1, "quote": "Total: 121.00"},
@@ -141,13 +141,13 @@ def test_schema_without_citations(txt, quiet, monkeypatch):
 
 def test_registered_type_and_matching_schema_agree(quiet):
     resolved = resolve(quiet(document_type="invoice", schema_model=Invoice))
-    assert resolved.document_type.name == "invoice"
+    assert resolved.document_type.schema_id == "invoice"
 
 
 @pytest.mark.parametrize(
     "kwargs, message",
     [
-        ({"document_type": "spaceship"}, "unknown document type 'spaceship'; known: invoice"),
+        ({"document_type": "spaceship"}, "unknown schema 'spaceship'; known: invoice"),
         ({"document_type": "invoice", "schema_model": Ticket}, "uses Invoice, not Ticket"),
         ({"classify": False}, "classify=False needs document_type or schema_model"),
     ],
@@ -163,16 +163,16 @@ def test_classification_runs_when_nothing_is_fixed(txt, quiet, monkeypatch):
     monkeypatch.setattr(pipeline, "classify", lambda text: calls.append(text) or real(text))
     monkeypatch.setattr(extract_module, "chat_json", lambda *a, **k: _invoice_payload())
     result = pipeline.process_document(txt(), quiet())
-    assert calls and result.classification.type_name == "invoice"
+    assert calls and result.classification.doc_type == "invoice"
 
 
 def test_load_schema_from_import_path():
-    assert load_schema("docket.schemas:Invoice") is Invoice
+    assert load_schema("docket.catalog:Invoice") is Invoice
     assert load_schema(f"{__name__}:Ticket") is Ticket
     for spec, message in [
-        ("docket.schemas.Invoice", "must look like"),
+        ("docket.catalog.Invoice", "must look like"),
         ("no_such_pkg_xyz:Model", "cannot import"),
-        ("docket.schemas:Nope", "has no attribute"),
+        ("docket.catalog:Nope", "has no attribute"),
         ("docket.config:MAX_PDF_PAGES", "not a Pydantic"),
     ]:
         with pytest.raises(DocumentTypeError, match=message):
@@ -180,12 +180,12 @@ def test_load_schema_from_import_path():
 
 
 def test_non_model_schema_is_rejected():
-    from docket.doctypes import resolve as resolve_type
+    from docket.catalog import resolve as resolve_type
 
     with pytest.raises(ValueError, match="subclass of BaseModel"):
         ProcessOptions(schema_model=dict)
     with pytest.raises(DocumentTypeError, match="Pydantic BaseModel subclass"):
-        resolve_type(schema=dict)
+        resolve_type(model=dict)
 
 
 # ---- precedence -----------------------------------------------------------------
@@ -239,11 +239,11 @@ def test_layout_can_be_left_out_but_locations_stay(tmp_path, quiet, monkeypatch)
 
 def test_review_threshold_and_queue_path_are_per_call(txt, tmp_path, monkeypatch):
     from docket import review_queue
-    from docket.schemas import ClassificationResult, DocType
+    from docket.schemas import ClassificationResult
 
     monkeypatch.setattr(
         pipeline, "classify",
-        lambda text: ClassificationResult(doc_type=DocType.INVOICE, confidence=0.5, method="tfidf"),
+        lambda text: ClassificationResult(doc_type="invoice", confidence=0.5, method="tfidf"),
     )
     monkeypatch.setattr(extract_module, "chat_json", lambda *a, **k: _invoice_payload())
     queue = tmp_path / "q" / "review.jsonl"
@@ -307,7 +307,7 @@ def test_export_refuses_an_invalid_result(txt, quiet, monkeypatch):
 
 def test_export_a_model_built_by_hand():
     invoice = Invoice(
-        invoice_number="X-1", issue_date=date(2026, 1, 1), vendor_name="A", customer_name="B",
+        invoice_number="X-1", issue_date=date(2026, 1, 1), seller={"name": "A"}, buyer={"name": "B"},
         subtotal=1, total_amount=1,
     )
     exported = export_document(invoice, "xero-json")
@@ -332,15 +332,15 @@ def test_cli_document_type_and_schema(txt, monkeypatch, capsys):
     _no_classifier(monkeypatch)
     monkeypatch.setattr(config, "REVIEW_QUEUE_ENABLED", False)
     monkeypatch.setattr(extract_module, "chat_json", lambda *a, **k: _invoice_payload())
-    cli.main([str(txt()), "--document-type", "invoice", "--no-ocr-fallback", "--no-layout"])
+    cli.main(["process", str(txt()), "--document-type", "invoice", "--no-ocr-fallback", "--no-layout"])
     out = json.loads(capsys.readouterr().out)
     assert out["schema_id"] == "invoice" and out["layout"] is None
 
-    cli.main([str(txt()), "--schema", "docket.schemas:Invoice", "--no-ocr-fallback"])
+    cli.main(["process", str(txt()), "--schema", "docket.catalog:Invoice", "--no-ocr-fallback"])
     assert json.loads(capsys.readouterr().out)["schema_id"] == "invoice"
 
     with pytest.raises(SystemExit) as exc:
-        cli.main([str(txt()), "--schema", "nowhere:Model"])
+        cli.main(["process", str(txt()), "--schema", "nowhere:Model"])
     assert exc.value.code == 3
 
 

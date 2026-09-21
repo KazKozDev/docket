@@ -1,5 +1,5 @@
 from docket.classify_tfidf import classify_tfidf
-from docket.schemas import DocType
+
 
 
 def test_returns_a_classification_result():
@@ -22,4 +22,4 @@ def test_doc_type_is_one_of_the_three_known_types():
         "The parties hereby agree to the obligations set out below."
     )
     assert result is not None
-    assert result.doc_type in {DocType.INVOICE, DocType.RECEIPT, DocType.CONTRACT}
+    assert result.doc_type in {"invoice", "receipt", "contract"}

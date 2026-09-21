@@ -11,7 +11,8 @@ from __future__ import annotations
 import xml.etree.ElementTree as ET
 from typing import Literal
 
-from ..schemas import Invoice
+from ..catalog.models import Invoice
+from ._parties import address_line, bic, iban, tax_number, vat_number
 
 # UBL 2.1 Namespaces
 UBL_NS_INVOICE = "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
@@ -75,49 +76,49 @@ def export_to_ubl_xml(invoice: Invoice) -> str:
     # AccountingSupplierParty
     supp_party = cac(root, "AccountingSupplierParty")
     supp_inner = cac(supp_party, "Party")
-    if invoice.vendor_vat_number:
-        ep_id = cbc(supp_inner, "EndpointID", invoice.vendor_vat_number, schemeID="EM")
+    if vat_number(invoice.seller):
+        ep_id = cbc(supp_inner, "EndpointID", vat_number(invoice.seller), schemeID="EM")
         _ = ep_id
     party_name = cac(supp_inner, "PartyName")
-    cbc(party_name, "Name", invoice.vendor_name)
-    if invoice.vendor_address:
+    cbc(party_name, "Name", invoice.seller.name)
+    if address_line(invoice.seller.address):
         postal = cac(supp_inner, "PostalAddress")
-        cbc(postal, "StreetName", invoice.vendor_address)
-    if invoice.vendor_vat_number:
+        cbc(postal, "StreetName", address_line(invoice.seller.address))
+    if vat_number(invoice.seller):
         tax_scheme = cac(supp_inner, "PartyTaxScheme")
-        cbc(tax_scheme, "CompanyID", invoice.vendor_vat_number)
+        cbc(tax_scheme, "CompanyID", vat_number(invoice.seller))
         tax_sub = cac(tax_scheme, "TaxScheme")
         cbc(tax_sub, "ID", "VAT")
     legal_entity = cac(supp_inner, "PartyLegalEntity")
-    cbc(legal_entity, "RegistrationName", invoice.vendor_name)
+    cbc(legal_entity, "RegistrationName", invoice.seller.name)
 
     # AccountingCustomerParty
     cust_party = cac(root, "AccountingCustomerParty")
     cust_inner = cac(cust_party, "Party")
     cust_name = cac(cust_inner, "PartyName")
-    cbc(cust_name, "Name", invoice.customer_name)
-    if invoice.customer_address:
+    cbc(cust_name, "Name", invoice.buyer.name)
+    if address_line(invoice.buyer.address):
         postal_c = cac(cust_inner, "PostalAddress")
-        cbc(postal_c, "StreetName", invoice.customer_address)
-    if invoice.customer_tax_id:
+        cbc(postal_c, "StreetName", address_line(invoice.buyer.address))
+    if tax_number(invoice.buyer):
         tax_scheme_c = cac(cust_inner, "PartyTaxScheme")
-        cbc(tax_scheme_c, "CompanyID", invoice.customer_tax_id)
+        cbc(tax_scheme_c, "CompanyID", tax_number(invoice.buyer))
         tax_sub_c = cac(tax_scheme_c, "TaxScheme")
         cbc(tax_sub_c, "ID", "VAT")
     legal_entity_c = cac(cust_inner, "PartyLegalEntity")
-    cbc(legal_entity_c, "RegistrationName", invoice.customer_name)
+    cbc(legal_entity_c, "RegistrationName", invoice.buyer.name)
 
     # PaymentMeans (Credit Transfer / SEPA if IBAN available)
     pay_means = cac(root, "PaymentMeans")
-    cbc(pay_means, "PaymentMeansCode", "58" if invoice.vendor_iban else "30")
+    cbc(pay_means, "PaymentMeansCode", "58" if iban(invoice) else "30")
     if invoice.payment_reference:
         cbc(pay_means, "PaymentID", invoice.payment_reference)
-    if invoice.vendor_iban:
+    if iban(invoice):
         financial_acc = cac(pay_means, "PayeeFinancialAccount")
-        cbc(financial_acc, "ID", invoice.vendor_iban)
-        if invoice.vendor_bic:
+        cbc(financial_acc, "ID", iban(invoice))
+        if bic(invoice):
             fin_inst = cac(financial_acc, "FinancialInstitutionBranch")
-            cbc(fin_inst, "ID", invoice.vendor_bic)
+            cbc(fin_inst, "ID", bic(invoice))
 
     # TaxTotal
     tax_total = cac(root, "TaxTotal")
@@ -291,11 +292,11 @@ def export_to_facturae_xml(invoice: Invoice) -> str:
     tax_id_s = fe(seller, "TaxIdentification")
     fe(tax_id_s, "PersonTypeCode", "J")  # Legal Entity
     fe(tax_id_s, "ResidenceTypeCode", "R")  # Resident
-    fe(tax_id_s, "TaxIdentificationNumber", invoice.vendor_vat_number or "ES000000000")
+    fe(tax_id_s, "TaxIdentificationNumber", vat_number(invoice.seller) or "ES000000000")
     legal_s = fe(seller, "LegalEntity")
-    fe(legal_s, "CorporateName", invoice.vendor_name)
+    fe(legal_s, "CorporateName", invoice.seller.name)
     addr_s = fe(legal_s, "AddressInSpain")
-    fe(addr_s, "Address", invoice.vendor_address or "Spain")
+    fe(addr_s, "Address", address_line(invoice.seller.address) or "Spain")
     fe(addr_s, "PostCode", "28001")
     fe(addr_s, "Town", "Madrid")
     fe(addr_s, "Province", "Madrid")
@@ -306,11 +307,11 @@ def export_to_facturae_xml(invoice: Invoice) -> str:
     tax_id_b = fe(buyer, "TaxIdentification")
     fe(tax_id_b, "PersonTypeCode", "J")
     fe(tax_id_b, "ResidenceTypeCode", "R")
-    fe(tax_id_b, "TaxIdentificationNumber", invoice.customer_tax_id or "ES000000000")
+    fe(tax_id_b, "TaxIdentificationNumber", tax_number(invoice.buyer) or "ES000000000")
     legal_b = fe(buyer, "LegalEntity")
-    fe(legal_b, "CorporateName", invoice.customer_name)
+    fe(legal_b, "CorporateName", invoice.buyer.name)
     addr_b = fe(legal_b, "AddressInSpain")
-    fe(addr_b, "Address", invoice.customer_address or "Spain")
+    fe(addr_b, "Address", address_line(invoice.buyer.address) or "Spain")
     fe(addr_b, "PostCode", "08001")
     fe(addr_b, "Town", "Barcelona")
     fe(addr_b, "Province", "Barcelona")
@@ -373,7 +374,7 @@ def export_to_facturae_xml(invoice: Invoice) -> str:
             fe(line, "GrossAmount", f"{itm.total:.2f}")
 
     # PaymentDetails
-    if invoice.vendor_iban:
+    if iban(invoice):
         payment_details = fe(inv, "PaymentDetails")
         installment = fe(payment_details, "Installment")
         fe(
@@ -383,7 +384,7 @@ def export_to_facturae_xml(invoice: Invoice) -> str:
         )
         fe(installment, "InstallmentAmount", f"{invoice.total_amount:.2f}")
         fe(installment, "PaymentMeans", "04")  # Transferencia
-        fe(installment, "AccountToBeCredited", invoice.vendor_iban)
+        fe(installment, "AccountToBeCredited", iban(invoice))
 
     ET.indent(root, space="  ")
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(
@@ -490,32 +491,32 @@ def export_to_zugferd_xml(
     # Agreement (Seller and Buyer)
     agr_header = ram(tx, "ApplicableHeaderTradeAgreement")
     seller = ram(agr_header, "SellerTradeParty")
-    ram(seller, "Name", invoice.vendor_name)
-    if invoice.vendor_address:
+    ram(seller, "Name", invoice.seller.name)
+    if address_line(invoice.seller.address):
         post = ram(seller, "PostalTradeAddress")
-        ram(post, "LineOne", invoice.vendor_address)
-    if invoice.vendor_vat_number:
+        ram(post, "LineOne", address_line(invoice.seller.address))
+    if vat_number(invoice.seller):
         tax_reg = ram(seller, "SpecifiedTaxRegistration")
-        ram(tax_reg, "ID", invoice.vendor_vat_number, schemeID="VA")
+        ram(tax_reg, "ID", vat_number(invoice.seller), schemeID="VA")
 
     buyer = ram(agr_header, "BuyerTradeParty")
-    ram(buyer, "Name", invoice.customer_name)
-    if invoice.customer_address:
+    ram(buyer, "Name", invoice.buyer.name)
+    if address_line(invoice.buyer.address):
         post_b = ram(buyer, "PostalTradeAddress")
-        ram(post_b, "LineOne", invoice.customer_address)
-    if invoice.customer_tax_id:
+        ram(post_b, "LineOne", address_line(invoice.buyer.address))
+    if tax_number(invoice.buyer):
         tax_reg_b = ram(buyer, "SpecifiedTaxRegistration")
-        ram(tax_reg_b, "ID", invoice.customer_tax_id, schemeID="VA")
+        ram(tax_reg_b, "ID", tax_number(invoice.buyer), schemeID="VA")
 
     # Settlement
     settle_header = ram(tx, "ApplicableHeaderTradeSettlement")
     ram(settle_header, "InvoiceCurrencyCode", invoice.currency)
 
-    if invoice.vendor_iban:
+    if iban(invoice):
         pm = ram(settle_header, "SpecifiedTradeSettlementPaymentMeans")
         ram(pm, "TypeCode", "58")
         creditor_acc = ram(pm, "PayeePartyCreditorFinancialAccount")
-        ram(creditor_acc, "IBANID", invoice.vendor_iban)
+        ram(creditor_acc, "IBANID", iban(invoice))
 
     # Taxes
     trade_tax = ram(settle_header, "ApplicableTradeTax")

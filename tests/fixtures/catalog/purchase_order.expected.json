@@ -1,0 +1,60 @@
+{
+  "po_number": "PO-7781",
+  "po_date": "2026-06-15",
+  "buyer": {
+    "name": "Harbor Logistics Inc",
+    "address": {
+      "street": "400 Pier Ave",
+      "city": "Seattle",
+      "region": "WA",
+      "country_code": "US"
+    }
+  },
+  "supplier": {
+    "name": "Pacific Pallet Co"
+  },
+  "delivery_address": {
+    "text": "Harbor Logistics Warehouse 3"
+  },
+  "currency": "USD",
+  "line_items": [
+    {
+      "description": "Standard pallet",
+      "quantity": 200,
+      "unit_price": 12.0,
+      "total": 2400.0
+    },
+    {
+      "description": "Pallet wrap roll",
+      "quantity": 50,
+      "unit_price": 8.0,
+      "total": 400.0
+    }
+  ],
+  "subtotal": 2800.0,
+  "tax_amount": 280.0,
+  "total_amount": 3080.0,
+  "payment_terms": "Net 30",
+  "field_locations": {
+    "po_number": {
+      "page": 1,
+      "quote": "PO number: PO-7781"
+    },
+    "po_date": {
+      "page": 1,
+      "quote": "Order date: 2026-06-15"
+    },
+    "buyer.name": {
+      "page": 1,
+      "quote": "Buyer: Harbor Logistics Inc"
+    },
+    "supplier.name": {
+      "page": 1,
+      "quote": "Vendor: Pacific Pallet Co"
+    },
+    "total_amount": {
+      "page": 1,
+      "quote": "Total: 3080.00 USD"
+    }
+  }
+}

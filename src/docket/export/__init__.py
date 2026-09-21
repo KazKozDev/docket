@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING, Any, Callable
 
 from pydantic import BaseModel, Field
 
-from ..schemas import AcceptanceAct, BankStatement, Invoice, Receipt
+from ..catalog.models import AcceptanceAct, BankStatement, CreditNote, Invoice, Receipt
 from .einvoice import (
     export_to_facturae_xml,
     export_to_ubl_xml,

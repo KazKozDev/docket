@@ -1,7 +1,7 @@
 # A separate package that adds an export format to docket.
 # `pip install ./examples/exporter_plugin` and then:
-#   docket --list-formats          # shows "myerp-json"
-#   docket invoice.pdf --export myerp-json
+#   docket formats                 # shows "myerp-json"
+#   docket process invoice.pdf --export myerp-json
 [build-system]
 requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"

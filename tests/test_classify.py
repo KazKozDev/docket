@@ -2,7 +2,7 @@ import pytest
 
 from docket import classify as classify_module
 from docket.classify import classify, classify_rules
-from docket.schemas import DocType
+
 
 INVOICE_TEXT = """
 INVOICE
@@ -34,20 +34,20 @@ AMBIGUOUS_TEXT = "A short note with no distinguishing keywords at all."
 
 def test_classifies_invoice_by_rules():
     result = classify(INVOICE_TEXT)
-    assert result.doc_type == DocType.INVOICE
+    assert result.doc_type == "invoice"
     assert result.method == "rules"
     assert result.confidence > 0
 
 
 def test_classifies_receipt_by_rules():
     result = classify(RECEIPT_TEXT)
-    assert result.doc_type == DocType.RECEIPT
+    assert result.doc_type == "receipt"
     assert result.method == "rules"
 
 
 def test_classifies_contract_by_rules():
     result = classify(CONTRACT_TEXT)
-    assert result.doc_type == DocType.CONTRACT
+    assert result.doc_type == "contract"
     assert result.method == "rules"
 
 
@@ -59,7 +59,7 @@ def test_ambiguous_text_falls_back_to_llm(monkeypatch):
     )
     result = classify(AMBIGUOUS_TEXT)
     assert result.method == "llm"
-    assert result.doc_type == DocType.RECEIPT
+    assert result.doc_type == "receipt"
     assert result.confidence == 0.4
 
 
@@ -72,7 +72,7 @@ def test_llm_classifier_prompt_includes_boarding_pass(monkeypatch):
 
     monkeypatch.setattr(classify_module, "chat_json", fake_chat)
     result = classify_module.classify_llm("Passenger and itinerary")
-    assert result.doc_type == DocType.BOARDING_PASS
+    assert result.doc_type == "boarding_pass"
     assert '"boarding_pass"' in captured[0]
 
 
@@ -89,7 +89,7 @@ def test_llm_classifier_reads_all_long_document_chunks(monkeypatch):
     monkeypatch.setattr(classify_module.config, "EXTRACT_CHUNK_CHARS", 1000)
     result = classify_module.classify_llm("x" * 1100 + "TAIL_BOARDING_PASS")
     assert len(prompts) == 2
-    assert result.doc_type == DocType.BOARDING_PASS
+    assert result.doc_type == "boarding_pass"
 
 
 def test_llm_outage_falls_back_to_tfidf_answer(monkeypatch):
@@ -118,7 +118,7 @@ def test_total_outage_returns_unknown_not_an_exception(monkeypatch):
     monkeypatch.setattr(classify_module, "classify_tfidf", lambda _t: None)
 
     result = classify(AMBIGUOUS_TEXT)
-    assert result.doc_type == DocType.UNKNOWN
+    assert result.doc_type == "unknown"
     assert result.method == "unavailable"
     assert result.confidence == 0.0
 
@@ -157,19 +157,19 @@ def test_spanish_invoice_classified_by_rules():
     most expensive tier — the opposite of the point of having tiers.
     """
     result = classify(SPANISH_INVOICE)
-    assert result.doc_type == DocType.INVOICE
+    assert result.doc_type == "invoice"
     assert result.method == "rules"
 
 
 def test_spanish_receipt_classified_by_rules():
     result = classify(SPANISH_RECEIPT)
-    assert result.doc_type == DocType.RECEIPT
+    assert result.doc_type == "receipt"
     assert result.method == "rules"
 
 
 def test_spanish_contract_classified_by_rules():
     result = classify(SPANISH_CONTRACT)
-    assert result.doc_type == DocType.CONTRACT
+    assert result.doc_type == "contract"
     assert result.method == "rules"
 
 
@@ -183,7 +183,7 @@ def test_bank_statement_classified_by_rules():
     Withdrawals: 1,270.00 EUR
     """
     result = classify(text)
-    assert result.doc_type == DocType.BANK_STATEMENT
+    assert result.doc_type == "bank_statement"
     assert result.method == "rules"
 
 
@@ -195,7 +195,7 @@ def test_acceptance_act_classified_by_rules():
     Both parties confirm no mutual claims exist.
     """
     result = classify(text)
-    assert result.doc_type == DocType.ACCEPTANCE_ACT
+    assert result.doc_type == "acceptance_act"
     assert result.method == "rules"
 
 
@@ -208,7 +208,7 @@ def test_waybill_classified_by_rules():
     Total gross weight: 450.0 kg
     """
     result = classify(text)
-    assert result.doc_type == DocType.WAYBILL
+    assert result.doc_type == "waybill"
     assert result.method == "rules"
 
 
@@ -233,4 +233,4 @@ def test_waybill_classified_by_rules():
 )
 def test_eu_document_names(text, expected):
     result = classify_rules(text)
-    assert result is not None and result.type_name == expected
+    assert result is not None and result.doc_type == expected

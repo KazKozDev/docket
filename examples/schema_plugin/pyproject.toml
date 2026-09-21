@@ -1,0 +1,16 @@
+# A separate package that adds a document schema to docket.
+# `pip install ./examples/schema_plugin` and then:
+#   docket schemas list                            # shows "customs_declaration"
+#   docket schemas json-schema customs_declaration
+#   docket process declaration.pdf --document-type customs_declaration
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docket-customs"
+version = "0.1.0"
+dependencies = ["docket-idp"]
+
+[project.entry-points."docket.schemas"]
+customs = "docket_customs:schemas"

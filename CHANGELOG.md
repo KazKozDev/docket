@@ -43,6 +43,37 @@ each stage; see the Breaking changes list.
   schema instance) and returns an `ExportResult` (`format`, `media_type`,
   `content`) instead of a string. It refuses a result that failed, has
   validation errors or needs review unless `ExportOptions(require_valid=False)`.
+- Document types are schemas in a versioned catalog (`docket.catalog`).
+  `register_document_type`, `get_document_type`, `list_document_types`,
+  `unregister_document_type`, `DocumentType`, `DocumentTypeError` and the
+  `docket.doctypes` module are replaced by `register_schema(SchemaSpec(...))`,
+  `get_schema`, `list_schemas`, `unregister_schema`, `SchemaSpec` and
+  `SchemaError`; the `docket.document_types` entry point is now
+  `docket.schemas` (target: a SchemaSpec, a list, or a callable).
+- Validators take `(document, ValidationContext)` instead of
+  `(document, raw_text)`.
+- `DocType` is removed; `ClassificationResult.doc_type` is a plain schema id
+  string and `type_name` is gone.
+- Invoice 2.0 and PurchaseOrder 2.0: `vendor_*` / `customer_*` fields become
+  `seller` / `buyer` (`supplier` / `buyer` on POs) `Party` objects with
+  `address` and `tax_ids`; `vendor_iban` / `vendor_bic` become
+  `payment_account`; `purchase_order_number` becomes a `references` entry
+  (still readable as the `purchase_order_number` property). Citation keys
+  and validation issue fields use paths: `seller.name`,
+  `seller.tax_ids[0]`, `payment_account.iban`.
+- The other original schemas drop the `doc_type` field (version 1.1).
+  Document models moved from `docket.schemas` to `docket.catalog`;
+  `docket.schemas` keeps the non-document models.
+- Matching discrepancies name `seller.name` / `buyer.name` instead of
+  `vendor_name` / `customer_name`.
+- CLI is subcommand-based: `docket process FILE`, `docket schemas
+  list|show|json-schema`, `docket formats`, `docket ocr-backends`,
+  `docket forensics FILE`. `--list-formats`, `--list-types`,
+  `--list-ocr-backends` and `--forensics` are gone.
+- HTTP: `GET /document-types` is replaced by `GET /schemas`,
+  `GET /schemas/{id}` and `GET /schemas/{id}/json-schema`;
+  `/export-formats` entries gain `media_type` and `schemas`.
+- Eval golden files grade nested fields by path (`seller.name`).
 - Configuration errors share the base `docket.ConfigurationError`
   (`UnknownLanguage`, `OcrBackendError`, `BackendUnavailable`,
   `DocumentTypeError`).
@@ -89,8 +120,31 @@ each stage; see the Breaking changes list.
   field locations are kept.
 - Pipeline stages usable on their own: `select_schema`, `extract`,
   `validate_extraction`, `review`.
+- Versioned schema catalog with metadata (display name, description,
+  status, keywords, cited fields, validators, exporters, migrations),
+  automatic migration of stored results from older schema versions,
+  JSON Schema per schema, and `docket schemas` / `GET /schemas` to browse it.
+- Shared schema blocks: `Party`, `Address`, `TaxIdentifier`, `Money`,
+  `DocumentReference`, `BankAccount`.
+- New experimental schemas: credit note, tax invoice, utility bill, delivery
+  note, certificate of origin, ID document (printed text only; ICAO 9303 MRZ
+  check digits for TD1/TD3). Each has multilingual keywords, TF-IDF example
+  sentences, business rules, cited fields, and a fixture with expected
+  extraction in `tests/fixtures/catalog/`.
+- Classification is catalog-driven: keyword rules, TF-IDF training
+  sentences and LLM descriptions come from each schema, so a registered
+  schema with `examples` is learned by the TF-IDF tier too.
+- `--schema-version` / `ProcessOptions.schema_version`;
+  `DocumentResult.schema_version` is filled.
+- `examples/schema_plugin/`: a schema shipped as a pip package.
 - `docket --ocr-backend`, `--ocr-fallback`, `--no-ocr-fallback`,
   `--ocr-languages`, `--list-ocr-backends`; `GET /ocr-backends`.
+
+### Changed
+- With 14 built-in schemas instead of 8 the TF-IDF tier is confident less
+  often: 19 of 34 held-out sentences (none confidently wrong), and the rules
+  tier's confidence (a share of all matched weight) is lower when a text
+  matches several schemas. Not yet measured on the eval sets.
 
 ### Fixed
 - The HTTP `/process` and `/jobs` runner called the endpoint function instead

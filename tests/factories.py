@@ -13,7 +13,7 @@ from docket.ocr import (
     PageAcquisition,
 )
 from docket.result import DocumentResult, DocumentStatus
-from docket.schemas import ClassificationResult, DocType
+from docket.schemas import ClassificationResult
 
 
 def words_page(
@@ -92,8 +92,10 @@ def make_result(**overrides) -> DocumentResult:
         document_id="doc_test",
         status=DocumentStatus.SUCCEEDED,
         document_type="invoice",
+        schema_id="invoice",
+        schema_version="2.0",
         classification=ClassificationResult(
-            doc_type=DocType.INVOICE, confidence=0.9, method="rules"
+            doc_type="invoice", confidence=0.9, method="rules"
         ),
         layout=DocumentLayout(pages=[text_only_page(page_number=1, text="x", backend="pdf_text")]),
         extracted={"invoice_number": "INV-1"},
@@ -149,3 +151,20 @@ def write_png(path: Path, size=(200, 100)) -> Path:
 
     Image.new("RGB", size, "white").save(path)
     return path
+
+
+def flat_invoice(**fields):
+    """An Invoice 2.0 built from 1.0-style flat fields (vendor_name, vendor_vat_number, ...),
+    through the same migration that upgrades stored 1.0 results."""
+    from docket.catalog import Invoice
+    from docket.catalog.builtin import _upgrade_invoice
+
+    return Invoice.model_validate(_upgrade_invoice(fields))
+
+
+def flat_po(**fields):
+    """A PurchaseOrder 2.0 from 1.0-style vendor_name/customer_name fields."""
+    from docket.catalog import PurchaseOrder
+    from docket.catalog.builtin import _upgrade_purchase_order
+
+    return PurchaseOrder.model_validate(_upgrade_purchase_order(fields))

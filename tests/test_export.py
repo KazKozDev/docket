@@ -18,20 +18,12 @@ from docket.export import (
     export_to_xero_json,
     export_to_zugferd_xml,
 )
-from docket.schemas import (
-    AcceptanceAct,
-    AcceptanceActItem,
-    BankStatement,
-    BankStatementTransaction,
-    Invoice,
-    LineItem,
-    Receipt,
-    ReceiptItem,
-)
+from docket.catalog import AcceptanceAct, AcceptanceActItem, BankStatement, BankStatementTransaction, Invoice, LineItem, Receipt, ReceiptItem
+from tests.factories import flat_invoice, flat_po
 
 
 def sample_invoice() -> Invoice:
-    return Invoice(
+    return flat_invoice(
         invoice_number="INV-2026-001",
         issue_date=date(2026, 9, 15),
         due_date=date(2026, 10, 15),

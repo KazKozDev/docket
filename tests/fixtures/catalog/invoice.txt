@@ -1,0 +1,14 @@
+INVOICE
+Invoice no: INV-2026-0418
+Issue date: 2026-05-04
+Due date: 2026-06-03
+Seller: Northgate Supplies Ltd, 14 Harbour Road, Leeds LS1 4DY, GB
+VAT: GB 999 9999 73
+Bill to: Iberia Mantenimiento SA, Calle Mayor 5, 28013 Madrid, ES
+PO number: PO-5521
+Hydraulic seal kit | 12 | 45.00 | 540.00
+Brake pad set | 6 | 120.00 | 720.00
+Subtotal: 1260.00
+VAT 20%: 252.00
+Total due: 1512.00 GBP
+IBAN: GB82 WEST 1234 5698 7654 32

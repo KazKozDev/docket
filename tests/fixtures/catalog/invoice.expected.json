@@ -1,0 +1,88 @@
+{
+  "invoice_number": "INV-2026-0418",
+  "issue_date": "2026-05-04",
+  "due_date": "2026-06-03",
+  "seller": {
+    "name": "Northgate Supplies Ltd",
+    "address": {
+      "street": "14 Harbour Road",
+      "postal_code": "LS1 4DY",
+      "city": "Leeds",
+      "country_code": "GB"
+    },
+    "tax_ids": [
+      {
+        "value": "GB999999973",
+        "scheme": "vat",
+        "country_code": "GB"
+      }
+    ]
+  },
+  "buyer": {
+    "name": "Iberia Mantenimiento SA",
+    "address": {
+      "street": "Calle Mayor 5",
+      "postal_code": "28013",
+      "city": "Madrid",
+      "country_code": "ES"
+    }
+  },
+  "references": [
+    {
+      "kind": "purchase_order",
+      "number": "PO-5521"
+    }
+  ],
+  "payment_account": {
+    "iban": "GB82WEST12345698765432"
+  },
+  "currency": "GBP",
+  "line_items": [
+    {
+      "description": "Hydraulic seal kit",
+      "quantity": 12,
+      "unit_price": 45.0,
+      "total": 540.0
+    },
+    {
+      "description": "Brake pad set",
+      "quantity": 6,
+      "unit_price": 120.0,
+      "total": 720.0
+    }
+  ],
+  "subtotal": 1260.0,
+  "tax_rate_percent": 20.0,
+  "tax_amount": 252.0,
+  "total_amount": 1512.0,
+  "field_locations": {
+    "invoice_number": {
+      "page": 1,
+      "quote": "Invoice no: INV-2026-0418"
+    },
+    "issue_date": {
+      "page": 1,
+      "quote": "Issue date: 2026-05-04"
+    },
+    "seller.name": {
+      "page": 1,
+      "quote": "Seller: Northgate Supplies Ltd"
+    },
+    "buyer.name": {
+      "page": 1,
+      "quote": "Bill to: Iberia Mantenimiento SA"
+    },
+    "subtotal": {
+      "page": 1,
+      "quote": "Subtotal: 1260.00"
+    },
+    "tax_amount": {
+      "page": 1,
+      "quote": "VAT 20%: 252.00"
+    },
+    "total_amount": {
+      "page": 1,
+      "quote": "Total due: 1512.00 GBP"
+    }
+  }
+}

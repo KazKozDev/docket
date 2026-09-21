@@ -1,0 +1,36 @@
+{
+  "waybill_number": "CMR-448120",
+  "waybill_date": "2026-08-18",
+  "shipper_name": "Holzwerk Bayern GmbH",
+  "shipper_address": "Rosenheim DE",
+  "consignee_name": "Bois du Nord SARL",
+  "consignee_address": "Lille FR",
+  "carrier_name": "TransEuropa Spedition",
+  "vehicle_number": "RO-TE 4411",
+  "items": [
+    {
+      "item_name": "Oak planks",
+      "quantity": 40,
+      "unit_of_measure": "pallets",
+      "gross_weight_kg": 16000.0,
+      "package_count": 40
+    }
+  ],
+  "total_quantity": 40,
+  "total_gross_weight_kg": 16000.0,
+  "total_packages": 40,
+  "field_locations": {
+    "shipper_name": {
+      "page": 1,
+      "quote": "Shipper: Holzwerk Bayern GmbH"
+    },
+    "consignee_name": {
+      "page": 1,
+      "quote": "Consignee: Bois du Nord SARL"
+    },
+    "waybill_number": {
+      "page": 1,
+      "quote": "Waybill no: CMR-448120"
+    }
+  }
+}

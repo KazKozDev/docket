@@ -6,7 +6,7 @@ The primary engine reads every page; a page whose confidence is below
 DOCKET_OCR_MIN_CONFIDENCE goes to the next backend, and so on. Pages of a
 born-digital PDF skip OCR entirely. The same chain from the shell:
 
-    docket scan.pdf --ocr-backend paddle --ocr-fallback tesseract --ocr-fallback vlm
+    docket process scan.pdf --ocr-backend paddle --ocr-fallback tesseract --ocr-fallback vlm
 """
 import sys
 

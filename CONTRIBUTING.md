@@ -28,10 +28,15 @@ calls with `monkeypatch`, as the existing tests do.
 
 ## Adding a document type
 
-Built-in types live in `schemas.py` (schema), `classify.py` (keyword rules),
-`validate.py` (validator) and `doctypes.py` (LLM description). Types specific
-to one business should be a plugin registered through
-`register_document_type` instead; see `examples/custom_document_type.py`.
+Built-in schemas live in `src/docket/catalog/`: the Pydantic model in
+`models.py` (reuse the shared blocks in `common.py`), the registration —
+version, description, multilingual keywords, cited fields, validators,
+migrations — in `builtin.py`, business rules in `rules.py` (or `validate.py`
+for the original types), and TF-IDF example sentences in `corpus.py`. Add a
+fixture and expected extraction under `tests/fixtures/catalog/`; the catalog
+tests pick it up. Types specific to one business belong in a plugin
+(`register_schema` or the `docket.schemas` entry point); see
+`examples/custom_document_type.py` and `examples/schema_plugin/`.
 
 ## Adding an export format
 

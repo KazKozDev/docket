@@ -3,15 +3,15 @@ from datetime import date
 import pymupdf as fitz
 
 from docket import extract as extract_module
-from docket.schemas import Invoice
+from docket.catalog import Invoice
 
 
 def _invoice_payload() -> dict:
     return {
         "invoice_number": "INV-1",
         "issue_date": date(2026, 1, 1).isoformat(),
-        "vendor_name": "Acme",
-        "customer_name": "Bob",
+        "seller": {"name": "Acme"},
+        "buyer": {"name": "Bob"},
         "subtotal": 10.0,
         "total_amount": 10.0,
     }

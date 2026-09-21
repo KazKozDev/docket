@@ -6,18 +6,9 @@ from docket.matching import (
     match_receipt_to_transactions,
     match_three_way,
 )
-from docket.schemas import (
-    BankTransaction,
-    Contract,
-    DiscrepancyType,
-    Invoice,
-    LineItem,
-    MatchingStatus,
-    PurchaseOrder,
-    Receipt,
-    Waybill,
-    WaybillItem,
-)
+from docket.catalog import Contract, Invoice, LineItem, PurchaseOrder, Receipt, Waybill, WaybillItem
+from docket.schemas import BankTransaction, DiscrepancyType, MatchingStatus
+from tests.factories import flat_invoice, flat_po
 
 
 def _make_po(
@@ -45,7 +36,7 @@ def _make_po(
                 total=300.0,
             ),
         ]
-    return PurchaseOrder(
+    return flat_po(
         po_number=po_number,
         po_date=date(2026, 1, 10),
         vendor_name=vendor_name,
@@ -84,7 +75,7 @@ def _make_invoice(
                 total=300.0,
             ),
         ]
-    return Invoice(
+    return flat_invoice(
         invoice_number=invoice_number,
         purchase_order_number=purchase_order_number,
         issue_date=issue_date,
@@ -485,8 +476,8 @@ def test_match_three_way_unfulfilled_billing_flagged():
     waybill = Waybill(
         waybill_number="WB-777",
         waybill_date=date(2026, 2, 5),
-        shipper_name=po.vendor_name,
-        consignee_name=po.customer_name,
+        shipper_name=po.supplier.name,
+        consignee_name=po.buyer.name,
         items=[
             WaybillItem(sku="BOLT-01", item_name="Steel Bolts M8", quantity=60.0),
         ],
@@ -528,8 +519,8 @@ def test_match_three_way_price_variance_flagged():
     waybill = Waybill(
         waybill_number="WB-777",
         waybill_date=date(2026, 2, 5),
-        shipper_name=po.vendor_name,
-        consignee_name=po.customer_name,
+        shipper_name=po.supplier.name,
+        consignee_name=po.buyer.name,
         items=[
             WaybillItem(sku="BOLT-01", item_name="Steel Bolts M8", quantity=100.0),
         ],

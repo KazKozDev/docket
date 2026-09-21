@@ -6,14 +6,32 @@ the LLM — see tests/test_metrics.py.
 from __future__ import annotations
 
 
+def value_at(data: dict | None, path: str):
+    """Value at a dotted path with optional list indices; None if absent."""
+    current: object = data
+    for part in path.split("."):
+        name, _, index = part.partition("[")
+        if not isinstance(current, dict):
+            return None
+        current = current.get(name)
+        if index:
+            try:
+                current = current[int(index.rstrip("]"))]  # type: ignore[index]
+            except (IndexError, TypeError, ValueError):
+                return None
+    return current
+
+
 def field_accuracy(extracted: dict | None, expected: dict) -> tuple[int, int, list[str]]:
     """Returns (n_correct, n_total, mismatched_field_names).
 
     Only checks keys present in `expected` (minus metadata keys starting
-    with `_`) — golden files don't have to enumerate every schema field,
-    just the ones worth grading.
+    with `_`, and `doc_type`, which grades classification) — golden files
+    don't have to enumerate every schema field, just the ones worth grading.
+    Keys may be field paths into nested data: "seller.name",
+    "seller.tax_ids[0].value".
     """
-    graded_keys = [k for k in expected if not k.startswith("_")]
+    graded_keys = [k for k in expected if not k.startswith("_") and k != "doc_type"]
     if extracted is None:
         return 0, len(graded_keys), graded_keys
 
@@ -21,7 +39,7 @@ def field_accuracy(extracted: dict | None, expected: dict) -> tuple[int, int, li
     correct = 0
     for key in graded_keys:
         exp_val = expected[key]
-        got_val = extracted.get(key)
+        got_val = value_at(extracted, key)
         if _values_match(got_val, exp_val):
             correct += 1
         else:
@@ -59,10 +77,10 @@ def field_precision_recall_f1(rows: list[tuple[dict | None, dict]]) -> dict[str,
 
     for extracted, expected in rows:
         for key, exp_val in expected.items():
-            if key.startswith("_"):
+            if key.startswith("_") or key == "doc_type":
                 continue
             c = counts.setdefault(key, {"tp": 0, "fp": 0, "fn": 0})
-            got_val = extracted.get(key) if extracted is not None else None
+            got_val = value_at(extracted, key) if extracted is not None else None
             if got_val is None:
                 c["fn"] += 1
             elif _values_match(got_val, exp_val):

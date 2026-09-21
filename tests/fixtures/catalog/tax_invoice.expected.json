@@ -1,0 +1,60 @@
+{
+  "invoice_number": "TI-88213",
+  "issue_date": "2026-04-11",
+  "seller": {
+    "name": "Lion City Electronics Pte Ltd",
+    "tax_ids": [
+      {
+        "value": "200312345M",
+        "scheme": "gst",
+        "country_code": "SG"
+      }
+    ]
+  },
+  "buyer": {
+    "name": "Marina Bay Events Pte Ltd"
+  },
+  "currency": "SGD",
+  "line_items": [
+    {
+      "description": "LED panel",
+      "quantity": 4,
+      "unit_price": 250.0,
+      "total": 1000.0
+    }
+  ],
+  "subtotal": 1000.0,
+  "tax_rate_percent": 9.0,
+  "tax_amount": 90.0,
+  "total_amount": 1090.0,
+  "field_locations": {
+    "invoice_number": {
+      "page": 1,
+      "quote": "Invoice No: TI-88213"
+    },
+    "issue_date": {
+      "page": 1,
+      "quote": "Date: 2026-04-11"
+    },
+    "seller.name": {
+      "page": 1,
+      "quote": "Supplier: Lion City Electronics Pte Ltd"
+    },
+    "buyer.name": {
+      "page": 1,
+      "quote": "Customer: Marina Bay Events Pte Ltd"
+    },
+    "subtotal": {
+      "page": 1,
+      "quote": "Total excluding GST: 1000.00"
+    },
+    "tax_amount": {
+      "page": 1,
+      "quote": "GST @ 9%: 90.00"
+    },
+    "total_amount": {
+      "page": 1,
+      "quote": "Total including GST: 1090.00 SGD"
+    }
+  }
+}
