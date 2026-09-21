@@ -155,6 +155,16 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -304,6 +314,16 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -428,6 +448,16 @@
           },
           "422": {
             "description": "Invalid options",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
             "content": {
               "application/json": {
                 "schema": {
@@ -575,6 +605,16 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -698,6 +738,16 @@
           },
           "422": {
             "description": "Invalid options",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
             "content": {
               "application/json": {
                 "schema": {
@@ -834,6 +884,16 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -956,6 +1016,159 @@
           },
           "422": {
             "description": "Invalid options",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/validate/einvoice": {
+      "post": {
+        "summary": "Validate Einvoice Upload",
+        "description": "Validate an e-invoice with the official XSD and Schematron rules.",
+        "operationId": "validate_einvoice_upload_validate_einvoice_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_validate_einvoice_upload_validate_einvoice_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EInvoiceValidationResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Not ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported file type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid options",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
             "content": {
               "application/json": {
                 "schema": {
@@ -1187,6 +1400,16 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -1330,6 +1553,16 @@
           },
           "422": {
             "description": "Invalid options",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
             "content": {
               "application/json": {
                 "schema": {
@@ -1672,6 +1905,16 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       },
@@ -1813,6 +2056,16 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -1935,6 +2188,16 @@
           },
           "422": {
             "description": "Invalid options",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
             "content": {
               "application/json": {
                 "schema": {
@@ -2206,6 +2469,32 @@
           "file"
         ],
         "title": "Body_process_upload_process_post"
+      },
+      "Body_validate_einvoice_upload_validate_einvoice_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "description": "UBL or CII XML, or a Factur-X / ZUGFeRD PDF."
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Profile"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Validate as this profile; default: the declared one."
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_validate_einvoice_upload_validate_einvoice_post"
       },
       "BoundingBox": {
         "properties": {
@@ -2561,6 +2850,162 @@
         ],
         "title": "DocumentStatus"
       },
+      "EInvoiceIssue": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Rule id (BR-CO-15, PEPPOL-EN16931-R001, BR-DE-1) or DOCKET-/XSD- code."
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "fatal",
+              "error",
+              "warning",
+              "info"
+            ],
+            "title": "Severity"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location",
+            "description": "XPath (Schematron) or line and path (XSD)."
+          },
+          "rule_source": {
+            "type": "string",
+            "title": "Rule Source",
+            "description": "Artifact and version the rule comes from."
+          },
+          "layer": {
+            "type": "string",
+            "enum": [
+              "input",
+              "profile",
+              "xsd",
+              "schematron"
+            ],
+            "title": "Layer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "message",
+          "rule_source",
+          "layer"
+        ],
+        "title": "EInvoiceIssue"
+      },
+      "EInvoiceValidationResult": {
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "title": "Valid"
+          },
+          "detected_format": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detected Format",
+            "description": "ubl-invoice, ubl-credit-note, cii; prefixed factur-x-pdf/ when read from a PDF."
+          },
+          "syntax": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "ubl",
+                  "cii"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Syntax"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Profile"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Profile whose rules ran."
+          },
+          "declared_profile_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Declared Profile Id",
+            "description": "Specification identifier in the document."
+          },
+          "validator": {
+            "type": "string",
+            "title": "Validator",
+            "default": "docket e-invoice validator (lxml XSD + SaxonC-HE Schematron)"
+          },
+          "validator_version": {
+            "type": "string",
+            "title": "Validator Version",
+            "default": ""
+          },
+          "validation_resource_version": {
+            "type": "string",
+            "title": "Validation Resource Version",
+            "default": ""
+          },
+          "layers": {
+            "items": {
+              "$ref": "#/components/schemas/LayerReport"
+            },
+            "type": "array",
+            "title": "Layers"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/EInvoiceIssue"
+            },
+            "type": "array",
+            "title": "Issues"
+          },
+          "elapsed_seconds": {
+            "type": "number",
+            "title": "Elapsed Seconds",
+            "default": 0.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "valid"
+        ],
+        "title": "EInvoiceValidationResult"
+      },
       "ErrorBody": {
         "properties": {
           "code": {
@@ -2858,6 +3303,71 @@
         "title": "JobOptions",
         "description": "What an HTTP caller may choose. Only registered schemas can be named —\nthe API never imports or runs caller-supplied code."
       },
+      "LayerReport": {
+        "properties": {
+          "layer": {
+            "type": "string",
+            "enum": [
+              "xsd",
+              "schematron"
+            ],
+            "title": "Layer"
+          },
+          "artifact": {
+            "type": "string",
+            "title": "Artifact"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "ran": {
+            "type": "boolean",
+            "title": "Ran"
+          },
+          "passed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Passed"
+          },
+          "rules_fired": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rules Fired"
+          },
+          "skipped_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Skipped Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "layer",
+          "artifact",
+          "version",
+          "ran"
+        ],
+        "title": "LayerReport"
+      },
       "MigrationInfo": {
         "properties": {
           "from_version": {
@@ -3087,6 +3597,21 @@
         },
         "type": "object",
         "title": "ProcessingMetrics"
+      },
+      "Profile": {
+        "type": "string",
+        "enum": [
+          "en16931",
+          "peppol",
+          "xrechnung",
+          "factur-x-minimum",
+          "factur-x-basicwl",
+          "factur-x-basic",
+          "factur-x-en16931",
+          "factur-x-extended",
+          "factur-x-xrechnung"
+        ],
+        "title": "Profile"
       },
       "ReviewUpdate": {
         "properties": {

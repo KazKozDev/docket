@@ -291,8 +291,8 @@ def _processed(txt, quiet, monkeypatch, payload):
 
 def test_export_a_valid_result(txt, quiet, monkeypatch):
     result = _processed(txt, quiet, monkeypatch, _invoice_payload())
-    exported = export_document(result, "ubl")
-    assert exported.format == "ubl" and exported.media_type == "application/xml"
+    exported = export_document(result, "xero-json")
+    assert exported.format == "xero-json" and exported.media_type == "application/json"
     assert "INV-7" in exported.content
 
 
@@ -300,8 +300,8 @@ def test_export_refuses_an_invalid_result(txt, quiet, monkeypatch):
     result = _processed(txt, quiet, monkeypatch, _invoice_payload(total_amount=999.0))
     assert not result.is_valid
     with pytest.raises(ExportError, match="not exporting"):
-        export_document(result, "ubl")
-    forced = export_document(result, "ubl", ExportOptions(require_valid=False))
+        export_document(result, "xero-json")
+    forced = export_document(result, "xero-json", ExportOptions(require_valid=False))
     assert "999" in forced.content
 
 
@@ -320,7 +320,7 @@ def test_export_of_a_failed_result_explains_why(tmp_path, quiet):
     path.write_bytes(b"PK")
     failed = pipeline.process_document(path, quiet())
     with pytest.raises(ExportError, match="acquire failed"):
-        export_document(failed, "ubl")
+        export_document(failed, "xero-json")
 
 
 # ---- CLI and HTTP use the same contract -----------------------------------------------

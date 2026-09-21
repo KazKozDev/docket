@@ -114,6 +114,10 @@ REVIEW_QUEUE_PATH = Path(os.getenv("DOCKET_REVIEW_QUEUE", "data/review_queue.jso
 REVIEW_DOCUMENTS_DIR = Path(
     os.getenv("DOCKET_REVIEW_DOCUMENTS", "data/review_documents")
 )
+# Official e-invoice validation artifacts (XSD, Schematron). Default: the copy
+# shipped in the package (docket/einvoice/resources); set to use your own.
+EINVOICE_RESOURCES = os.getenv("DOCKET_EINVOICE_RESOURCES") or None
+
 # HTTP jobs: one directory per job (metadata, results, uploads until done).
 JOBS_DIR = Path(os.getenv("DOCKET_JOBS_DIR", "data/jobs"))
 

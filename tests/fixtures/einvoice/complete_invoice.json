@@ -1,0 +1,35 @@
+{
+  "invoice_number": "RE-2026-0418",
+  "issue_date": "2026-05-04",
+  "due_date": "2026-06-03",
+  "buyer_reference": "04011000-12345-34",
+  "seller": {
+    "name": "Northgate Supplies GmbH",
+    "address": {"street": "Hafenstraße 14", "postal_code": "20457", "city": "Hamburg", "country_code": "DE"},
+    "tax_ids": [{"value": "DE136695976", "scheme": "vat", "country_code": "DE"}, {"value": "HRB 12345", "scheme": "company_registration"}],
+    "contact_name": "Anna Keller",
+    "phone": "+49 40 123456",
+    "email": "billing@northgate.example",
+    "electronic_address": "billing@northgate.example",
+    "electronic_address_scheme": "EM"
+  },
+  "buyer": {
+    "name": "Stadtverwaltung Nordhafen",
+    "address": {"street": "Rathausplatz 1", "postal_code": "20095", "city": "Hamburg", "country_code": "DE"},
+    "electronic_address": "einkauf@nordhafen.example",
+    "electronic_address_scheme": "EM"
+  },
+  "references": [{"kind": "purchase_order", "number": "PO-5521"}],
+  "payment_account": {"iban": "DE89370400440532013000", "bic": "COBADEFFXXX"},
+  "payment_reference": "RE-2026-0418",
+  "payment_terms": "Zahlbar innerhalb von 30 Tagen netto",
+  "currency": "EUR",
+  "line_items": [
+    {"description": "Hydraulic seal kit", "quantity": 12, "unit_price": 45.0, "total": 540.0, "sku": "HSK-12", "unit_of_measure": "pcs"},
+    {"description": "Maintenance labour", "quantity": 6, "unit_price": 120.0, "total": 720.0, "unit_of_measure": "hrs"}
+  ],
+  "subtotal": 1260.0,
+  "tax_rate_percent": 19.0,
+  "tax_amount": 239.4,
+  "total_amount": 1499.4
+}
