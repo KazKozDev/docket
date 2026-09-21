@@ -3,7 +3,7 @@
   "info": {
     "title": "docket",
     "description": "Extract, classify, validate and export structured data from business documents.",
-    "version": "0.2.0"
+    "version": "0.3.0"
   },
   "paths": {
     "/health": {
