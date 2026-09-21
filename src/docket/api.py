@@ -16,7 +16,8 @@ from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
 from . import __version__, config, job_store, review_queue
-from .doctypes import list_document_types
+from . import catalog
+from .catalog import SchemaError, SchemaInfo
 from .export import list_exporters
 from .logging_setup import configure, get_logger
 from .pdf import page_count
@@ -131,18 +132,28 @@ def health() -> dict:
     return {"status": "ok"}
 
 
-@app.get("/document-types", dependencies=[Depends(require_api_key)])
-def document_types() -> list[dict]:
-    """Document types this deployment recognises, with the JSON Schema of each."""
-    return [
-        {
-            "name": t.name,
-            "description": t.description,
-            "builtin": t.builtin,
-            "schema": t.schema.model_json_schema(),
-        }
-        for t in list_document_types()
-    ]
+@app.get("/schemas", response_model=list[SchemaInfo], dependencies=[Depends(require_api_key)])
+def list_schemas(all_versions: bool = False) -> list[SchemaInfo]:
+    """Registered schemas (latest version of each unless all_versions)."""
+    return [s.info() for s in catalog.list_schemas(all_versions=all_versions)]
+
+
+def _schema(schema_id: str, version: str | None):
+    try:
+        return catalog.require_schema(schema_id, version)
+    except SchemaError as exc:
+        raise HTTPException(404, str(exc)) from exc
+
+
+@app.get("/schemas/{schema_id}", response_model=SchemaInfo, dependencies=[Depends(require_api_key)])
+def get_schema(schema_id: str, version: str | None = None) -> SchemaInfo:
+    return _schema(schema_id, version).info()
+
+
+@app.get("/schemas/{schema_id}/json-schema", dependencies=[Depends(require_api_key)])
+def get_json_schema(schema_id: str, version: str | None = None) -> dict:
+    """The JSON Schema extraction fills for this schema."""
+    return _schema(schema_id, version).json_schema()
 
 
 @app.get("/export-formats", dependencies=[Depends(require_api_key)])
@@ -151,7 +162,9 @@ def export_formats() -> list[dict]:
         {
             "name": e.name,
             "description": e.description,
+            "media_type": e.media_type,
             "accepts": [t.__name__ for t in e.accepts],
+            "schemas": [s.schema_id for s in catalog.list_schemas() if issubclass(s.model, e.accepts)],
         }
         for e in list_exporters()
     ]

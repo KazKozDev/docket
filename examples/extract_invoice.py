@@ -17,7 +17,7 @@ print("review:    ", result.needs_review, result.review_reasons)
 invoice = result.document
 if isinstance(invoice, Invoice):
     print("number:    ", invoice.invoice_number)
-    print("vendor:    ", invoice.vendor_name, invoice.vendor_vat_number)
+    print("seller:    ", invoice.seller.name, invoice.seller.tax_id("vat"))
     print("total:     ", invoice.total_amount, invoice.currency)
     # Where each value came from: the quote, and its box on the page (0..1,
     # top-left origin) — draw it over the page image next to the field in your UI.

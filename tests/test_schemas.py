@@ -3,24 +3,12 @@ from datetime import date
 import pytest
 from pydantic import ValidationError
 
-from docket.schemas import (
-    AcceptanceAct,
-    AcceptanceActItem,
-    BankStatement,
-    BankStatementTransaction,
-    Contract,
-    Invoice,
-    LineItem,
-    PurchaseOrder,
-    Receipt,
-    ReceiptItem,
-    Waybill,
-    WaybillItem,
-)
+from docket.catalog import AcceptanceAct, AcceptanceActItem, BankStatement, BankStatementTransaction, Contract, Invoice, LineItem, PurchaseOrder, Receipt, ReceiptItem, Waybill, WaybillItem
+from tests.factories import flat_invoice, flat_po
 
 
 def test_invoice_minimal_valid():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-001",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -29,13 +17,12 @@ def test_invoice_minimal_valid():
         tax_amount=10.0,
         total_amount=110.0,
     )
-    assert inv.doc_type.value == "invoice"
     assert inv.currency == "USD"
 
 
 def test_invoice_missing_required_field_raises():
     with pytest.raises(ValidationError):
-        Invoice(  # type: ignore[call-arg]
+        flat_invoice(  # type: ignore[call-arg]
             issue_date=date(2026, 1, 1),
             vendor_name="Acme Corp",
             customer_name="Wile E. Coyote",
@@ -46,7 +33,7 @@ def test_invoice_missing_required_field_raises():
 
 def test_invoice_bad_date_raises():
     with pytest.raises(ValidationError):
-        Invoice(
+        flat_invoice(
             invoice_number="INV-001",
             issue_date="not-a-date",  # type: ignore[arg-type]
             vendor_name="Acme Corp",
@@ -76,7 +63,7 @@ def test_line_item_with_b2b_fields():
 
 
 def test_invoice_with_b2b_fields():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-2026-99",
         issue_date=date(2026, 1, 15),
         vendor_name="Global Tech Ltd",
@@ -93,18 +80,19 @@ def test_invoice_with_b2b_fields():
         total_amount=1200.0,
     )
     dumped = inv.model_dump()
-    assert dumped["vendor_bic"] == "DEUTDEDDFXX"
-    assert dumped["customer_tax_id"] == "US-987654321"
-    assert dumped["purchase_order_number"] == "PO-778899"
+    assert dumped["payment_account"]["bic"] == "DEUTDEDDFXX"
+    assert dumped["buyer"]["tax_ids"] == [{"value": "US-987654321", "scheme": "tax_id", "country_code": None}]
+    assert dumped["references"] == [{"kind": "purchase_order", "number": "PO-778899", "issue_date": None}]
+    assert inv.purchase_order_number == "PO-778899"
     assert dumped["payment_reference"] == "RF18539007547034"
     assert dumped["tax_rate_percent"] == 20.0
-    assert "San Francisco" in dumped["vendor_address"]
-    assert "New York" in dumped["customer_address"]
+    assert "San Francisco" in dumped["seller"]["address"]["text"]
+    assert "New York" in dumped["buyer"]["address"]["text"]
 
 
 def test_invoice_invalid_tax_rate_raises():
     with pytest.raises(ValidationError):
-        Invoice(
+        flat_invoice(
             invoice_number="INV-001",
             issue_date=date(2026, 1, 1),
             vendor_name="Acme",
@@ -115,7 +103,7 @@ def test_invoice_invalid_tax_rate_raises():
         )
 
     with pytest.raises(ValidationError):
-        Invoice(
+        flat_invoice(
             invoice_number="INV-001",
             issue_date=date(2026, 1, 1),
             vendor_name="Acme",
@@ -133,7 +121,6 @@ def test_contract_minimal_defaults():
         parties_b=["Company B"],
         effective_date=date(2026, 1, 1),
     )
-    assert c.doc_type.value == "contract"
     assert c.auto_renewal is False
     assert c.contract_value is None
     assert c.currency is None
@@ -296,7 +283,7 @@ def test_receipt_invalid_card_last_four_raises():
 
 
 def test_purchase_order_schema():
-    po = PurchaseOrder(
+    po = flat_po(
         po_number="PO-7788",
         po_date=date(2026, 3, 1),
         vendor_name="Acme Industrial",
@@ -314,7 +301,6 @@ def test_purchase_order_schema():
             )
         ],
     )
-    assert po.doc_type.value == "purchase_order"
     assert len(po.line_items) == 1
     assert po.total_amount == 1200.0
 
@@ -346,7 +332,6 @@ def test_bank_statement_schema():
             ),
         ],
     )
-    assert stmt.doc_type.value == "bank_statement"
     assert len(stmt.transactions) == 2
     assert stmt.closing_balance == 15000.0
 
@@ -373,7 +358,6 @@ def test_acceptance_act_schema():
         claims_waived=True,
         signatories=["Alice Smith (Client)", "Bob Jones (Provider)"],
     )
-    assert act.doc_type.value == "acceptance_act"
     assert act.claims_waived is True
     assert len(act.signatories) == 2
 
@@ -400,6 +384,5 @@ def test_waybill_schema():
         total_gross_weight_kg=1250.0,
         total_packages=5,
     )
-    assert wb.doc_type.value == "waybill"
     assert wb.carrier_name == "DHL Freight"
     assert wb.total_gross_weight_kg == 1250.0

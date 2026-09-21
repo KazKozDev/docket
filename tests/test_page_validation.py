@@ -1,7 +1,8 @@
 import pytest
 
 from docket import pipeline
-from docket.schemas import ClassificationResult, Receipt
+from docket.catalog import Receipt
+from docket.schemas import ClassificationResult
 from docket.validate import validate
 from tests.factories import acquisition, words_page
 from docket.layout import text_only_page

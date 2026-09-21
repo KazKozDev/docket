@@ -1,0 +1,10 @@
+CMR CONSIGNMENT NOTE / WAYBILL
+Waybill no: CMR-448120
+Date: 2026-08-18
+Shipper: Holzwerk Bayern GmbH, Rosenheim DE
+Consignee: Bois du Nord SARL, Lille FR
+Carrier: TransEuropa Spedition
+Vehicle: RO-TE 4411
+Oak planks | 40 pallets | gross weight 16000 kg
+Total packages: 40
+Total gross weight: 16000 kg

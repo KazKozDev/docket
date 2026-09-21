@@ -1,0 +1,11 @@
+RECEIPT
+Corner Bean Coffee
+12 Market St, Portland OR
+2026-09-10 08:42
+Cashier: Dana
+Latte  4.50
+Croissant  3.25
+Subtotal 7.75
+Total 7.75
+Cash 10.00
+Change due 2.25

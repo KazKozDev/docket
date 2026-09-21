@@ -1,7 +1,7 @@
 # A separate package that adds an OCR backend to docket.
 # `pip install ./examples/ocr_plugin` and then:
-#   docket --list-ocr-backends                     # shows "sidecar"
-#   docket scan.png --ocr-backend sidecar
+#   docket ocr-backends                            # shows "sidecar"
+#   docket process scan.png --ocr-backend sidecar
 [build-system]
 requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"

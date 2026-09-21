@@ -37,7 +37,7 @@ def reasons_for(
             reasons.append(
                 f"low classification confidence ({classification.confidence:.2f} < {floor:.2f})"
             )
-        if classification.type_name == "unknown":
+        if classification.doc_type == "unknown":
             reasons.append("unrecognized document type")
     degraded = result.ocr.degraded_pages if result.ocr else []
     if degraded:

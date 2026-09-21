@@ -1,0 +1,61 @@
+{
+  "credit_note_number": "GS-2026-017",
+  "issue_date": "2026-03-20",
+  "reason": "2 beschädigte Paletten zurückgenommen",
+  "references": [
+    {
+      "kind": "invoice",
+      "number": "RE-2026-0311",
+      "issue_date": "2026-03-02"
+    }
+  ],
+  "seller": {
+    "name": "Holzwerk Bayern GmbH"
+  },
+  "buyer": {
+    "name": "Schreinerei Maier KG"
+  },
+  "currency": "EUR",
+  "line_items": [
+    {
+      "description": "Eichenbretter",
+      "quantity": 2,
+      "unit_price": 150.0,
+      "total": 300.0
+    }
+  ],
+  "subtotal": 300.0,
+  "tax_rate_percent": 19.0,
+  "tax_amount": 57.0,
+  "total_amount": 357.0,
+  "field_locations": {
+    "credit_note_number": {
+      "page": 1,
+      "quote": "Gutschrift Nr.: GS-2026-017"
+    },
+    "issue_date": {
+      "page": 1,
+      "quote": "Datum: 2026-03-20"
+    },
+    "seller.name": {
+      "page": 1,
+      "quote": "Lieferant: Holzwerk Bayern GmbH"
+    },
+    "buyer.name": {
+      "page": 1,
+      "quote": "Kunde: Schreinerei Maier KG"
+    },
+    "subtotal": {
+      "page": 1,
+      "quote": "Netto: 300.00"
+    },
+    "tax_amount": {
+      "page": 1,
+      "quote": "USt 19%: 57.00"
+    },
+    "total_amount": {
+      "page": 1,
+      "quote": "Gutschriftsbetrag: 357.00 EUR"
+    }
+  }
+}

@@ -15,8 +15,9 @@ import pytest
 from docket import pipeline, review_queue
 from docket.ocr import AcquisitionError
 from docket.result import DocumentResult
-from docket.schemas import Invoice, ValidationIssue
-from tests.factories import acquisition, make_result, text_acquisition, words_page
+from docket.catalog import Invoice
+from docket.schemas import ValidationIssue
+from tests.factories import acquisition, flat_invoice, flat_po, make_result, text_acquisition, words_page
 
 _ERROR = [ValidationIssue(field="total_amount", message="does not add up")]
 
@@ -140,7 +141,7 @@ def test_discount_in_accounting_parentheses_is_normalized():
     """($371.00) transcribes as -371.0; the schema's contract is a positive
     magnitude, so the sign is normalized rather than trusted.
     """
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-1",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme",

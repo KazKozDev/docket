@@ -26,12 +26,22 @@
         }
       }
     },
-    "/document-types": {
+    "/schemas": {
       "get": {
-        "summary": "Document Types",
-        "description": "Document types this deployment recognises, with the JSON Schema of each.",
-        "operationId": "document_types_document_types_get",
+        "summary": "List Schemas",
+        "description": "Registered schemas (latest version of each unless all_versions).",
+        "operationId": "list_schemas_schemas_get",
         "parameters": [
+          {
+            "name": "all_versions",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "All Versions"
+            }
+          },
           {
             "name": "authorization",
             "in": "header",
@@ -73,10 +83,186 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "additionalProperties": true
+                    "$ref": "#/components/schemas/SchemaInfo"
                   },
-                  "title": "Response Document Types Document Types Get"
+                  "title": "Response List Schemas Schemas Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schemas/{schema_id}": {
+      "get": {
+        "summary": "Get Schema",
+        "operationId": "get_schema_schemas__schema_id__get",
+        "parameters": [
+          {
+            "name": "schema_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Schema Id"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Version"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchemaInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schemas/{schema_id}/json-schema": {
+      "get": {
+        "summary": "Get Json Schema",
+        "description": "The JSON Schema extraction fills for this schema.",
+        "operationId": "get_json_schema_schemas__schema_id__json_schema_get",
+        "parameters": [
+          {
+            "name": "schema_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Schema Id"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Version"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Json Schema Schemas  Schema Id  Json Schema Get"
                 }
               }
             }
@@ -935,15 +1121,9 @@
       "ClassificationResult": {
         "properties": {
           "doc_type": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/DocType"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "title": "Doc Type"
+            "type": "string",
+            "title": "Doc Type",
+            "description": "A registered schema id, or 'unknown'."
           },
           "confidence": {
             "type": "number",
@@ -986,21 +1166,6 @@
         ],
         "title": "Column",
         "description": "A vertical run of text separated from its neighbours by a gutter."
-      },
-      "DocType": {
-        "type": "string",
-        "enum": [
-          "invoice",
-          "receipt",
-          "contract",
-          "purchase_order",
-          "bank_statement",
-          "acceptance_act",
-          "waybill",
-          "boarding_pass",
-          "unknown"
-        ],
-        "title": "DocType"
       },
       "DocumentError": {
         "properties": {
@@ -1339,6 +1504,34 @@
         "title": "HandwrittenAnnotation",
         "description": "Detection of handwritten marginalia, numeric corrections, or status stamps."
       },
+      "MigrationInfo": {
+        "properties": {
+          "from_version": {
+            "type": "string",
+            "title": "From Version"
+          },
+          "to_version": {
+            "type": "string",
+            "title": "To Version"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "automatic": {
+            "type": "boolean",
+            "title": "Automatic"
+          }
+        },
+        "type": "object",
+        "required": [
+          "from_version",
+          "to_version",
+          "description",
+          "automatic"
+        ],
+        "title": "MigrationInfo"
+      },
       "PageAcquisition": {
         "properties": {
           "page": {
@@ -1581,6 +1774,102 @@
           "status"
         ],
         "title": "ReviewUpdate"
+      },
+      "SchemaInfo": {
+        "properties": {
+          "schema_id": {
+            "type": "string",
+            "title": "Schema Id"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "builtin": {
+            "type": "boolean",
+            "title": "Builtin"
+          },
+          "has_citations": {
+            "type": "boolean",
+            "title": "Has Citations"
+          },
+          "cited_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Cited Fields"
+          },
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Keywords"
+          },
+          "validators": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Validators"
+          },
+          "exporters": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Exporters"
+          },
+          "migrations": {
+            "items": {
+              "$ref": "#/components/schemas/MigrationInfo"
+            },
+            "type": "array",
+            "title": "Migrations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "schema_id",
+          "version",
+          "display_name",
+          "description",
+          "status",
+          "model",
+          "builtin",
+          "has_citations",
+          "cited_fields",
+          "keywords",
+          "validators",
+          "exporters",
+          "migrations"
+        ],
+        "title": "SchemaInfo",
+        "description": "Serializable metadata of a registered schema (what the CLI and HTTP API list)."
       },
       "SignatureDetection": {
         "properties": {

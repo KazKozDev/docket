@@ -1,24 +1,12 @@
 from datetime import date
 
-from docket.schemas import (
-    AcceptanceAct,
-    AcceptanceActItem,
-    BankStatement,
-    BankStatementTransaction,
-    Contract,
-    Invoice,
-    LineItem,
-    PurchaseOrder,
-    Receipt,
-    ReceiptItem,
-    Waybill,
-    WaybillItem,
-)
+from docket.catalog import AcceptanceAct, AcceptanceActItem, BankStatement, BankStatementTransaction, Contract, Invoice, LineItem, PurchaseOrder, Receipt, ReceiptItem, Waybill, WaybillItem
 from docket.validate import assess_contract_risks, validate
+from tests.factories import flat_invoice, flat_po
 
 
 def test_invoice_totals_match_no_issues():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-001",
         issue_date=date(2026, 1, 1),
         due_date=date(2026, 1, 31),
@@ -36,7 +24,7 @@ def test_invoice_totals_match_no_issues():
 
 
 def test_invoice_total_mismatch_is_flagged():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-002",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -50,7 +38,7 @@ def test_invoice_total_mismatch_is_flagged():
 
 
 def test_invoice_due_before_issue_is_flagged():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-003",
         issue_date=date(2026, 2, 1),
         due_date=date(2026, 1, 1),  # before issue_date
@@ -205,7 +193,7 @@ def test_receipt_merchant_tax_id_validation():
 
 
 def test_invoice_valid_iban_has_no_issue():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-004",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -215,11 +203,11 @@ def test_invoice_valid_iban_has_no_issue():
         total_amount=100.0,
     )
     issues = validate(inv)
-    assert not any(i.field == "vendor_iban" for i in issues)
+    assert not any(i.field == "payment_account.iban" for i in issues)
 
 
 def test_invoice_bad_iban_checksum_is_flagged():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-005",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -229,11 +217,11 @@ def test_invoice_bad_iban_checksum_is_flagged():
         total_amount=100.0,
     )
     issues = validate(inv)
-    assert any(i.field == "vendor_iban" and i.severity == "error" for i in issues)
+    assert any(i.field == "payment_account.iban" and i.severity == "error" for i in issues)
 
 
 def test_invoice_bad_vat_checksum_is_flagged():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-006",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -243,11 +231,11 @@ def test_invoice_bad_vat_checksum_is_flagged():
         total_amount=100.0,
     )
     issues = validate(inv)
-    assert any(i.field == "vendor_vat_number" and i.severity == "error" for i in issues)
+    assert any(i.field.startswith("seller.tax_ids") and i.severity == "error" for i in issues)
 
 
 def test_invoice_unverifiable_vat_country_is_a_warning():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-007",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -258,12 +246,12 @@ def test_invoice_unverifiable_vat_country_is_a_warning():
     )
     issues = validate(inv)
     assert any(
-        i.field == "vendor_vat_number" and i.severity == "warning" for i in issues
+        i.field.startswith("seller.tax_ids") and i.severity == "warning" for i in issues
     )
 
 
 def test_invoice_valid_french_vat_has_no_issue():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-008",
         issue_date=date(2026, 1, 1),
         vendor_name="Michelin",
@@ -273,11 +261,11 @@ def test_invoice_valid_french_vat_has_no_issue():
         total_amount=100.0,
     )
     issues = validate(inv)
-    assert not any(i.field == "vendor_vat_number" for i in issues)
+    assert not any(i.field.startswith("seller.tax_ids") for i in issues)
 
 
 def test_invoice_bad_french_vat_checksum_is_error():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-009",
         issue_date=date(2026, 1, 1),
         vendor_name="Michelin",
@@ -287,11 +275,11 @@ def test_invoice_bad_french_vat_checksum_is_error():
         total_amount=100.0,
     )
     issues = validate(inv)
-    assert any(i.field == "vendor_vat_number" and i.severity == "error" for i in issues)
+    assert any(i.field.startswith("seller.tax_ids") and i.severity == "error" for i in issues)
 
 
 def test_invoice_us_iban_informs_about_non_iban_system():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-US-01",
         issue_date=date(2026, 1, 1),
         vendor_name="US Vendor",
@@ -301,13 +289,13 @@ def test_invoice_us_iban_informs_about_non_iban_system():
         total_amount=100.0,
     )
     issues = validate(inv)
-    iban_issue = next(i for i in issues if i.field == "vendor_iban")
+    iban_issue = next(i for i in issues if i.field == "payment_account.iban")
     assert "does not use IBAN" in iban_issue.message
     assert iban_issue.severity == "error"
 
 
 def test_invoice_valid_us_ein_has_no_issue():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-US-02",
         issue_date=date(2026, 1, 1),
         vendor_name="US Corp",
@@ -317,11 +305,11 @@ def test_invoice_valid_us_ein_has_no_issue():
         total_amount=100.0,
     )
     issues = validate(inv)
-    assert not any(i.field == "vendor_tax_id" for i in issues)
+    assert not any(i.field.startswith("seller.tax_ids") for i in issues)
 
 
 def test_invoice_invalid_us_ein_is_flagged():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-US-03",
         issue_date=date(2026, 1, 1),
         vendor_name="US Corp",
@@ -332,13 +320,13 @@ def test_invoice_invalid_us_ein_is_flagged():
     )
     issues = validate(inv)
     assert any(
-        i.field == "vendor_tax_id" and "US EIN" in i.message and i.severity == "error"
+        i.field.startswith("seller.tax_ids") and "US EIN" in i.message and i.severity == "error"
         for i in issues
     )
 
 
 def test_invoice_valid_ca_bn_has_no_issue():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-CA-01",
         issue_date=date(2026, 1, 1),
         vendor_name="Canadian Corp",
@@ -348,11 +336,11 @@ def test_invoice_valid_ca_bn_has_no_issue():
         total_amount=100.0,
     )
     issues = validate(inv)
-    assert not any(i.field == "vendor_tax_id" for i in issues)
+    assert not any(i.field.startswith("seller.tax_ids") for i in issues)
 
 
 def test_invoice_invalid_ca_bn_is_flagged():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-CA-02",
         issue_date=date(2026, 1, 1),
         vendor_name="Canadian Corp",
@@ -363,7 +351,7 @@ def test_invoice_invalid_ca_bn_is_flagged():
     )
     issues = validate(inv)
     assert any(
-        i.field == "vendor_tax_id"
+        i.field.startswith("seller.tax_ids")
         and "Canadian BN" in i.message
         and i.severity == "error"
         for i in issues
@@ -371,7 +359,7 @@ def test_invoice_invalid_ca_bn_is_flagged():
 
 
 def test_invoice_valid_brazil_cnpj_has_no_issue():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-BR-01",
         issue_date=date(2026, 1, 1),
         vendor_name="Brazil Corp",
@@ -381,11 +369,11 @@ def test_invoice_valid_brazil_cnpj_has_no_issue():
         total_amount=100.0,
     )
     issues = validate(inv)
-    assert not any(i.field == "vendor_tax_id" for i in issues)
+    assert not any(i.field.startswith("seller.tax_ids") for i in issues)
 
 
 def test_invoice_invalid_brazil_cnpj_is_flagged():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-BR-02",
         issue_date=date(2026, 1, 1),
         vendor_name="Brazil Corp",
@@ -396,7 +384,7 @@ def test_invoice_invalid_brazil_cnpj_is_flagged():
     )
     issues = validate(inv)
     assert any(
-        i.field == "vendor_tax_id"
+        i.field.startswith("seller.tax_ids")
         and "Brazilian CNPJ" in i.message
         and i.severity == "error"
         for i in issues
@@ -404,7 +392,7 @@ def test_invoice_invalid_brazil_cnpj_is_flagged():
 
 
 def test_invoice_customer_tax_id_validation():
-    inv_valid = Invoice(
+    inv_valid = flat_invoice(
         invoice_number="INV-CUST-01",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -413,9 +401,9 @@ def test_invoice_customer_tax_id_validation():
         subtotal=100.0,
         total_amount=100.0,
     )
-    assert not any(i.field == "customer_tax_id" for i in validate(inv_valid))
+    assert not any(i.field.startswith("buyer.tax_ids") for i in validate(inv_valid))
 
-    inv_invalid = Invoice(
+    inv_invalid = flat_invoice(
         invoice_number="INV-CUST-02",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -425,11 +413,11 @@ def test_invoice_customer_tax_id_validation():
         total_amount=100.0,
     )
     issues = validate(inv_invalid)
-    assert any(i.field == "customer_tax_id" and i.severity == "error" for i in issues)
+    assert any(i.field.startswith("buyer.tax_ids") and i.severity == "error" for i in issues)
 
 
 def test_invoice_vendor_bic_validation():
-    inv_valid = Invoice(
+    inv_valid = flat_invoice(
         invoice_number="INV-BIC-01",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -438,9 +426,9 @@ def test_invoice_vendor_bic_validation():
         subtotal=100.0,
         total_amount=100.0,
     )
-    assert not any(i.field == "vendor_bic" for i in validate(inv_valid))
+    assert not any(i.field == "payment_account.bic" for i in validate(inv_valid))
 
-    inv_invalid = Invoice(
+    inv_invalid = flat_invoice(
         invoice_number="INV-BIC-02",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -450,11 +438,11 @@ def test_invoice_vendor_bic_validation():
         total_amount=100.0,
     )
     issues = validate(inv_invalid)
-    assert any(i.field == "vendor_bic" and i.severity == "warning" for i in issues)
+    assert any(i.field == "payment_account.bic" and i.severity == "warning" for i in issues)
 
 
 def test_invoice_tax_rate_percent_validation():
-    inv_match = Invoice(
+    inv_match = flat_invoice(
         invoice_number="INV-TAX-01",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -466,7 +454,7 @@ def test_invoice_tax_rate_percent_validation():
     )
     assert not any(i.field == "tax_rate_percent" for i in validate(inv_match))
 
-    inv_mismatch = Invoice(
+    inv_mismatch = flat_invoice(
         invoice_number="INV-TAX-02",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -494,7 +482,7 @@ def test_contract_same_party_is_flagged():
 
 
 def test_invoice_with_discount_totals_correctly_has_no_issues():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="#001",
         issue_date=date(2025, 10, 1),
         due_date=date(2025, 10, 30),
@@ -525,7 +513,7 @@ def test_line_item_quantity_times_price_must_equal_line_total():
     """A garbled unit price is invisible to every other check: the line
     total, subtotal and grand total all still agree with each other.
     """
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-008",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -541,7 +529,7 @@ def test_line_item_quantity_times_price_must_equal_line_total():
 
 
 def test_consistent_line_items_pass():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="INV-009",
         issue_date=date(2026, 1, 1),
         vendor_name="Acme Corp",
@@ -572,7 +560,7 @@ def _invoice(**overrides) -> Invoice:
         total_amount=1512.0,
     )
     fields.update(overrides)
-    return Invoice(**fields)
+    return flat_invoice(**fields)
 
 
 CONTRACT_TEXT = """SERVICES AGREEMENT
@@ -636,7 +624,7 @@ def test_date_absent_from_the_document_is_a_warning_not_an_error():
 def test_invoice_date_far_in_the_future_is_flagged():
     # Reproduces a real hallucination: garbled OCR of the date line produced
     # "2036-01-01", which no other rule can contradict.
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="1254",
         issue_date=date(2036, 1, 1),
         vendor_name="Invoice Fly",
@@ -649,7 +637,7 @@ def test_invoice_date_far_in_the_future_is_flagged():
 
 
 def test_implausibly_old_date_is_flagged():
-    inv = Invoice(
+    inv = flat_invoice(
         invoice_number="X",
         issue_date=date(1887, 5, 1),
         vendor_name="Acme",
@@ -885,7 +873,7 @@ def _sourced(**overrides) -> Invoice:
         },
     )
     fields.update(overrides)
-    return Invoice(**fields)
+    return flat_invoice(**fields)
 
 
 def test_a_correctly_cited_invoice_is_clean():
@@ -970,7 +958,7 @@ def test_a_non_iban_is_reported_as_absent_not_as_a_bad_checksum():
     """
     inv = _sourced(vendor_iban="[IBAN code]")
     issues = validate(inv, TIMETREX_TEXT)
-    iban = [i for i in issues if i.field == "vendor_iban"]
+    iban = [i for i in issues if i.field == "payment_account.iban"]
     assert iban and "is not an IBAN" in iban[0].message
     assert "mod-97" not in iban[0].message
 
@@ -978,7 +966,7 @@ def test_a_non_iban_is_reported_as_absent_not_as_a_bad_checksum():
 def test_a_real_iban_with_a_bad_digit_still_says_checksum():
     inv = _sourced(vendor_iban="DE89370400440532013100")
     issues = validate(inv, TIMETREX_TEXT)
-    iban = [i for i in issues if i.field == "vendor_iban"]
+    iban = [i for i in issues if i.field == "payment_account.iban"]
     assert iban and "mod-97" in iban[0].message
 
 
@@ -1161,7 +1149,7 @@ def test_waybill_quantity_mismatch_flagged():
 
 
 def test_purchase_order_validates_cleanly():
-    po = PurchaseOrder(
+    po = flat_po(
         po_number="PO-999",
         po_date=date(2026, 2, 1),
         vendor_name="Vendor Inc",

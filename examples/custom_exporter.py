@@ -1,7 +1,7 @@
 """Add your own output format at runtime.
 
 After registration it works everywhere docket resolves formats by name:
-`export_document(result, "my-erp-csv")` and `docket file.pdf --export my-erp-csv`
+`export_document(result, "my-erp-csv")` and `docket process file.pdf --export my-erp-csv`
 (the latter only if registered via a plugin package, see exporter_plugin/).
 """
 import csv
@@ -25,8 +25,8 @@ def to_my_erp_csv(invoice: Invoice) -> str:
     writer.writerow([
         invoice.invoice_number,
         invoice.issue_date.isoformat(),
-        invoice.vendor_name,
-        invoice.vendor_vat_number or "",
+        invoice.seller.name,
+        invoice.seller.tax_id("vat") or "",
         invoice.subtotal,
         invoice.total_amount,
         invoice.currency,

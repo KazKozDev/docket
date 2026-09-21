@@ -1,0 +1,46 @@
+{
+  "bank_name": "Stadtsparkasse Nordhafen",
+  "account_holder": "Lena Hoffmann",
+  "account_iban": "DE89370400440532013000",
+  "statement_period_start": "2026-07-01",
+  "statement_period_end": "2026-07-31",
+  "currency": "EUR",
+  "opening_balance": 1200.0,
+  "closing_balance": 2600.0,
+  "total_deposits": 2500.0,
+  "total_withdrawals": 1100.0,
+  "transactions": [
+    {
+      "transaction_date": "2026-07-03",
+      "description": "Salary ACME GmbH",
+      "amount": 2500.0,
+      "balance_after": 3700.0
+    },
+    {
+      "transaction_date": "2026-07-10",
+      "description": "Rent Wohnbau eG",
+      "amount": -950.0,
+      "balance_after": 2750.0
+    },
+    {
+      "transaction_date": "2026-07-21",
+      "description": "Card payment Supermarkt",
+      "amount": -150.0,
+      "balance_after": 2600.0
+    }
+  ],
+  "field_locations": {
+    "bank_name": {
+      "page": 1,
+      "quote": "Bank: Stadtsparkasse Nordhafen"
+    },
+    "account_holder": {
+      "page": 1,
+      "quote": "Account holder: Lena Hoffmann"
+    },
+    "closing_balance": {
+      "page": 1,
+      "quote": "Closing balance: 2600.00 EUR"
+    }
+  }
+}

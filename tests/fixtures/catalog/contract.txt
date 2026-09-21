@@ -1,0 +1,11 @@
+SERVICES AGREEMENT
+This Services Agreement is entered into on 2026-02-01 between Brightline Analytics Ltd
+("Provider") and Harbor Logistics Inc ("Client").
+WHEREAS the Client wishes to engage the Provider for data services;
+the parties hereby agree as follows.
+1. Term. This agreement is effective from 2026-02-01 and expires on 2027-01-31.
+2. Fees. The Client shall pay a fixed fee of 48000.00 USD, within 30 days of invoice.
+3. Termination. Either party may terminate with 60 days written notice.
+4. Governing law. This agreement is governed by the laws of the State of New York.
+Signed: Maria Keller, Brightline Analytics Ltd
+Signed: Tom Reyes, Harbor Logistics Inc
