@@ -209,7 +209,7 @@ Every setting and its environment variable is in [`docket.example.toml`](https:/
 - The TF-IDF tier is trained on a small embedded corpus (about 20 phrases per type), so it only answers when confident and leaves the rest to the LLM.
 - `--forensics` is a pixel heuristic, not a trained vision model. It finds colored stamps and seals and handwriting in colored or black ink, but never reports black stamps, which it can't tell apart from logos or table graphics. Its confidence scores come from geometry and aren't calibrated probabilities.
 - The vision model has been observed changing digits so that a page reconciles (a printed `450.00` read as `480.00` three times out of three). There is no fix for that in this repo.
-- Line items carry no source citations, so the citation check doesn't cover them.
+- Line items and nested fields carry citations that are grounded and located like top-level amounts (golden set: every item row cited, 0.98 located; top-level fields 0.97 / 0.92), and a wrong or ungrounded item value fails validation like any other amount.
 - The review queue is a single file: durable on one node, not across hosts.
 - Windows is untested. A document takes a median of 6.4–22.7 s depending on the OCR backend (measured over 33 scans), longer when a page needs the vision model.
 
@@ -259,6 +259,15 @@ temperature 0: 10 runs of the coupon receipt produce 15/15 identical fields.
 Dropping the `[TABLE]` / `[COLUMN]` serialization markers changes nothing
 measurable (identical outcomes for Paddle, ±2 marginal scans for Tesseract) —
 the gain of layout serialization is for hard tables, not this set.
+
+Citation coverage, measured on the 17 golden scans (tesseract,
+`eval/benchmark_ocr.py --dataset eval/golden_dataset`): every line-item row
+now carries a citation that validates (1.00 cited / 0.98 located on the page);
+top-level fields 0.97 cited / 0.92 located. Before stage 1 the items were at
+0.08 / 0.06 and fields at 0.92 / 0.87. One document stays in review by
+design (purchase order); two receipt scans still extract wrong values from
+garbled Tesseract text without triggering review — the false-success metric
+that stage 2 measures.
 
 </details>
 

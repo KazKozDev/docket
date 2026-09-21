@@ -29,7 +29,7 @@ from .catalog import SchemaSpec
 from .classify import classify
 from .extract import extract_pages
 from .language import detect_language
-from .layout import locate_quote
+from .layout import locate_all
 from .llm_client import usage as llm_usage
 from .logging_setup import get_logger, log_stage
 from .ocr import (
@@ -121,7 +121,12 @@ def select_schema(
 def _resolve_sources(extracted: dict, acquisition: Acquisition) -> dict[str, SourceLocation]:
     """Turn the model's {page, quote} citations into page regions: the quote
     is matched against the page's word boxes, or — for a page the vision
-    model read — against the OCR reading kept as its witness."""
+    model read — against the OCR reading kept as its witness. Every place
+    the quote occurs becomes a region; one exact hit is `verified`, several
+    are `conflicting` (the document itself is ambiguous about which
+    occurrence is the source), a close-but-inexact window is `fuzzy`."""
+    from .result import SourceRegion
+
     layout = acquisition.layout
     witnesses = {p.page: p.witness for p in acquisition.report.pages if p.witness is not None}
     citations = extracted.pop("field_locations", None) or {}
@@ -133,16 +138,26 @@ def _resolve_sources(extracted: dict, acquisition: Acquisition) -> dict[str, Sou
         located, located_by = None, None
         for candidate in (layout.page(page_number), witnesses.get(page_number)):
             if candidate is not None and candidate.has_geometry:
-                located = locate_quote(quote, candidate)
-                if located is not None:
+                located = locate_all(quote, candidate)
+                if located:
                     located_by = candidate.backend
                     break
+        if not located:
+            sources[field] = SourceLocation(page=page_number, quote=quote)
+            continue
+        status = "conflicting" if len(located) > 1 and located[0].match_score >= 1.0 else (
+            "verified" if located[0].match_score >= 1.0 else "fuzzy"
+        )
+        regions = [SourceRegion(page=page_number, bbox=l.bbox, word_ids=l.word_ids) for l in located]
         sources[field] = SourceLocation(
             page=page_number,
             quote=quote,
-            bbox=located.bbox if located else None,
-            word_ids=located.word_ids if located else [],
-            confidence=located.confidence if located else None,
+            status=status,
+            match="exact" if located[0].match_score >= 1.0 else "fuzzy",
+            regions=regions,
+            bbox=located[0].bbox,
+            word_ids=located[0].word_ids,
+            confidence=max(l.confidence for l in located),
             located_by=located_by,
         )
     return sources

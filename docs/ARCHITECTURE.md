@@ -170,6 +170,16 @@ score ≥0.8) and records `bbox`, `word_ids`, a confidence (match score ×
 mean word confidence) and `located_by`. The model is never asked for
 coordinates.
 
+Every occurrence is kept, not just the first: `SourceLocation.regions`
+holds each contiguous place the quote was found, and `status` says how it
+resolved — `verified` (one exact match), `fuzzy` (no exact match, one close
+window), `conflicting` (several exact matches; the document doesn't say
+which one is the source), `unlocated` (no geometry or the quote isn't on
+the page). `bbox` / `word_ids` remain the first region's coordinates for
+back-compatibility. `DocumentResult.highlights(page=None)` returns
+`(field, source, region)` triples for drawing provenance boxes over the
+original pages, optionally filtered to one page.
+
 Rotation detection with Tesseract OSD added 0.34 s in a single run on one sample page
 (`form_funsd_00.png`, Apple Silicon); disable it with
 `DOCKET_OCR_DETECT_ROTATION=false` if your scans are always upright.
@@ -314,6 +324,7 @@ Every tier reads the schema catalog, so a registered schema takes part in all th
 
 - **JSON Schema Contracts**: The target schema is the Pydantic model of the selected catalog schema; its JSON Schema is the extraction contract.
 - **Nested citations**: `field_locations` keys are field paths (`seller.name`, `references[0].number`); validation and quote location follow them.
+- **Line-item citations**: every row of every repeated list must be cited per field (`line_items[0].quantity`, `items[0].price`, `transactions[0].amount`), the quote being that row's own text. Grounding, location and review treats an item value exactly like a top-level amount.
 - **Verbatim Evidence**: The model must provide verbatim quotes (`quote`, `page`) for extracted values.
 - **Multilingual Parsing**: Supports both European (`1.234,56 €`) and American (`$1,234.56`) numerical conventions.
 
@@ -322,6 +333,8 @@ Every tier reads the schema catalog, so a registered schema takes part in all th
 ## 6. Deterministic Validation
 
 Validation never calls a model. It executes deterministic arithmetic and mathematical checksum algorithms:
+
+- **Citation grounding**: every numeric field — top-level and line-item (`_item_numeric_fields` keys every row value by schema path) — must be found on its cited line. A value the cited row actually implies also grounds: a derived unit price (4.98 / 2 = 2.49) or line total (2 × 58.50 = 117.00) counts only when both operands are printed on that row. A quantity of 1 is the implicit single item, not a fabricated amount. An item value contradicted by a garbled witness is a warning, not a blocker, when the rows close their own arithmetic (items sum to the stated subtotal under either coupon layout). A list cited element-wise (`parties_a[0]`) satisfies the requirement on the whole list.
 
 - **Totals & Line Items**: Verifies `subtotal + tax + shipping - discount == total_amount` and the other sums to the cent: `validate._isclose` allows an absolute difference of 0.01 (one rounding step of a printed two-decimal amount), whatever the size of the amount. A relative tolerance was used before; it let a 10.00 gap through on a 1,100 total. The EN 16931 rules downstream compare exact decimals, so a looser check here would only move the failure to export time.
 - **IBAN**: ISO 7064 MOD 97-10 check digits for all European nations and Brazil. Identifies non-IBAN systems (US, Canada) and requests routing numbers instead.

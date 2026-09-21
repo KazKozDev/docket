@@ -10,6 +10,7 @@ from docket.layout import (
     RawWord,
     TableHint,
     build_page,
+    locate_all,
     locate_quote,
     serialize_page,
 )
@@ -281,3 +282,32 @@ def test_absent_quote_and_geometryless_page_do_not_resolve():
     assert locate_quote("Vendor: Acme Ltd", page) is None
     text_only = PageLayout(page_number=1, width=1, height=1, backend="vlm", text="Total 13.00")
     assert locate_quote("Total 13.00", text_only) is None
+
+
+# ---- locate_all: every occurrence, for provenance --------------------------------------------
+
+
+def test_repeated_quote_yields_one_region_per_occurrence():
+    """A value that prints twice is ambiguous provenance: both regions must
+    come back, in reading order, so SourceLocation can call itself
+    'conflicting' and a UI can draw both."""
+    words = _put([], "Total 450.00", 20, 20)
+    _put(words, "Deposit 450.00", 20, 500)
+    page = _page(words)
+    matches = locate_all("450.00", page)
+    assert len(matches) == 2
+    assert all(m.match_score == 1.0 for m in matches)
+    assert matches[0].bbox.y1 < matches[1].bbox.y0  # reading order
+    assert locate_quote("450.00", page).bbox == matches[0].bbox
+
+
+def test_fuzzy_match_returns_the_single_best_window():
+    words = _put([], "Total: USD 13.00", 20, 20)
+    matches = locate_all("Totl: USD 13,00", _page(words))
+    assert len(matches) == 1 and 0.8 <= matches[0].match_score < 1.0
+
+
+def test_locate_all_empty_when_page_has_no_geometry_or_quote_absent():
+    page = _page(_put([], "Total 13.00", 20, 20))
+    assert locate_all("Vendor: Acme Ltd", page) == []
+    assert locate_all("Total 13.00", PageLayout(page_number=1, width=1, height=1, backend="vlm", text="Total 13.00")) == []

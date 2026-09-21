@@ -8,6 +8,52 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+Line-item provenance: every row of every repeated list now carries source
+citations that are grounded, located on the page and validated like any
+top-level amount. Measured on the 17 golden scans (tesseract,
+`eval/benchmark_ocr.py --dataset eval/golden_dataset`):
+
+| citation metric | before | after |
+|---|---|---|
+| line-item rows cited | 0.08 | **1.00** |
+| line-item rows located on the page | 0.06 | 0.98 |
+| top-level fields cited | 0.92 | 0.97 |
+| top-level fields located | 0.87 | 0.92 |
+| documents in review | 1 | 1 |
+
+### Added
+- Line-item and nested citations: the extraction prompt requires a citation
+  for every row of every repeated list, per field (`line_items[0].quantity`,
+  `items[0].price`, ...), the quote being that row's own text.
+- `SourceLocation.status` (`verified` / `fuzzy` / `conflicting` / `unlocated`)
+  and `SourceLocation.regions`: every place a quote was found is kept
+  (several exact matches mark the value `conflicting`), with `match` saying
+  how it was found.
+- `DocumentResult.highlights(page=None)`: `(field, source, region)` triples
+  for drawing provenance boxes over the original pages.
+- Citation coverage metrics in `eval/metrics.py` and `eval/benchmark_ocr.py`
+  (spec-aware paths, so `line_items[0].total` counts against the item rows).
+- Grounding of line-item numeric fields: a fabricated row that balances the
+  totals now fails validation like any invented top-level amount.
+
+### Fixed
+- False citation-check flags that queued correct extractions for review:
+  - a derived value (unit price 4.98 / 2 = 2.49, line total 2 × 58.50 = 117.00)
+    is grounded by its own row when both operands are printed on it;
+  - `quantity == 1` is the implicit single item, not a fabricated amount;
+  - an item value contradicted by a garbled witness is a warning, not a
+    blocker, when the rows close their own arithmetic (items sum to the
+    stated subtotal under either coupon layout);
+  - a list cited element-wise (`parties_a[0]`) satisfies the citation
+    requirement on the whole list (`parties_a`).
+- Review queue after the fixes: 1 document (purchase order, by design),
+  down from 5 during development. Note: the intermediate run's higher
+  "docs ok" (0.94) was an artifact — the false flags escalated two garbled
+  receipt scans to a vision-model re-read that fixed fields by accident.
+  With honest flags those scans keep their Tesseract misreads
+  (`total 775.0`, `card_last_four` missing) without review; measuring that
+  false-success rate is the next stage.
+
 ## [0.3.0] - 2026-09-21
 
 Layout-first redesign: a layout model shared by every OCR backend,
