@@ -153,6 +153,55 @@ def test_receipt_with_tip_and_discount_mismatch_flagged():
     assert any(i.field == "total_amount" for i in issues)
 
 
+def test_receipt_coupon_above_and_below_subtotal_both_validate():
+    """Receipts print coupons in two places: above the SUBTOTAL line (the
+    stated subtotal already has the discount applied) or below it (it doesn't).
+    Both are consistent arithmetic and must pass; the validator used to flag
+    the first layout no matter what the extraction said."""
+    items = [
+        ReceiptItem(description="PAINT ROLLER", price=8.99, quantity=1.0, unit_price=8.99),
+        ReceiptItem(description="DROP CLOTH", price=12.5, quantity=1.0, unit_price=12.5),
+    ]
+    # Layout A: discount printed below the subtotal (items sum 21.49).
+    below = Receipt(
+        merchant_name="Northgate Hardware",
+        transaction_date=date(2026, 4, 17),
+        items=items,
+        subtotal=21.49,
+        tax_amount=2.21,
+        discount_amount=2.0,
+        total_amount=21.70,
+    )
+    # Layout B: coupon as a line above the SUBTOTAL, which already excludes it.
+    above = Receipt(
+        merchant_name="Northgate Hardware",
+        transaction_date=date(2026, 4, 17),
+        items=items,
+        subtotal=19.49,
+        tax_amount=2.21,
+        discount_amount=2.0,
+        total_amount=21.70,
+    )
+    assert validate(below) == []
+    assert validate(above) == []
+
+
+def test_receipt_coupon_mismatch_still_flagged():
+    """Neither layout closes: the items rule and the total rule both fire."""
+    rec = Receipt(
+        merchant_name="Northgate Hardware",
+        transaction_date=date(2026, 4, 17),
+        items=[ReceiptItem(description="PAINT ROLLER", price=8.99, quantity=1.0, unit_price=8.99)],
+        subtotal=9.99,  # items say 8.99, with discount 8.99 - 2.00 doesn't close either
+        tax_amount=0.0,
+        discount_amount=2.0,
+        total_amount=10.50,  # closes under neither layout (7.99 nor 9.99)
+    )
+    issues = validate(rec)
+    assert any(i.field == "items" for i in issues)
+    assert any(i.field == "total_amount" for i in issues)
+
+
 def test_receipt_item_quantity_unit_price_mismatch_flagged():
     rec = Receipt(
         merchant_name="Grocery Mart",
