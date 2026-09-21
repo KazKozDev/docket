@@ -6,17 +6,15 @@ from docket.schemas import (
     ClassificationResult,
     DocType,
     Invoice,
-    PipelineResult,
     ValidationIssue,
 )
+from docket.result import DocumentResult
+from tests.factories import acquisition, make_result, words_page
 
 
-def _result(**overrides) -> PipelineResult:
+def _result(**overrides) -> DocumentResult:
     defaults = dict(
         source="doc.txt",
-        classification=ClassificationResult(
-            doc_type=DocType.INVOICE, confidence=0.9, method="rules"
-        ),
         extracted=Invoice(
             invoice_number="INV-1",
             issue_date=date(2026, 1, 1),
@@ -25,13 +23,9 @@ def _result(**overrides) -> PipelineResult:
             subtotal=100.0,
             total_amount=100.0,
         ).model_dump(mode="json"),
-        extract_attempts=1,
-        validation_issues=[],
-        ocr_method="pdf_text",
-        raw_text_chars=100,
     )
     defaults.update(overrides)
-    return PipelineResult(**defaults)
+    return make_result(**defaults)
 
 
 def test_clean_result_has_no_review_reasons():
@@ -128,3 +122,29 @@ def test_review_preserves_original_and_records_correction_history(
     assert record["status"] == "approved"
     assert record["corrections"] == {"total_amount": 100.0}
     assert record["history"][-1]["actor"] == "alice"
+
+
+def test_degraded_page_triggers_review():
+    page = words_page(["TOTAL 12.00"], confidence=0.3)
+    acq = acquisition([page], degraded={1})
+    result = _result(layout=acq.layout, ocr=acq.report)
+    reasons = review_queue.reasons_for(result)
+    assert any("page(s) 1" in r and "confidence gate" in r for r in reasons)
+
+
+def test_page_without_text_triggers_review():
+    blank = words_page([], page_number=2)
+    acq = acquisition([words_page(["TOTAL 12.00"]), blank])
+    reasons = review_queue.reasons_for(_result(layout=acq.layout, ocr=acq.report))
+    assert any("incomplete" in r and "2" in r for r in reasons)
+
+
+def test_failed_document_reports_its_error():
+    from docket.result import DocumentError, DocumentStatus
+
+    result = _result(
+        status=DocumentStatus.FAILED,
+        extracted=None,
+        error=DocumentError(code="no_text", stage="acquire", message="nothing readable"),
+    )
+    assert review_queue.reasons_for(result) == ["acquire failed: nothing readable"]

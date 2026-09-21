@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import base64
 import json
-import mimetypes
 import re
 import time
 from contextvars import ContextVar
@@ -208,13 +207,20 @@ def chat_json(
 
 
 def vision_transcribe(
-    image_path: str, *, model: str | None = None, timeout: float | None = None
+    image: bytes,
+    *,
+    mime: str = "image/png",
+    model: str | None = None,
+    timeout: float | None = None,
 ) -> str:
-    """Ask a vision model to transcribe all visible text in an image, verbatim."""
+    """Ask a vision model to transcribe all visible text in an image, verbatim.
+
+    Takes encoded image bytes, not a path: callers render pages in memory, so
+    no temporary file is ever written next to the user's document.
+    """
     model = model or config.VISION_MODEL
     timeout = config.VISION_TIMEOUT_S if timeout is None else timeout
-    with open(image_path, "rb") as f:
-        b64 = base64.b64encode(f.read()).decode()
+    b64 = base64.b64encode(image).decode()
 
     prompt_text = (
         "Transcribe every piece of text visible in this document image, "
@@ -225,7 +231,6 @@ def vision_transcribe(
     )
     start = time.monotonic()
     if config.LLM_PROVIDER == "openai":
-        mime = mimetypes.guess_type(image_path)[0] or "image/png"
         message = {
             "role": "user",
             "content": [

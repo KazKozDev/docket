@@ -10,10 +10,11 @@ Docket converts unstructured or semi-structured documents (invoices, receipts, c
                                            |
                                            v
 +---------------------------------------------------------------------------------------+
-|                                 Text Acquisition Tier                                 |
-|   1. Direct PDF Text Layer (pdfplumber)                                               |
-|   2. Local OCR (Tesseract) + Garbled Quality Gate                                     |
-|   3. Vision-Language Model (Ollama VLM) on low OCR confidence / garbled scans         |
+|                       Text Acquisition Tier (per page, pluggable)                     |
+|   1. Direct PDF Text Layer (pdf_text backend) -> words, boxes, ruled tables           |
+|   2. OCR backend (tesseract / plugin) + confidence gate + garbled pre-flight          |
+|   3. Fallback backends (vision LLM by default); overruled OCR kept as witness         |
+|   -> PageLayout: words, lines, blocks, columns, tables (normalized coordinates)       |
 +---------------------------------------------------------------------------------------+
                                            |
                                            v
@@ -54,14 +55,104 @@ Docket converts unstructured or semi-structured documents (invoices, receipts, c
 
 ---
 
-## 1. Text Acquisition Tier
+## 1. Text Acquisition and Layout
 
-To minimize inference costs and latency, Docket selects the cheapest extraction method that yields reliable text:
+Every page becomes a `PageLayout`: words with normalized boxes (0..1,
+top-left origin, upright page), lines, blocks, text columns and tables, plus
+the page's original width/height for converting back to pixels or points.
+The LLM reads a serialization of that layout; the structured layout stays in
+the result as the source of geometry.
 
-1. **Digital PDF Text Layer**: Extracted directly using `pdfplumber`; scanned pages are rendered with `pypdfium2`. Zero model overhead.
-2. **Local Tesseract OCR**: Used when no text layer is present.
-3. **OCR Quality Pre-flight (`looks_garbled`)**: Checks character distribution and token validity. If a scan is noisy or degraded, passing it to an extraction model wastes computation (garbled inputs take up to $2.5\times$ longer to process).
-4. **VLM Transcription Fallback**: Triggered automatically when OCR confidence is low or text is garbled.
+### OCR backends
+
+A backend implements `OcrBackend` (`name`, `capabilities`, `availability()`,
+`recognize_page()`) and returns a `PageLayout`. Built in:
+
+| Backend | Input | Confidence | Word boxes | Tables | Rotation |
+|---|---|---|---|---|---|
+| `pdf_text` | PDF text layer (pdfplumber) | – | yes | ruled (drawn borders) + aligned | glyph matrices |
+| `tesseract` | rendered page (`image_to_data`) | yes | yes | aligned | OSD |
+| `vlm` | rendered page, vision LLM | – | – | – | – |
+
+Backends are looked up by name in a registry; plugins register through the
+`docket.ocr_backends` entry point, and an `OcrBackend` instance can be passed
+straight to `process_document(ocr_backend=...)`. A backend named explicitly
+that cannot run (binary missing, language data missing, extra not installed)
+is a configuration error raised before any page is read, with the reason and
+an install hint. `auto` takes the first installed of `tesseract`, `paddle`.
+
+### Per-page chain
+
+1. A PDF page with a usable text layer is taken as is. Unusable means fewer
+   than 20 characters, or more than 10 % unmapped `(cid:N)` glyphs.
+2. Otherwise the primary backend, then each fallback (default: `vlm`). A
+   reading is accepted when it has text and, if the backend reports
+   confidence, page confidence ≥ `DOCKET_OCR_MIN_CONFIDENCE` (0.60).
+   Tesseract's page confidence is the character-weighted share of text in
+   lines whose mean word confidence clears the word floor.
+3. If nothing is accepted, the best rejected reading is used and the page is
+   marked degraded, which sends the document to review.
+
+Mixed PDFs fall out of this naturally. When the accepted reading has no word
+boxes (the vision model), the OCR reading it overruled is kept as the page's
+**witness**: validation cross-checks the model's numbers against it, and
+citations are located in it.
+
+Two escalations re-run the chain with every reading but the last backend's
+rejected: before extraction, when a cheap text model judges the OCR text
+garbled (`looks_garbled`); after validation, when OCR text passed its gate
+but the extraction failed validation (fewer or equal errors wins, ties go to
+the re-read).
+
+### Layout analysis
+
+`docket.layout.analysis.build_page` is shared by every backend with word
+boxes. Pure geometry, no keywords:
+
+- **Rows**: words overlapping vertically by ≥40 % of the smaller height. An
+  engine's own line identity (Tesseract block/paragraph/line) is respected,
+  so skewed lines don't interleave.
+- **Segments**: a gap wider than 1.5 × the page's median word height splits
+  a row; serialized as ` | `.
+- **Aligned tables**: ≥2 consecutive rows with ≥3 segments that fall into ≥3
+  shared column bands. **Ruled tables** come from pdfplumber's rulings,
+  including row/column spans, and take precedence.
+- **Text columns**: an ink-free gutter over ≥4 consecutive rows with
+  substantial text on both sides (median ≥12 characters, ≥20 % of the page
+  width per side). Reading order inside such a region is column-major.
+- **Blocks**: consecutive lines in the same column/table with at most one
+  line height between them.
+
+Serialization writes lines in reading order, with `[TABLE n: R rows x C
+columns]` and `[COLUMN n]` marker lines.
+
+Known limits — the heuristics were checked on synthetic layouts and a few
+real scans, not measured on an annotated table/column benchmark:
+
+- A table cell that wraps onto a second line becomes its own row (or breaks
+  the table run); it is not merged back into the cell above.
+- Two-column tables (description | amount) are not tables — they read as
+  lines with a ` | ` separator. Tables need ≥3 columns.
+- A borderless table whose columns are separated by less than 1.5 × word
+  height is read as plain lines.
+- Text columns with narrow gutters (below 1.5 × word height), or with
+  short lines (label/value blocks), are read row by row.
+- Rotation is corrected in 90° steps; skew is not.
+- Upside-down PDF pages with a mirrored text layer, and vertical CJK text,
+  are not handled.
+
+### Source locations
+
+The extraction model returns only `page` and `quote` for each field. The
+pipeline matches the quote against the page's words (whitespace-free,
+case-folded character stream; exact first, then a fuzzy window that must
+score ≥0.8) and records `bbox`, `word_ids`, a confidence (match score ×
+mean word confidence) and `located_by`. The model is never asked for
+coordinates.
+
+Rotation detection with Tesseract OSD added 0.34 s in a single run on one sample page
+(`form_funsd_00.png`, Apple Silicon); disable it with
+`DOCKET_OCR_DETECT_ROTATION=false` if your scans are always upright.
 
 ---
 
@@ -186,7 +277,7 @@ trained vision model. What it does, and deliberately does not do:
   elongation, signing zone, label nearby; lower for black ink), useful for
   ranking and thresholds, not a calibrated probability.
 
-Keyword detection depends on the Tesseract language packs in `DOCKET_OCR_LANG`
+Keyword detection depends on the Tesseract language packs for `DOCKET_OCR_LANGUAGES`
 (Russian markers need `rus`).
 
 

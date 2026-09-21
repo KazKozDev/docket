@@ -10,29 +10,35 @@ from pathlib import Path
 from uuid import uuid4
 
 from . import config
-from .schemas import PipelineResult
+from .result import DocumentResult
 
 _LOCK = threading.RLock()
 _STATUSES = {"pending", "in_review", "corrected", "approved", "rejected"}
 
 
-def reasons_for(result: PipelineResult) -> list[str]:
+def reasons_for(result: DocumentResult) -> list[str]:
     reasons: list[str] = []
-    if not result.complete or result.pages_processed != result.pages_total:
+    if result.error is not None:
+        reasons.append(f"{result.error.stage} failed: {result.error.message}")
+        return reasons
+    if not result.complete:
+        empty = [p.page_number for p in (result.layout.pages if result.layout else []) if not p.text.strip()]
+        reasons.append(f"incomplete processing (no text on page(s) {', '.join(map(str, empty)) or '?'})")
+    classification = result.classification
+    if classification is not None:
+        if classification.confidence < config.MIN_CLASSIFICATION_CONFIDENCE:
+            reasons.append(
+                f"low classification confidence ({classification.confidence:.2f} "
+                f"< {config.MIN_CLASSIFICATION_CONFIDENCE:.2f})"
+            )
+        if classification.type_name == "unknown":
+            reasons.append("unrecognized document type")
+    degraded = result.ocr.degraded_pages if result.ocr else []
+    if degraded:
         reasons.append(
-            f"incomplete processing ({result.pages_processed}/{result.pages_total} pages)"
-        )
-    if result.classification.confidence < config.MIN_CLASSIFICATION_CONFIDENCE:
-        reasons.append(
-            f"low classification confidence ({result.classification.confidence:.2f} "
-            f"< {config.MIN_CLASSIFICATION_CONFIDENCE:.2f})"
-        )
-    if result.classification.type_name == "unknown":
-        reasons.append("unrecognized document type")
-    if result.ocr_method == "ocr_degraded" or "ocr_degraded" in result.page_methods:
-        reasons.append(
-            "text came from low-confidence OCR — the vision model that should have "
-            "transcribed this document was unavailable"
+            f"text on page(s) {', '.join(map(str, degraded))} came from a reading below "
+            "the confidence gate — every backend that should have read it better "
+            "failed or was unavailable"
         )
     if result.extracted is None:
         reasons.append("extraction failed to produce valid structured output")
@@ -96,7 +102,7 @@ def _records() -> dict[str, dict]:
     return records
 
 
-def enqueue(result: PipelineResult, reasons: list[str]) -> str:
+def enqueue(result: DocumentResult, reasons: list[str]) -> str:
     source = Path(result.source)
     document_id = result.document_id or _document_id(source)
     original_path: str | None = None
@@ -117,7 +123,7 @@ def enqueue(result: PipelineResult, reasons: list[str]) -> str:
             "status": "pending",
             "source": result.source,
             "original_path": original_path,
-            "doc_type": result.classification.type_name,
+            "doc_type": result.document_type,
             "reasons": reasons,
             "result": result.model_dump(mode="json"),
             "corrections": None,

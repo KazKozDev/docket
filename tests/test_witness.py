@@ -15,9 +15,13 @@ that region stays silent.
 """
 from datetime import date
 
-from docket import ocr
+from docket.layout import build_page, text_only_page
+from docket.ocr import AcquisitionOptions, acquire
+from docket.ocr.tesseract import page_confidence, words_from_data
+from docket.ocr.witness import confident_amounts
 from docket.schemas import Invoice, LineItem
 from docket.validate import validate
+from tests.factories import ScriptedBackend, words_page, write_png
 
 
 def _invoice(**overrides):
@@ -62,89 +66,93 @@ WITNESS_AGREES = [
 ]
 
 
-def _ocr_data(words, line=1):
-    n = len(words)
+def _data(texts, confs, lefts, widths, lines=None):
+    n = len(texts)
     return {
-        "text": [w for w, _ in words],
-        "conf": [str(c) for _, c in words],
-        "left": [str(10 + 60 * i) for i in range(n)],
-        "width": [str(50) for _ in range(n)],
+        "text": texts,
+        "conf": [str(c) for c in confs],
+        "left": [str(v) for v in lefts],
+        "top": ["10"] * n if lines is None else [str(10 + 30 * (ln - 1)) for ln in lines],
+        "width": [str(v) for v in widths],
+        "height": ["14"] * n,
         "page_num": [1] * n,
         "block_num": [1] * n,
         "par_num": [1] * n,
-        "line_num": [line] * n,
+        "line_num": [1] * n if lines is None else lines,
     }
 
 
-def test_vlm_success_keeps_witness_numbers(monkeypatch):
-    monkeypatch.setattr(ocr, "vision_transcribe", lambda _p: "clean transcription")
-    result = ocr._vlm_or_degraded_ocr(["page.png"], "TOTAL 12.00", [[12.0]])
-    assert result.method == "vlm"
+def _page(data):
+    return build_page(
+        page_number=1,
+        width=1000.0,
+        height=1000.0,
+        unit="px",
+        backend="tesseract",
+        confidence=page_confidence(data, 0.6),
+        words=words_from_data(data),
+    )
+
+
+def _ocr_data(words):
+    n = len(words)
+    return _data(
+        [w for w, _ in words], [c for _, c in words], [10 + 60 * i for i in range(n)], [50] * n
+    )
+
+
+def _chain(tmp_path, ocr_page, vlm_text):
+    """Tesseract reading below the gate, then the vision model."""
+    tesseract = ScriptedBackend("tesseract", {0: ocr_page})
+    vlm = ScriptedBackend(
+        "vlm",
+        {0: text_only_page(page_number=1, text=vlm_text, backend="vlm")},
+        geometry=False,
+    )
+    options = AcquisitionOptions(backend=tesseract, fallbacks=[vlm])
+    return acquire(write_png(tmp_path / "page.png"), options)
+
+
+def test_vlm_success_keeps_witness_numbers(tmp_path):
+    ocr_page = words_page(["TOTAL 12.00"], confidence=0.3, word_confidence=0.9)
+    result = _chain(tmp_path, ocr_page, "clean transcription")
+    assert result.report.pages[0].backend == "vlm"
     assert result.witness_pages == ["TOTAL 12.00"]
     assert result.witness_numbers == [[12.0]]
 
 
-def test_empty_ocr_leaves_no_witness(monkeypatch):
-    monkeypatch.setattr(ocr, "vision_transcribe", lambda _p: "clean transcription")
-    result = ocr._vlm_or_degraded_ocr(["page.png"], "   ")
+def test_empty_ocr_leaves_no_witness(tmp_path):
+    ocr_page = words_page([], confidence=0.0)
+    result = _chain(tmp_path, ocr_page, "clean transcription")
     assert result.witness_pages == [None]
     assert result.witness_numbers == [[]]
 
 
-def test_low_confidence_words_are_not_witnesses(monkeypatch):
+def test_low_confidence_words_are_not_witnesses():
     data = _ocr_data([("8,480.00", 95), ("45O.OO", 12), ("8000.00", 30)])
-    monkeypatch.setattr(ocr.pytesseract, "image_to_data", lambda *a, **k: data)
-    _, _, confident = ocr._ocr_image(object())
-    assert confident == [8480.0]
+    assert confident_amounts(_page(data), 0.6) == [8480.0]
 
 
-def test_split_amount_is_glued_from_touching_boxes(monkeypatch):
-    data = {
-        "text": ["8,480", ".00"],
-        "conf": ["90", "92"],
-        "left": ["10", "62"],
-        "width": ["50", "25"],
-        "page_num": [1, 1],
-        "block_num": [1, 1],
-        "par_num": [1, 1],
-        "line_num": [1, 1],
-    }
-    monkeypatch.setattr(ocr.pytesseract, "image_to_data", lambda *a, **k: data)
-    _, _, confident = ocr._ocr_image(object())
-    assert confident == [8480.0]
+def test_split_amount_is_glued_from_touching_boxes():
+    data = _data(["8,480", ".00"], [90, 92], [10, 62], [50, 25])
+    assert confident_amounts(_page(data), 0.6) == [8480.0]
 
 
-def test_column_gap_becomes_separator(monkeypatch):
-    data = {
-        "text": ["2", "15.00", "30.00"],
-        "conf": ["90", "91", "92"],
-        "left": ["10", "300", "600"],
-        "width": ["20", "50", "50"],
-        "page_num": [1, 1, 1],
-        "block_num": [1, 1, 1],
-        "par_num": [1, 1, 1],
-        "line_num": [1, 1, 1],
-    }
-    monkeypatch.setattr(ocr.pytesseract, "image_to_data", lambda *a, **k: data)
-    text, _, _ = ocr._ocr_image(object())
-    assert text == "2 | 15.00 | 30.00"
+def test_column_gap_becomes_separator():
+    data = _data(["2", "15.00", "30.00"], [90, 91, 92], [10, 300, 600], [20, 50, 50])
+    assert _page(data).text == "2 | 15.00 | 30.00"
 
 
-def test_garbled_lines_sink_page_confidence(monkeypatch):
+def test_garbled_lines_sink_page_confidence():
     # two lines: one confident, one garbage — char-weighted share drops below gate
-    data = {
-        "text": ["Subtotal", "145.00", "sata", '"4500', "zzz"],
-        "conf": ["95", "93", "20", "15", "10"],
-        "left": ["10", "200", "10", "200", "300"],
-        "width": ["80", "60", "50", "60", "40"],
-        "page_num": [1, 1, 1, 1, 1],
-        "block_num": [1, 1, 1, 1, 1],
-        "par_num": [1, 1, 1, 1, 1],
-        "line_num": [1, 1, 2, 2, 2],
-    }
-    monkeypatch.setattr(ocr.pytesseract, "image_to_data", lambda *a, **k: data)
-    _, conf, _ = ocr._ocr_image(object())
-    assert conf < 60.0
+    data = _data(
+        ["Subtotal", "145.00", "sata", '"4500', "zzz"],
+        [95, 93, 20, 15, 10],
+        [10, 200, 10, 200, 300],
+        [80, 60, 50, 60, 40],
+        lines=[1, 1, 2, 2, 2],
+    )
+    assert page_confidence(data, 0.6) < 0.6
 
 
 def test_an_agreeing_witness_says_nothing():

@@ -34,7 +34,7 @@ from typing import Callable, Iterable
 
 from pydantic import BaseModel, Field
 
-from .schemas import SCHEMA_BY_DOC_TYPE, DocType, SourceLocation, ValidationIssue
+from .schemas import SCHEMA_BY_DOC_TYPE, Citation, DocType, ValidationIssue
 
 ENTRY_POINT_GROUP = "docket.document_types"
 
@@ -58,7 +58,7 @@ class CitedDocument(BaseModel):
     that page — the same grounding check the built-in types get.
     """
 
-    field_locations: dict[str, SourceLocation] = Field(
+    field_locations: dict[str, Citation] = Field(
         default_factory=dict,
         description="Page and exact source region for each material extracted field.",
     )

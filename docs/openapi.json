@@ -161,6 +161,74 @@
         }
       }
     },
+    "/ocr-backends": {
+      "get": {
+        "summary": "Ocr Backends",
+        "description": "OCR backends this deployment knows, with capabilities and availability.",
+        "operationId": "ocr_backends_ocr_backends_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "title": "Response Ocr Backends Ocr Backends Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/process": {
       "post": {
         "summary": "Process Document",
@@ -231,7 +299,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PipelineResult"
+                  "$ref": "#/components/schemas/DocumentResult"
                 }
               }
             }
@@ -705,6 +773,100 @@
   },
   "components": {
     "schemas": {
+      "AcquisitionReport": {
+        "properties": {
+          "primary_backend": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Backend"
+          },
+          "fallback_backends": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fallback Backends"
+          },
+          "fallbacks_applied": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fallbacks Applied",
+            "description": "Fallback backends whose reading some page uses."
+          },
+          "pages": {
+            "items": {
+              "$ref": "#/components/schemas/PageAcquisition"
+            },
+            "type": "array",
+            "title": "Pages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "primary_backend",
+          "fallback_backends"
+        ],
+        "title": "AcquisitionReport"
+      },
+      "Attempt": {
+        "properties": {
+          "backend": {
+            "type": "string",
+            "title": "Backend"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "accepted",
+              "rejected",
+              "unavailable",
+              "failed"
+            ],
+            "title": "Outcome"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "seconds": {
+            "type": "number",
+            "title": "Seconds",
+            "default": 0.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "backend",
+          "outcome"
+        ],
+        "title": "Attempt"
+      },
       "Body_create_job_jobs_post": {
         "properties": {
           "file": {
@@ -732,6 +894,43 @@
           "file"
         ],
         "title": "Body_process_document_process_post"
+      },
+      "BoundingBox": {
+        "properties": {
+          "x0": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "X0"
+          },
+          "y0": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Y0"
+          },
+          "x1": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "X1"
+          },
+          "y1": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Y1"
+          }
+        },
+        "type": "object",
+        "required": [
+          "x0",
+          "y0",
+          "x1",
+          "y1"
+        ],
+        "title": "BoundingBox",
+        "description": "Axis-aligned box in normalized page coordinates (0..1, top-left origin)."
       },
       "ClassificationResult": {
         "properties": {
@@ -770,6 +969,24 @@
         ],
         "title": "ClassificationResult"
       },
+      "Column": {
+        "properties": {
+          "index": {
+            "type": "integer",
+            "title": "Index"
+          },
+          "bbox": {
+            "$ref": "#/components/schemas/BoundingBox"
+          }
+        },
+        "type": "object",
+        "required": [
+          "index",
+          "bbox"
+        ],
+        "title": "Column",
+        "description": "A vertical run of text separated from its neighbours by a gutter."
+      },
       "DocType": {
         "type": "string",
         "enum": [
@@ -784,6 +1001,32 @@
           "unknown"
         ],
         "title": "DocType"
+      },
+      "DocumentError": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Stable machine-readable code, e.g. 'ocr_unavailable'."
+          },
+          "stage": {
+            "type": "string",
+            "title": "Stage",
+            "description": "Pipeline stage that failed: acquire, classify, extract, ..."
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "stage",
+          "message"
+        ],
+        "title": "DocumentError",
+        "description": "Why processing a document stopped."
       },
       "DocumentForensicReport": {
         "properties": {
@@ -850,6 +1093,182 @@
         "type": "object",
         "title": "DocumentForensicReport",
         "description": "Forensic report covering physical execution, stamps, signatures, and alterations."
+      },
+      "DocumentLayout": {
+        "properties": {
+          "pages": {
+            "items": {
+              "$ref": "#/components/schemas/PageLayout"
+            },
+            "type": "array",
+            "title": "Pages"
+          }
+        },
+        "type": "object",
+        "title": "DocumentLayout"
+      },
+      "DocumentResult": {
+        "properties": {
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "document_id": {
+            "type": "string",
+            "title": "Document Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DocumentStatus"
+          },
+          "document_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Type",
+            "description": "Registered document type name, or 'unknown'."
+          },
+          "schema_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Schema Id"
+          },
+          "schema_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Schema Version"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClassificationResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "language": {
+            "type": "string",
+            "title": "Language",
+            "default": "unknown"
+          },
+          "ocr": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AcquisitionReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Which backend read each page, what was tried, and why."
+          },
+          "layout": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DocumentLayout"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "extracted": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extracted"
+          },
+          "field_sources": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/SourceLocation"
+            },
+            "type": "object",
+            "title": "Field Sources",
+            "description": "Where each extracted field was read — kept beside the data, not inside it."
+          },
+          "validation_issues": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationIssue"
+            },
+            "type": "array",
+            "title": "Validation Issues"
+          },
+          "needs_review": {
+            "type": "boolean",
+            "title": "Needs Review",
+            "default": false
+          },
+          "review_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Review Reasons"
+          },
+          "metrics": {
+            "$ref": "#/components/schemas/ProcessingMetrics"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DocumentError"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "forensic_report": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DocumentForensicReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "source",
+          "document_id",
+          "status"
+        ],
+        "title": "DocumentResult"
+      },
+      "DocumentStatus": {
+        "type": "string",
+        "enum": [
+          "succeeded",
+          "needs_review",
+          "failed"
+        ],
+        "title": "DocumentStatus"
       },
       "HTTPValidationError": {
         "properties": {
@@ -920,75 +1339,182 @@
         "title": "HandwrittenAnnotation",
         "description": "Detection of handwritten marginalia, numeric corrections, or status stamps."
       },
-      "PipelineResult": {
+      "PageAcquisition": {
         "properties": {
-          "source": {
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "backend": {
             "type": "string",
-            "title": "Source"
+            "title": "Backend",
+            "description": "Backend whose reading the page uses."
           },
-          "classification": {
-            "$ref": "#/components/schemas/ClassificationResult"
+          "degraded": {
+            "type": "boolean",
+            "title": "Degraded",
+            "description": "No reading was accepted; the best rejected one is used.",
+            "default": false
           },
-          "extracted": {
+          "confidence": {
             "anyOf": [
               {
-                "additionalProperties": true,
-                "type": "object"
+                "type": "number"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Extracted"
+            "title": "Confidence"
           },
-          "field_sources": {
+          "attempts": {
+            "items": {
+              "$ref": "#/components/schemas/Attempt"
+            },
+            "type": "array",
+            "title": "Attempts"
+          },
+          "witness": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PageLayout"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Independent OCR reading kept when the accepted one has no geometry (VLM)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "page",
+          "backend"
+        ],
+        "title": "PageAcquisition"
+      },
+      "PageLayout": {
+        "properties": {
+          "page_number": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Page Number"
+          },
+          "width": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Width",
+            "description": "Page width in `unit`, before normalization."
+          },
+          "height": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Height"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "px",
+              "pt"
+            ],
+            "title": "Unit",
+            "default": "px"
+          },
+          "rotation": {
+            "type": "integer",
+            "title": "Rotation",
+            "description": "Clockwise degrees the source was rotated to read upright.",
+            "default": 0
+          },
+          "backend": {
+            "type": "string",
+            "title": "Backend",
+            "description": "OCR backend that produced this page."
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence",
+            "description": "Page-level confidence as the backend defines it; None if it reports none."
+          },
+          "words": {
+            "items": {
+              "$ref": "#/components/schemas/WordToken"
+            },
+            "type": "array",
+            "title": "Words"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/TextLine"
+            },
+            "type": "array",
+            "title": "Lines",
+            "description": "In reading order."
+          },
+          "blocks": {
+            "items": {
+              "$ref": "#/components/schemas/TextBlock"
+            },
+            "type": "array",
+            "title": "Blocks"
+          },
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/Column"
+            },
+            "type": "array",
+            "title": "Columns"
+          },
+          "tables": {
+            "items": {
+              "$ref": "#/components/schemas/Table"
+            },
+            "type": "array",
+            "title": "Tables"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "Serialized page text in reading order — what the LLM reads.",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "page_number",
+          "width",
+          "height",
+          "backend"
+        ],
+        "title": "PageLayout"
+      },
+      "ProcessingMetrics": {
+        "properties": {
+          "elapsed_seconds": {
+            "type": "number",
+            "title": "Elapsed Seconds",
+            "default": 0.0
+          },
+          "stage_seconds": {
             "additionalProperties": {
-              "$ref": "#/components/schemas/SourceLocation"
+              "type": "number"
             },
             "type": "object",
-            "title": "Field Sources",
-            "description": "Where each extracted field was read from — kept beside the data, not inside it."
+            "title": "Stage Seconds"
           },
-          "extract_attempts": {
+          "pages": {
             "type": "integer",
-            "title": "Extract Attempts"
-          },
-          "validation_issues": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationIssue"
-            },
-            "type": "array",
-            "title": "Validation Issues"
-          },
-          "ocr_method": {
-            "type": "string",
-            "title": "Ocr Method"
-          },
-          "raw_text_chars": {
-            "type": "integer",
-            "title": "Raw Text Chars"
-          },
-          "language": {
-            "type": "string",
-            "title": "Language",
-            "default": "unknown"
-          },
-          "escalated_to_vlm": {
-            "type": "boolean",
-            "title": "Escalated To Vlm",
-            "default": false
-          },
-          "needs_review": {
-            "type": "boolean",
-            "title": "Needs Review",
-            "default": false
-          },
-          "review_reasons": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Review Reasons"
+            "title": "Pages",
+            "default": 0
           },
           "llm_calls": {
             "type": "integer",
@@ -1000,60 +1526,20 @@
             "title": "Llm Estimated Tokens",
             "default": 0
           },
-          "pages_total": {
+          "extract_attempts": {
             "type": "integer",
-            "title": "Pages Total",
-            "default": 1
+            "title": "Extract Attempts",
+            "default": 0
           },
-          "pages_processed": {
-            "type": "integer",
-            "title": "Pages Processed",
-            "default": 1
-          },
-          "complete": {
+          "escalated_to_vlm": {
             "type": "boolean",
-            "title": "Complete",
-            "default": true
-          },
-          "document_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Document Id"
-          },
-          "page_methods": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Page Methods"
-          },
-          "forensic_report": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/DocumentForensicReport"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "title": "Escalated To Vlm",
+            "description": "OCR text passed its gate but failed validation, and a vision-model re-read won.",
+            "default": false
           }
         },
         "type": "object",
-        "required": [
-          "source",
-          "classification",
-          "extracted",
-          "extract_attempts",
-          "ocr_method",
-          "raw_text_chars"
-        ],
-        "title": "PipelineResult"
+        "title": "ProcessingMetrics"
       },
       "ReviewUpdate": {
         "properties": {
@@ -1163,9 +1649,50 @@
           },
           "quote": {
             "type": "string",
-            "minLength": 1,
-            "title": "Quote",
-            "description": "Exact text copied from the source page."
+            "title": "Quote"
+          },
+          "bbox": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BoundingBox"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "word_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Word Ids"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence",
+            "description": "Quote match score × mean OCR confidence of the matched words; None when unresolved."
+          },
+          "located_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Located By",
+            "description": "Backend whose word boxes located the quote. Differs from the page's backend when the page was read by the vision model and the quote was found in the independent OCR reading kept as its witness."
           }
         },
         "type": "object",
@@ -1174,7 +1701,7 @@
           "quote"
         ],
         "title": "SourceLocation",
-        "description": "Auditable link from a field to the original page region."
+        "description": "Where an extracted value was read: the quote the model cited, and the\npage region it resolves to.\n\n`bbox` and `word_ids` come from matching the quote against the page's\nword boxes, never from the model. A page read by the vision model has no\nboxes; its quote is then looked up in the OCR reading kept as the page's\nwitness (`located_by` says which). They are None / empty when neither has\nthe quote."
       },
       "StampDetection": {
         "properties": {
@@ -1246,6 +1773,193 @@
         "title": "StampDetection",
         "description": "Detection of a physical seal, official rubber stamp, or organization stamp."
       },
+      "Table": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "bbox": {
+            "$ref": "#/components/schemas/BoundingBox"
+          },
+          "rows": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Rows"
+          },
+          "columns": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Columns"
+          },
+          "cells": {
+            "items": {
+              "$ref": "#/components/schemas/TableCell"
+            },
+            "type": "array",
+            "title": "Cells"
+          },
+          "detection": {
+            "type": "string",
+            "enum": [
+              "ruled",
+              "aligned",
+              "backend"
+            ],
+            "title": "Detection",
+            "description": "'ruled': drawn cell borders in a PDF; 'aligned': inferred from word alignment only; 'backend': reported by the OCR engine itself."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "bbox",
+          "rows",
+          "columns",
+          "cells",
+          "detection"
+        ],
+        "title": "Table"
+      },
+      "TableCell": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "bbox": {
+            "$ref": "#/components/schemas/BoundingBox"
+          },
+          "row": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Row"
+          },
+          "column": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Column"
+          },
+          "row_span": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Row Span",
+            "default": 1
+          },
+          "column_span": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Column Span",
+            "default": 1
+          },
+          "word_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Word Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text",
+          "bbox",
+          "row",
+          "column"
+        ],
+        "title": "TableCell"
+      },
+      "TextBlock": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "bbox": {
+            "$ref": "#/components/schemas/BoundingBox"
+          },
+          "line_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Line Ids"
+          },
+          "column": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Column"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "bbox",
+          "line_ids"
+        ],
+        "title": "TextBlock"
+      },
+      "TextLine": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "Words joined left to right; ' | ' marks a column-sized gap."
+          },
+          "bbox": {
+            "$ref": "#/components/schemas/BoundingBox"
+          },
+          "word_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Word Ids"
+          },
+          "column": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Column",
+            "description": "Index into PageLayout.columns, when the page has text columns."
+          },
+          "table_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Table Id",
+            "description": "Set when this line is a row of a detected table."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "text",
+          "bbox",
+          "word_ids"
+        ],
+        "title": "TextLine"
+      },
       "ValidationError": {
         "properties": {
           "loc": {
@@ -1308,6 +2022,71 @@
           "message"
         ],
         "title": "ValidationIssue"
+      },
+      "WordToken": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Stable id, 'p{page}-w{index}'."
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence",
+            "description": "Backend's recognition confidence; None when it reports none (e.g. a PDF text layer)."
+          },
+          "bbox": {
+            "$ref": "#/components/schemas/BoundingBox"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Page"
+          },
+          "block_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Block Id"
+          },
+          "line_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "text",
+          "bbox",
+          "page"
+        ],
+        "title": "WordToken"
       }
     }
   }

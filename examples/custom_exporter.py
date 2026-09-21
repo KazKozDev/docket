@@ -8,7 +8,7 @@ import csv
 import io
 import sys
 
-from docket import Invoice, export_document, process, register_exporter
+from docket import Invoice, export_document, process_document, register_exporter
 
 
 def to_my_erp_csv(invoice: Invoice) -> str:
@@ -32,5 +32,5 @@ register_exporter(
 )
 
 if __name__ == "__main__":
-    result = process(sys.argv[1], enqueue_review=False)
+    result = process_document(sys.argv[1], enqueue_review=False)
     print(export_document(result.document, "my-erp-csv"))

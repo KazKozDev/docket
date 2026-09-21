@@ -10,121 +10,128 @@ looked; validation measures whether the numbers mean anything.
 from datetime import date
 from pathlib import Path
 
+import pytest
+
 from docket import pipeline, review_queue
-from docket.llm_client import LLMError
-from docket.schemas import (
-    ClassificationResult,
-    DocType,
-    Invoice,
-    PipelineResult,
-    ValidationIssue,
-)
-
-
-def _result(ocr_method: str, issues: list[ValidationIssue]) -> PipelineResult:
-    return PipelineResult(
-        source="doc.png",
-        classification=ClassificationResult(
-            doc_type=DocType.INVOICE, confidence=0.9, method="rules"
-        ),
-        extracted={"invoice_number": "INV-1"},
-        extract_attempts=1,
-        validation_issues=issues,
-        ocr_method=ocr_method,
-        raw_text_chars=100,
-    )
-
+from docket.ocr import AcquisitionError
+from docket.result import DocumentResult
+from docket.schemas import Invoice, ValidationIssue
+from tests.factories import acquisition, make_result, text_acquisition, words_page
 
 _ERROR = [ValidationIssue(field="total_amount", message="does not add up")]
 
 
-def _runner(first: PipelineResult, second: PipelineResult | None):
-    calls = []
+def _ocr_reading():
+    return acquisition([words_page(["TOTAL 830.00"], backend="tesseract")])
 
-    def _run_once(path, *, on_stage, force_vlm=False):
-        calls.append(force_vlm)
-        if force_vlm:
-            if second is None:
-                raise LLMError("vision model unavailable")
-            return second
+
+def _vlm_reading():
+    return text_acquisition("TOTAL 530.00", backend="vlm")
+
+
+def _pdf_reading():
+    return acquisition([words_page(["TOTAL 530.00"], backend="pdf_text", confidence=None)], primary=None)
+
+
+def _result(issues, backend) -> DocumentResult:
+    return make_result(validation_issues=issues, document_type="invoice", schema_id=backend)
+
+
+@pytest.fixture
+def source(tmp_path, monkeypatch):
+    monkeypatch.setattr(review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "q.jsonl")
+    monkeypatch.setattr(pipeline, "looks_garbled", lambda _text: False)
+    path = tmp_path / "doc.png"
+    path.write_bytes(b"not read: acquisition is scripted")
+    return path
+
+
+def _script(monkeypatch, first, first_issues, second_issues, *, second_fails=False):
+    """First pass reads `first`; an escalated pass reads with the vision model."""
+    calls: list[bool] = []
+
+    def fake_acquire(path, options, stage_seconds):
+        calls.append(options.escalate)
+        if options.escalate:
+            if second_fails:
+                raise AcquisitionError("vision model unavailable")
+            return _vlm_reading()
         return first
 
-    return _run_once, calls
+    def fake_run_once(path, document_id, acq, *, on_stage, stage_seconds):
+        vlm = acq.layout.pages[0].backend == "vlm"
+        return _result(second_issues if vlm else first_issues, "vlm" if vlm else "ocr")
+
+    monkeypatch.setattr(pipeline, "_acquire", fake_acquire)
+    monkeypatch.setattr(pipeline, "_run_once", fake_run_once)
+    return calls
 
 
-def test_validation_failure_on_ocr_text_escalates(monkeypatch, tmp_path):
-    clean = _result("vlm", [])
-    run_once, calls = _runner(_result("ocr", _ERROR), clean)
-    monkeypatch.setattr(pipeline, "_run_once", run_once)
-    monkeypatch.setattr(review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "q.jsonl")
-
-    result = pipeline.process(Path("doc.png"))
+def test_validation_failure_on_ocr_text_escalates(source, monkeypatch):
+    calls = _script(monkeypatch, _ocr_reading(), _ERROR, [])
+    result = pipeline.process_document(source)
     assert calls == [False, True]
-    assert result.escalated_to_vlm is True
+    assert result.metrics.escalated_to_vlm is True
     assert result.needs_review is False
 
 
-def test_clean_ocr_result_does_not_pay_for_a_vlm_call(monkeypatch, tmp_path):
-    run_once, calls = _runner(_result("ocr", []), _result("vlm", []))
-    monkeypatch.setattr(pipeline, "_run_once", run_once)
-    monkeypatch.setattr(review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "q.jsonl")
-
-    result = pipeline.process(Path("doc.png"))
+def test_clean_ocr_result_does_not_pay_for_a_vlm_call(source, monkeypatch):
+    calls = _script(monkeypatch, _ocr_reading(), [], [])
+    result = pipeline.process_document(source)
     assert calls == [False]
-    assert result.escalated_to_vlm is False
+    assert result.metrics.escalated_to_vlm is False
 
 
-def test_a_tie_goes_to_the_vision_model(monkeypatch, tmp_path):
+def test_a_tie_goes_to_the_vision_model(source, monkeypatch):
     """Equal error counts aren't a reason to keep the OCR reading. Getting
     here at all means that reading already failed validation, so it has no
     claim to the benefit of the doubt.
     """
-    run_once, calls = _runner(_result("ocr", _ERROR), _result("vlm", _ERROR))
-    monkeypatch.setattr(pipeline, "_run_once", run_once)
-    monkeypatch.setattr(review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "q.jsonl")
-
-    result = pipeline.process(Path("doc.png"))
+    calls = _script(monkeypatch, _ocr_reading(), _ERROR, _ERROR)
+    result = pipeline.process_document(source)
     assert calls == [False, True]
-    assert result.escalated_to_vlm is True
-    assert result.ocr_method == "vlm"
+    assert result.metrics.escalated_to_vlm is True
+    assert result.schema_id == "vlm"
     assert result.needs_review is True
 
 
-def test_a_strictly_worse_vlm_reading_loses(monkeypatch, tmp_path):
-    two_errors = [
-        ValidationIssue(field="total_amount", message="does not add up"),
-        ValidationIssue(field="tax_amount", message="unverifiable"),
-    ]
-    run_once, calls = _runner(_result("ocr", _ERROR), _result("vlm", two_errors))
-    monkeypatch.setattr(pipeline, "_run_once", run_once)
-    monkeypatch.setattr(review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "q.jsonl")
-
-    result = pipeline.process(Path("doc.png"))
+def test_a_strictly_worse_vlm_reading_loses(source, monkeypatch):
+    two_errors = _ERROR + [ValidationIssue(field="tax_amount", message="unverifiable")]
+    calls = _script(monkeypatch, _ocr_reading(), _ERROR, two_errors)
+    result = pipeline.process_document(source)
     assert calls == [False, True]
-    assert result.escalated_to_vlm is False
-    assert result.ocr_method == "ocr"
+    assert result.metrics.escalated_to_vlm is False
+    assert result.schema_id == "ocr"
 
 
-def test_escalation_survives_an_unavailable_vision_model(monkeypatch, tmp_path):
-    run_once, calls = _runner(_result("ocr", _ERROR), None)
-    monkeypatch.setattr(pipeline, "_run_once", run_once)
-    monkeypatch.setattr(review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "q.jsonl")
-
-    result = pipeline.process(Path("doc.png"))
+def test_escalation_survives_an_unavailable_vision_model(source, monkeypatch):
+    calls = _script(monkeypatch, _ocr_reading(), _ERROR, [], second_fails=True)
+    result = pipeline.process_document(source)
     assert calls == [False, True]
     assert result.needs_review is True
 
 
-def test_pdf_text_failures_do_not_escalate(monkeypatch, tmp_path):
+def test_pdf_text_failures_do_not_escalate(source, monkeypatch):
     """A born-digital PDF's text layer is exact — if validation failed there,
     the document is wrong, not the transcription. Don't pay for a VLM call.
     """
-    run_once, calls = _runner(_result("pdf_text", _ERROR), _result("vlm", []))
-    monkeypatch.setattr(pipeline, "_run_once", run_once)
-    monkeypatch.setattr(review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "q.jsonl")
-
-    pipeline.process(Path("doc.pdf"))
+    calls = _script(monkeypatch, _pdf_reading(), _ERROR, [])
+    pipeline.process_document(source)
     assert calls == [False]
+
+
+def test_no_fallback_means_no_escalation(source, monkeypatch):
+    calls = _script(monkeypatch, _ocr_reading(), _ERROR, [])
+    pipeline.process_document(source, ocr_fallbacks=[])
+    assert calls == [False]
+
+
+def test_garbled_ocr_is_reread_before_extraction(source, monkeypatch):
+    calls = _script(monkeypatch, _ocr_reading(), [], [])
+    monkeypatch.setattr(pipeline, "looks_garbled", lambda _text: True)
+    result = pipeline.process_document(source)
+    assert calls == [False, True]
+    assert result.schema_id == "vlm"
 
 
 def test_discount_in_accounting_parentheses_is_normalized():

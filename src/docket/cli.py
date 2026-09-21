@@ -9,7 +9,8 @@ import sys
 from . import __version__
 from .doctypes import list_document_types
 from .export import ExportError, get_exporter, list_exporters
-from .pipeline import process
+from .ocr import BackendUnavailable, OcrBackendError, UnknownLanguage, list_ocr_backends
+from .pipeline import process_document
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -40,6 +41,32 @@ def main(argv: list[str] | None = None) -> None:
         action="store_true",
         help="List document types (built-in and registered) and exit",
     )
+    parser.add_argument(
+        "--ocr-backend",
+        metavar="NAME",
+        help="Primary OCR backend (tesseract, paddle, auto, or a plugin); default DOCKET_OCR_BACKEND",
+    )
+    parser.add_argument(
+        "--ocr-fallback",
+        action="append",
+        metavar="NAME",
+        help="Fallback OCR backend, tried in order; repeat for more. Default DOCKET_OCR_FALLBACKS",
+    )
+    parser.add_argument(
+        "--no-ocr-fallback",
+        action="store_true",
+        help="Use no fallback backend at all",
+    )
+    parser.add_argument(
+        "--ocr-languages",
+        metavar="CODES",
+        help="ISO 639-1 codes, comma-separated (e.g. en,de); default DOCKET_OCR_LANGUAGES",
+    )
+    parser.add_argument(
+        "--list-ocr-backends",
+        action="store_true",
+        help="List OCR backends, their capabilities and availability, and exit",
+    )
     parser.add_argument("--version", action="version", version=f"docket {__version__}")
 
     args = parser.parse_args(argv)
@@ -54,6 +81,20 @@ def main(argv: list[str] | None = None) -> None:
             origin = "built-in" if doc_type.builtin else "custom"
             print(f"{doc_type.name:16} {doc_type.schema.__name__:16} {origin:8} {doc_type.description}")
         return
+    if args.list_ocr_backends:
+        for info in list_ocr_backends():
+            state = "available" if info.status.available else f"unavailable: {info.status.reason}"
+            caps = info.capabilities
+            flags = (
+                ",".join(
+                    k for k in ("confidence", "word_coordinates", "lines", "tables", "rotation")
+                    if getattr(caps, k)
+                )
+                if caps
+                else "-"
+            )
+            print(f"{info.name:12} {flags:48} {state}")
+        return
     if args.document is None:
         parser.error("the following arguments are required: document")
 
@@ -66,7 +107,17 @@ def main(argv: list[str] | None = None) -> None:
             raise SystemExit(2)
         return
 
-    result = process(args.document)
+    fallbacks = [] if args.no_ocr_fallback else args.ocr_fallback
+    try:
+        result = process_document(
+            args.document,
+            ocr_backend=args.ocr_backend,
+            ocr_fallbacks=fallbacks,
+            ocr_languages=args.ocr_languages,
+        )
+    except (BackendUnavailable, OcrBackendError, UnknownLanguage) as exc:
+        print(f"Configuration error: {exc}", file=sys.stderr)
+        raise SystemExit(3) from exc
     if not args.export:
         print(json.dumps(result.model_dump(mode="json"), indent=2, ensure_ascii=False))
         if not result.is_valid:

@@ -23,7 +23,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 from docket.classify import classify_llm, classify_rules  # noqa: E402
 from docket.classify_tfidf import classify_tfidf  # noqa: E402
 from docket.llm_client import LLMError, vision_transcribe  # noqa: E402
-from docket.ocr import _ocr_image  # noqa: E402
+from docket.ocr import DocumentSource  # noqa: E402
+from docket.ocr.tesseract import TesseractBackend  # noqa: E402
 
 ROOT = Path(__file__).parent
 DIRS = [ROOT / "golden_dataset", ROOT / "real_samples"]
@@ -83,26 +84,26 @@ def _bench_ocr(images: list[Path]) -> list[dict]:
     and the run died after the classification numbers had been computed but
     before anything was written, so nothing survived.
     """
-    from PIL import Image
-
+    tesseract = TesseractBackend()
     rows = []
     for path in images:
-        image = Image.open(path)
-
-        start = time.perf_counter()
-        tess_text, tess_conf, _witness = _ocr_image(image)
-        tess_latency = time.perf_counter() - start
+        with DocumentSource(path) as source:
+            page = source.page(1)
+            start = time.perf_counter()
+            layout = tesseract.recognize_page(page)
+            tess_latency = time.perf_counter() - start
+            png = page.image_png()
 
         row = {
             "image": path.name,
-            "tesseract_confidence": round(tess_conf, 1),
-            "tesseract_chars": len(tess_text.strip()),
+            "tesseract_confidence": round((layout.confidence or 0.0) * 100, 1),
+            "tesseract_chars": len(layout.text.strip()),
             "tesseract_latency_s": round(tess_latency, 2),
         }
 
         start = time.perf_counter()
         try:
-            vlm_text = vision_transcribe(str(path))
+            vlm_text = vision_transcribe(png)
         except LLMError as exc:
             row["vlm_error"] = f"{type(exc).__name__}: {exc}"
             row["vlm_latency_s"] = round(time.perf_counter() - start, 2)

@@ -3,7 +3,6 @@ from datetime import date
 import pymupdf as fitz
 
 from docket import extract as extract_module
-from docket import ocr
 from docket.schemas import Invoice
 
 
@@ -70,26 +69,6 @@ def test_retry_prompt_keeps_source_document(monkeypatch):
     assert result is not None
     assert attempts == 2
     assert "SOURCE_SENTINEL" in prompts[1]
-
-
-def test_mixed_pdf_uses_text_layer_and_ocr_per_page(tmp_path, monkeypatch):
-    path = tmp_path / "mixed.pdf"
-    with fitz.open() as document:
-        page = document.new_page()
-        page.insert_text((72, 72), "Digital page with enough searchable text")
-        document.new_page()
-        document.save(path)
-
-    monkeypatch.setattr(ocr, "_render_pdf_page", lambda *_args: object())
-    monkeypatch.setattr(
-        ocr, "_ocr_image", lambda _image: ("Scanned second page", 99.0, [])
-    )
-    result = ocr.extract_text(path)
-
-    assert result.method == "mixed"
-    assert result.page_methods == ["pdf_text", "ocr"]
-    assert "Digital page" in result.pages[0]
-    assert result.pages[1] == "Scanned second page"
 
 
 def test_date_convention_instruction_in_extraction_prompt(monkeypatch):

@@ -35,7 +35,32 @@ from .doctypes import (
     unregister_document_type,
 )
 from .forensics import analyze_document_forensics
-from .pipeline import process
+from .layout import (
+    BoundingBox,
+    DocumentLayout,
+    PageLayout,
+    Table,
+    TableCell,
+    TextLine,
+    WordToken,
+)
+from .ocr import (
+    BackendUnavailable,
+    Capabilities,
+    OcrBackend,
+    OcrSettings,
+    get_ocr_backend,
+    list_ocr_backends,
+    register_ocr_backend,
+)
+from .pipeline import process_document
+from .result import (
+    DocumentError,
+    DocumentResult,
+    DocumentStatus,
+    ProcessingMetrics,
+    SourceLocation,
+)
 from .schemas import (
     AcceptanceAct,
     BankStatement,
@@ -49,19 +74,38 @@ from .schemas import (
     Invoice,
     MatchingStatus,
     MatchResult,
-    PipelineResult,
     PurchaseOrder,
     Receipt,
     SignatureDetection,
     StampDetection,
     Waybill,
-    SourceLocation,
+    Citation,
     ValidationIssue,
 )
 
 __all__ = [
     "__version__",
-    "process",
+    "process_document",
+    "DocumentResult",
+    "DocumentStatus",
+    "DocumentError",
+    "ProcessingMetrics",
+    "SourceLocation",
+    "Citation",
+    "BoundingBox",
+    "DocumentLayout",
+    "PageLayout",
+    "Table",
+    "TableCell",
+    "TextLine",
+    "WordToken",
+    "BackendUnavailable",
+    "Capabilities",
+    "OcrBackend",
+    "OcrSettings",
+    "get_ocr_backend",
+    "list_ocr_backends",
+    "register_ocr_backend",
     "export_document",
     "ExportError",
     "get_exporter",
@@ -75,7 +119,6 @@ __all__ = [
     "list_document_types",
     "register_document_type",
     "unregister_document_type",
-    "SourceLocation",
     "ValidationIssue",
     "AcceptanceAct",
     "BankStatement",
@@ -87,7 +130,6 @@ __all__ = [
     "Invoice",
     "MatchingStatus",
     "MatchResult",
-    "PipelineResult",
     "PurchaseOrder",
     "Receipt",
     "Waybill",

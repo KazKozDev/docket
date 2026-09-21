@@ -24,7 +24,7 @@ from metrics import (  # noqa: E402
 )
 
 from docket import config  # noqa: E402
-from docket.pipeline import process  # noqa: E402
+from docket.pipeline import process_document  # noqa: E402
 
 DEFAULT_DIR = Path(__file__).parent / "golden_dataset"
 RESULTS_DIR = Path(__file__).parent / "results"
@@ -49,7 +49,7 @@ def main() -> None:
 
         start = time.perf_counter()
         try:
-            result = process(doc_path)
+            result = process_document(doc_path)
         except Exception as exc:  # noqa: BLE001
             # One unreachable model or unreadable file shouldn't cost you the
             # other eighteen documents' worth of results.
@@ -81,7 +81,7 @@ def main() -> None:
         latency_s = time.perf_counter() - start
 
         correct, total, mismatches = field_accuracy(result.extracted, expected)
-        classification_ok = result.classification.type_name == expected.get("doc_type")
+        classification_ok = result.document_type == expected.get("doc_type")
 
         # A document whose correct answer is "unknown" has no fields to
         # extract — grading one anyway would count a correct abstention as a
@@ -99,27 +99,28 @@ def main() -> None:
         )
         validation_correct = caught_expected_error if expected_validation_field else not validation_detected
         est_cost_usd = (
-            result.llm_estimated_tokens / 1_000_000
+            result.metrics.llm_estimated_tokens / 1_000_000
         ) * config.CLOUD_EQUIVALENT_USD_PER_1M_TOKENS
 
         rows.append(
             {
                 "doc": doc_path.name,
                 "classification_ok": classification_ok,
-                "classified_as": result.classification.type_name,
-                "classification_method": result.classification.method,
-                "ocr_method": result.ocr_method + ("*" if result.escalated_to_vlm else ""),
+                "classified_as": result.document_type or "-",
+                "classification_method": result.classification.method if result.classification else "-",
+                "ocr_method": "+".join(result.ocr.backends_used if result.ocr else ["-"])
+                + ("*" if result.metrics.escalated_to_vlm else ""),
                 "field_accuracy": "n/a" if correctly_abstained else f"{correct}/{total}",
                 "mismatches": mismatches,
                 "validation_caught_expected_error": validation_correct,
                 "validation_expected": expected_validation_field is not None,
                 "validation_expected_detected": caught_expected_error,
                 "validation_alerted": validation_detected,
-                "extract_attempts": result.extract_attempts,
+                "extract_attempts": result.metrics.extract_attempts,
                 "needs_review": result.needs_review,
                 "latency_s": round(latency_s, 2),
-                "llm_calls": result.llm_calls,
-                "llm_estimated_tokens": result.llm_estimated_tokens,
+                "llm_calls": result.metrics.llm_calls,
+                "llm_estimated_tokens": result.metrics.llm_estimated_tokens,
                 "est_cloud_cost_usd": round(est_cost_usd, 6),
             }
         )
