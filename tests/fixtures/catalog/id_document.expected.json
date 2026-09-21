@@ -1,0 +1,36 @@
+{
+  "document_kind": "passport",
+  "document_number": "L898902C3",
+  "issuing_country": "UTO",
+  "surname": "ERIKSSON",
+  "given_names": "ANNA MARIA",
+  "date_of_birth": "1974-08-12",
+  "sex": "F",
+  "nationality": "UTOPIAN",
+  "place_of_birth": "ZENITH",
+  "date_of_issue": "2002-04-16",
+  "date_of_expiry": "2012-04-15",
+  "issuing_authority": "PASSPORT OFFICE",
+  "mrz": [
+    "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<",
+    "L898902C36UTO7408122F1204159ZE184226B<<<<<10"
+  ],
+  "field_locations": {
+    "document_number": {
+      "page": 1,
+      "quote": "Passport No.: L898902C3"
+    },
+    "surname": {
+      "page": 1,
+      "quote": "Surname: ERIKSSON"
+    },
+    "given_names": {
+      "page": 1,
+      "quote": "Given names: ANNA MARIA"
+    },
+    "date_of_birth": {
+      "page": 1,
+      "quote": "Date of birth: 1974-08-12"
+    }
+  }
+}

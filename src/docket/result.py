@@ -117,16 +117,31 @@ class DocumentResult(BaseModel):
     @property
     def document(self):
         """`extracted` as its typed schema (Invoice, Receipt, …), or None if
-        extraction failed or no longer matches the schema."""
-        from .doctypes import get_document_type
+        extraction failed or the schema isn't registered here. A result saved
+        under an older schema version is migrated to the registered one."""
+        from . import catalog
 
-        if self.document_type is None or self.extracted is None:
+        if self.schema_id is None or self.extracted is None:
             return None
-        doc_type = get_document_type(self.document_type)
-        if doc_type is None:
-            return None
+        spec = catalog.get_schema(self.schema_id, self.schema_version) if self.schema_version else None
+        data = self.extracted
+        if spec is None:
+            spec = catalog.get_schema(self.schema_id)
+            if spec is None and ":" in self.schema_id:
+                # An unregistered model: its id is its import path.
+                try:
+                    spec = catalog.adhoc(catalog.load_schema(self.schema_id))
+                except catalog.SchemaError:
+                    return None
+            if spec is None:
+                return None
+            if self.schema_version and self.schema_version != spec.version:
+                try:
+                    data = catalog.migrate(self.schema_id, data, self.schema_version, spec.version)
+                except catalog.SchemaError:
+                    return None
         try:
-            return doc_type.schema.model_validate(self.extracted)
+            return spec.model.model_validate(data)
         except ValidationError:
             return None
 

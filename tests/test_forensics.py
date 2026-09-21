@@ -190,7 +190,7 @@ def test_page_forensics_direct():
 
 def test_validate_with_forensic_report(tmp_path: Path):
     from datetime import date
-    from docket.schemas import AcceptanceAct, AcceptanceActItem
+    from docket.catalog import AcceptanceAct, AcceptanceActItem
     from docket.validate import validate
 
     blank_path = _create_blank_contract_template(tmp_path)

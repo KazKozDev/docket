@@ -1,0 +1,11 @@
+ACCOUNT STATEMENT
+Kontoauszug 07/2026
+Bank: Stadtsparkasse Nordhafen
+Account holder: Lena Hoffmann
+IBAN: DE89 3704 0044 0532 0130 00
+Statement period: 2026-07-01 to 2026-07-31
+Opening balance: 1200.00
+2026-07-03 Salary ACME GmbH +2500.00 balance 3700.00
+2026-07-10 Rent Wohnbau eG -950.00 balance 2750.00
+2026-07-21 Card payment Supermarkt -150.00 balance 2600.00
+Closing balance: 2600.00 EUR

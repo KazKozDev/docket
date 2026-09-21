@@ -15,12 +15,8 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from typing import Any
 
-from ..schemas import (
-    AcceptanceAct,
-    BankStatement,
-    Invoice,
-    Receipt,
-)
+from ..catalog.models import AcceptanceAct, BankStatement, Invoice, Receipt
+from ._parties import address_line, iban, tax_number
 
 
 def export_to_1c_client_bank(statement: BankStatement) -> str:
@@ -98,10 +94,10 @@ def export_to_1c_enterprise_xml(doc: Invoice | AcceptanceAct) -> str:
     if isinstance(doc, Invoice):
         doc_num = doc.invoice_number
         doc_date = doc.issue_date.isoformat()
-        vendor_name = doc.vendor_name
-        vendor_tax_id = doc.vendor_vat_number or doc.vendor_tax_id or ""
-        customer_name = doc.customer_name
-        customer_tax_id = doc.customer_tax_id or ""
+        vendor_name = doc.seller.name
+        vendor_tax_id = tax_number(doc.seller) or ""
+        customer_name = doc.buyer.name
+        customer_tax_id = tax_number(doc.buyer) or ""
         currency = doc.currency
         subtotal = doc.subtotal
         tax_amount = doc.tax_amount
@@ -214,18 +210,18 @@ def export_to_sap_idoc(invoice: Invoice) -> str:
     # Vendor Partner Segment (LF)
     edka1_vendor = ET.SubElement(idoc, "E1EDKA1", {"SEGMENT": "1"})
     ET.SubElement(edka1_vendor, "PARVW").text = "LF"
-    ET.SubElement(edka1_vendor, "NAME1").text = invoice.vendor_name
-    if invoice.vendor_address:
-        ET.SubElement(edka1_vendor, "STRAS").text = invoice.vendor_address
-    if invoice.vendor_iban:
-        ET.SubElement(edka1_vendor, "BNKAC").text = invoice.vendor_iban
+    ET.SubElement(edka1_vendor, "NAME1").text = invoice.seller.name
+    if address_line(invoice.seller.address):
+        ET.SubElement(edka1_vendor, "STRAS").text = address_line(invoice.seller.address)
+    if iban(invoice):
+        ET.SubElement(edka1_vendor, "BNKAC").text = iban(invoice)
 
     # Customer Partner Segment (AG)
     edka1_cust = ET.SubElement(idoc, "E1EDKA1", {"SEGMENT": "1"})
     ET.SubElement(edka1_cust, "PARVW").text = "AG"
-    ET.SubElement(edka1_cust, "NAME1").text = invoice.customer_name
-    if invoice.customer_address:
-        ET.SubElement(edka1_cust, "STRAS").text = invoice.customer_address
+    ET.SubElement(edka1_cust, "NAME1").text = invoice.buyer.name
+    if address_line(invoice.buyer.address):
+        ET.SubElement(edka1_cust, "STRAS").text = address_line(invoice.buyer.address)
 
     # Line Item Segments
     for idx, item in enumerate(invoice.line_items, start=1):
@@ -301,7 +297,7 @@ def export_to_sap_journal_csv(doc: Invoice | BankStatement) -> str:
                 company_code,
                 currency,
                 ref,
-                f"Inv {doc.vendor_name}",
+                f"Inv {doc.seller.name}",
                 "40",
                 "600000",
                 f"{doc.subtotal:.2f}",
@@ -320,7 +316,7 @@ def export_to_sap_journal_csv(doc: Invoice | BankStatement) -> str:
                     company_code,
                     currency,
                     ref,
-                    f"Tax {doc.vendor_name}",
+                    f"Tax {doc.seller.name}",
                     "40",
                     "154000",
                     f"{doc.tax_amount:.2f}",
@@ -338,12 +334,12 @@ def export_to_sap_journal_csv(doc: Invoice | BankStatement) -> str:
                 company_code,
                 currency,
                 ref,
-                f"Vendor {doc.vendor_name}",
+                f"Vendor {doc.seller.name}",
                 "31",
                 "700000",
                 f"-{doc.total_amount:.2f}",
                 "",
-                doc.vendor_name,
+                doc.seller.name,
             ]
         )
     else:
@@ -444,7 +440,7 @@ def export_to_quickbooks_iif(doc: Invoice | Receipt) -> str:
 
     if isinstance(doc, Invoice):
         dt_str = doc.issue_date.strftime("%m/%d/%Y")
-        vendor = doc.vendor_name
+        vendor = doc.seller.name
         doc_num = doc.invoice_number
         total = doc.total_amount
         subtotal = doc.subtotal
@@ -525,7 +521,7 @@ def export_to_quickbooks_json(doc: Invoice | Receipt) -> dict[str, Any]:
         payload: dict[str, Any] = {
             "TxnDate": doc.issue_date.isoformat(),
             "DocNumber": doc.invoice_number,
-            "VendorRef": {"name": doc.vendor_name},
+            "VendorRef": {"name": doc.seller.name},
             "CurrencyRef": {"value": doc.currency},
             "TotalAmt": doc.total_amount,
             "Line": lines,
@@ -602,7 +598,7 @@ def export_to_xero_csv(doc: Invoice | Receipt) -> str:
     writer.writerow(headers)
 
     if isinstance(doc, Invoice):
-        contact = doc.vendor_name
+        contact = doc.seller.name
         inv_num = doc.invoice_number
         inv_date = doc.issue_date.strftime("%d/%m/%Y")
         due_date = doc.due_date.strftime("%d/%m/%Y") if doc.due_date else inv_date
@@ -711,7 +707,7 @@ def export_to_xero_json(doc: Invoice | Receipt) -> dict[str, Any]:
             "Invoices": [
                 {
                     "Type": "ACCPAY",
-                    "Contact": {"Name": doc.vendor_name},
+                    "Contact": {"Name": doc.seller.name},
                     "Date": doc.issue_date.isoformat(),
                     "DueDate": doc.due_date.isoformat()
                     if doc.due_date

@@ -1,69 +1,82 @@
 """Teach docket a document type it doesn't ship with.
 
-    python examples/custom_document_type.py lieferschein.pdf
+    python examples/custom_document_type.py strafzettel.pdf
 
-Once registered, the type goes through the whole pipeline: keyword rules and
-the LLM classifier recognise it, the LLM fills your schema, every required
-field's page/quote citation is checked against the source, your validators
-run, and exporters can target it.
+A registered schema goes through the whole pipeline: the keyword rules, the
+TF-IDF tier (if you give it example sentences) and the LLM classifier
+recognise it, the LLM fills your model, every cited field's page/quote is
+checked against the source and resolved to a box on the page, your
+validators run, and exporters can target it.
+
+To use a model once without registering it, pass it directly:
+`ProcessOptions(schema_model=ParkingTicket)` or
+`docket process file.pdf --schema my_module:ParkingTicket`.
 """
 import sys
 from datetime import date
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from docket import (
     CitedDocument,
-    ValidationIssue,
-    add_validator,
+    Party,
     ProcessOptions,
     ReviewOptions,
+    SchemaSpec,
+    ValidationIssue,
+    add_validator,
+    keywords,
     process_document,
-    register_document_type,
+    register_schema,
 )
 
 
-class DeliveryItem(BaseModel):
-    description: str
-    quantity: float
-    unit: str | None = None
-
-
-class DeliveryNote(CitedDocument):
+class ParkingTicket(CitedDocument):
     """Field descriptions go into the JSON Schema the LLM sees — write them
     as instructions."""
 
-    note_number: str
-    supplier_name: str
-    supplier_vat_number: str | None = None
-    delivery_date: date
-    order_reference: str | None = Field(
-        default=None, description="Buyer's purchase order number, if printed"
+    ticket_number: str
+    issuing_authority: Party = Field(description="The municipality or police office that issued it.")
+    issue_date: date
+    plate: str | None = Field(default=None, description="Vehicle registration plate, as printed.")
+    offence: str | None = None
+    fine: float
+    currency: str = Field(default="EUR", min_length=3, max_length=3)
+    pay_by: date | None = None
+
+
+def pay_by_after_issue(ticket: ParkingTicket, ctx):
+    if ticket.pay_by and ticket.pay_by < ticket.issue_date:
+        yield ValidationIssue(field="pay_by", message="payment deadline is before the issue date")
+
+
+register_schema(
+    SchemaSpec(
+        schema_id="parking_ticket",
+        version="1.0",
+        display_name="Parking ticket",
+        status="experimental",
+        model=ParkingTicket,
+        description="Parking ticket / Strafzettel / avis de contravention for a parking offence",
+        keywords=keywords("parking ticket", "penalty charge notice", "strafzettel", "verwarnungsgeld",
+                          "avis de contravention", "multa de aparcamiento"),
+        # Optional: sentences in your own words let the TF-IDF tier learn the type too.
+        examples=(
+            "Your vehicle was parked without a valid ticket; the fine is payable within 14 days.",
+            "Ihr Fahrzeug parkte im Halteverbot; das Verwarnungsgeld ist binnen einer Woche zu zahlen.",
+            "Stationnement gênant constaté par l'agent, amende forfaitaire à régler sous 45 jours.",
+        ),
+        cited_fields=("ticket_number", "issuing_authority.name", "issue_date", "fine"),
+        validators=(pay_by_after_issue,),
     )
-    items: list[DeliveryItem] = []
-
-
-def items_present(note: DeliveryNote, _raw_text: str | None):
-    if not note.items:
-        yield ValidationIssue(field="items", message="no delivered items found")
-
-
-register_document_type(
-    "delivery_note",
-    DeliveryNote,
-    description="Delivery note / Lieferschein / bon de livraison listing goods handed over",
-    keywords=["delivery note", "lieferschein", "bon de livraison", ("packing list", 1.0)],
-    validators=[items_present],
 )
 
 
-# Validators can be attached to built-in types too.
-def po_required(invoice, _raw_text):
+# Validators can be attached to built-in schemas too.
+def po_required(invoice, ctx):
     if not invoice.purchase_order_number:
         yield ValidationIssue(
-            field="purchase_order_number",
-            message="our AP policy requires a PO number",
-            severity="warning",
+            field="references", message="our AP policy requires a PO number", severity="warning"
         )
 
 
@@ -71,7 +84,7 @@ add_validator("invoice", po_required)
 
 if __name__ == "__main__":
     result = process_document(sys.argv[1], ProcessOptions(review=ReviewOptions(enqueue=False)))
-    print(result.document_type, "valid" if result.is_valid else "INVALID")
+    print(result.document_type, result.schema_version, "valid" if result.is_valid else "INVALID")
     print(result.document)
     for issue in result.validation_issues:
         print(f"[{issue.severity}] {issue.field}: {issue.message}")

@@ -27,8 +27,8 @@ LINES = [
 CITES = {
     "invoice_number": "Invoice no: INV-2026-0042",
     "issue_date": "Issue date: 2026-03-02",
-    "vendor_name": "Vendor: Northgate Supplies Ltd",
-    "customer_name": "Bill to: Iberia Mantenimiento SA",
+    "seller.name": "Vendor: Northgate Supplies Ltd",
+    "buyer.name": "Bill to: Iberia Mantenimiento SA",
     "subtotal": "Subtotal: EUR 100.00",
     "tax_amount": "VAT: EUR 21.00",
     "total_amount": "Total due: EUR 121.00",
@@ -48,8 +48,8 @@ def _payload():
     return {
         "invoice_number": "INV-2026-0042",
         "issue_date": "2026-03-02",
-        "vendor_name": "Northgate Supplies Ltd",
-        "customer_name": "Iberia Mantenimiento SA",
+        "seller": {"name": "Northgate Supplies Ltd"},
+        "buyer": {"name": "Iberia Mantenimiento SA"},
         "currency": "EUR",
         "subtotal": 100.0,
         "tax_amount": 21.0,
@@ -137,7 +137,7 @@ def test_cli_reports_configuration_errors_with_exit_code_3(capsys):
     from docket import cli
 
     with pytest.raises(SystemExit) as exc:
-        cli.main(["whatever.pdf", "--ocr-backend", "nope"])
+        cli.main(["process", "whatever.pdf", "--ocr-backend", "nope"])
     assert exc.value.code == 3
     assert "unknown OCR backend 'nope'" in capsys.readouterr().err
 
@@ -145,6 +145,6 @@ def test_cli_reports_configuration_errors_with_exit_code_3(capsys):
 def test_cli_lists_ocr_backends(capsys):
     from docket import cli
 
-    cli.main(["--list-ocr-backends"])
+    cli.main(["ocr-backends"])
     out = capsys.readouterr().out
     assert "pdf_text" in out and "tesseract" in out and "vlm" in out

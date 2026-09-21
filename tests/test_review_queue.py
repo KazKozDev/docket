@@ -2,20 +2,16 @@ from datetime import date
 from pathlib import Path
 
 from docket import review_queue
-from docket.schemas import (
-    ClassificationResult,
-    DocType,
-    Invoice,
-    ValidationIssue,
-)
+from docket.catalog import Invoice
+from docket.schemas import ClassificationResult, ValidationIssue
 from docket.result import DocumentResult
-from tests.factories import acquisition, make_result, words_page
+from tests.factories import acquisition, flat_invoice, flat_po, make_result, words_page
 
 
 def _result(**overrides) -> DocumentResult:
     defaults = dict(
         source="doc.txt",
-        extracted=Invoice(
+        extracted=flat_invoice(
             invoice_number="INV-1",
             issue_date=date(2026, 1, 1),
             vendor_name="Acme",
@@ -35,7 +31,7 @@ def test_clean_result_has_no_review_reasons():
 def test_low_confidence_triggers_review():
     result = _result(
         classification=ClassificationResult(
-            doc_type=DocType.INVOICE, confidence=0.2, method="llm"
+            doc_type="invoice", confidence=0.2, method="llm"
         )
     )
     reasons = review_queue.reasons_for(result)
@@ -45,7 +41,7 @@ def test_low_confidence_triggers_review():
 def test_unknown_doc_type_triggers_review():
     result = _result(
         classification=ClassificationResult(
-            doc_type=DocType.UNKNOWN, confidence=0.9, method="llm"
+            doc_type="unknown", confidence=0.9, method="llm"
         )
     )
     reasons = review_queue.reasons_for(result)

@@ -8,7 +8,7 @@ code or record locator is proof of a bad read rather than a hint.
 from datetime import datetime
 
 from docket.classify import classify
-from docket.schemas import BoardingPass, DocType
+from docket.catalog import BoardingPass
 from docket.validate import validate
 
 PASS_TEXT = """BOARDING PASS
@@ -37,7 +37,7 @@ def _pass(**overrides) -> BoardingPass:
 
 def test_classified_by_rules_in_english():
     result = classify(PASS_TEXT)
-    assert result.doc_type == DocType.BOARDING_PASS
+    assert result.doc_type == "boarding_pass"
     assert result.method == "rules"
 
 
@@ -48,7 +48,7 @@ def test_classified_by_rules_in_spanish():
     Asiento 12C
     """
     result = classify(spanish)
-    assert result.doc_type == DocType.BOARDING_PASS
+    assert result.doc_type == "boarding_pass"
     assert result.method == "rules"
 
 

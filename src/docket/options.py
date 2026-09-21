@@ -69,7 +69,10 @@ class ProcessOptions(BaseModel):
 
     ocr: OcrOptions = Field(default_factory=OcrOptions)
     document_type: str | None = Field(
-        default=None, description="A registered document type. Skips classification."
+        default=None, description="A registered schema id (e.g. 'invoice'). Skips classification."
+    )
+    schema_version: str | None = Field(
+        default=None, description="A registered version of document_type; default the latest."
     )
     schema_model: type[BaseModel] | None = Field(
         default=None,
@@ -104,7 +107,7 @@ class ResolvedOptions:
     instantiated and checked, schema chosen or classification required."""
 
     acquisition: AcquisitionOptions
-    document_type: object | None  # doctypes.DocumentType, when the schema is fixed
+    document_type: object | None  # catalog.SchemaSpec, when the schema is fixed
     classify: bool
     include_layout: bool
     escalate: bool
@@ -122,7 +125,7 @@ def _pick(value, env):
 def resolve(options: ProcessOptions | None = None) -> ResolvedOptions:
     """Apply the environment to `options` and validate them. Raises
     ConfigurationError on anything that would fail later."""
-    from . import doctypes
+    from . import catalog
 
     options = options or ProcessOptions()
     ocr = options.ocr
@@ -148,7 +151,9 @@ def resolve(options: ProcessOptions | None = None) -> ResolvedOptions:
         update={"backend": primary if primary is not None else "auto", "fallbacks": fallbacks}
     )
 
-    doc_type = doctypes.resolve(document_type=options.document_type, schema=options.schema_model)
+    doc_type = catalog.resolve(
+        schema_id=options.document_type, model=options.schema_model, version=options.schema_version
+    )
     if doc_type is None and not options.classify:
         raise ConfigurationError(
             "classify=False needs document_type or schema_model: there is nothing else to pick a schema with"

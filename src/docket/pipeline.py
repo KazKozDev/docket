@@ -24,7 +24,8 @@ from typing import Any, Callable
 
 from pydantic import BaseModel
 
-from . import doctypes, review_queue
+from . import catalog, review_queue
+from .catalog import SchemaSpec
 from .classify import classify
 from .extract import extract_pages
 from .language import detect_language
@@ -107,14 +108,14 @@ def _uses_ocr(acquisition: Acquisition) -> bool:
 
 
 def select_schema(
-    acquisition: Acquisition, fixed: doctypes.DocumentType | None
-) -> tuple[doctypes.DocumentType | None, ClassificationResult | None]:
+    acquisition: Acquisition, fixed: SchemaSpec | None
+) -> tuple[SchemaSpec | None, ClassificationResult | None]:
     """The schema to extract into. A type or schema the caller fixed wins and
     no classifier runs; otherwise the rules → TF-IDF → LLM cascade decides."""
     if fixed is not None:
         return fixed, None
     classification = classify(acquisition.text)
-    return doctypes.get_document_type(classification.doc_type), classification
+    return catalog.get_schema(classification.doc_type), classification
 
 
 def _resolve_sources(extracted: dict, acquisition: Acquisition) -> dict[str, SourceLocation]:
@@ -148,15 +149,15 @@ def _resolve_sources(extracted: dict, acquisition: Acquisition) -> dict[str, Sou
 
 
 def extract(
-    acquisition: Acquisition, doc_type: doctypes.DocumentType
+    acquisition: Acquisition, doc_type: SchemaSpec
 ) -> tuple[BaseModel | None, int]:
     """Fill the schema from the acquired pages. Returns the instance (None if
     the model never produced valid output) and the number of attempts."""
-    return extract_pages(acquisition.layout.page_texts, doc_type.schema)
+    return extract_pages(acquisition.layout.page_texts, doc_type.model)
 
 
 def validate_extraction(
-    instance: BaseModel | None, acquisition: Acquisition, doc_type: doctypes.DocumentType
+    instance: BaseModel | None, acquisition: Acquisition, doc_type: SchemaSpec
 ) -> list[ValidationIssue]:
     if instance is None:
         return [ValidationIssue(field="*", message="extraction failed to produce valid structured output")]
@@ -170,7 +171,7 @@ def validate_extraction(
         pages=layout.page_texts,
         witness_pages=acquisition.witness_pages,
         vlm_unconfirmed=bool(unbacked) and not any(acquisition.witness_numbers),
-        doc_type=doc_type,
+        spec=doc_type,
     )
 
 
@@ -224,7 +225,7 @@ def _read(
         "layout": acquisition.layout,
     }
     if doc_type is None:
-        name = classification.type_name if classification else "unknown"
+        name = classification.doc_type if classification else catalog.UNKNOWN
         _notify(on_stage, "extract", None)
         return DocumentResult(
             **common,
@@ -234,7 +235,7 @@ def _read(
             ],
         )
 
-    with stages.timed("extract"), log_stage(log, "extract", **doc, schema=doc_type.schema.__name__):
+    with stages.timed("extract"), log_stage(log, "extract", **doc, schema=doc_type.schema_id):
         instance, attempts = extract(acquisition, doc_type)
     _notify(on_stage, "extract", instance)
 
@@ -246,8 +247,9 @@ def _read(
     extracted = instance.model_dump(mode="json") if instance else None
     return DocumentResult(
         **common,
-        document_type=doc_type.name,
-        schema_id=doc_type.name,
+        document_type=doc_type.schema_id,
+        schema_id=doc_type.schema_id,
+        schema_version=doc_type.version,
         extracted=extracted,
         field_sources=_resolve_sources(extracted, acquisition) if extracted else {},
         validation_issues=issues,

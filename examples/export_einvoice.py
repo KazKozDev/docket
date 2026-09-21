@@ -4,7 +4,7 @@
     python examples/export_einvoice.py invoice.pdf xrechnung > invoice.xml
 
 Formats: xrechnung, zugferd (Factur-X / EN 16931), ubl (Peppol BIS), facturae.
-Run `docket --list-formats` for everything available.
+Run `docket formats` for everything available.
 """
 import sys
 

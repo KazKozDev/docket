@@ -1,0 +1,56 @@
+{
+  "certificate_number": "DE-HK-2026-004417",
+  "issue_date": "2026-07-22",
+  "certificate_type": "non_preferential",
+  "exporter": {
+    "name": "Maschinenbau Kessler GmbH",
+    "address": {
+      "city": "Stuttgart",
+      "country_code": "DE"
+    }
+  },
+  "consignee": {
+    "name": "Pacific Machinery Ltd",
+    "address": {
+      "city": "Vancouver",
+      "country_code": "CA"
+    }
+  },
+  "country_of_origin": "Germany",
+  "destination_country": "Canada",
+  "transport_details": "Sea freight Hamburg - Vancouver",
+  "issuing_authority": "IHK Region Stuttgart",
+  "goods": [
+    {
+      "description": "CNC milling spindle",
+      "hs_code": "8466.93",
+      "quantity": 12,
+      "unit_of_measure": "units",
+      "gross_weight_kg": 480.0
+    }
+  ],
+  "invoice_references": [
+    {
+      "kind": "invoice",
+      "number": "INV-2026-0977"
+    }
+  ],
+  "field_locations": {
+    "certificate_number": {
+      "page": 1,
+      "quote": "Certificate No: DE-HK-2026-004417"
+    },
+    "issue_date": {
+      "page": 1,
+      "quote": "Issued: 2026-07-22"
+    },
+    "country_of_origin": {
+      "page": 1,
+      "quote": "Country of origin: Germany"
+    },
+    "exporter.name": {
+      "page": 1,
+      "quote": "Exporter: Maschinenbau Kessler GmbH"
+    }
+  }
+}

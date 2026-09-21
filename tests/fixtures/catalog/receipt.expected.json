@@ -1,0 +1,37 @@
+{
+  "merchant_name": "Corner Bean Coffee",
+  "merchant_address": "12 Market St, Portland OR",
+  "transaction_date": "2026-09-10",
+  "currency": "USD",
+  "items": [
+    {
+      "description": "Latte",
+      "price": 4.5
+    },
+    {
+      "description": "Croissant",
+      "price": 3.25
+    }
+  ],
+  "subtotal": 7.75,
+  "total_amount": 7.75,
+  "payment_method": "cash",
+  "field_locations": {
+    "merchant_name": {
+      "page": 1,
+      "quote": "Corner Bean Coffee"
+    },
+    "transaction_date": {
+      "page": 1,
+      "quote": "2026-09-10 08:42"
+    },
+    "subtotal": {
+      "page": 1,
+      "quote": "Subtotal 7.75"
+    },
+    "total_amount": {
+      "page": 1,
+      "quote": "Total 7.75"
+    }
+  }
+}

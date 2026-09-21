@@ -1,0 +1,76 @@
+{
+  "provider": {
+    "name": "Stadtwerke Nordhafen GmbH"
+  },
+  "customer": {
+    "name": "Lena Hoffmann",
+    "address": {
+      "street": "Hafenstraße 9",
+      "postal_code": "20457",
+      "city": "Hamburg",
+      "country_code": "DE"
+    }
+  },
+  "account_number": "7000123456",
+  "issue_date": "2026-08-05",
+  "due_date": "2026-08-19",
+  "billing_period_start": "2026-07-01",
+  "billing_period_end": "2026-07-31",
+  "service_type": "electricity",
+  "service_address": {
+    "street": "Hafenstraße 9",
+    "postal_code": "20457",
+    "city": "Hamburg",
+    "country_code": "DE"
+  },
+  "meter_readings": [
+    {
+      "meter_id": "1ESY1160123456",
+      "previous_reading": 18240,
+      "current_reading": 18450,
+      "consumption": 210,
+      "unit": "kWh"
+    }
+  ],
+  "charges": [
+    {
+      "description": "Arbeitspreis",
+      "amount": 63.0
+    },
+    {
+      "description": "Grundpreis",
+      "amount": 12.0
+    }
+  ],
+  "currency": "EUR",
+  "current_charges": 89.25,
+  "tax_amount": 14.25,
+  "previous_balance": 0.0,
+  "amount_due": 89.25,
+  "field_locations": {
+    "account_number": {
+      "page": 1,
+      "quote": "Kundennummer: 7000123456"
+    },
+    "issue_date": {
+      "page": 1,
+      "quote": "Rechnungsdatum: 2026-08-05"
+    },
+    "amount_due": {
+      "page": 1,
+      "quote": "Zu zahlen: 89.25 EUR"
+    },
+    "current_charges": {
+      "page": 1,
+      "quote": "Aktuelle Kosten: 89.25"
+    },
+    "tax_amount": {
+      "page": 1,
+      "quote": "USt 19%: 14.25"
+    },
+    "provider.name": {
+      "page": 1,
+      "quote": "Stadtwerke Nordhafen GmbH"
+    }
+  }
+}
