@@ -7,9 +7,11 @@ import json
 import sys
 
 from . import __version__
-from .doctypes import list_document_types
-from .export import ExportError, get_exporter, list_exporters
-from .ocr import BackendUnavailable, OcrBackendError, UnknownLanguage, list_ocr_backends
+from .doctypes import list_document_types, load_schema
+from .errors import ConfigurationError
+from .export import ExportError, export_document, list_exporters
+from .ocr import list_ocr_backends
+from .options import OcrOptions, ProcessOptions
 from .pipeline import process_document
 
 
@@ -63,6 +65,21 @@ def main(argv: list[str] | None = None) -> None:
         help="ISO 639-1 codes, comma-separated (e.g. en,de); default DOCKET_OCR_LANGUAGES",
     )
     parser.add_argument(
+        "--document-type",
+        metavar="NAME",
+        help="Extract as this registered document type; skips classification",
+    )
+    parser.add_argument(
+        "--schema",
+        metavar="MODULE:CLASS",
+        help="Extract into this Pydantic model (importable path); skips classification",
+    )
+    parser.add_argument(
+        "--no-layout",
+        action="store_true",
+        help="Leave page layouts out of the JSON result (field locations are kept)",
+    )
+    parser.add_argument(
         "--list-ocr-backends",
         action="store_true",
         help="List OCR backends, their capabilities and availability, and exit",
@@ -107,30 +124,30 @@ def main(argv: list[str] | None = None) -> None:
             raise SystemExit(2)
         return
 
-    fallbacks = [] if args.no_ocr_fallback else args.ocr_fallback
     try:
-        result = process_document(
-            args.document,
-            ocr_backend=args.ocr_backend,
-            ocr_fallbacks=fallbacks,
-            ocr_languages=args.ocr_languages,
+        options = ProcessOptions(
+            ocr=OcrOptions(
+                backend=args.ocr_backend,
+                fallbacks=[] if args.no_ocr_fallback else args.ocr_fallback,
+                languages=args.ocr_languages,
+            ),
+            document_type=args.document_type,
+            schema_model=load_schema(args.schema) if args.schema else None,
+            include_layout=not args.no_layout,
         )
-    except (BackendUnavailable, OcrBackendError, UnknownLanguage) as exc:
+        result = process_document(args.document, options)
+    except ConfigurationError as exc:
         print(f"Configuration error: {exc}", file=sys.stderr)
         raise SystemExit(3) from exc
+
     if not args.export:
         print(json.dumps(result.model_dump(mode="json"), indent=2, ensure_ascii=False))
         if not result.is_valid:
             raise SystemExit(2)
         return
 
-    doc = result.document
-    if doc is None:
-        print("Error: Extraction failed, cannot export.", file=sys.stderr)
-        raise SystemExit(2)
-
     try:
-        print(get_exporter(args.export)(doc))
+        print(export_document(result, args.export).content)
     except ExportError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         raise SystemExit(2) from exc

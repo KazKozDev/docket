@@ -36,7 +36,18 @@ each stage; see the Breaking changes list.
   (ISO 639-1, `en,de`); `DOCKET_OCR_PSM` is renamed `DOCKET_TESSERACT_PSM`.
 - `llm_client.vision_transcribe()` takes encoded image bytes, not a path.
 - On-stage callback: the `"ocr"` stage is now `"acquire"` and receives an
-  `Acquisition`.
+  `Acquisition`; `"classify"` receives `None` when the schema was fixed.
+- `process_document(source, options)` takes a `ProcessOptions` object; the
+  `enqueue_review=` keyword is gone (`ReviewOptions(enqueue=...)`).
+- `export_document(source, format, options)` takes a `DocumentResult` (or a
+  schema instance) and returns an `ExportResult` (`format`, `media_type`,
+  `content`) instead of a string. It refuses a result that failed, has
+  validation errors or needs review unless `ExportOptions(require_valid=False)`.
+- Configuration errors share the base `docket.ConfigurationError`
+  (`UnknownLanguage`, `OcrBackendError`, `BackendUnavailable`,
+  `DocumentTypeError`).
+- `review_queue.reasons_for`, `enqueue`, `list_pending`, `get`, `update` and
+  `clear` take the threshold / queue location as keyword arguments.
 - CLI: a configuration error exits with code 3.
 
 ### Added
@@ -67,10 +78,23 @@ each stage; see the Breaking changes list.
   `DOCKET_PADDLE_MODEL` (`mobile` / `medium`). The base install and
   `import docket` never need PaddleOCR; selecting it without the extra is a
   configuration error naming the install command.
+- `ProcessOptions`, `OcrOptions`, `ReviewOptions`: one options object with
+  explicit-argument > environment > default precedence, validated before
+  processing starts.
+- Fixed schema selection: `document_type=` or `schema_model=` (any Pydantic
+  model, registered or not) skips classification; `classify=False` makes
+  forgetting both an error. `docket --document-type`, `--schema MODULE:CLASS`,
+  `--no-layout`; `doctypes.load_schema("pkg.mod:Class")`.
+- `include_layout=False` drops page layouts and OCR witnesses from results;
+  field locations are kept.
+- Pipeline stages usable on their own: `select_schema`, `extract`,
+  `validate_extraction`, `review`.
 - `docket --ocr-backend`, `--ocr-fallback`, `--no-ocr-fallback`,
   `--ocr-languages`, `--list-ocr-backends`; `GET /ocr-backends`.
 
 ### Fixed
+- The HTTP `/process` and `/jobs` runner called the endpoint function instead
+  of the pipeline (a name collision introduced with `process_document`).
 - Scanned pages sent to the vision model were written as temporary PNGs next
   to the input file; pages are now encoded in memory.
 - A blank page (e.g. an empty back side) no longer fails the whole document
@@ -133,6 +157,8 @@ First packaged release.
 - The HTTP service moved to `docket.api` (`uvicorn docket.api:app`); the root `api.py` remains as a shim.
 
 ### Fixed
+- The HTTP `/process` and `/jobs` runner called the endpoint function instead
+  of the pipeline (a name collision introduced with `process_document`).
 - `docket <file> --export <format>` crashed because `PipelineResult` had no `document` attribute.
 
 [Unreleased]: https://github.com/KazKozDev/docket/compare/v0.2.0...HEAD

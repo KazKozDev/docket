@@ -34,6 +34,8 @@ from typing import Callable, Iterable
 
 from pydantic import BaseModel, Field
 
+from .errors import ConfigurationError
+
 from .schemas import SCHEMA_BY_DOC_TYPE, Citation, DocType, ValidationIssue
 
 ENTRY_POINT_GROUP = "docket.document_types"
@@ -46,7 +48,7 @@ Validator = Callable[[BaseModel, "str | None"], Iterable[ValidationIssue]]
 DEFAULT_KEYWORD_WEIGHT = 3.0
 
 
-class DocumentTypeError(ValueError):
+class DocumentTypeError(ConfigurationError):
     """Invalid registration or unknown document type."""
 
 
@@ -73,6 +75,7 @@ class DocumentType:
     validators: tuple[Validator, ...] = ()
     cited_fields: tuple[str, ...] | None = None
     builtin: bool = False
+    registered: bool = True
 
     @property
     def required_citations(self) -> tuple[str, ...]:
@@ -231,6 +234,72 @@ def for_schema(schema: type[BaseModel]) -> DocumentType | None:
     return None
 
 
+def _adhoc(schema: type[BaseModel]) -> DocumentType:
+    """A DocumentType for a Pydantic model passed straight to the pipeline
+    without registering it. Its id is the model's import path."""
+    if not (isinstance(schema, type) and issubclass(schema, BaseModel)):
+        raise DocumentTypeError(f"schema must be a Pydantic BaseModel subclass, got {schema!r}")
+    try:
+        schema.model_json_schema()
+    except Exception as exc:  # noqa: BLE001 — pydantic raises several types here
+        raise DocumentTypeError(
+            f"{schema.__name__} cannot be described as JSON Schema, which extraction needs: {exc}"
+        ) from exc
+    return DocumentType(
+        name=f"{schema.__module__}:{schema.__qualname__}",
+        schema=schema,
+        description=(schema.__doc__ or schema.__name__).strip().splitlines()[0],
+        registered=False,
+    )
+
+
+def load_schema(spec: str) -> type[BaseModel]:
+    """Import a Pydantic model from `package.module:ClassName`."""
+    import importlib
+
+    module_name, sep, attr = spec.partition(":")
+    if not sep or not module_name or not attr:
+        raise DocumentTypeError(f"schema {spec!r} must look like 'package.module:ClassName'")
+    try:
+        module = importlib.import_module(module_name)
+    except ImportError as exc:
+        raise DocumentTypeError(f"cannot import {module_name!r} for schema {spec!r}: {exc}") from exc
+    target = module
+    for part in attr.split("."):
+        target = getattr(target, part, None)
+        if target is None:
+            raise DocumentTypeError(f"{module_name!r} has no attribute {attr!r}")
+    if not (isinstance(target, type) and issubclass(target, BaseModel)):
+        raise DocumentTypeError(f"{spec!r} is not a Pydantic BaseModel subclass")
+    return target
+
+
+def resolve(
+    *, document_type: str | None = None, schema: type[BaseModel] | None = None
+) -> DocumentType | None:
+    """The DocumentType a caller fixed up front, or None to classify.
+
+    A registered name, a model (registered or not), or both — in which case
+    they must agree.
+    """
+    if document_type is None and schema is None:
+        return None
+    by_name = None
+    if document_type is not None:
+        by_name = get_document_type(document_type)
+        if by_name is None:
+            known = ", ".join(t.name for t in list_document_types())
+            raise DocumentTypeError(f"unknown document type {document_type!r}; known: {known}")
+        if schema is None:
+            return by_name
+    by_schema = for_schema(schema) or _adhoc(schema)
+    if by_name is not None and by_name.schema is not schema:
+        raise DocumentTypeError(
+            f"document type {document_type!r} uses {by_name.schema.__name__}, not {schema.__name__}"
+        )
+    return by_schema
+
+
 def parse_type(value: object) -> DocType | str:
     """Map a classifier's answer to a DocType, a registered custom name, or UNKNOWN."""
     text = str(value or "").strip().lower()
@@ -243,10 +312,12 @@ def parse_type(value: object) -> DocType | str:
     return DocType.UNKNOWN
 
 
-def validate_extra(document: BaseModel, raw_text: str | None) -> list[ValidationIssue]:
+def validate_extra(
+    document: BaseModel, raw_text: str | None, doc_type: DocumentType | None = None
+) -> list[ValidationIssue]:
     """Registered validators for this document's type, plus the citation
     check for custom schemas that carry `field_locations`."""
-    doc_type = for_schema(type(document))
+    doc_type = doc_type or for_schema(type(document))
     if doc_type is None:
         return []
     issues: list[ValidationIssue] = []
@@ -271,7 +342,9 @@ __all__ = [
     "for_schema",
     "get_document_type",
     "list_document_types",
+    "load_schema",
     "parse_type",
     "register_document_type",
+    "resolve",
     "unregister_document_type",
 ]

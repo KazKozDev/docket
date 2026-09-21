@@ -30,6 +30,13 @@ def receipt(page=1):
     )
 
 
+def _read(tmp_path, acq):
+    from docket.options import OcrOptions, ProcessOptions, resolve
+
+    options = resolve(ProcessOptions(ocr=OcrOptions(fallbacks=[])))
+    return pipeline._read(tmp_path / "receipt.png", "doc_x", acq, options, pipeline._Stages(), None)
+
+
 def _classified_receipt(monkeypatch):
     monkeypatch.setattr(
         pipeline,
@@ -48,9 +55,7 @@ def test_image_pipeline_passes_acquired_pages_to_real_validator(
     _classified_receipt(monkeypatch)
     page = words_page(TEXT.splitlines(), confidence=0.3 if degraded else 0.9)
     acq = acquisition([page], degraded={1} if degraded else set())
-    result = pipeline._run_once(
-        tmp_path / "receipt.png", "doc_x", acq, on_stage=None, stage_seconds={}
-    )
+    result = _read(tmp_path, acq)
     assert result.validation_issues == []
     # Citations resolve to page regions through the layout.
     total = result.field_sources["total_amount"]
@@ -62,9 +67,7 @@ def test_image_pipeline_passes_acquired_pages_to_real_validator(
 def test_vlm_reading_without_ocr_support_is_flagged(tmp_path, monkeypatch):
     _classified_receipt(monkeypatch)
     acq = acquisition([text_only_page(page_number=1, text=TEXT, backend="vlm")])
-    result = pipeline._run_once(
-        tmp_path / "receipt.png", "doc_x", acq, on_stage=None, stage_seconds={}
-    )
+    result = _read(tmp_path, acq)
     assert any(
         i.field == "*" and "no confident OCR" in i.message
         for i in result.validation_issues
@@ -79,9 +82,7 @@ def test_vlm_reading_backed_by_a_witness_is_not_flagged(tmp_path, monkeypatch):
     acq = acquisition(
         [text_only_page(page_number=1, text=TEXT, backend="vlm")], witnesses={1: witness}
     )
-    result = pipeline._run_once(
-        tmp_path / "receipt.png", "doc_x", acq, on_stage=None, stage_seconds={}
-    )
+    result = _read(tmp_path, acq)
     assert not [i for i in result.validation_issues if "no confident OCR" in i.message]
     # The vision transcript has no boxes; the quote is found in the witness.
     total = result.field_sources["total_amount"]

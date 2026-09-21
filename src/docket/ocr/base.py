@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING, ClassVar, Literal
 
 from pydantic import BaseModel, Field
 
+from ..errors import ConfigurationError
 from ..layout import DocumentLayout, PageLayout
 
 if TYPE_CHECKING:
@@ -33,7 +34,7 @@ class OcrError(RuntimeError):
     """A backend failed while reading a page."""
 
 
-class BackendUnavailable(OcrError):
+class BackendUnavailable(OcrError, ConfigurationError):
     """A backend was asked for but cannot run here (not installed, no binary,
     missing language data). The message says why and how to fix it."""
 

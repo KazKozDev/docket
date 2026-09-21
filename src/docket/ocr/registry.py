@@ -20,6 +20,7 @@ from typing import Callable, Union
 
 from pydantic import BaseModel
 
+from ..errors import ConfigurationError
 from .base import BackendStatus, BackendUnavailable, Capabilities, OcrBackend, OcrSettings
 
 ENTRY_POINT_GROUP = "docket.ocr_backends"
@@ -37,7 +38,7 @@ _REGISTRY: dict[str, Union[str, BackendFactory]] = dict(_BUILTIN)
 _plugins_loaded = False
 
 
-class OcrBackendError(ValueError):
+class OcrBackendError(ConfigurationError):
     """Unknown backend name or invalid registration."""
 
 

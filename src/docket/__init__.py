@@ -2,6 +2,8 @@ __version__ = "0.2.0"
 
 from .export import (
     ExportError,
+    ExportOptions,
+    ExportResult,
     export_document,
     get_exporter,
     list_exporters,
@@ -53,6 +55,8 @@ from .ocr import (
     list_ocr_backends,
     register_ocr_backend,
 )
+from .errors import ConfigurationError
+from .options import OcrOptions, ProcessOptions, ReviewOptions
 from .pipeline import process_document
 from .result import (
     DocumentError,
@@ -86,6 +90,12 @@ from .schemas import (
 __all__ = [
     "__version__",
     "process_document",
+    "ProcessOptions",
+    "OcrOptions",
+    "ReviewOptions",
+    "ConfigurationError",
+    "ExportOptions",
+    "ExportResult",
     "DocumentResult",
     "DocumentStatus",
     "DocumentError",

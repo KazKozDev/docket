@@ -50,7 +50,7 @@ def _script(monkeypatch, first, first_issues, second_issues, *, second_fails=Fal
     """First pass reads `first`; an escalated pass reads with the vision model."""
     calls: list[bool] = []
 
-    def fake_acquire(path, options, stage_seconds):
+    def fake_acquire(path, options, stages):
         calls.append(options.escalate)
         if options.escalate:
             if second_fails:
@@ -58,12 +58,12 @@ def _script(monkeypatch, first, first_issues, second_issues, *, second_fails=Fal
             return _vlm_reading()
         return first
 
-    def fake_run_once(path, document_id, acq, *, on_stage, stage_seconds):
+    def fake_read(path, document_id, acq, options, stages, on_stage):
         vlm = acq.layout.pages[0].backend == "vlm"
         return _result(second_issues if vlm else first_issues, "vlm" if vlm else "ocr")
 
     monkeypatch.setattr(pipeline, "_acquire", fake_acquire)
-    monkeypatch.setattr(pipeline, "_run_once", fake_run_once)
+    monkeypatch.setattr(pipeline, "_read", fake_read)
     return calls
 
 
@@ -122,7 +122,9 @@ def test_pdf_text_failures_do_not_escalate(source, monkeypatch):
 
 def test_no_fallback_means_no_escalation(source, monkeypatch):
     calls = _script(monkeypatch, _ocr_reading(), _ERROR, [])
-    pipeline.process_document(source, ocr_fallbacks=[])
+    from docket.options import OcrOptions, ProcessOptions
+
+    pipeline.process_document(source, ProcessOptions(ocr=OcrOptions(fallbacks=[])))
     assert calls == [False]
 
 
