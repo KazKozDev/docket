@@ -86,6 +86,10 @@ _ERRORS = {
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    global _job_slots
+    # Invalid settings stop the server before it accepts a request.
+    config.check()
+    _job_slots = asyncio.Semaphore(config.MAX_CONCURRENT_JOBS)
     for job in job_store.unfinished():
         _schedule(job.job_id)
     yield
@@ -203,7 +207,7 @@ def _job_options(
     ocr_backend: str | None,
     ocr_fallbacks: str | None,
     ocr_languages: str | None,
-    include_layout: bool,
+    include_layout: bool | None,
 ) -> JobOptions:
     fallbacks = None if ocr_fallbacks is None else [f.strip() for f in ocr_fallbacks.split(",") if f.strip()]
     return JobOptions(
@@ -212,7 +216,7 @@ def _job_options(
         ocr_backend=ocr_backend or None,
         ocr_fallbacks=fallbacks,
         ocr_languages=ocr_languages or None,
-        include_layout=include_layout,
+        include_layout=config.INCLUDE_LAYOUT if include_layout is None else include_layout,
     )
 
 
@@ -231,7 +235,7 @@ SchemaVersionForm = Form(default=None, description="Registered version of docume
 OcrBackendForm = Form(default=None, description="Primary OCR backend name.")
 OcrFallbacksForm = Form(default=None, description="Comma-separated fallback backends; empty string for none.")
 OcrLanguagesForm = Form(default=None, description="ISO 639-1 codes, comma-separated.")
-IncludeLayoutForm = Form(default=False, description="Keep page layouts in results.")
+IncludeLayoutForm = Form(default=None, description="Keep page layouts in results; default DOCKET_INCLUDE_LAYOUT.")
 
 
 # ---- jobs ------------------------------------------------------------------------
@@ -316,7 +320,7 @@ async def process_upload(
     ocr_backend: str | None = OcrBackendForm,
     ocr_fallbacks: str | None = OcrFallbacksForm,
     ocr_languages: str | None = OcrLanguagesForm,
-    include_layout: bool = IncludeLayoutForm,
+    include_layout: bool | None = IncludeLayoutForm,
 ) -> DocumentResult:
     """Process one document and wait for the result."""
     options = _job_options(document_type, schema_version, ocr_backend, ocr_fallbacks, ocr_languages, include_layout)
@@ -338,7 +342,7 @@ async def create_job(
     ocr_backend: str | None = OcrBackendForm,
     ocr_fallbacks: str | None = OcrFallbacksForm,
     ocr_languages: str | None = OcrLanguagesForm,
-    include_layout: bool = IncludeLayoutForm,
+    include_layout: bool | None = IncludeLayoutForm,
     idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
 ) -> Job:
     """Queue documents for processing; poll `GET /jobs/{job_id}`. The same
@@ -531,13 +535,23 @@ def update_review(document_id: str, update: ReviewUpdate) -> dict:
 
 
 def run() -> None:
-    """Console entry point: `docket-api [--host H] [--port P]`."""
+    """Console entry point: `docket-api [--host H] [--port P] [--config PATH]`."""
     import argparse
+    import sys
 
     import uvicorn
 
     parser = argparse.ArgumentParser(description="Run the docket HTTP API.")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument("--config", metavar="PATH",
+                        help="TOML settings file (default: DOCKET_CONFIG, else ./docket.toml if present)")
     args = parser.parse_args()
+    if args.config:
+        config.configure(args.config)
+    try:
+        config.check()
+    except ConfigurationError as exc:
+        print(f"Configuration error: {exc}", file=sys.stderr)
+        raise SystemExit(3) from None
     uvicorn.run(app, host=args.host, port=args.port)

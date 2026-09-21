@@ -28,6 +28,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from statistics import median
 
+from .. import config
 from .models import (
     BoundingBox,
     Column,
@@ -589,7 +590,7 @@ def build_page(
         columns=columns,
         tables=table_models,
     )
-    return page.model_copy(update={"text": serialize_page(page)})
+    return page.model_copy(update={"text": serialize_page(page, markers=config.LAYOUT_MARKERS)})
 
 
 def _table_lines(t: dict, rows: list[_Row], words: list[RawWord], t_index: int) -> list[_Line]:

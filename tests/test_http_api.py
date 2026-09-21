@@ -70,14 +70,15 @@ def _incoming(tmp_path):
 # ---- single document ------------------------------------------------------------
 
 
-def test_process_runs_the_pipeline(client, tmp_path):
+def test_process_runs_the_pipeline(client, tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "INCLUDE_LAYOUT", False)
     response = client.post("/process", files={"file": ("inv.txt", INVOICE.encode())},
                            data={"document_type": "invoice"})
     assert response.status_code == 200, response.text
     body = response.json()
     assert body["source"] == "inv.txt"
     assert body["status"] == "succeeded" and body["schema_id"] == "invoice"
-    assert body["layout"] is None  # include_layout defaults to false over HTTP
+    assert body["layout"] is None  # include_layout follows DOCKET_INCLUDE_LAYOUT
     assert _incoming(tmp_path) == []  # the upload is gone
 
 

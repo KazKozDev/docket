@@ -344,7 +344,7 @@ def test_cli_batch_to_csv_with_line_items(invoices, tmp_path, quiet_env, capsys)
 
 def test_cli_batch_jsonl_and_json(invoices, tmp_path, quiet_env, capsys):
     invoices(2)
-    assert _cli("batch", str(tmp_path / "in"), "--format", "jsonl") == 0
+    assert _cli("batch", str(tmp_path / "in"), "--format", "jsonl", "--no-include-layout") == 0
     lines = capsys.readouterr().out.splitlines()
     assert len(lines) == 2 and "layout" not in json.loads(lines[0])
     assert _cli("batch", str(tmp_path / "in"), "--format", "json", "--include-layout") == 0

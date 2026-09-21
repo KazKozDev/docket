@@ -106,6 +106,15 @@ each stage; see the Breaking changes list.
   `CreditNote` (UBL `CreditNote` / CII type 381).
 - Amount checks use an absolute tolerance of 0.01 instead of 1 % of the
   amount: a 10.00 gap on a 1,100 total is now a validation error.
+- Settings are validated as a whole: an invalid `DOCKET_*` value no longer
+  raises `ValueError` at import; it is reported, with every other problem,
+  by `config.check()`, which the CLI, `docket-api` and `process_document()`
+  run before reading anything. `DOCKET_TESSERACT_PSM` is an integer 0-13;
+  `config.OCR_LANGUAGES` is a list.
+- Page layouts are kept in CLI and HTTP results by default, following
+  `DOCKET_INCLUDE_LAYOUT` (default true) like the Python API; `--no-include-layout`
+  or `include_layout=false` leaves them out. `ProcessOptions.include_layout`
+  defaults to `None` (use the setting).
 - `Invoice` (2.0) gains `buyer_reference` (BT-10, the XRechnung Leitweg-ID)
   and `Party` gains `contact_name`; both are optional.
 
@@ -200,6 +209,11 @@ each stage; see the Breaking changes list.
   their pinned official downloads; `--check` verifies them.
   `DOCKET_EINVOICE_RESOURCES` points to a separately maintained copy.
 - Examples `validate_xrechnung.py` and `validate_peppol.py`.
+- TOML config file (`docket --config`, `docket-api --config`, `DOCKET_CONFIG`,
+  `./docket.toml`) below the environment in priority; `docket.example.toml`
+  lists every setting. `docket config show|check`.
+- `DOCKET_INCLUDE_LAYOUT`, `DOCKET_LAYOUT_MARKERS` (table/column markers in
+  the LLM's text).
 - `docket --ocr-backend`, `--ocr-fallback`, `--no-ocr-fallback`,
   `--ocr-languages`, `--list-ocr-backends`; `GET /ocr-backends`.
 
@@ -210,6 +224,10 @@ each stage; see the Breaking changes list.
   matches several schemas. Not yet measured on the eval sets.
 
 ### Fixed
+- `docket forensics` crashed with `NameError` whenever it found an empty
+  template or an alteration; it now exits 2.
+- `.env.example` said thinking made extraction 18x slower; the recorded
+  measurement is 11.9 s vs 5.1 s on one invoice.
 - The UBL and ZUGFeRD/XRechnung exporters produced XML that failed the
   official EN 16931 rules (the README called it Peppol BIS compatible). The
   new exporters pass the official XSD and Schematron of every profile they

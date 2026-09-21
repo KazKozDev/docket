@@ -86,7 +86,7 @@ class OcrSettings(BaseModel):
         default=0.60, ge=0.0, le=1.0,
         description="Words below this confidence neither count toward page confidence nor act as witnesses.",
     )
-    tesseract_psm: str = "3"
+    tesseract_psm: int = 3
     paddle_model: Literal["mobile", "medium"] = Field(
         default="mobile",
         description="PaddleOCR model size: 'mobile' (PP-OCRv5 mobile) or 'medium' (PaddleOCR's default for the language).",

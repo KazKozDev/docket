@@ -332,9 +332,14 @@ def test_cli_document_type_and_schema(txt, monkeypatch, capsys):
     _no_classifier(monkeypatch)
     monkeypatch.setattr(config, "REVIEW_QUEUE_ENABLED", False)
     monkeypatch.setattr(extract_module, "chat_json", lambda *a, **k: _invoice_payload())
-    cli.main(["process", str(txt()), "--document-type", "invoice", "--no-ocr-fallback"])
+    cli.main(["process", str(txt()), "--document-type", "invoice", "--no-ocr-fallback", "--no-include-layout"])
     out = json.loads(capsys.readouterr().out)
     assert out["schema_id"] == "invoice" and "layout" not in out
+    monkeypatch.setattr(config, "INCLUDE_LAYOUT", False)
+    cli.main(["process", str(txt()), "--document-type", "invoice", "--no-ocr-fallback"])
+    assert "layout" not in json.loads(capsys.readouterr().out)
+    cli.main(["process", str(txt()), "--document-type", "invoice", "--no-ocr-fallback", "--include-layout"])
+    assert json.loads(capsys.readouterr().out)["layout"]["pages"]
 
     cli.main(["process", str(txt()), "--schema", "docket.catalog:Invoice", "--no-ocr-fallback"])
     assert json.loads(capsys.readouterr().out)["schema_id"] == "invoice"
