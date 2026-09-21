@@ -3,7 +3,9 @@
 | File | What it shows |
 |---|---|
 | [`extract_invoice.py`](extract_invoice.py) | Use docket as a Python library: extract, check validation, read typed fields and where on the page each came from |
-| [`export_einvoice.py`](export_einvoice.py) | Turn a PDF/scan into XRechnung, ZUGFeRD/Factur-X, UBL (Peppol) or Facturae XML |
+| [`export_einvoice.py`](export_einvoice.py) | Turn a PDF/scan into XRechnung, Factur-X/ZUGFeRD, Peppol or UBL XML and validate it right after export |
+| [`validate_xrechnung.py`](validate_xrechnung.py) | Check an XRechnung (UBL or CII) with the official KoSIT and CEN rules, layer by layer |
+| [`validate_peppol.py`](validate_peppol.py) | Check UBL files against Peppol BIS Billing 3.0 or plain EN 16931, one JSON line per file |
 | [`batch_to_csv.py`](batch_to_csv.py) | A directory into a summary CSV and a line-item CSV, resumable |
 | [`ocr_paddle.py`](ocr_paddle.py) | Read a scan with PaddleOCR (`docket-idp[paddle]`): words, rotation, tables |
 | [`ocr_fallback.py`](ocr_fallback.py) | An OCR fallback chain and a per-page report of what was tried and used |

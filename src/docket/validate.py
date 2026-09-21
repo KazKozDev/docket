@@ -40,7 +40,13 @@ _PERCENT_RE = re.compile(r"\d+(?:[.,]\d+)?\s*%")
 
 
 def _isclose(a: float, b: float, tol: float = _AMOUNT_TOLERANCE) -> bool:
-    return abs(a - b) <= tol * max(1.0, abs(b))
+    """Equal to within an absolute tolerance, in currency units.
+
+    Absolute, not relative: EN 16931 totals must agree to the cent, and a
+    1 % relative tolerance let a total of 1,100.00 differ from its components
+    by 10.00 unnoticed. The epsilon absorbs binary floating-point error.
+    """
+    return abs(a - b) <= tol + 1e-9
 
 
 # Business documents don't come from the 1800s, and a document recording

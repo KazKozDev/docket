@@ -2,6 +2,7 @@
 
     POST /process                     one document, synchronous → DocumentResult
     POST /jobs                        one or more documents, asynchronous → 202 Job
+    POST /validate/einvoice           official EN 16931 / Peppol / XRechnung / Factur-X validation
     GET  /jobs/{id}                   status, counts, per-document progress
     GET  /jobs/{id}/results/{index}   one DocumentResult
     GET  /jobs/{id}/results.jsonl     every finished result, JSON Lines
@@ -39,6 +40,8 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from . import __version__, catalog, config, job_store, review_queue
 from .batch import BatchOptions, process_batch
 from .catalog import SchemaError, SchemaInfo
+from .einvoice import EInvoiceUnavailable, EInvoiceValidationOptions, EInvoiceValidationResult, Profile
+from .einvoice import validate_einvoice as run_einvoice_validation
 from .errors import ConfigurationError
 from .export import list_exporters
 from .export import tabular
@@ -77,6 +80,7 @@ _ERRORS = {
     413: {"model": ErrorResponse, "description": "Too large"},
     415: {"model": ErrorResponse, "description": "Unsupported file type"},
     422: {"model": ErrorResponse, "description": "Invalid options"},
+    503: {"model": ErrorResponse, "description": "Feature not installed on this server"},
 }
 
 
@@ -105,6 +109,11 @@ def _error(status: int, code: str, message: str) -> JSONResponse:
 @app.exception_handler(ApiError)
 async def _api_error(_request: Request, exc: ApiError) -> JSONResponse:
     return _error(exc.status, exc.code, exc.message)
+
+
+@app.exception_handler(EInvoiceUnavailable)
+async def _einvoice_unavailable(_request: Request, exc: EInvoiceUnavailable) -> JSONResponse:
+    return _error(503, "einvoice_unavailable", str(exc))
 
 
 @app.exception_handler(ConfigurationError)
@@ -409,6 +418,28 @@ def download_line_items(job_id: str) -> StreamingResponse:
     job = _job(job_id)
     rows = (row for _, result in job_store.results(job) for row in tabular.line_item_rows(result))
     return _download(job, _csv_lines(rows, tabular.ITEM_COLUMNS), "text/csv", f"{job_id}.line_items.csv")
+
+
+@app.post(
+    "/validate/einvoice",
+    response_model=EInvoiceValidationResult,
+    responses=_ERRORS,
+    dependencies=[Depends(require_api_key)],
+)
+async def validate_einvoice_upload(
+    file: UploadFile = File(..., description="UBL or CII XML, or a Factur-X / ZUGFeRD PDF."),
+    profile: Profile | None = Form(default=None, description="Validate as this profile; default: the declared one."),
+) -> EInvoiceValidationResult:
+    """Validate an e-invoice with the official XSD and Schematron rules."""
+    suffix = Path(file.filename or "").suffix.lower()
+    if suffix not in {".xml", ".pdf"}:
+        raise ApiError(415, "unsupported_file_type", f"{file.filename!r}: send .xml or .pdf")
+    data = await file.read(config.MAX_FILE_BYTES + 1)
+    if len(data) > config.MAX_FILE_BYTES:
+        raise ApiError(413, "file_too_large", f"{file.filename!r} exceeds {config.MAX_FILE_BYTES} bytes")
+    if not data:
+        raise ApiError(400, "empty_file", f"{file.filename!r} is empty")
+    return await run_in_threadpool(run_einvoice_validation, data, EInvoiceValidationOptions(profile=profile))
 
 
 @app.get("/schemas", response_model=list[SchemaInfo], dependencies=[Depends(require_api_key)])

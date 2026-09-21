@@ -45,6 +45,10 @@ class _Billing(CitedDocument):
     due_date: date | None = None
     seller: Party = Field(description="Who issues the document and is owed the money (vendor, supplier).")
     buyer: Party = Field(description="Who is billed (customer).")
+    buyer_reference: str | None = Field(
+        default=None,
+        description="Buyer's reference for routing, e.g. a German Leitweg-ID or a cost centre (BT-10), if printed.",
+    )
     references: list[DocumentReference] = Field(
         default_factory=list,
         description="Other documents referred to: purchase order, contract, delivery note, original invoice.",
