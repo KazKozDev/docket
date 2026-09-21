@@ -868,7 +868,23 @@ def _appears_in(value: str, normalized_text: str) -> bool:
 _NUMERIC_DATE_RE = re.compile(r"(?<!\d)(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2,4})(?!\d)")
 
 
+# "404,00" / "1.278,00": a decimal comma. "1,800.00" / "12.50": a decimal point.
+_DECIMAL_COMMA_RE = re.compile(r"\d,\d{2}(?!\d)")
+_DECIMAL_POINT_RE = re.compile(r"\d\.\d{2}(?!\d)")
+
+
 def _document_date_convention(raw_text: str) -> str | None:
+    """"dmy", "mdy" or None, from the document's own evidence.
+
+    First choice: a numeric date with a part above 12 fixes the order. When
+    every date is ambiguous (03/09/2026), amounts written only with a decimal
+    comma mark a continental-European document, where dates are day-first;
+    month-first countries write a decimal point. English documents with a
+    decimal point stay undecided (US and UK disagree)."""
+    return _convention_from_dates(raw_text) or _convention_from_amounts(raw_text)
+
+
+def _convention_from_dates(raw_text: str) -> str | None:
     day_first = month_first = False
     for first, second, _ in _NUMERIC_DATE_RE.findall(raw_text):
         if int(second) > 12:
@@ -882,46 +898,57 @@ def _document_date_convention(raw_text: str) -> str | None:
     return None
 
 
+def _convention_from_amounts(raw_text: str) -> str | None:
+    if _DECIMAL_COMMA_RE.search(raw_text) and not _DECIMAL_POINT_RE.search(raw_text):
+        return "dmy"
+    return None
+
+
 def _check_date_convention(
     fields: list[tuple[str, date]], raw_text: str
 ) -> list[ValidationIssue]:
     """Flag extracted dates that contradict the document's own convention.
 
-    Only fires when the text holds unambiguous evidence (a part above 12)
-    pointing one way. A date with no matching day-first rendering in the
-    text was read under the other convention — exactly the Nov-2/Feb-24
-    mix-up this catches. Never guesses a locale for an ambiguous document.
+    With unambiguous dates (a part above 12) pointing one way, a date with
+    no matching rendering under that convention was read the other way —
+    the Nov-2/Feb-24 mix-up. With only the weaker decimal-comma cue, a date
+    is flagged only when the text shows it written the other way round
+    (9 March extracted, "03/09/2026" printed), never merely for being absent.
     """
-    convention = _document_date_convention(raw_text)
+    from_dates = _convention_from_dates(raw_text)
+    convention = from_dates or _convention_from_amounts(raw_text)
     if convention is None:
         return []
     normalized = _normalize(raw_text)
+
+    def renderings(value: date, order: str) -> list[str]:
+        short_year = value.year % 100
+        first, second = (value.day, value.month) if order == "dmy" else (value.month, value.day)
+        return [
+            f"{first:02d} {second:02d} {value.year}",
+            f"{first} {second:02d} {value.year}",
+            f"{first:02d} {second:02d} {short_year:02d}",
+        ]
+
+    other = "mdy" if convention == "dmy" else "dmy"
     issues: list[ValidationIssue] = []
     for field, value in fields:
-        short_year = value.year % 100
-        if convention == "dmy":
-            renderings = [
-                f"{value.day:02d} {value.month:02d} {value.year}",
-                f"{value.day} {value.month:02d} {value.year}",
-                f"{value.day:02d} {value.month:02d} {short_year:02d}",
-            ]
-        else:
-            renderings = [
-                f"{value.month:02d} {value.day:02d} {value.year}",
-                f"{value.month} {value.day} {value.year}",
-                f"{value.month:02d} {value.day:02d} {short_year:02d}",
-            ]
-        if not any(r in normalized for r in renderings):
-            issues.append(
-                ValidationIssue(
-                    field=field,
-                    message=(
-                        f"{value.isoformat()} does not appear in the document under "
-                        f"its {convention} convention — the date may have been read "
-                        f"with a mixed convention; check against the original page"
-                    ),
-                )
+        if any(r in normalized for r in renderings(value, convention)):
+            continue
+        if from_dates is None and (
+            value.day == value.month or not any(r in normalized for r in renderings(value, other))
+        ):
+            continue
+        issues.append(
+            ValidationIssue(
+                field=field,
+                message=(
+                    f"{value.isoformat()} does not appear in the document under "
+                    f"its {convention} convention — the date may have been read "
+                    f"with a mixed convention; check against the original page"
+                ),
             )
+        )
     return issues
 
 

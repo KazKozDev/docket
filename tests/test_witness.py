@@ -309,3 +309,22 @@ def test_verified_arithmetic_downgrades_witness_disagreement_to_warning():
     ]
     assert witness_issues
     assert all(i.severity == "warning" for i in witness_issues)
+
+
+def test_decimal_comma_amounts_make_ambiguous_dates_day_first():
+    """Found by the OCR benchmark: a French credit note dated 03/09/2026
+    (3 September) came back as 9 March — OCR was perfect, the only date was
+    ambiguous, and nothing told the model the document is European."""
+    from docket.validate import _document_date_convention
+
+    french = "[PAGE 1]\nAvoir n° AV-2026-031\nDate : 03/09/2026\nTotal TTC : 484,80 €"
+    assert _document_date_convention(french) == "dmy"
+    assert _document_date_convention("Invoice date 03/09/2026\nTotal: $1,800.00") is None
+    assert _document_date_convention("Date 03/09/2026\nTotal 1.278,00 and 12.50") is None  # mixed: undecided
+    assert _document_date_convention("Invoice date 12/31/2026\nTotal 404,00") == "mdy"  # dates win
+
+    misread = _invoice(issue_date=date(2026, 3, 9), due_date=None)
+    flagged = {i.field for i in validate(misread, french) if "convention" in i.message}
+    assert "issue_date" in flagged
+    right = _invoice(issue_date=date(2026, 9, 3), due_date=None)
+    assert not [i for i in validate(right, french) if "convention" in i.message]
