@@ -134,8 +134,8 @@ def _date_instruction_for(text: str) -> str:
     convention = _document_date_convention(text)
     if convention == "dmy":
         return (
-            "IMPORTANT: This document uses DMY (Day/Month/Year) date format based on "
-            "unambiguous dates (e.g. DD/MM/YYYY). Interpret ALL ambiguous numeric dates "
+            "IMPORTANT: This document uses DMY (Day/Month/Year) date format, judging by its "
+            "unambiguous dates or its decimal-comma amounts (e.g. DD/MM/YYYY). Interpret ALL ambiguous numeric dates "
             "(such as 11/02/2019 -> February 11, 2019) strictly as Day/Month/Year. "
             "Never mix conventions within one document."
         )
