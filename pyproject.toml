@@ -3,7 +3,7 @@ requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "docket"
+name = "docket-idp"
 dynamic = ["version"]
 description = "Invoice and receipt data extraction with OCR and LLMs — validated JSON, source citations, human review, EU e-invoicing export"
 readme = "README.md"
@@ -58,13 +58,13 @@ tracing = [
     "langfuse>=2.0",
 ]
 all = [
-    "docket[api,ui,tui,tracing]",
+    "docket-idp[api,ui,tui,tracing]",
 ]
 eval = [
     "datasets>=2.19",
 ]
 dev = [
-    "docket[api,ui,tui,eval]",
+    "docket-idp[api,ui,tui,eval]",
     "pytest>=8.0",
     # Test fixtures only (builds PDFs with a text layer); never a runtime
     # dependency, so its AGPL license does not reach installed users.

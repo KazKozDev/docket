@@ -13,7 +13,7 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 First packaged release.
 
 ### Added
-- Published to PyPI as `docket`; `docket` and `docket-api` console commands.
+- Published to PyPI as `docket-idp` (import name and command stay `docket`); `docket` and `docket-api` console commands.
 - Optional extras: `api`, `ui`, `tui`, `tracing`, `all`.
 - Docker image on `ghcr.io/kazkozdev/docket` (amd64 + arm64) with EU Tesseract language packs.
 - OpenAI-compatible LLM backend (`DOCKET_LLM_PROVIDER=openai`) for Mistral, OpenAI, Azure OpenAI, vLLM, LM Studio.
