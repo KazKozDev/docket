@@ -27,5 +27,6 @@ async function extract(path: string) {
 }
 
 const result = await extract(process.argv[2]);
-console.log(result.classification.doc_type, result.extracted);
+console.log(result.document_type, result.status, result.extracted);
+// Each field's page region: result.field_sources[field].bbox = {x0, y0, x1, y1} in 0..1.
 if (result.needs_review) console.warn("needs review:", result.review_reasons);

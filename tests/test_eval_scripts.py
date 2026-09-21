@@ -47,7 +47,7 @@ def test_eval_script_imports_cleanly(script):
 
 def test_benchmark_survives_the_ocr_call_it_makes():
     """The bug this file exists for was runtime, not import-time: the
-    benchmark unpacked two values from `_ocr_image` after it had grown a
+    benchmark unpacked two values from the OCR helper after it had grown a
     third. Importing the module could never catch that, so the OCR path is
     exercised directly with the vision call stubbed out.
     """
@@ -57,7 +57,7 @@ def test_benchmark_survives_the_ocr_call_it_makes():
     sys.path.insert(0, str(ROOT / "eval"))
     import benchmark_methods
 
-    benchmark_methods.vision_transcribe = lambda _p: "transcribed"
+    benchmark_methods.vision_transcribe = lambda _png: "transcribed"
     rows = benchmark_methods._bench_ocr(
         [ROOT / "eval" / "golden_dataset" / "receipt_scan.png"]
     )

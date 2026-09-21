@@ -16,7 +16,7 @@ from docket import (
     CitedDocument,
     ValidationIssue,
     add_validator,
-    process,
+    process_document,
     register_document_type,
 )
 
@@ -68,8 +68,8 @@ def po_required(invoice, _raw_text):
 add_validator("invoice", po_required)
 
 if __name__ == "__main__":
-    result = process(sys.argv[1], enqueue_review=False)
-    print(result.classification.type_name, "valid" if result.is_valid else "INVALID")
+    result = process_document(sys.argv[1], enqueue_review=False)
+    print(result.document_type, "valid" if result.is_valid else "INVALID")
     print(result.document)
     for issue in result.validation_issues:
         print(f"[{issue.severity}] {issue.field}: {issue.message}")

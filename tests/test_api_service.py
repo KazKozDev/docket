@@ -6,7 +6,8 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 from docket import api, job_store, review_queue
-from docket.schemas import ClassificationResult, DocType, PipelineResult
+from docket.result import DocumentResult
+from tests.factories import make_result
 
 
 class _Upload:
@@ -23,18 +24,8 @@ class _Upload:
         return self.content
 
 
-def _result(path: Path) -> PipelineResult:
-    return PipelineResult(
-        source=str(path),
-        classification=ClassificationResult(
-            doc_type=DocType.UNKNOWN, confidence=0.0, method="unavailable"
-        ),
-        extracted=None,
-        extract_attempts=0,
-        validation_issues=[],
-        ocr_method="pdf_text",
-        raw_text_chars=1,
-    )
+def _result(path: Path) -> DocumentResult:
+    return make_result(source=str(path), document_type="unknown", extracted=None)
 
 
 def test_api_key_is_enforced_only_when_configured(monkeypatch):
@@ -59,7 +50,7 @@ def test_durable_job_runs_pipeline_off_event_loop(tmp_path, monkeypatch):
     source = tmp_path / "doc.txt"
     source.write_text("x")
     job = job_store.create(source, source.name)
-    monkeypatch.setattr(api, "process", _result)
+    monkeypatch.setattr(api, "process_document", _result)
 
     completed = asyncio.run(api._run_job(job["job_id"]))
 

@@ -17,7 +17,7 @@ and cannot see:
   paid" printed on a receipt is not mistaken for one.
 - Handwritten corrections are found by marker words ("corrected",
   "korrigiert", "исправлено", ...), which needs the matching Tesseract
-  language packs (`DOCKET_OCR_LANG`).
+  language packs (`DOCKET_OCR_LANGUAGES`).
 
 Confidence values are heuristic scores derived from geometry and position.
 They are useful for ranking and thresholds, not calibrated probabilities.
@@ -35,6 +35,7 @@ import pytesseract
 from PIL import Image
 
 from . import config, pdf as pdf_render
+from .ocr.languages import parse_languages, tesseract_codes
 from .schemas import (
     DocumentForensicReport,
     HandwrittenAnnotation,
@@ -94,10 +95,17 @@ def _load_page_images(doc_path: str | Path) -> list[Image.Image]:
     return [Image.open(str(path)).convert("RGB")]
 
 
+def _tesseract_lang() -> str | None:
+    try:
+        return "+".join(tesseract_codes(parse_languages(config.OCR_LANGUAGES)))
+    except ValueError:
+        return None
+
+
 def _ocr_words(image: Image.Image) -> list[_Word] | None:
     """Every word Tesseract finds, with its box. None if OCR is unavailable."""
     data = None
-    for lang in (config.OCR_LANG, None):
+    for lang in (_tesseract_lang(), None):
         try:
             kwargs = {"lang": lang} if lang else {}
             data = pytesseract.image_to_data(

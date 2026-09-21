@@ -20,8 +20,9 @@ from .doctypes import list_document_types
 from .export import list_exporters
 from .logging_setup import configure, get_logger
 from .pdf import page_count
-from .pipeline import process
-from .schemas import PipelineResult
+from .ocr import list_ocr_backends
+from .pipeline import process_document
+from .result import DocumentResult
 
 configure()
 log = get_logger()
@@ -100,7 +101,7 @@ async def _run_job(job_id: str) -> dict:
     async with _job_slots:
         job_store.update(job_id, status="running", error=None)
         try:
-            result = await run_in_threadpool(process, Path(job["path"]))
+            result = await run_in_threadpool(process_document, Path(job["path"]))
         except Exception as exc:  # noqa: BLE001
             log.exception("pipeline failed", extra={"job_id": job_id})
             return job_store.update(job_id, status="failed", error=f"{type(exc).__name__}: {exc}")
@@ -156,11 +157,17 @@ def export_formats() -> list[dict]:
     ]
 
 
-@app.post("/process", response_model=PipelineResult, dependencies=[Depends(require_api_key)])
+@app.get("/ocr-backends", dependencies=[Depends(require_api_key)])
+def ocr_backends() -> list[dict]:
+    """OCR backends this deployment knows, with capabilities and availability."""
+    return [info.model_dump(mode="json") for info in list_ocr_backends()]
+
+
+@app.post("/process", response_model=DocumentResult, dependencies=[Depends(require_api_key)])
 async def process_document(
     file: UploadFile = File(...),
     idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
-) -> PipelineResult:
+) -> DocumentResult:
     path = await _save_upload(file)
     job = job_store.create(path, file.filename or path.name, idempotency_key=idempotency_key)
     if Path(job["path"]) != path:
@@ -168,7 +175,7 @@ async def process_document(
     job = await _schedule(job["job_id"])
     if job["status"] != "completed":
         raise HTTPException(500, f"pipeline failed: {job['error']}")
-    return PipelineResult.model_validate(job["result"])
+    return DocumentResult.model_validate(job["result"])
 
 
 @app.post("/jobs", status_code=202, dependencies=[Depends(require_api_key)])

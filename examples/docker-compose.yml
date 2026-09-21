@@ -12,7 +12,7 @@ services:
       DOCKET_LLM_API_KEY: ${MISTRAL_API_KEY:?}
       DOCKET_TEXT_MODEL: mistral-small-latest
       DOCKET_VISION_MODEL: pixtral-12b-latest
-      DOCKET_OCR_LANG: eng+deu+fra+spa+ita
+      DOCKET_OCR_LANGUAGES: en,de,fr,es,it
     volumes:
       - docket-data:/app/data
 volumes:
