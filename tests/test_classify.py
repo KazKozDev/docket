@@ -1,5 +1,7 @@
+import pytest
+
 from docket import classify as classify_module
-from docket.classify import classify
+from docket.classify import classify, classify_rules
 from docket.schemas import DocType
 
 INVOICE_TEXT = """
@@ -208,3 +210,27 @@ def test_waybill_classified_by_rules():
     result = classify(text)
     assert result.doc_type == DocType.WAYBILL
     assert result.method == "rules"
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("RECHNUNG Nr. 2026-17", "invoice"),
+        ("FACTURE N° 88", "invoice"),
+        ("Fattura n. 12 del 3 marzo", "invoice"),
+        ("Factuur 2026-004", "invoice"),
+        ("Kassenbon Filiale 12", "receipt"),
+        ("Scontrino fiscale", "receipt"),
+        ("Vertrag über Dienstleistungen", "contract"),
+        ("Contrat de prestation de services", "contract"),
+        ("Bon de commande 4711", "purchase_order"),
+        ("Kontoauszug Nr. 9 / 2026", "bank_statement"),
+        ("Estratto conto corrente", "bank_statement"),
+        ("Abnahmeprotokoll Projekt Alpha", "acceptance_act"),
+        ("Frachtbrief / lettre de voiture", "waybill"),
+        ("Bordkarte LH 123", "boarding_pass"),
+    ],
+)
+def test_eu_document_names(text, expected):
+    result = classify_rules(text)
+    assert result is not None and result.type_name == expected

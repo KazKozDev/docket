@@ -9,4 +9,5 @@
 | [`exporter_plugin/`](exporter_plugin/) | Ship a format as a separate pip package via the `docket.exporters` entry point |
 | [`api_client.sh`](api_client.sh) | Call the HTTP API with curl (sync and async jobs) |
 | [`api_client.ts`](api_client.ts) | Call the HTTP API from TypeScript / Node 18+ |
+| [`streamlit_demo.py`](streamlit_demo.py) | Development UI: document preview and per-stage results (`streamlit run examples/streamlit_demo.py`) |
 | [`docker-compose.yml`](docker-compose.yml) | Run the API in Docker against an EU-hosted LLM (Mistral) |

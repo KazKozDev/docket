@@ -1,7 +1,10 @@
-"""Streamlit demo: upload a document, watch it go through
+"""Streamlit demo for development: upload a document, watch it go through
 OCR/VLM -> classify -> extract -> validate, see the result at each stage.
 
-    streamlit run app.py
+Not part of the installed library. From a source checkout:
+
+    pip install -e ".[dev]"
+    streamlit run examples/streamlit_demo.py
 """
 from __future__ import annotations
 
@@ -12,16 +15,30 @@ from pathlib import Path
 
 import streamlit as st
 
-from docket import config, llm_client
+from docket import config, llm_client, pdf
 from docket.pipeline import process
 from docket.schemas import PipelineResult
 
-GOLDEN_DIR = Path(__file__).parent / "eval" / "golden_dataset"
+GOLDEN_DIR = Path(__file__).resolve().parent.parent / "eval" / "golden_dataset"
+PREVIEW_DPI = 110
+PREVIEW_MAX_PAGES = 10
+
+
+@st.cache_data(show_spinner=False)
+def _pdf_preview(path: str, mtime: float) -> tuple[list, int]:
+    """Rendered pages (capped) and the total page count. `mtime` keys the
+    cache so a re-uploaded file with the same temp name re-renders."""
+    total = pdf.page_count(path)
+    pages = [
+        pdf.render_page(path, i, PREVIEW_DPI)
+        for i in range(min(total, PREVIEW_MAX_PAGES))
+    ]
+    return pages, total
 
 st.set_page_config(page_title="docket", layout="wide")
 
 st.title("docket")
-st.caption("Extract, classify and validate structured data from business documents — runs on Ollama.")
+st.caption("Extract, classify and validate structured data from business documents — runs on Ollama or any OpenAI-compatible API.")
 
 # The model pickers below write straight back to `config`. Every call site
 # reads `config.TEXT_MODEL` / `config.VISION_MODEL` at call time, so a
@@ -101,9 +118,17 @@ with col_preview:
     st.subheader("Document")
     suffix = uploaded_path.suffix.lower()
     if suffix in {".png", ".jpg", ".jpeg"}:
-        st.image(str(uploaded_path), use_container_width=True)
+        st.image(str(uploaded_path), width="stretch")
     elif suffix == ".pdf":
-        st.caption("PDF preview not rendered here — see extracted text in the pipeline output. →")
+        try:
+            pages, total = _pdf_preview(str(uploaded_path), uploaded_path.stat().st_mtime)
+        except Exception as exc:  # noqa: BLE001 — a broken preview must not block the run
+            st.caption(f"PDF preview unavailable ({exc}); the pipeline still runs. →")
+        else:
+            for number, image in enumerate(pages, 1):
+                st.image(image, caption=f"Page {number} of {total}", width="stretch")
+            if total > len(pages):
+                st.caption(f"Preview shows the first {len(pages)} of {total} pages.")
     else:
         st.text(uploaded_path.read_text()[:3000])
 

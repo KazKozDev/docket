@@ -98,12 +98,12 @@ document → text layer / OCR / VLM → classify → extract + cite → validate
 ```
 
 - **Text** comes from the cheapest source that works: the PDF text layer, then Tesseract, then a vision model, which is used only when OCR confidence is low or a cheap text model judges the scan unusable.
-- **Classification** tries keyword rules, then TF-IDF, then an LLM. Each tier runs only when the one before it was unsure.
+- **Classification** tries keyword rules, then TF-IDF, then an LLM. Each tier runs only when the one before it was unsure. Rules and TF-IDF cover English, Spanish, German, French, Italian, Dutch and Portuguese; any other language falls through to the LLM.
 - **Extraction** fills a Pydantic schema under a JSON Schema contract and cites the verbatim line for every value. Output that fails the schema goes back to the model with the error attached.
 - **Validation** never calls a model. It checks arithmetic, dates, IBAN mod-97, VAT check digits (all 27 EU states, UK, CH, NO), national tax IDs, and that every cited line exists and contains the claimed value. Contracts also get counterparty, grounding and risk checks (unlimited liability, auto-renewal, notice periods).
 - **Review**: low confidence, failed extraction or a validation error sends the document to a review queue that keeps the original and an audit history. Nothing is silently reconciled. An invoice whose `Amount Due: 500.00` disagrees with its own 270.60 subtotal and tax is flagged, not fixed.
 
-Also included: cross-document matching (invoice ↔ PO, three-way PO/waybill/invoice, invoice ↔ contract, receipt ↔ bank transactions) and stamp, signature and alteration detection (`docket file.pdf --forensics`). Details are in [ARCHITECTURE.md](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md).
+Also included: cross-document matching (invoice ↔ PO, three-way PO/waybill/invoice, invoice ↔ contract, receipt ↔ bank transactions) and a heuristic stamp, signature and alteration check (`docket file.pdf --forensics`). Details are in [ARCHITECTURE.md](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md).
 
 ## Configuration
 
@@ -122,7 +122,8 @@ Set in the environment or `.env`. [`.env.example`](https://github.com/KazKozDev/
 
 ## Limitations
 
-- Built-in keyword rules and the TF-IDF model cover English and Spanish, so other languages rely on the LLM tier.
+- The TF-IDF tier is trained on a small embedded corpus (about 20 phrases per type), so it only answers when confident and leaves the rest to the LLM.
+- `--forensics` is a pixel heuristic, not a trained vision model. It finds colored stamps and seals and handwriting in colored or black ink, but never reports black stamps, which it can't tell apart from logos or table graphics. Its confidence scores come from geometry and aren't calibrated probabilities.
 - The vision model has been observed changing digits so that a page reconciles (a printed `450.00` read as `480.00` three times out of three). There is no fix for that in this repo.
 - Line items carry no source citations, so the citation check doesn't cover them.
 - The review queue is a single file: durable on one node, not across hosts.
@@ -134,7 +135,7 @@ Set in the environment or `.env`. [`.env.example`](https://github.com/KazKozDev/
 ```bash
 pip install docket-idp            # library + CLI
 pip install "docket-idp[api]"     # + HTTP service (docket-api)
-pip install "docket-idp[all]"     # + Streamlit UI, terminal UI, Langfuse tracing
+pip install "docket-idp[all]"     # + Langfuse tracing
 ```
 
 From source:
@@ -143,8 +144,7 @@ From source:
 git clone https://github.com/KazKozDev/docket.git
 cd docket && python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]" && cp .env.example .env
-python tui.py invoice.pdf        # live per-stage progress
-streamlit run app.py             # browser UI with a document preview
+streamlit run examples/streamlit_demo.py   # demo UI: document preview + per-stage results
 ```
 
 On macOS, double-clicking `start.command` sets everything up and opens the UI.

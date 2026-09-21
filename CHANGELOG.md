@@ -20,8 +20,23 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 - `docket --list-types`; `GET /document-types` and `GET /export-formats` API endpoints.
 - `ClassificationResult.type_name`, and `SourceLocation` / `ValidationIssue`
   exported from the package root.
+- Keyword rules recognise each document's own name in German, French,
+  Italian, Dutch, Portuguese and Polish.
+- `VOID_STAMP_PRESENT` forensic flag; status stamps (paid / approved / void)
+  in the main EU languages.
 
 ### Changed
+- TF-IDF tier: corpus rebuilt per type in seven languages (EN, ES, DE, FR,
+  IT, NL, PT) with boarding passes added, and word + character n-gram
+  features. Before, its confidence never exceeded ~0.45, so it never cleared
+  the 0.65 floor and every ambiguous document went to the LLM; it now answers
+  about two thirds of held-out documents, with no confident mistakes there.
+- Forensics: handwriting in black ink is detected (outside printed words and
+  ruled lines, in the signing zone); confidence is computed from geometry
+  instead of fixed constants; a red stamp counts as a payment stamp only when
+  a payment word is read inside it; black stamps are never claimed.
+- The Streamlit demo moved to `examples/streamlit_demo.py` and now renders
+  PDF pages; the `ui` and `tui` extras, `tui.py` and `gui.py` were removed.
 - `ClassificationResult.doc_type` is `DocType | str`: built-in types stay
   `DocType` members, custom types are plain strings. Code comparing against
   strings (`doc_type == "invoice"`) works unchanged; use `type_name` instead

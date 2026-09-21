@@ -180,6 +180,42 @@ _RULES: dict[DocType, list[tuple[re.Pattern, float]]] = {
     ],
 }
 
+# The document's own name in the other main EU languages (German, French,
+# Italian, Dutch, Portuguese, Polish). Only the name, at the same weight as
+# "invoice"/"factura" above: it is the one cue that is both high-precision and
+# cheap to get right in every language. Anything subtler goes to the LLM.
+_EU_DOCUMENT_NAMES: dict[DocType, str] = {
+    DocType.INVOICE: r"rechnung|rechnungsnummer|facture|fattura|factuur|fatura|faktura",
+    DocType.RECEIPT: (
+        r"kassenbon|kassenbeleg|quittung|ticket de caisse|re[çc]u|scontrino|"
+        r"ricevuta|kassabon|kassabonnetje|tal[ãa]o|paragon"
+    ),
+    DocType.CONTRACT: r"vertrag|vereinbarung|contrat|contratto|overeenkomst|umowa",
+    DocType.PURCHASE_ORDER: (
+        r"bestellung|bon de commande|ordine d'acquisto|ordine di acquisto|"
+        r"inkooporder|bestelbon|nota de encomenda|zam[óo]wienie"
+    ),
+    DocType.BANK_STATEMENT: (
+        r"kontoauszug|relev[ée] de compte|relev[ée] bancaire|estratto conto|"
+        r"rekeningafschrift|extrato banc[áa]rio|wyci[ąa]g bankowy"
+    ),
+    DocType.ACCEPTANCE_ACT: (
+        r"abnahmeprotokoll|abnahmebescheinigung|proc[èe]s-verbal de r[ée]ception|"
+        r"verbale di collaudo|certificato di collaudo|opleveringsrapport|"
+        r"protocolo de aceita[çc][ãa]o|protok[óo][łl] odbioru"
+    ),
+    DocType.WAYBILL: (
+        r"frachtbrief|lettre de voiture|documento di trasporto|vrachtbrief|"
+        r"guia de transporte|list przewozowy"
+    ),
+    DocType.BOARDING_PASS: (
+        r"bordkarte|carte d'embarquement|carta d'imbarco|instapkaart|"
+        r"cart[ãa]o de embarque|karta pok[łl]adowa"
+    ),
+}
+for _doc_type, _names in _EU_DOCUMENT_NAMES.items():
+    _RULES[_doc_type].append((re.compile(rf"\b(?:{_names})\b", re.I), 3.0))
+
 # If the top score isn't at least this many points clear of the runner-up,
 # the rules are ambiguous and we defer to the LLM instead of guessing.
 _CONFIDENCE_MARGIN = 2.0
