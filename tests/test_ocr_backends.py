@@ -339,7 +339,7 @@ def test_plugin_that_fails_to_import_is_reported_unavailable(monkeypatch):
 def test_backend_object_passes_straight_through_the_pipeline(tmp_path, monkeypatch):
     from docket import pipeline
 
-    monkeypatch.setattr(pipeline, "_run_once", lambda path, doc_id, acq, **k: pytest.fail("not reached") if not acq else _capture(acq))
+    monkeypatch.setattr(pipeline, "_read", lambda path, doc_id, acq, *a: _capture(acq))
     captured = {}
 
     def _capture(acq):
@@ -350,5 +350,10 @@ def test_backend_object_passes_straight_through_the_pipeline(tmp_path, monkeypat
 
     image = tmp_path / "x.png"
     Image.new("RGB", (50, 50), "white").save(image)
-    pipeline.process_document(image, ocr_backend=_EchoBackend(), ocr_fallbacks=[], enqueue_review=False)
+    from docket.options import OcrOptions, ProcessOptions, ReviewOptions
+
+    pipeline.process_document(
+        image,
+        ProcessOptions(ocr=OcrOptions(backend=_EchoBackend(), fallbacks=[]), review=ReviewOptions(enqueue=False)),
+    )
     assert captured["text"] == "echo"

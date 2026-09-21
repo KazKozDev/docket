@@ -175,7 +175,33 @@ Rotation detection with Tesseract OSD added 0.34 s in a single run on one sample
 
 ---
 
-## 2. Classification Tier
+## 2. Pipeline contract
+
+`process_document(source, ProcessOptions) -> DocumentResult` is the one
+entry point; the CLI and the HTTP API call it. Its stages are plain
+functions in `docket.pipeline`: `acquire` → `select_schema` → `extract` →
+`validate_extraction` → `review`; `export_document(result, format)` is the
+separate last step and refuses results that failed or need review unless
+told otherwise.
+
+- **Options** (`docket.options`): `OcrOptions` (chain, languages, engine
+  settings), `document_type` / `schema_model` (either one skips
+  classification; given both, they must agree), `classify`,
+  `include_layout`, `escalate`, `ReviewOptions` (enqueue, classification
+  threshold, queue location). Every unset option comes from `DOCKET_*`, else
+  the built-in default; `resolve()` applies that and validates it.
+- **Errors**: anything detectable up front — unknown or unavailable backend,
+  unknown language, unknown document type, a schema that isn't a Pydantic
+  model — raises `ConfigurationError` before the first page is read. A
+  document that fails later returns `status="failed"` with `error.code`
+  (`unsupported_document`, `unreadable_file`, `no_text`) and `error.stage`.
+- **Status**: `failed` if `error` is set, `needs_review` if any review reason
+  applies, otherwise `succeeded`. Failed documents are not written to the
+  review queue.
+
+---
+
+## 3. Classification Tier
 
 Classification determines which Pydantic schema will govern extraction:
 
@@ -185,7 +211,7 @@ Classification determines which Pydantic schema will govern extraction:
 
 ---
 
-## 3. Extraction & Verbatim Citations
+## 4. Extraction & Verbatim Citations
 
 - **JSON Schema Contracts**: The target schema is defined as a Pydantic model (`Invoice`, `Receipt`, `Contract`, `BoardingPass`, `PurchaseOrder`, `BankStatement`, `AcceptanceAct`, `Waybill`).
 - **Verbatim Evidence**: The model must provide verbatim quotes (`quote`, `page`) for extracted values.
@@ -193,7 +219,7 @@ Classification determines which Pydantic schema will govern extraction:
 
 ---
 
-## 4. Deterministic Validation
+## 5. Deterministic Validation
 
 Validation never calls a model. It executes deterministic arithmetic and mathematical checksum algorithms:
 
@@ -211,7 +237,7 @@ Validation never calls a model. It executes deterministic arithmetic and mathema
 
 ---
 
-## 5. Human Review Queue
+## 6. Human Review Queue
 
 Documents that fail any error-level validation rule, fail extraction, or carry low classification confidence are routed to the Review Queue (`data/review_queue.jsonl`):
 
@@ -220,7 +246,7 @@ Documents that fail any error-level validation rule, fail extraction, or carry l
 
 ---
 
-## 6. Cross-Document Reconciliation & 3-Way Matching
+## 7. Cross-Document Reconciliation & 3-Way Matching
 
 Deterministic multi-document audits connect extracted records across the procurement and expense lifecycle:
 
@@ -243,7 +269,7 @@ Deterministic multi-document audits connect extracted records across the procure
 
 ---
 
-## 7. Accounting & e-Invoicing Export Tier
+## 8. Accounting & e-Invoicing Export Tier
 
 Extracted and validated records can be deterministically converted to corporate ERP and standard electronic invoicing formats without external cloud dependencies:
 
@@ -266,7 +292,7 @@ Extracted and validated records can be deterministically converted to corporate 
 
 ---
 
-## 8. Document Forensics (stamps, signatures, alterations)
+## 9. Document Forensics (stamps, signatures, alterations)
 
 `docket.forensics` is a pixel heuristic over Pillow and Tesseract, not a
 trained vision model. What it does, and deliberately does not do:

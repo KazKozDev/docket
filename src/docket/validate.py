@@ -1768,6 +1768,7 @@ def validate(
     witness_pages: list[str | None] | None = None,
     vlm_unconfirmed: bool = False,
     forensic_report: DocumentForensicReport | None = None,
+    doc_type: "doctypes.DocumentType | None" = None,
 ) -> list[ValidationIssue]:
     # Page identity comes from acquisition, never from whether OCR happened
     # to include a synthetic marker. Serialize the same 1-based page contract
@@ -1778,14 +1779,14 @@ def validate(
         )
     validator = _VALIDATORS.get(type(document))
     if validator is None:
-        if doctypes.for_schema(type(document)) is None:
+        if doc_type is None and doctypes.for_schema(type(document)) is None:
             raise TypeError(f"No validator registered for {type(document)}")
         issues = []  # a custom type: its checks all come from the registry
     elif validator in (validate_invoice, validate_receipt):
         issues = validator(document, raw_text, witness_pages, vlm_unconfirmed)
     else:
         issues = validator(document, raw_text)
-    issues.extend(doctypes.validate_extra(document, raw_text))
+    issues.extend(doctypes.validate_extra(document, raw_text, doc_type))
 
     if forensic_report is not None:
         doc_type = getattr(document, "doc_type", None)

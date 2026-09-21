@@ -28,11 +28,13 @@ def test_export_by_name_matches_direct_call():
     from docket.export import export_to_ubl_xml
 
     invoice = sample_invoice()
-    assert export_document(invoice, "ubl") == export_to_ubl_xml(invoice)
+    exported = export_document(invoice, "ubl")
+    assert exported.content == export_to_ubl_xml(invoice)
+    assert exported.media_type == "application/xml"
 
 
 def test_json_exporters_return_text():
-    parsed = json.loads(export_document(sample_invoice(), "xero-json"))
+    parsed = json.loads(export_document(sample_invoice(), "xero-json").content)
     assert isinstance(parsed, dict)
 
 
@@ -51,7 +53,7 @@ def test_custom_exporter_can_be_registered(monkeypatch):
 
     monkeypatch.setattr(export_module, "_REGISTRY", dict(export_module._REGISTRY))
     register_exporter("my-erp", lambda inv: f"#{inv.invoice_number}", accepts=(Invoice,))
-    assert export_document(sample_invoice(), "my-erp") == "#INV-2026-001"
+    assert export_document(sample_invoice(), "my-erp").content == "#INV-2026-001"
     with pytest.raises(ExportError, match="already registered"):
         register_exporter("my-erp", str, accepts=(Invoice,))
 
@@ -142,7 +144,7 @@ def test_cli_exports_extracted_document(monkeypatch, capsys):
     from tests.factories import make_result
 
     result = make_result(source="x.pdf", extracted=sample_invoice().model_dump(mode="json"))
-    monkeypatch.setattr(cli, "process_document", lambda _path, **_kw: result)
+    monkeypatch.setattr(cli, "process_document", lambda _path, _options: result)
     cli.main(["x.pdf", "--export", "ubl"])
     assert "INV-2026-001" in capsys.readouterr().out
 
@@ -160,11 +162,18 @@ def test_review_queue_can_be_disabled_per_call(monkeypatch, tmp_path):
         extracted=None,
     )
     monkeypatch.setattr(pipeline, "_acquire", lambda *a, **k: text_acquisition("x"))
-    monkeypatch.setattr(pipeline, "_run_once", lambda *a, **k: flagged)
+    monkeypatch.setattr(pipeline, "_read", lambda *a, **k: flagged)
     enqueued: list = []
-    monkeypatch.setattr(review_queue, "enqueue", lambda *a: enqueued.append(a) or "id")
+    monkeypatch.setattr(review_queue, "enqueue", lambda *a, **k: enqueued.append(a) or "id")
 
-    result = pipeline.process_document(source, ocr_fallbacks=[], enqueue_review=False)
+    from docket.options import OcrOptions, ProcessOptions, ReviewOptions
+
+    def run(enqueue):
+        return pipeline.process_document(
+            source, ProcessOptions(ocr=OcrOptions(fallbacks=[]), review=ReviewOptions(enqueue=enqueue))
+        )
+
+    result = run(False)
     assert result.needs_review and enqueued == []
-    pipeline.process_document(source, ocr_fallbacks=[], enqueue_review=True)
+    run(True)
     assert len(enqueued) == 1

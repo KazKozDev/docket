@@ -5,9 +5,10 @@
 """
 import sys
 
-from docket import Invoice, process_document
+from docket import Invoice, ProcessOptions, ReviewOptions, process_document
 
-result = process_document(sys.argv[1], enqueue_review=False)  # your app owns the review flow
+# Your app owns the review flow, so nothing goes to docket's review queue.
+result = process_document(sys.argv[1], ProcessOptions(review=ReviewOptions(enqueue=False)))
 
 print("type:      ", result.document_type, f"({result.status.value})")
 print("valid:     ", result.is_valid)

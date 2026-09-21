@@ -8,16 +8,14 @@ Run `docket --list-formats` for everything available.
 """
 import sys
 
-from docket import ExportError, export_document, process_document
+from docket import ExportError, ProcessOptions, ReviewOptions, export_document, process_document
 
 path, fmt = sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else "xrechnung"
-result = process_document(path, enqueue_review=False)
-
-if not result.is_valid or result.document is None:
-    # Never emit a legally binding e-invoice from data that failed validation.
-    sys.exit(f"not exporting: {[i.message for i in result.validation_issues]}")
+result = process_document(path, ProcessOptions(document_type="invoice", review=ReviewOptions(enqueue=False)))
 
 try:
-    print(export_document(result.document, fmt))
+    # Refuses a result that failed validation or needs review: never emit a
+    # legally binding e-invoice from unchecked data.
+    print(export_document(result, fmt).content)
 except ExportError as exc:
     sys.exit(str(exc))
