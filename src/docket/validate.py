@@ -101,6 +101,26 @@ def _amounts_on_line(line: str) -> list[float]:
     return values
 
 
+def _item_numeric_fields(document) -> dict[str, float]:
+    """Every numeric value of every repeated-list row, keyed by its schema
+    path (spec.line_items knows where each schema keeps them). Line items are
+    where a model fabricates least visibly — a made-up row that balances the
+    totals — so their grounding is checked like any top-level amount."""
+    from .catalog import for_model
+
+    spec = for_model(type(document))
+    spec_items = spec.line_items if spec is not None else None
+    if spec_items is None:
+        return {}
+    out: dict[str, float] = {}
+    for i, _item in enumerate(value_at(document, spec_items.path) or []):
+        for attr in set(spec_items.columns.values()):
+            value = value_at(document, f"{spec_items.path}[{i}].{attr}")
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                out[f"{spec_items.path}[{i}].{attr}"] = float(value)
+    return out
+
+
 def _check_cited_sources(
     document, raw_text: str, numeric_fields: dict[str, float]
 ) -> list[ValidationIssue]:
@@ -129,13 +149,18 @@ def _check_cited_sources(
     issues: list[ValidationIssue] = []
     locations = getattr(document, "field_locations", None) or {}
     normalized_text = _normalize(raw_text)
+    item_fields = _item_numeric_fields(document)
+    numeric_fields = {**item_fields, **numeric_fields}
 
     for field, value in numeric_fields.items():
         source_text = normalized_text
         location = locations.get(field)
         cited = location.quote if location is not None else None
         if not cited or not cited.strip():
-            if "[PAGE " in raw_text:
+            # Line items get no derived-value warning: a row without a citation
+            # is a coverage gap the benchmark measures, while dozens of
+            # warnings per document would drown the real signals.
+            if "[PAGE " in raw_text and field not in item_fields:
                 # No citation means the value was computed, not read. Real
                 # invoices do this: one printed "Total excl. VAT 372.00" and
                 # "Total incl. VAT 450.12" and no VAT line at all, so the tax
@@ -189,15 +214,31 @@ def _check_cited_sources(
 
         stated = _amounts_on_line(cited)
         if stated and not any(_isclose(s, value, tol=0.02) for s in stated):
-            issues.append(
-                ValidationIssue(
-                    field=field,
-                    message=(
-                        f"cited line {short_cited!r} states "
-                        f"{', '.join(f'{s:.2f}' for s in stated)}, but {field}={value:.2f}"
-                    ),
-                )
+            # Not printed — but the row can still ground the value: a derived
+            # unit price (4.98 / 2 = 2.49), a line total (2 x 58.50 = 117.00).
+            # Only pairs of numbers actually on the cited line count, so an
+            # invented amount never derives from a real row.
+            derived = any(
+                (_isclose(a / b, value, tol=0.02) if b else False)
+                or _isclose(a * b, value, tol=0.02)
+                for a in stated
+                for b in stated
+                if a != b
             )
+            # A quantity of 1 is the implicit single item: receipts print one
+            # price per row and never a "1" — quantity 1 is the schema default
+            # and the multiplicative identity, not a fabricated amount.
+            implicit_one = value == 1 and field.endswith(".quantity")
+            if not derived and not implicit_one:
+                issues.append(
+                    ValidationIssue(
+                        field=field,
+                        message=(
+                            f"cited line {short_cited!r} states "
+                            f"{', '.join(f'{s:.2f}' for s in stated)}, but {field}={value:.2f}"
+                        ),
+                    )
+                )
 
     return issues
 
@@ -290,11 +331,7 @@ def _check_witness_contradicts(
         if any(_digit_signature(value) == _digit_signature(n) for n in witnessed):
             continue
         is_verified_arithmetic = False
-        if (
-            field == "total_amount"
-            and hasattr(document, "subtotal")
-            and hasattr(document, "tax_amount")
-        ):
+        if field == "total_amount" and hasattr(document, "subtotal") and hasattr(document, "tax_amount"):
             sub = getattr(document, "subtotal", 0.0) or 0.0
             tax = getattr(document, "tax_amount", 0.0) or 0.0
             ship = getattr(document, "shipping_amount", 0.0) or 0.0
@@ -306,6 +343,18 @@ def _check_witness_contradicts(
                 not getattr(document, "line_items", None) or _isclose(items_sum, sub)
             ):
                 is_verified_arithmetic = True
+        if "[" in field:
+            # An item value contradicted by a garbled witness on a degraded
+            # page is a warning, not a blocker, when the rows close their own
+            # arithmetic: the items sum to the document's stated subtotal
+            # (under either coupon layout).
+            sub = getattr(document, "subtotal", None)
+            items = getattr(document, "line_items", None) or getattr(document, "items", None) or []
+            if sub:
+                items_sum = sum(getattr(li, "total", getattr(li, "price", 0.0)) for li in items)
+                discount = getattr(document, "discount_amount", 0.0) or 0.0
+                if _isclose(items_sum, sub) or (discount and _isclose(items_sum, sub + discount)):
+                    is_verified_arithmetic = True
 
         severity = "warning" if is_verified_arithmetic else "error"
         issues.append(
@@ -352,6 +401,10 @@ def _check_material_locations(
         if value is None or value == "" or value == []:
             continue
         location = locations.get(field)
+        if location is None:
+            # A list field is properly cited element-wise: 'parties_a[0]' is
+            # the citation for the whole 'parties_a' requirement.
+            location = next((loc for key, loc in locations.items() if key.startswith(f"{field}[")), None)
         if location is None:
             issues.append(
                 ValidationIssue(

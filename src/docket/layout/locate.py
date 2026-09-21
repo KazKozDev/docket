@@ -45,10 +45,21 @@ def _reading_order(page: PageLayout) -> list[int]:
 
 def locate_quote(quote: str, page: PageLayout) -> LocatedQuote | None:
     """Locate `quote` among the page's words; None if the page has no word
-    geometry or the quote isn't there."""
+    geometry or the quote isn't there. The first/best of `locate_all`."""
+    matches = locate_all(quote, page)
+    return matches[0] if matches else None
+
+
+def locate_all(quote: str, page: PageLayout) -> list[LocatedQuote]:
+    """Every place `quote` occurs on the page, in reading order — a repeated
+    string (an amount that prints twice) yields one LocatedQuote per hit, so
+    provenance can tell "verified once" from "ambiguous, appears twice".
+    Exact hits all come back with match_score 1.0; when there is no exact
+    hit, the single best fuzzy window above MIN_FUZZY_SCORE does. Empty when
+    the page has no word geometry or the quote isn't there."""
     target = _norm(quote)
     if not target or not page.words:
-        return None
+        return []
     stream_chars: list[str] = []
     owner: list[int] = []
     for n in _reading_order(page):
@@ -57,32 +68,39 @@ def locate_quote(quote: str, page: PageLayout) -> LocatedQuote | None:
             owner.append(n)
     stream = "".join(stream_chars)
     if not stream:
-        return None
+        return []
 
+    hits: list[tuple[int, int, float]] = []
     start = stream.find(target)
-    if start >= 0:
-        end, score = start + len(target), 1.0
-    else:
+    while start >= 0:
+        hits.append((start, start + len(target), 1.0))
+        start = stream.find(target, start + 1)
+    if not hits:
         matcher = SequenceMatcher(None, stream, target, autojunk=False)
         a, b, size = matcher.find_longest_match(0, len(stream), 0, len(target))
         if size < MIN_ANCHOR_CHARS:
-            return None
-        start = max(0, a - b)
-        end = min(len(stream), start + len(target))
-        score = SequenceMatcher(None, stream[start:end], target, autojunk=False).ratio()
-        if score < MIN_FUZZY_SCORE:
-            return None
+            return []
+        s = max(0, a - b)
+        e = min(len(stream), s + len(target))
+        score = SequenceMatcher(None, stream[s:e], target, autojunk=False).ratio()
+        if score >= MIN_FUZZY_SCORE:
+            hits.append((s, e, score))
 
-    members = sorted(set(owner[start:end]), key=owner[start:end].index)
-    words = [page.words[n] for n in members]
-    confidences = [w.confidence for w in words if w.confidence is not None]
-    reading = sum(confidences) / len(confidences) if confidences else 1.0
-    return LocatedQuote(
-        bbox=BoundingBox.union(w.bbox for w in words),
-        word_ids=[w.id for w in words],
-        match_score=round(score, 4),
-        confidence=round(score * reading, 4),
-    )
+    located: list[LocatedQuote] = []
+    for start, end, score in hits:
+        members = sorted(set(owner[start:end]), key=owner[start:end].index)
+        words = [page.words[n] for n in members]
+        confidences = [w.confidence for w in words if w.confidence is not None]
+        reading = sum(confidences) / len(confidences) if confidences else 1.0
+        located.append(
+            LocatedQuote(
+                bbox=BoundingBox.union(w.bbox for w in words),
+                word_ids=[w.id for w in words],
+                match_score=round(score, 4),
+                confidence=round(score * reading, 4),
+            )
+        )
+    return located
 
 
-__all__ = ["LocatedQuote", "locate_quote"]
+__all__ = ["LocatedQuote", "locate_all", "locate_quote"]

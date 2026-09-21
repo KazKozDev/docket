@@ -34,8 +34,11 @@ class CitedDocument(BaseModel):
     field_locations: dict[str, Citation] = Field(
         default_factory=dict,
         description=(
-            "Page and exact source text for each material field, keyed by field path "
-            "(e.g. 'invoice_number', 'seller.name')."
+            "Page and exact source text for every material field, keyed by field path. "
+            "Top-level paths are dotted ('invoice_number', 'seller.name', 'payment_account.iban', "
+            "'seller.tax_ids[0].value', 'references[0].number'); every row of a repeated list "
+            "is cited per field with its schema path — 'line_items[0].quantity', 'items[0].price', "
+            "'transactions[0].amount', ... — the quote for a row field being that row's text."
         ),
     )
 

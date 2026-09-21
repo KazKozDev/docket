@@ -328,3 +328,21 @@ def test_decimal_comma_amounts_make_ambiguous_dates_day_first():
     assert "issue_date" in flagged
     right = _invoice(issue_date=date(2026, 9, 3), due_date=None)
     assert not [i for i in validate(right, french) if "convention" in i.message]
+
+
+def test_item_witness_disagreement_is_a_warning_when_rows_close_their_sum():
+    """A garbled witness contradicts an item value: if the rows still sum to
+    the stated subtotal, that is verified arithmetic downgrading the
+    contradiction to a warning — a correct extraction is not blocked on a
+    bad independent reading."""
+    inv = _invoice(
+        subtotal=555.00,
+        line_items=[LineItem(description="Sabanas algodon", quantity=30, unit_price=18.50, total=555.00)],
+        field_locations={
+            "line_items[0].quantity": {"page": 1, "quote": "Sabanas algodon 30 18.50 555.00"},
+        },
+    )
+    witness = ["Sabanas algodon 150.00 18.50"]  # same row, misread numbers
+    issues = validate(inv, PRIMARY, witness_pages=witness)
+    item_issues = [i for i in issues if i.field == "line_items[0].quantity" and "independent OCR" in i.message]
+    assert item_issues and all(i.severity == "warning" for i in item_issues)

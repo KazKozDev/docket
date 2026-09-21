@@ -1233,3 +1233,25 @@ def test_a_non_vat_shaped_number_filed_as_vat_is_checked_as_a_tax_id():
     assert not [i for i in validate(inv) if i.severity == "error"]
     shaped = inv.model_copy(update={"seller": Party(name="Northgate", tax_ids=[TaxIdentifier(value="GB123456789", scheme="vat")])})
     assert any(i.field == "seller.tax_ids[0]" and i.severity == "error" for i in validate(shaped))
+
+
+def test_element_citation_satisfies_a_list_fields_requirement():
+    """A list field required to be cited is properly cited element-wise: the
+    model writing 'parties_a[0]' must not be told the whole list is uncited."""
+    from datetime import date as _date
+
+    contract = Contract(
+        contract_title="Master Services Agreement",
+        parties_a=["Northgate Supplies Ltd"],
+        parties_b=["Iberia Mantenimiento SA"],
+        effective_date=_date(2026, 3, 2),
+        field_locations={
+            "contract_title": {"page": 1, "quote": "Master Services Agreement"},
+            "parties_a[0]": {"page": 1, "quote": "Northgate Supplies Ltd"},
+            "parties_b[0]": {"page": 1, "quote": "Iberia Mantenimiento SA"},
+            "effective_date": {"page": 1, "quote": "Effective 2026-03-02"},
+        },
+    )
+    text = "[PAGE 1]\nMaster Services Agreement\nNorthgate Supplies Ltd\nIberia Mantenimiento SA\nEffective 2026-03-02"
+    issues = validate(contract, text)
+    assert not any("missing page and source-region citation" in i.message for i in issues), issues
