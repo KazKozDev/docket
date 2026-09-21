@@ -7,6 +7,7 @@ import json
 import sys
 
 from . import __version__
+from .doctypes import list_document_types
 from .export import ExportError, get_exporter, list_exporters
 from .pipeline import process
 
@@ -34,6 +35,11 @@ def main(argv: list[str] | None = None) -> None:
         action="store_true",
         help="List available export formats and exit",
     )
+    parser.add_argument(
+        "--list-types",
+        action="store_true",
+        help="List document types (built-in and registered) and exit",
+    )
     parser.add_argument("--version", action="version", version=f"docket {__version__}")
 
     args = parser.parse_args(argv)
@@ -42,6 +48,11 @@ def main(argv: list[str] | None = None) -> None:
         for exporter in list_exporters():
             accepts = ", ".join(t.__name__ for t in exporter.accepts)
             print(f"{exporter.name:16} {exporter.description} [{accepts}]")
+        return
+    if args.list_types:
+        for doc_type in list_document_types():
+            origin = "built-in" if doc_type.builtin else "custom"
+            print(f"{doc_type.name:16} {doc_type.schema.__name__:16} {origin:8} {doc_type.description}")
         return
     if args.document is None:
         parser.error("the following arguments are required: document")

@@ -81,7 +81,7 @@ class DocketApp:
         self._write("", clear=True)
         self._write("Summary\n", tag="h1")
         c = result.classification
-        self._write(f"  Doc type:         {c.doc_type.value}\n")
+        self._write(f"  Doc type:         {c.type_name}\n")
         self._write(f"  Classified via:   {c.method} ({c.confidence:.0%} confidence)\n")
         self._write(f"  OCR method:       {result.ocr_method}\n")
         self._write(f"  Extract attempts: {result.extract_attempts}\n\n")

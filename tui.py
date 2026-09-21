@@ -24,7 +24,7 @@ def _describe_stage(stage: str, payload) -> str:
         return f"[green]OK[/] OCR/VLM — via [bold]{payload.method}[/] ({len(payload.text)} chars)"
     if stage == "classify":
         c = payload
-        return f"[green]OK[/] Classify — [bold]{c.doc_type.value}[/] via {c.method} ({c.confidence:.0%} confidence)"
+        return f"[green]OK[/] Classify — [bold]{c.type_name}[/] via {c.method} ({c.confidence:.0%} confidence)"
     if stage == "extract":
         if payload is None:
             return "[red]FAIL[/] Extract — failed to produce valid structured output"
@@ -55,7 +55,7 @@ def run(path: Path) -> None:
     console.print()
 
     summary = Table.grid(padding=(0, 2))
-    summary.add_row("Doc type:", f"[bold]{result.classification.doc_type.value}[/]")
+    summary.add_row("Doc type:", f"[bold]{result.classification.type_name}[/]")
     summary.add_row("Classified via:", result.classification.method)
     summary.add_row(
         "OCR method:",

@@ -79,6 +79,47 @@ docket --list-formats
 Runnable versions of all three, a TypeScript client, a Mistral-backed
 `docker-compose.yml` and an exporter plugin are in [`examples/`](https://github.com/KazKozDev/docket/blob/master/examples/).
 
+## Your own document types
+
+The built-in types are invoice, receipt, contract, purchase order, bank
+statement, acceptance act, waybill and boarding pass. Anything else (delivery
+notes, customs declarations, insurance claims) takes one Pydantic model and
+one call:
+
+```python
+from datetime import date
+from docket import CitedDocument, register_document_type, process
+
+class DeliveryNote(CitedDocument):          # CitedDocument adds page/quote citations
+    note_number: str
+    supplier_name: str
+    delivery_date: date
+
+register_document_type(
+    "delivery_note",
+    DeliveryNote,
+    description="Delivery note / Lieferschein listing goods handed over",  # read by the LLM classifier
+    keywords=["delivery note", "lieferschein", "bon de livraison"],         # free rules tier
+    validators=[my_check],                   # (document, raw_text) -> ValidationIssues
+)
+
+result = process("lieferschein.pdf")
+result.classification.doc_type               # "delivery_note"
+result.document                              # DeliveryNote(...)
+```
+
+The new type gets the same treatment as the built-in ones. Keyword rules and
+the LLM classifier recognise it, and the LLM fills your schema. Every required
+field's citation is checked against the page it claims to quote, your
+validators run, and exporters can target it. `add_validator("invoice", fn)`
+adds rules to built-in types, for example your own AP policy. Packages can
+ship types through the `docket.document_types` entry point. `docket
+--list-types` and `GET /document-types` show what a deployment knows.
+
+Once any custom type is registered, the TF-IDF tier is skipped. That model
+only knows the built-in types, so ambiguous documents go to the LLM instead.
+Full example: [`examples/custom_document_type.py`](https://github.com/KazKozDev/docket/blob/master/examples/custom_document_type.py).
+
 ## EU e-invoicing and ERP export
 
 | Format | `--export` / `export_document(…)` name |

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 
-from . import config
+from . import config, doctypes
 from .classify_tfidf import classify_tfidf
 from .llm_client import LLMError, chat_json
 from .schemas import ClassificationResult, DocType
@@ -185,7 +185,11 @@ _RULES: dict[DocType, list[tuple[re.Pattern, float]]] = {
 _CONFIDENCE_MARGIN = 2.0
 
 _LLM_PROMPT = """You classify business documents. Read the text below and
-respond with a JSON object: {{"doc_type": "invoice"|"receipt"|"contract"|"purchase_order"|"bank_statement"|"acceptance_act"|"waybill"|"boarding_pass"|"unknown", "confidence": 0-1}}.
+respond with a JSON object: {{"doc_type": {choices}, "confidence": 0-1}}.
+
+Document types:
+{descriptions}
+- unknown: none of the above
 
 Text:
 ---
@@ -194,9 +198,23 @@ Text:
 """
 
 
-def _score(text: str) -> dict[DocType, float]:
-    scores: dict[DocType, float] = {dt: 0.0 for dt in _RULES}
-    for doc_type, patterns in _RULES.items():
+def _llm_prompt(text: str) -> str:
+    types = doctypes.list_document_types()
+    choices = "|".join(f'"{t.name}"' for t in types) + '|"unknown"'
+    descriptions = "\n".join(f"- {t.name}: {t.description}" for t in types)
+    return _LLM_PROMPT.format(choices=choices, descriptions=descriptions, text=text)
+
+
+def _name(doc_type: DocType | str) -> str:
+    return doc_type.value if isinstance(doc_type, DocType) else doc_type
+
+
+def _score(text: str) -> dict[DocType | str, float]:
+    rules: dict[DocType | str, list[tuple[re.Pattern, float]]] = dict(_RULES)
+    for custom in doctypes.custom_document_types():
+        rules[custom.name] = list(custom.keywords)
+    scores: dict[DocType | str, float] = {dt: 0.0 for dt in rules}
+    for doc_type, patterns in rules.items():
         for pattern, weight in patterns:
             if pattern.search(text):
                 scores[doc_type] += weight
@@ -218,7 +236,7 @@ def classify_rules(text: str) -> ClassificationResult | None:
             doc_type=top_type,
             confidence=round(top_score / total, 2),
             method="rules",
-            scores={k.value: v for k, v in scores.items()},
+            scores={_name(k): v for k, v in scores.items()},
         )
     return None
 
@@ -230,22 +248,18 @@ def classify_llm(text: str) -> ClassificationResult:
     scores = _score(text)
     chunk_size = max(1000, config.EXTRACT_CHUNK_CHARS)
     chunks = [text[i : i + chunk_size] for i in range(0, len(text), chunk_size)] or [""]
-    results = [chat_json(_LLM_PROMPT.format(text=chunk)) for chunk in chunks]
+    results = [chat_json(_llm_prompt(chunk)) for chunk in chunks]
     if len(results) == 1:
         result = results[0]
-        try:
-            doc_type = DocType(result.get("doc_type", "unknown"))
-        except ValueError:
-            doc_type = DocType.UNKNOWN
+        doc_type = doctypes.parse_type(result.get("doc_type"))
         confidence = float(result.get("confidence", 0.0))
     else:
-        votes: dict[DocType, float] = {doc_type: 0.0 for doc_type in DocType}
+        votes: dict[DocType | str, float] = {}
         for result in results:
-            try:
-                candidate = DocType(result.get("doc_type", "unknown"))
-            except ValueError:
-                candidate = DocType.UNKNOWN
-            votes[candidate] += float(result.get("confidence", 0.0))
+            candidate = doctypes.parse_type(result.get("doc_type"))
+            votes[candidate] = votes.get(candidate, 0.0) + float(
+                result.get("confidence", 0.0)
+            )
         doc_type = max(votes, key=votes.get)
         total = sum(votes.values())
         confidence = votes[doc_type] / total if total else 0.0
@@ -253,7 +267,7 @@ def classify_llm(text: str) -> ClassificationResult:
         doc_type=doc_type,
         confidence=confidence,
         method="llm",
-        scores={k.value: v for k, v in scores.items()},
+        scores={_name(k): v for k, v in scores.items()},
     )
 
 
@@ -270,7 +284,11 @@ def classify(text: str) -> ClassificationResult:
     if rules_result is not None:
         return rules_result
 
-    tfidf_result = classify_tfidf(text)
+    # The TF-IDF model was trained on the built-in types only. With custom
+    # types registered it would confidently file a delivery note as a
+    # waybill, so the cascade goes straight to the LLM, which is told
+    # about every registered type.
+    tfidf_result = None if doctypes.custom_document_types() else classify_tfidf(text)
     if (
         tfidf_result is not None
         and tfidf_result.confidence >= config.TFIDF_CONFIDENCE_FLOOR
@@ -286,5 +304,5 @@ def classify(text: str) -> ClassificationResult:
             doc_type=DocType.UNKNOWN,
             confidence=0.0,
             method="unavailable",
-            scores={k.value: v for k, v in _score(text).items()},
+            scores={_name(k): v for k, v in _score(text).items()},
         )

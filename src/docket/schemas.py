@@ -469,10 +469,25 @@ SCHEMA_BY_DOC_TYPE: dict[DocType, type[BaseModel]] = {
 
 
 class ClassificationResult(BaseModel):
-    doc_type: DocType
+    # A DocType for built-in types, a plain string for types registered with
+    # `docket.register_document_type`. DocType is a str enum, so comparing
+    # against a string works for both; `type_name` is always a plain string.
+    doc_type: DocType | str
     confidence: float
     method: str  # "rules" | "tfidf" | "llm" | "unavailable"
     scores: dict[str, float] = Field(default_factory=dict)
+
+    @field_validator("doc_type", mode="before")
+    @classmethod
+    def _builtin_as_enum(cls, value: object) -> object:
+        try:
+            return DocType(value)
+        except ValueError:
+            return value
+
+    @property
+    def type_name(self) -> str:
+        return self.doc_type.value if isinstance(self.doc_type, DocType) else self.doc_type
 
 
 class ValidationIssue(BaseModel):
@@ -601,9 +616,12 @@ class PipelineResult(BaseModel):
     def document(self) -> BaseModel | None:
         """`extracted` as its typed schema (Invoice, Receipt, …), or None if
         extraction failed or no longer matches the schema."""
-        schema = SCHEMA_BY_DOC_TYPE.get(self.classification.doc_type)
-        if schema is None or self.extracted is None:
+        from .doctypes import get_document_type
+
+        doc_type = get_document_type(self.classification.doc_type)
+        if doc_type is None or self.extracted is None:
             return None
+        schema = doc_type.schema
         try:
             return schema.model_validate(self.extracted)
         except ValidationError:

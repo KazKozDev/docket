@@ -26,6 +26,13 @@ calls with `monkeypatch`, as the existing tests do.
   runtime `dependencies`; docket must stay embeddable in closed-source apps.
   Test-only tools in the `dev` extra are fine.
 
+## Adding a document type
+
+Built-in types live in `schemas.py` (schema), `classify.py` (keyword rules),
+`validate.py` (validator) and `doctypes.py` (LLM description). Types specific
+to one business should be a plugin registered through
+`register_document_type` instead; see `examples/custom_document_type.py`.
+
 ## Adding an export format
 
 Implement `func(document) -> str | dict` in `src/docket/export/`, register it
