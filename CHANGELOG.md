@@ -22,6 +22,7 @@ top-level amount. Measured on the 17 golden scans (tesseract,
 | documents in review | 1 | 1 |
 
 ### Added
+
 - Line-item and nested citations: the extraction prompt requires a citation
   for every row of every repeated list, per field (`line_items[0].quantity`,
   `items[0].price`, ...), the quote being that row's own text.
@@ -35,6 +36,56 @@ top-level amount. Measured on the 17 golden scans (tesseract,
   (spec-aware paths, so `line_items[0].total` counts against the item rows).
 - Grounding of line-item numeric fields: a fabricated row that balances the
   totals now fails validation like any invented top-level amount.
+- **Stage 2**: the false-success metric in `eval/benchmark_ocr.py` — documents
+  that come back "succeeded, no review needed" with wrong graded fields,
+  the wrong number nobody was told to check (rate taken over the silent
+  successes only; review and failed docs made no clean claim).
+- **Stage 2**: `eval/benchmark_competitors.py` — docket against docpick,
+  invoice2data and ocrcontext on the same corpus, graded with the same
+  field metric on each tool's own schema intersection; docket's number is
+  recomputed on exactly those docs and fields, tool errors count as every
+  graded field wrong, LLM-backed tools run against the same Ollama model
+  and are handed the correct schema while docket must classify its way
+  there.
+
+### Measured (stage 2 — extended corpus and the competition)
+
+The corpus grew from 17 golden scans to 198 scans (real documents from
+Hugging Face: DocILE, donut-style invoices, SROIE receipts, CORD, FUNSD,
+RVL-CDIP — `eval/download_real_samples.py --n` per source). Tesseract
+config throughout:
+
+| | golden only | extended corpus |
+|---|---|---|
+| field accuracy | 0.97 | 0.53 |
+| documents in review | 1 (6%) | 148 (75%) |
+| false successes | 3/16 silent (19%) | 23/50 silent (46%) |
+
+What the extended corpus says:
+
+- Classification is the bottleneck, not extraction: SROIE "receipts" are
+  Malaysian tax-invoice till slips, 82/120 classify as `tax_invoice` and
+  every graded field of those documents counts wrong. Where classification
+  is right, field accuracy is 0.80–0.97 per source.
+- The top false-success drivers are measured and actionable: a wrong or
+  missing date in 17 of the 23 docs — five are US-format day/month swaps
+  (`06/02/2015` → 2015-02-06 instead of 2015-06-02), the rest dates not
+  read at all from degraded thermal receipts and DocILE scans — plus
+  merchant names and totals on those same hard scans.
+
+Against the pip-installable competition, same documents and same graded
+fields (see the runner docstring for the fairness rules):
+
+| tool | docs | field accuracy | docket, same docs+fields |
+|---|---|---|---|
+| docpick 0.1.3 | 55 (subsample) | 0.61 | 0.45 |
+| ocrcontext 0.1.5 | 55 (subsample) | 0.04 (16 parse errors) | 0.40 |
+| invoice2data 1.0.1 | 44 | 0.00 (0 built-in template matches) | 0.86 |
+
+docket wins golden (1.00 vs docpick's 0.62), donut (0.93 vs 0.48) and
+docile (0.50 vs 0.08); docpick wins SROIE (0.75 vs 0.10) because it is
+handed the receipt schema. invoice2data matched none of its built-in
+vendor templates — authoring templates per vendor is its design.
 
 ### Fixed
 - False citation-check flags that queued correct extractions for review:

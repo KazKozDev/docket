@@ -247,6 +247,12 @@ def summarize(rows: list[dict]) -> dict:
     cells_matched = sum(r["table_cells"]["matched"] for r in rows)
     cells_total = sum(r["table_cells"]["expected"] for r in rows)
     pages = sum(r["pages"] for r in rows)
+    # A false success is the worst outcome: the pipeline answered "succeeded,
+    # no review needed" and the graded truth disagrees — a wrong number nobody
+    # will look at. Docs that went to review or failed made no clean claim,
+    # so the rate is taken over the silent successes only.
+    silent = [r for r in rows if r["status"] == "succeeded" and not r["needs_review"]]
+    false_successes = [r for r in silent if not r["success"]]
     return {
         "documents": n,
         "document_success_rate": round(sum(r["success"] for r in rows) / n, 4) if n else None,
@@ -265,6 +271,9 @@ def summarize(rows: list[dict]) -> dict:
         "llm_calls": sum(r["llm_calls"] for r in rows),
         "llm_calls_mean": round(sum(r["llm_calls"] for r in rows) / n, 2) if n else None,
         "citations": citation,
+        "silent_successes": len(silent),
+        "false_successes": len(false_successes),
+        "false_success_rate": round(len(false_successes) / len(silent), 4) if silent else None,
         "needs_review": sum(r["needs_review"] for r in rows),
         "failed": sum(r["status"] == "failed" for r in rows),
     }
@@ -325,13 +334,14 @@ def print_summary(report: dict) -> None:
     if report.get("pipeline"):
         print("\nFull pipeline (OCR backend -> vlm fallback, classification, extraction, validation)")
         print(f"{'config':15} {'docs':>4} {'success':>8} {'fields':>7} {'items F1':>9} {'tables':>7} "
-              f"{'mean s':>7} {'median s':>9} {'vlm pages':>10} {'vlm docs':>9} {'LLM':>5} {'review':>7}")
+              f"{'mean s':>7} {'median s':>9} {'vlm pages':>10} {'vlm docs':>9} {'LLM':>5} {'review':>7} {'false-ok':>9}")
         for name, run in report["pipeline"].items():
             s = run["summary"]
             print(f"{name:15} {s['documents']:>4} {s['document_success_rate']!s:>8} {s['field_accuracy']!s:>7} "
                   f"{s['line_items']['f1']!s:>9} {s['table_cell_accuracy']!s:>7} {s['seconds_mean']!s:>7} "
                   f"{s['seconds_median']!s:>9} {s['vlm_page_share']!s:>10} {s['vlm_document_share']!s:>9} "
-                  f"{s['llm_calls']:>5} {s['needs_review']:>7}")
+                  f"{s['llm_calls']:>5} {s['needs_review']:>7} "
+                  f"{s['false_successes']}/{s['silent_successes']:>4}")
 
 
 def main() -> None:
