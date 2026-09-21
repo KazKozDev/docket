@@ -211,7 +211,7 @@ Every setting and its environment variable is in [`docket.example.toml`](https:/
 - The vision model has been observed changing digits so that a page reconciles (a printed `450.00` read as `480.00` three times out of three). There is no fix for that in this repo.
 - Line items carry no source citations, so the citation check doesn't cover them.
 - The review queue is a single file: durable on one node, not across hosts.
-- Windows is untested. A document takes 3.6–9.5 s, longer when a page needs the vision model.
+- Windows is untested. A document takes a median of 6.4–22.7 s depending on the OCR backend (measured over 33 scans), longer when a page needs the vision model.
 
 <details>
 <summary>Install options, source setup, development</summary>
