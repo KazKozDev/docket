@@ -74,6 +74,19 @@ each stage; see the Breaking changes list.
   `GET /schemas/{id}` and `GET /schemas/{id}/json-schema`;
   `/export-formats` entries gain `media_type` and `schemas`.
 - Eval golden files grade nested fields by path (`seller.name`).
+- HTTP jobs are batches: `POST /jobs` takes `files` (one or more) plus form
+  options and returns a `Job` (`job_id`, `status`, `documents`, `counts`);
+  results are served by `/jobs/{id}/results/{index}`, `results.jsonl`,
+  `results.csv` and `line-items.csv` instead of inside the job. `POST
+  /process` accepts the same form options. Errors are `{"error": {"code",
+  "message"}}`; unsupported files are 415, invalid options 422, unfinished
+  results 409.
+- Jobs live in a directory per job under `DOCKET_JOBS_DIR`
+  (`DOCKET_JOB_STORE` and `DOCKET_JOB_UPLOADS` are gone); uploads are
+  deleted when a job finishes.
+- CLI exit codes: 0 all succeeded, 1 partial (some failed or need review),
+  2 all failed, 3 configuration error. `process` without `--include-layout`
+  leaves page layouts out of its JSON (`--no-layout` is gone).
 - Configuration errors share the base `docket.ConfigurationError`
   (`UnknownLanguage`, `OcrBackendError`, `BackendUnavailable`,
   `DocumentTypeError`).
@@ -137,6 +150,20 @@ each stage; see the Breaking changes list.
 - `--schema-version` / `ProcessOptions.schema_version`;
   `DocumentResult.schema_version` is filled.
 - `examples/schema_plugin/`: a schema shipped as a pip package.
+- `process_batch(sources, options, BatchOptions)` → `BatchResult`: a
+  directory (recursive, glob), a glob pattern or any iterable; input-order
+  results, partial failure, `fail_fast`, bounded look-ahead, streaming via
+  `on_result`, checkpoint resume, aggregate metrics.
+- `docket batch INPUT` with `--recursive`, `--glob`, `--workers`,
+  `--fail-fast`, `--checkpoint`, `--output`, `--format json|jsonl|csv`,
+  `--line-items`, `--include-layout`; `process` gains `--output` and
+  `--format`.
+- Summary and line-item CSV with fixed columns for every schema
+  (`docket.export.tabular`, `SchemaSpec.summary` / `line_items`).
+- Process-wide limits on simultaneous LLM requests and OCR engines
+  (`DOCKET_LLM_CONCURRENCY`, `DOCKET_OCR_CONCURRENCY`); `DOCKET_BATCH_WORKERS`,
+  `DOCKET_MAX_BATCH_FILES`, `DOCKET_MAX_BATCH_BYTES`.
+- `checksums.vat_format_ok`: per-country VAT formats (VIES, plus GB/XI, CH, NO).
 - `docket --ocr-backend`, `--ocr-fallback`, `--no-ocr-fallback`,
   `--ocr-languages`, `--list-ocr-backends`; `GET /ocr-backends`.
 
@@ -147,6 +174,11 @@ each stage; see the Breaking changes list.
   matches several schemas. Not yet measured on the eval sets.
 
 ### Fixed
+- A tax number the extraction filed as VAT (e.g. "Tax ID: GB-771-4402",
+  filed as VAT for its GB prefix) failed the VAT checksum it never claimed;
+  only a value with its country's VAT format is now held to that checksum.
+- An empty text page was reported as "text accepted"; it is now a rejected,
+  degraded page.
 - The HTTP `/process` and `/jobs` runner called the endpoint function instead
   of the pipeline (a name collision introduced with `process_document`).
 - Scanned pages sent to the vision model were written as temporary PNGs next
@@ -211,6 +243,11 @@ First packaged release.
 - The HTTP service moved to `docket.api` (`uvicorn docket.api:app`); the root `api.py` remains as a shim.
 
 ### Fixed
+- A tax number the extraction filed as VAT (e.g. "Tax ID: GB-771-4402",
+  filed as VAT for its GB prefix) failed the VAT checksum it never claimed;
+  only a value with its country's VAT format is now held to that checksum.
+- An empty text page was reported as "text accepted"; it is now a rejected,
+  degraded page.
 - The HTTP `/process` and `/jobs` runner called the endpoint function instead
   of the pipeline (a name collision introduced with `process_document`).
 - `docket <file> --export <format>` crashed because `PipelineResult` had no `document` attribute.

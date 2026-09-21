@@ -402,19 +402,15 @@ def _check_party_ids(party: Party | None, prefix: str) -> list[ValidationIssue]:
     for n, tax in enumerate(party.tax_ids):
         field = f"{prefix}.tax_ids[{n}]"
         value = tax.value
-        if tax.scheme == "vat":
+        # The scheme is the extraction model's reading of the label, not
+        # something the document asserts: a "Tax ID: GB-771-4402" gets filed
+        # as VAT for its GB prefix, though GB VAT numbers have 9 or 12 digits.
+        # Only a value with its country's VAT format is held to the VAT
+        # checksum; anything else is checked as a plain tax number.
+        if tax.scheme == "vat" and checksums.vat_format_ok(value) is not False:
             vat_ok = checksums.validate_vat(value)
             if vat_ok is False:
-                issues.append(
-                    ValidationIssue(
-                        field=field,
-                        message=(
-                            f"{value!r} fails its country's VAT checksum"
-                            if checksums.is_vat_shaped(value)
-                            else f"{value!r} is not a VAT number — the document states none for this party"
-                        ),
-                    )
-                )
+                issues.append(ValidationIssue(field=field, message=f"{value!r} fails its country's VAT checksum"))
             elif vat_ok is None:
                 issues.append(
                     ValidationIssue(

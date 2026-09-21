@@ -25,7 +25,7 @@ from dataclasses import dataclass
 
 import httpx
 
-from . import config
+from . import config, limits
 
 
 class LLMError(RuntimeError):
@@ -255,6 +255,11 @@ def vision_transcribe(
 
 
 def _ollama_chat(payload: dict, *, timeout: float) -> str:
+    with limits.slot("llm"):
+        return _ollama_request(payload, timeout=timeout)
+
+
+def _ollama_request(payload: dict, *, timeout: float) -> str:
     try:
         resp = httpx.post(
             f"{config.OLLAMA_HOST}/api/chat", json=payload, timeout=timeout
@@ -270,6 +275,13 @@ def _openai_headers() -> dict:
 
 
 def _openai_chat(
+    model: str, messages: list[dict], *, timeout: float, json_mode: bool = False
+) -> str:
+    with limits.slot("llm"):
+        return _openai_request(model, messages, timeout=timeout, json_mode=json_mode)
+
+
+def _openai_request(
     model: str, messages: list[dict], *, timeout: float, json_mode: bool = False
 ) -> str:
     payload: dict = {"model": model, "messages": messages, "temperature": 0}
