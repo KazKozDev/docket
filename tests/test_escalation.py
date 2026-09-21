@@ -12,13 +12,21 @@ from pathlib import Path
 
 from docket import pipeline, review_queue
 from docket.llm_client import LLMError
-from docket.schemas import ClassificationResult, DocType, Invoice, PipelineResult, ValidationIssue
+from docket.schemas import (
+    ClassificationResult,
+    DocType,
+    Invoice,
+    PipelineResult,
+    ValidationIssue,
+)
 
 
 def _result(ocr_method: str, issues: list[ValidationIssue]) -> PipelineResult:
     return PipelineResult(
         source="doc.png",
-        classification=ClassificationResult(doc_type=DocType.INVOICE, confidence=0.9, method="rules"),
+        classification=ClassificationResult(
+            doc_type=DocType.INVOICE, confidence=0.9, method="rules"
+        ),
         extracted={"invoice_number": "INV-1"},
         extract_attempts=1,
         validation_issues=issues,

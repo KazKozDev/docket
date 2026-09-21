@@ -28,7 +28,9 @@ def _invoice(**overrides):
         "vendor_name": "Saldo Apps",
         "customer_name": "Shepard corp.",
         "line_items": [
-            LineItem(description="Prototype", quantity=2, unit_price=4000.0, total=8000.0)
+            LineItem(
+                description="Prototype", quantity=2, unit_price=4000.0, total=8000.0
+            )
         ],
         "subtotal": 8000.0,
         "tax_amount": 450.0,
@@ -157,10 +159,16 @@ def test_a_contradicting_witness_is_flagged_not_corrected():
     inv = _invoice(
         tax_amount=480.0,
         total_amount=8480.0,
-        field_locations={"subtotal": {"page": 1, "quote": "Subtotal: USD 8000.00"}, "tax_amount": {"page": 1, "quote": "Sales Tax: USD 480.00"}, "total_amount": {"page": 1, "quote": "Total: USD 8,480.00"}},
+        field_locations={
+            "subtotal": {"page": 1, "quote": "Subtotal: USD 8000.00"},
+            "tax_amount": {"page": 1, "quote": "Sales Tax: USD 480.00"},
+            "total_amount": {"page": 1, "quote": "Total: USD 8,480.00"},
+        },
     )
     issues = validate(inv, PRIMARY, witness_pages=WITNESS_AGREES)
-    flagged = [i for i in issues if i.field == "tax_amount" and "independent OCR" in i.message]
+    flagged = [
+        i for i in issues if i.field == "tax_amount" and "independent OCR" in i.message
+    ]
     assert flagged, [i.message for i in issues]
     assert inv.tax_amount == 480.0  # the validator reports; it never rewrites
 
@@ -178,11 +186,20 @@ def test_uncited_fields_are_not_cross_checked():
     # nothing is claimed about them either way.
     inv = _invoice(
         line_items=[
-            LineItem(description="Prototype", quantity=2000, unit_price=20230450.0, total=20230450.0)
+            LineItem(
+                description="Prototype",
+                quantity=2000,
+                unit_price=20230450.0,
+                total=20230450.0,
+            )
         ]
     )
     issues = validate(inv, PRIMARY, witness_pages=WITNESS_AGREES)
-    assert not [i for i in issues if i.field.startswith("line_items") and "independent OCR" in i.message]
+    assert not [
+        i
+        for i in issues
+        if i.field.startswith("line_items") and "independent OCR" in i.message
+    ]
 
 
 def test_garbled_witness_skips_quietly():
@@ -217,7 +234,10 @@ def test_vlm_without_any_ocr_support_needs_review():
     number is wrong.
     """
     issues = validate(_invoice(), PRIMARY, vlm_unconfirmed=True)
-    assert len([i for i in issues if i.field == "*" and "no confident OCR" in i.message]) == 1
+    assert (
+        len([i for i in issues if i.field == "*" and "no confident OCR" in i.message])
+        == 1
+    )
     assert validate(_invoice(), PRIMARY, witness_pages=WITNESS_AGREES) == []
 
 
@@ -229,23 +249,32 @@ def test_a_lost_decimal_point_is_not_a_contradiction():
     """
     witness = ["Total: USD 775.00"]
     inv = _invoice(
-        subtotal=7.75, tax_amount=0.0, total_amount=7.75,
+        subtotal=7.75,
+        tax_amount=0.0,
+        total_amount=7.75,
         line_items=[],
         field_locations={"total_amount": {"page": 1, "quote": "Total: USD 7.75"}},
     )
     text = "[PAGE 1]\nTotal: USD 7.75"
-    assert not [i for i in validate(inv, text, witness_pages=witness) if "independent OCR" in i.message]
+    assert not [
+        i
+        for i in validate(inv, text, witness_pages=witness)
+        if "independent OCR" in i.message
+    ]
 
 
 def test_a_changed_digit_survives_the_decimal_tolerance():
     # 450 against 480 is a different digit, not a moved point.
     witness = ["Sales Tax: USD 450.00"]
     inv = _invoice(
-        tax_amount=480.0, total_amount=8480.0,
+        tax_amount=480.0,
+        total_amount=8480.0,
         field_locations={"tax_amount": {"page": 1, "quote": "Sales Tax: USD 480.00"}},
     )
     issues = validate(inv, PRIMARY, witness_pages=witness)
-    assert [i for i in issues if i.field == "tax_amount" and "independent OCR" in i.message]
+    assert [
+        i for i in issues if i.field == "tax_amount" and "independent OCR" in i.message
+    ]
 
 
 def test_the_unconfirmed_advisory_is_a_warning_not_a_review_trigger():
@@ -255,3 +284,20 @@ def test_the_unconfirmed_advisory_is_a_warning_not_a_review_trigger():
     issues = validate(_invoice(), PRIMARY, vlm_unconfirmed=True)
     advisory = [i for i in issues if i.field == "*" and "no confident OCR" in i.message]
     assert advisory and advisory[0].severity == "warning"
+
+
+def test_verified_arithmetic_downgrades_witness_disagreement_to_warning():
+    """When total_amount is proven by subtotal + taxes + line items,
+    a noisy OCR witness reading does not trigger an error that queues
+    the clean document for review.
+    """
+    witness = ["Total: USD 9450.00"]  # OCR misread 8 as 9
+    inv = _invoice()
+    issues = validate(inv, PRIMARY, witness_pages=witness)
+    witness_issues = [
+        i
+        for i in issues
+        if i.field == "total_amount" and "independent OCR" in i.message
+    ]
+    assert witness_issues
+    assert all(i.severity == "warning" for i in witness_issues)

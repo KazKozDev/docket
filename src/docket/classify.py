@@ -24,13 +24,24 @@ _RULES: dict[DocType, list[tuple[re.Pattern, float]]] = {
         (re.compile(r"\binvoice\b|\bfactura\b", re.I), 3.0),
         (re.compile(r"\bbill to\b|\bfacturar a\b|\bcliente\b", re.I), 2.0),
         (re.compile(r"\bamount due\b|\bimporte total\b|\btotal a pagar\b", re.I), 2.0),
-        (re.compile(r"\bdue date\b|\bfecha de vencimiento\b|\bvencimiento\b", re.I), 1.0),
+        (
+            re.compile(r"\bdue date\b|\bfecha de vencimiento\b|\bvencimiento\b", re.I),
+            1.0,
+        ),
         (re.compile(r"\bpo number\b|\bpurchase order\b|\bpedido\b", re.I), 1.0),
         (re.compile(r"\bbase imponible\b|\bn[úu]mero de factura\b", re.I), 2.0),
     ],
     DocType.RECEIPT: [
-        (re.compile(r"\breceipt\b|\brecibo\b|\btique\b|\bticket de compra\b", re.I), 3.0),
-        (re.compile(r"\bthank you for your purchase\b|\bgracias por su compra\b", re.I), 2.0),
+        (
+            re.compile(r"\breceipt\b|\brecibo\b|\btique\b|\bticket de compra\b", re.I),
+            3.0,
+        ),
+        (
+            re.compile(
+                r"\bthank you for your purchase\b|\bgracias por su compra\b", re.I
+            ),
+            2.0,
+        ),
         (re.compile(r"\bchange due\b|\bcambio\b|\bentregado\b", re.I), 2.0),
         (re.compile(r"\bcashier\b|\bcajero?a?\b", re.I), 1.0),
         (re.compile(r"\btender(ed)?\b|\befectivo\b", re.I), 1.0),
@@ -40,16 +51,128 @@ _RULES: dict[DocType, list[tuple[re.Pattern, float]]] = {
         (re.compile(r"\bgate\b|\bpuerta de embarque\b", re.I), 2.0),
         (re.compile(r"\bseat\b|\basiento\b", re.I), 2.0),
         (re.compile(r"\bflight\b|\bvuelo\b", re.I), 2.0),
-        (re.compile(r"\bboarding time\b|\bembarque\b|\bpnr\b|\bbooking ref", re.I), 1.0),
+        (
+            re.compile(r"\bboarding time\b|\bembarque\b|\bpnr\b|\bbooking ref", re.I),
+            1.0,
+        ),
     ],
     DocType.CONTRACT: [
         (re.compile(r"\bagreement\b|\bcontrato\b|\bacuerdo\b", re.I), 3.0),
         (re.compile(r"\bwhereas\b|\bexponen\b|\bmanifiestan\b", re.I), 2.0),
         (re.compile(r"\bhereby agrees?\b|\bacuerdan\b|\bcl[áa]usulas\b", re.I), 2.0),
-        (re.compile(r"\bgoverning law\b|\blegislaci[óo]n aplicable\b|\bley aplicable\b", re.I), 2.0),
+        (
+            re.compile(
+                r"\bgoverning law\b|\blegislaci[óo]n aplicable\b|\bley aplicable\b",
+                re.I,
+            ),
+            2.0,
+        ),
         (
             re.compile(
                 r"\bparty of the first part\b|\bthe parties\b|\blas partes\b|\bde una parte\b",
+                re.I,
+            ),
+            1.0,
+        ),
+    ],
+    DocType.PURCHASE_ORDER: [
+        (
+            re.compile(
+                r"\bpurchase order\b|\border confirmation\b|\borden de compra\b", re.I
+            ),
+            3.0,
+        ),
+        (re.compile(r"\bpo number\b|\bn[úu]mero de pedido\b|\bpo #\b", re.I), 2.0),
+        (
+            re.compile(r"\bvendor\b|\bproveedor\b|\bship to\b|\bentregar en\b", re.I),
+            2.0,
+        ),
+        (re.compile(r"\brequisition\b|\border date\b|\bfecha de pedido\b", re.I), 1.0),
+    ],
+    DocType.BANK_STATEMENT: [
+        (
+            re.compile(
+                r"\bbank statement\b|\baccount statement\b|\bextracto bancario\b|\bвыписка\b",
+                re.I,
+            ),
+            3.0,
+        ),
+        (
+            re.compile(
+                r"\bopening balance\b|\bclosing balance\b|\bsaldo inicial\b|\bsaldo final\b",
+                re.I,
+            ),
+            2.0,
+        ),
+        (
+            re.compile(
+                r"\bdeposits?\b|\bwithdrawals?\b|\bmovimientos?\b|\btransacciones\b",
+                re.I,
+            ),
+            2.0,
+        ),
+        (
+            re.compile(
+                r"\bstatement period\b|\bper[íi]odo del extracto\b|\baccount number\b",
+                re.I,
+            ),
+            1.0,
+        ),
+    ],
+    DocType.ACCEPTANCE_ACT: [
+        (
+            re.compile(
+                r"\bacceptance act\b|\bact of acceptance\b|\bcertificate of acceptance\b|\bакт выполненных работ\b|\bакт приема\b",
+                re.I,
+            ),
+            3.0,
+        ),
+        (
+            re.compile(
+                r"\bservices rendered\b|\bservicios prestados\b|\btrabajos realizados\b|\bacta de recepci[óo]n\b",
+                re.I,
+            ),
+            2.0,
+        ),
+        (
+            re.compile(
+                r"\bno mutual claims\b|\bsin reclamaciones\b|\bпретензий не имеют\b|\bwork completed\b",
+                re.I,
+            ),
+            2.0,
+        ),
+        (
+            re.compile(
+                r"\bcontractor\b|\bcontratista\b|\bподрядчик\b|\bзаказчик\b", re.I
+            ),
+            1.0,
+        ),
+    ],
+    DocType.WAYBILL: [
+        (
+            re.compile(
+                r"\bwaybill\b|\bbill of lading\b|\bconsignment note\b|\bcmr\b|\bтоварная накладная\b|\bторг-12\b|\balbar[áa]n\b",
+                re.I,
+            ),
+            3.0,
+        ),
+        (
+            re.compile(
+                r"\bconsignee\b|\bconsignor\b|\bshipper\b|\bdestinatario\b|\bremitente\b|\bгрузополучатель\b",
+                re.I,
+            ),
+            2.0,
+        ),
+        (
+            re.compile(
+                r"\bgross weight\b|\bnet weight\b|\bpeso bruto\b|\bpeso neto\b|\bвес брутто\b",
+                re.I,
+            ),
+            2.0,
+        ),
+        (
+            re.compile(
+                r"\bcarrier\b|\btransportista\b|\bcarrier tracking\b|\bvehicle\b|\bveh[íi]culo\b",
                 re.I,
             ),
             1.0,
@@ -62,7 +185,7 @@ _RULES: dict[DocType, list[tuple[re.Pattern, float]]] = {
 _CONFIDENCE_MARGIN = 2.0
 
 _LLM_PROMPT = """You classify business documents. Read the text below and
-respond with a JSON object: {{"doc_type": "invoice"|"receipt"|"contract"|"boarding_pass"|"unknown", "confidence": 0-1}}.
+respond with a JSON object: {{"doc_type": "invoice"|"receipt"|"contract"|"purchase_order"|"bank_statement"|"acceptance_act"|"waybill"|"boarding_pass"|"unknown", "confidence": 0-1}}.
 
 Text:
 ---
@@ -148,7 +271,10 @@ def classify(text: str) -> ClassificationResult:
         return rules_result
 
     tfidf_result = classify_tfidf(text)
-    if tfidf_result is not None and tfidf_result.confidence >= config.TFIDF_CONFIDENCE_FLOOR:
+    if (
+        tfidf_result is not None
+        and tfidf_result.confidence >= config.TFIDF_CONFIDENCE_FLOOR
+    ):
         return tfidf_result
 
     try:

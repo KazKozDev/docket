@@ -81,7 +81,10 @@ def test_record_locator_absent_from_the_document_is_flagged():
     invented is well-formed but still wrong, and only the page can say so.
     """
     issues = validate(_pass(booking_reference="ZZ9QQ1"), PASS_TEXT)
-    assert any(i.field == "booking_reference" and "does not appear" in i.message for i in issues)
+    assert any(
+        i.field == "booking_reference" and "does not appear" in i.message
+        for i in issues
+    )
 
 
 def test_departure_far_in_the_future_is_flagged():

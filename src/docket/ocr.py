@@ -9,12 +9,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-import pymupdf as fitz
 import pdfplumber
 import pytesseract
 from PIL import Image
 
-from . import amounts, config
+from . import amounts, config, pdf as pdf_render
 from .llm_client import LLMError, vision_transcribe
 
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".tiff", ".bmp"}
@@ -48,7 +47,9 @@ class OcrResult:
 
 
 def _vlm_or_degraded_ocr(
-    image_paths: list[Path], ocr_text: str, witness_numbers: list[list[float]] | None = None
+    image_paths: list[Path],
+    ocr_text: str,
+    witness_numbers: list[list[float]] | None = None,
 ) -> OcrResult:
     """Transcribe with the vision model, falling back to the OCR text we
     already have if the model is unreachable, out of memory, or too slow.
@@ -77,12 +78,12 @@ def _vlm_or_degraded_ocr(
 
 
 def _render_pdf_page(path: Path, page_number: int) -> Image.Image:
-    with fitz.open(path) as doc:
-        page = doc.load_page(page_number)
-        pix = page.get_pixmap(dpi=config.OCR_DPI)
-        return Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+    return pdf_render.render_page(path, page_number, config.OCR_DPI)
 
-def _line_words(data: dict, index: list[int]) -> tuple[list[str], list[int], list[int], list[int]]:
+
+def _line_words(
+    data: dict, index: list[int]
+) -> tuple[list[str], list[int], list[int], list[int]]:
     """One image_to_data row-group, left-to-right: text, confidence, offset, width."""
     rows = []
     for i in index:
@@ -119,7 +120,13 @@ def _serialize_line(words: list[str], lefts: list[int], widths: list[int]) -> st
     return "".join(parts)
 
 
-def _glued_amounts(words: list[str], confs: list[int], lefts: list[int], widths: list[int], floor: float) -> list[float]:
+def _glued_amounts(
+    words: list[str],
+    confs: list[int],
+    lefts: list[int],
+    widths: list[int],
+    floor: float,
+) -> list[float]:
     """Parse numbers from box-adjacent word runs, not isolated tokens.
 
     Tesseract often splits one printed amount across words ("8,480" ".00").
@@ -127,6 +134,7 @@ def _glued_amounts(words: list[str], confs: list[int], lefts: list[int], widths:
     reads what the page actually shows. Every word in the run must clear
     the floor, or the run contributes nothing.
     """
+
     def _parse(text: str) -> list[float]:
         found = []
         for match in amounts.MONEY_RE.finditer(text):
@@ -162,7 +170,9 @@ def _glued_amounts(words: list[str], confs: list[int], lefts: list[int], widths:
     return deduped
 
 
-def _ocr_image(image: Image.Image, word_floor: float = 60.0) -> tuple[str, float, list[float]]:
+def _ocr_image(
+    image: Image.Image, word_floor: float = 60.0
+) -> tuple[str, float, list[float]]:
     """OCR one rendered page from Tesseract's word boxes: layout-aware text,
     line-weighted confidence, and the numbers read confidently enough to
     second-guess the vision model.
@@ -173,12 +183,20 @@ def _ocr_image(image: Image.Image, word_floor: float = 60.0) -> tuple[str, float
     itself is unsure about can neither confirm nor accuse.
     """
     data = pytesseract.image_to_data(
-        image, config=f"--psm {config.OCR_PSM}", output_type=pytesseract.Output.DICT
+        image,
+        lang=config.OCR_LANG,
+        config=f"--psm {config.OCR_PSM}",
+        output_type=pytesseract.Output.DICT,
     )
     n = len(data.get("text", []))
     lines: dict[tuple, list[int]] = {}
     for i in range(n):
-        key = (data["page_num"][i], data["block_num"][i], data["par_num"][i], data["line_num"][i])
+        key = (
+            data["page_num"][i],
+            data["block_num"][i],
+            data["par_num"][i],
+            data["line_num"][i],
+        )
         lines.setdefault(key, []).append(i)
 
     texts, line_confs = [], []
@@ -267,7 +285,11 @@ def extract_text(
 
             image = _render_pdf_page(path, page_number)
             ocr_text, confidence, confident = _ocr_image(image)
-            if not force_vlm and confidence >= ocr_confidence_floor and ocr_text.strip():
+            if (
+                not force_vlm
+                and confidence >= ocr_confidence_floor
+                and ocr_text.strip()
+            ):
                 resolved_pages.append(ocr_text)
                 methods.append("ocr")
                 witnesses.append(None)
@@ -302,12 +324,19 @@ def extract_text(
         image = Image.open(path)
         text, conf, confident = _ocr_image(image)
         if conf >= ocr_confidence_floor and len(text.strip()) > 0:
-            return OcrResult(text=text, method="ocr", pages=[text], page_methods=["ocr"])
+            return OcrResult(
+                text=text, method="ocr", pages=[text], page_methods=["ocr"]
+            )
         return _vlm_or_degraded_ocr([path], text, [confident])
 
     if path.suffix.lower() in {".txt", ".md"}:
         pages = path.read_text().split("\f")
         text = "\n".join(f"[PAGE {i}]\n{page}" for i, page in enumerate(pages, 1))
-        return OcrResult(text=text, method="pdf_text", pages=pages, page_methods=["pdf_text"] * len(pages))
+        return OcrResult(
+            text=text,
+            method="pdf_text",
+            pages=pages,
+            page_methods=["pdf_text"] * len(pages),
+        )
 
     raise ValueError(f"Unsupported file type: {path.suffix}")

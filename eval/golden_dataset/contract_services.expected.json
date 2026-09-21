@@ -1,12 +1,23 @@
 {
   "doc_type": "contract",
-  "effective_date": "2026-03-01",
-  "expiration_date": "2027-03-01",
-  "governing_law": "State of New York",
+  "contract_title": "SERVICES AGREEMENT",
   "parties_a": [
     "Vertex Consulting LLC"
   ],
   "parties_b": [
     "Meridian Retail Inc."
+  ],
+  "effective_date": "2026-03-01",
+  "expiration_date": "2027-03-01",
+  "governing_law": "State of New York",
+  "payment_terms": "within 30 days of invoice",
+  "auto_renewal": false,
+  "termination_for_convenience": false,
+  "non_solicit": false,
+  "key_obligations": [
+    "Party A shall deliver monthly infrastructure audits.",
+    "Party A shall provide a dedicated support engineer during business hours.",
+    "Party B shall pay Party A within 30 days of invoice."
   ]
 }
+

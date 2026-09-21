@@ -35,7 +35,9 @@ def test_none_extracted_fails_everything():
 
 
 def test_metadata_keys_are_not_graded():
-    correct, total, _ = field_accuracy({"a": 1}, {"a": 1, "_expect_validation_error_field": "x"})
+    correct, total, _ = field_accuracy(
+        {"a": 1}, {"a": 1, "_expect_validation_error_field": "x"}
+    )
     assert (correct, total) == (1, 1)
 
 

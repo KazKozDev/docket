@@ -11,3 +11,12 @@ data/
 *.egg-info/
 .DS_Store
 .ruff_cache/
+
+# Desktop Shell & Built Application Artifacts
+run_desktop.sh
+web/
+*.tar.gz
+*.zip
+.serena/
+build/
+dist/

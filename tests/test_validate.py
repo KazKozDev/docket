@@ -1,7 +1,20 @@
 from datetime import date
 
-from docket.schemas import Contract, Invoice, LineItem, Receipt, ReceiptItem
-from docket.validate import validate
+from docket.schemas import (
+    AcceptanceAct,
+    AcceptanceActItem,
+    BankStatement,
+    BankStatementTransaction,
+    Contract,
+    Invoice,
+    LineItem,
+    PurchaseOrder,
+    Receipt,
+    ReceiptItem,
+    Waybill,
+    WaybillItem,
+)
+from docket.validate import assess_contract_risks, validate
 
 
 def test_invoice_totals_match_no_issues():
@@ -117,6 +130,78 @@ def test_untaxed_receipt_still_validates():
         total_amount=7.75,
     )
     assert validate(rec) == []
+
+
+def test_receipt_with_tip_and_discount_validates():
+    rec = Receipt(
+        merchant_name="Le Bistro",
+        transaction_date=date(2026, 3, 10),
+        items=[
+            ReceiptItem(
+                description="Steak Frites", price=35.0, quantity=1.0, unit_price=35.0
+            ),
+            ReceiptItem(description="Wine", price=15.0, quantity=1.0, unit_price=15.0),
+        ],
+        subtotal=50.0,
+        tax_amount=5.0,
+        tip_amount=8.0,
+        discount_amount=3.0,
+        total_amount=60.0,
+    )
+    assert validate(rec) == []
+
+
+def test_receipt_with_tip_and_discount_mismatch_flagged():
+    rec = Receipt(
+        merchant_name="Le Bistro",
+        transaction_date=date(2026, 3, 10),
+        subtotal=50.0,
+        tax_amount=5.0,
+        tip_amount=8.0,
+        discount_amount=3.0,
+        total_amount=75.0,  # Expected 60.0
+    )
+    issues = validate(rec)
+    assert any(i.field == "total_amount" for i in issues)
+
+
+def test_receipt_item_quantity_unit_price_mismatch_flagged():
+    rec = Receipt(
+        merchant_name="Grocery Mart",
+        transaction_date=date(2026, 2, 1),
+        items=[
+            ReceiptItem(
+                description="Organic Apples",
+                quantity=3.0,
+                unit_price=4.0,
+                price=10.0,  # 3 * 4 = 12 != 10
+            )
+        ],
+        total_amount=10.0,
+    )
+    issues = validate(rec)
+    assert any(i.field == "items[0]" for i in issues)
+
+
+def test_receipt_merchant_tax_id_validation():
+    # Valid Spanish CIF
+    rec_valid = Receipt(
+        merchant_name="Bar Tapas",
+        merchant_tax_id="ESB12345674",
+        transaction_date=date(2026, 5, 1),
+        total_amount=25.0,
+    )
+    assert not any(i.field == "merchant_tax_id" for i in validate(rec_valid))
+
+    # Invalid Spanish CIF checksum
+    rec_invalid = Receipt(
+        merchant_name="Bar Tapas",
+        merchant_tax_id="ESB12345679",
+        transaction_date=date(2026, 5, 1),
+        total_amount=25.0,
+    )
+    issues = validate(rec_invalid)
+    assert any(i.field == "merchant_tax_id" and i.severity == "error" for i in issues)
 
 
 def test_invoice_valid_iban_has_no_issue():
@@ -315,6 +400,85 @@ def test_invoice_invalid_brazil_cnpj_is_flagged():
         and "Brazilian CNPJ" in i.message
         and i.severity == "error"
         for i in issues
+    )
+
+
+def test_invoice_customer_tax_id_validation():
+    inv_valid = Invoice(
+        invoice_number="INV-CUST-01",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Customer Corp",
+        customer_tax_id="12-3456789",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    assert not any(i.field == "customer_tax_id" for i in validate(inv_valid))
+
+    inv_invalid = Invoice(
+        invoice_number="INV-CUST-02",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Customer Corp",
+        customer_tax_id="11.222.333/0001-82",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv_invalid)
+    assert any(i.field == "customer_tax_id" and i.severity == "error" for i in issues)
+
+
+def test_invoice_vendor_bic_validation():
+    inv_valid = Invoice(
+        invoice_number="INV-BIC-01",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Customer Corp",
+        vendor_bic="DEUTDEDDFXX",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    assert not any(i.field == "vendor_bic" for i in validate(inv_valid))
+
+    inv_invalid = Invoice(
+        invoice_number="INV-BIC-02",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Customer Corp",
+        vendor_bic="NOT_A_BIC_CODE_TOO_LONG",
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(inv_invalid)
+    assert any(i.field == "vendor_bic" and i.severity == "warning" for i in issues)
+
+
+def test_invoice_tax_rate_percent_validation():
+    inv_match = Invoice(
+        invoice_number="INV-TAX-01",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Customer Corp",
+        subtotal=1000.0,
+        tax_rate_percent=20.0,
+        tax_amount=200.0,
+        total_amount=1200.0,
+    )
+    assert not any(i.field == "tax_rate_percent" for i in validate(inv_match))
+
+    inv_mismatch = Invoice(
+        invoice_number="INV-TAX-02",
+        issue_date=date(2026, 1, 1),
+        vendor_name="Acme Corp",
+        customer_name="Customer Corp",
+        subtotal=1000.0,
+        tax_rate_percent=20.0,
+        tax_amount=50.0,
+        total_amount=1050.0,
+    )
+    issues = validate(inv_mismatch)
+    assert any(
+        i.field == "tax_rate_percent" and i.severity == "warning" for i in issues
     )
 
 
@@ -583,6 +747,107 @@ def test_an_empty_side_is_flagged():
     assert any(i.field == "parties_b" and "no party named" in i.message for i in issues)
 
 
+def test_contract_value_without_currency_is_warning():
+    c = _contract(contract_value=50000.0, currency=None)
+    issues = validate(c, CONTRACT_TEXT)
+    assert any(i.field == "currency" and i.severity == "warning" for i in issues)
+
+
+def test_contract_currency_without_value_is_warning():
+    c = _contract(currency="USD", contract_value=None)
+    issues = validate(c, CONTRACT_TEXT)
+    assert any(i.field == "contract_value" and i.severity == "warning" for i in issues)
+
+
+def test_contract_excessive_notice_period_is_warning():
+    c = _contract(notice_period_days=400)
+    issues = validate(c, CONTRACT_TEXT)
+    assert any(
+        i.field == "notice_period_days" and i.severity == "warning" for i in issues
+    )
+
+
+def test_contract_payment_terms_absent_from_text_is_warning():
+    c = _contract(payment_terms="Net 180 days upfront")
+    issues = validate(c, CONTRACT_TEXT)
+    assert any(i.field == "payment_terms" and i.severity == "warning" for i in issues)
+
+
+def test_contract_valid_business_fields_passes():
+    text = (
+        CONTRACT_TEXT
+        + "\nFees: 12000 USD. Terms: within 30 days. Notice: 30 days. Liability: capped at 12000 USD. Either party may terminate without cause."
+    )
+    c = _contract(
+        contract_value=12000.0,
+        currency="USD",
+        payment_terms="within 30 days",
+        auto_renewal=True,
+        notice_period_days=30,
+        liability_cap="capped at 12000 USD",
+        termination_for_convenience=True,
+    )
+    assert validate(c, text) == []
+
+
+def test_contract_excessive_cure_period_is_warning():
+    c = _contract(cure_period_days=200)
+    issues = validate(c, CONTRACT_TEXT)
+    assert any(
+        i.field == "cure_period_days" and i.severity == "warning" for i in issues
+    )
+
+
+def test_contract_liability_cap_absent_from_text_is_warning():
+    c = _contract(liability_cap="10000000 USD maximum liability")
+    issues = validate(c, CONTRACT_TEXT)
+    assert any(i.field == "liability_cap" and i.severity == "warning" for i in issues)
+
+
+def test_contract_phase2_fields_valid_passes():
+    text = (
+        CONTRACT_TEXT
+        + "\nLiability: liability capped at 50000 USD. Termination for convenience upon 30 days notice. 30 days cure period. Non-solicitation of employees."
+    )
+    c = _contract(
+        liability_cap="liability capped at 50000 USD",
+        termination_for_convenience=True,
+        cure_period_days=30,
+        non_solicit=True,
+    )
+    assert validate(c, text) == []
+
+
+def test_assess_contract_risks_detects_all_factors():
+    c = _contract(
+        contract_value=500000.0,
+        currency="USD",
+        liability_cap=None,
+        auto_renewal=True,
+        termination_for_convenience=False,
+        notice_period_days=7,
+        cure_period_days=90,
+    )
+    risks = assess_contract_risks(c)
+    assert any("unlimited liability" in r for r in risks)
+    assert any("auto-renewal trap" in r for r in risks)
+    assert any("short notice period" in r for r in risks)
+    assert any("long cure period" in r for r in risks)
+
+
+def test_contract_signatories_absent_from_text_is_warning():
+    c = _contract(signatories=["John Doe, President"])
+    issues = validate(c, CONTRACT_TEXT)
+    assert any("signatories[0]" in i.field and i.severity == "warning" for i in issues)
+
+
+def test_contract_signatories_present_in_text_passes():
+    text = CONTRACT_TEXT + "\nSigned by: John Doe, President."
+    c = _contract(signatories=["John Doe, President"])
+    issues = validate(c, text)
+    assert not any("signatories" in i.field for i in issues)
+
+
 # --- source citations -------------------------------------------------------
 # These replace sixteen tests of a keyword search that had to be told, one
 # document at a time, every place a money word can appear without being that
@@ -738,3 +1003,180 @@ def test_a_derived_value_is_a_warning_not_an_error():
     derived = [i for i in issues if i.field == "tax_amount"]
     assert derived and derived[0].severity == "warning"
     assert "derived rather than read" in derived[0].message
+
+
+def test_bank_statement_validates_cleanly():
+    stmt = BankStatement(
+        bank_name="Deutsche Bank",
+        account_holder="Enterprise GmbH",
+        account_iban="DE89370400440532013000",
+        statement_period_start=date(2026, 1, 1),
+        statement_period_end=date(2026, 1, 31),
+        currency="EUR",
+        opening_balance=10000.0,
+        closing_balance=15000.0,
+        total_deposits=7000.0,
+        total_withdrawals=2000.0,
+        transactions=[
+            BankStatementTransaction(
+                transaction_date=date(2026, 1, 15),
+                description="Client payment",
+                amount=7000.0,
+                balance_after=17000.0,
+            ),
+            BankStatementTransaction(
+                transaction_date=date(2026, 1, 20),
+                description="Office rent",
+                amount=-2000.0,
+                balance_after=15000.0,
+            ),
+        ],
+    )
+    assert validate(stmt) == []
+
+
+def test_bank_statement_closing_balance_mismatch_flagged():
+    stmt = BankStatement(
+        bank_name="Deutsche Bank",
+        account_holder="Enterprise GmbH",
+        account_iban="DE89370400440532013000",
+        statement_period_start=date(2026, 1, 1),
+        statement_period_end=date(2026, 1, 31),
+        currency="EUR",
+        opening_balance=10000.0,
+        closing_balance=99999.0,  # wrong
+        total_deposits=7000.0,
+        total_withdrawals=2000.0,
+    )
+    issues = validate(stmt)
+    assert any(i.field == "closing_balance" for i in issues)
+
+
+def test_bank_statement_bad_iban_flagged():
+    stmt = BankStatement(
+        bank_name="Bank",
+        account_holder="Person",
+        account_iban="DE89370400440532013100",  # bad checksum
+        statement_period_start=date(2026, 1, 1),
+        statement_period_end=date(2026, 1, 31),
+        opening_balance=100.0,
+        closing_balance=100.0,
+    )
+    issues = validate(stmt)
+    assert any(i.field == "account_iban" for i in issues)
+
+
+def test_acceptance_act_validates_cleanly():
+    act = AcceptanceAct(
+        act_number="ACT-001",
+        act_date=date(2026, 3, 1),
+        customer_name="Alpha Corp",
+        contractor_name="Beta Services LLC",
+        subtotal=1000.0,
+        tax_amount=200.0,
+        total_amount=1200.0,
+        items=[
+            AcceptanceActItem(
+                description="Security Audit",
+                quantity=1.0,
+                unit_price=1000.0,
+                total=1000.0,
+            )
+        ],
+        claims_waived=True,
+    )
+    assert validate(act) == []
+
+
+def test_acceptance_act_self_contracting_flagged():
+    act = AcceptanceAct(
+        act_number="ACT-001",
+        act_date=date(2026, 3, 1),
+        customer_name="Acme Corporation",
+        contractor_name="Acme Corp",  # same entity
+        subtotal=100.0,
+        total_amount=100.0,
+    )
+    issues = validate(act)
+    assert any(i.field == "contractor_name" for i in issues)
+
+
+def test_acceptance_act_total_mismatch_flagged():
+    act = AcceptanceAct(
+        act_number="ACT-001",
+        act_date=date(2026, 3, 1),
+        customer_name="Client LLC",
+        contractor_name="Vendor Inc",
+        subtotal=1000.0,
+        tax_amount=200.0,
+        total_amount=1500.0,  # wrong
+    )
+    issues = validate(act)
+    assert any(i.field == "total_amount" for i in issues)
+
+
+def test_waybill_validates_cleanly():
+    wb = Waybill(
+        waybill_number="WB-101",
+        waybill_date=date(2026, 4, 1),
+        shipper_name="Supplier Logistics LLC",
+        consignee_name="Retail Store Inc",
+        items=[
+            WaybillItem(
+                item_name="Item A",
+                quantity=20.0,
+                unit_price=10.0,
+                total_price=200.0,
+                gross_weight_kg=100.0,
+            ),
+            WaybillItem(
+                item_name="Item B",
+                quantity=10.0,
+                unit_price=20.0,
+                total_price=200.0,
+                gross_weight_kg=50.0,
+            ),
+        ],
+        total_quantity=30.0,
+        total_gross_weight_kg=150.0,
+        total_amount=400.0,
+    )
+    assert validate(wb) == []
+
+
+def test_waybill_quantity_mismatch_flagged():
+    wb = Waybill(
+        waybill_number="WB-101",
+        waybill_date=date(2026, 4, 1),
+        shipper_name="Supplier Logistics LLC",
+        consignee_name="Retail Store Inc",
+        items=[
+            WaybillItem(item_name="Item A", quantity=20.0),
+            WaybillItem(item_name="Item B", quantity=10.0),
+        ],
+        total_quantity=50.0,  # 20 + 10 != 50
+    )
+    issues = validate(wb)
+    assert any(i.field == "total_quantity" for i in issues)
+
+
+def test_purchase_order_validates_cleanly():
+    po = PurchaseOrder(
+        po_number="PO-999",
+        po_date=date(2026, 2, 1),
+        vendor_name="Vendor Inc",
+        customer_name="Client LLC",
+        subtotal=500.0,
+        tax_amount=50.0,
+        total_amount=550.0,
+        line_items=[
+            LineItem(
+                sku="SKU-1",
+                description="Item 1",
+                quantity=5,
+                unit_price=100.0,
+                total=500.0,
+            )
+        ],
+    )
+    assert validate(po) == []

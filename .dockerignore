@@ -9,3 +9,6 @@ eval/real_samples/
 eval/results/
 data/
 .env
+web/
+*.tar.gz
+*.zip

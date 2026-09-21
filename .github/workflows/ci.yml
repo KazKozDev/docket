@@ -20,7 +20,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
 
       - name: Install docket
-        run: pip install -e ".[dev,eval]"
+        run: pip install -e ".[dev]"
 
       - name: Run tests
         run: pytest -v
@@ -29,6 +29,28 @@ jobs:
           # Every test in this repo is LLM-free by design (see README) —
           # there's no Ollama server in CI, and there shouldn't need to be.
           DOCKET_REVIEW_QUEUE: /tmp/docket-ci-review-queue.jsonl
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build twine
+      - run: python -m build
+      - run: twine check dist/*
+      - name: Smoke-test the wheel in a clean venv
+        run: |
+          python -m venv /tmp/wheel-venv
+          /tmp/wheel-venv/bin/pip install "$(ls dist/*.whl)[api]"
+          cd /tmp && /tmp/wheel-venv/bin/docket --list-formats
+          /tmp/wheel-venv/bin/python -c "import docket, docket.api; print(docket.__version__)"
+      - name: OpenAPI spec is up to date
+        run: |
+          pip install -e ".[api]"
+          python scripts/export_openapi.py
+          git diff --exit-code docs/openapi.json
 
   docker-build:
     runs-on: ubuntu-latest

@@ -34,7 +34,11 @@ def create(path: Path, filename: str, *, idempotency_key: str | None = None) -> 
         jobs = _read()
         if idempotency_key:
             existing = next(
-                (job for job in jobs.values() if job.get("idempotency_key") == idempotency_key),
+                (
+                    job
+                    for job in jobs.values()
+                    if job.get("idempotency_key") == idempotency_key
+                ),
                 None,
             )
             if existing:
@@ -73,4 +77,6 @@ def update(job_id: str, **changes) -> dict:
 
 def unfinished() -> list[dict]:
     with _LOCK:
-        return [job for job in _read().values() if job["status"] in {"queued", "running"}]
+        return [
+            job for job in _read().values() if job["status"] in {"queued", "running"}
+        ]

@@ -35,6 +35,7 @@ def test_an_unavailable_judge_fails_safe(monkeypatch):
     """A broken judge must not stall a document. Returning False keeps the
     existing path, and every deterministic check downstream still runs.
     """
+
     def boom(_prompt):
         raise ocr_quality.LLMError("Ollama request failed")
 

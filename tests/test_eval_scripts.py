@@ -30,12 +30,17 @@ def test_eval_script_imports_cleanly(script):
     """Import the module without running main(). Catches a script that
     references something the library no longer exports."""
     result = subprocess.run(
-        [sys.executable, "-c",
-         f"import importlib.util,sys; sys.path.insert(0, {str(ROOT / 'src')!r}); "
-         f"sys.path.insert(0, {str(ROOT / 'eval')!r}); "
-         f"spec=importlib.util.spec_from_file_location('m', {str(script)!r}); "
-         f"m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)"],
-        capture_output=True, text=True, timeout=120,
+        [
+            sys.executable,
+            "-c",
+            f"import importlib.util,sys; sys.path.insert(0, {str(ROOT / 'src')!r}); "
+            f"sys.path.insert(0, {str(ROOT / 'eval')!r}); "
+            f"spec=importlib.util.spec_from_file_location('m', {str(script)!r}); "
+            f"m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=120,
     )
     assert result.returncode == 0, result.stderr[-1500:]
 
@@ -53,7 +58,9 @@ def test_benchmark_survives_the_ocr_call_it_makes():
     import benchmark_methods
 
     benchmark_methods.vision_transcribe = lambda _p: "transcribed"
-    rows = benchmark_methods._bench_ocr([ROOT / "eval" / "golden_dataset" / "receipt_scan.png"])
+    rows = benchmark_methods._bench_ocr(
+        [ROOT / "eval" / "golden_dataset" / "receipt_scan.png"]
+    )
 
     assert rows and rows[0]["tesseract_chars"] > 0
     assert "vlm_latency_s" in rows[0]

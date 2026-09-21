@@ -52,7 +52,9 @@ def test_partial_calls_request_schema_constrained_json(monkeypatch):
 
     monkeypatch.setattr(extract_module, "chat_json", fake_chat)
     monkeypatch.setattr(extract_module.config, "EXTRACT_CHUNK_CHARS", 1000)
-    extract_module.extract_pages(["start " + "a" * 1100, "b" * 1100], Invoice, max_retries=0)
+    extract_module.extract_pages(
+        ["start " + "a" * 1100, "b" * 1100], Invoice, max_retries=0
+    )
     assert isinstance(seen.get("schema"), dict)
 
 
@@ -79,10 +81,25 @@ def test_mixed_pdf_uses_text_layer_and_ocr_per_page(tmp_path, monkeypatch):
         document.save(path)
 
     monkeypatch.setattr(ocr, "_render_pdf_page", lambda *_args: object())
-    monkeypatch.setattr(ocr, "_ocr_image", lambda _image: ("Scanned second page", 99.0, []))
+    monkeypatch.setattr(
+        ocr, "_ocr_image", lambda _image: ("Scanned second page", 99.0, [])
+    )
     result = ocr.extract_text(path)
 
     assert result.method == "mixed"
     assert result.page_methods == ["pdf_text", "ocr"]
     assert "Digital page" in result.pages[0]
     assert result.pages[1] == "Scanned second page"
+
+
+def test_date_convention_instruction_in_extraction_prompt(monkeypatch):
+    prompts: list[str] = []
+
+    def fake_chat(prompt, **kwargs):
+        prompts.append(prompt)
+        return _invoice_payload()
+
+    monkeypatch.setattr(extract_module, "chat_json", fake_chat)
+    text = "[PAGE 1]\nInvoice date 11/02/2019\nDue 26/02/2019"
+    extract_module.extract(text, Invoice, max_retries=0)
+    assert any("uses DMY" in p for p in prompts)

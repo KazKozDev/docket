@@ -51,7 +51,9 @@ def test_classifies_contract_by_rules():
 
 def test_ambiguous_text_falls_back_to_llm(monkeypatch):
     monkeypatch.setattr(
-        classify_module, "chat_json", lambda _prompt: {"doc_type": "receipt", "confidence": 0.4}
+        classify_module,
+        "chat_json",
+        lambda _prompt: {"doc_type": "receipt", "confidence": 0.4},
     )
     result = classify(AMBIGUOUS_TEXT)
     assert result.method == "llm"
@@ -166,4 +168,43 @@ def test_spanish_receipt_classified_by_rules():
 def test_spanish_contract_classified_by_rules():
     result = classify(SPANISH_CONTRACT)
     assert result.doc_type == DocType.CONTRACT
+    assert result.method == "rules"
+
+
+def test_bank_statement_classified_by_rules():
+    text = """
+    OFFICIAL BANK STATEMENT
+    Account Statement Period: 01/01/2026 to 31/01/2026
+    Opening balance: 5,420.00 EUR
+    Closing balance: 7,150.00 EUR
+    Deposits: 3,000.00 EUR
+    Withdrawals: 1,270.00 EUR
+    """
+    result = classify(text)
+    assert result.doc_type == DocType.BANK_STATEMENT
+    assert result.method == "rules"
+
+
+def test_acceptance_act_classified_by_rules():
+    text = """
+    CERTIFICATE OF ACCEPTANCE / ACT OF ACCEPTANCE
+    Act of completion for services rendered under contract #123.
+    Contractor confirms all work completed in full.
+    Both parties confirm no mutual claims exist.
+    """
+    result = classify(text)
+    assert result.doc_type == DocType.ACCEPTANCE_ACT
+    assert result.method == "rules"
+
+
+def test_waybill_classified_by_rules():
+    text = """
+    INTERNATIONAL CONSIGNMENT NOTE / WAYBILL (CMR)
+    Shipper: Factory Central
+    Consignee: Destination Hub
+    Carrier: International Freight Co.
+    Total gross weight: 450.0 kg
+    """
+    result = classify(text)
+    assert result.doc_type == DocType.WAYBILL
     assert result.method == "rules"

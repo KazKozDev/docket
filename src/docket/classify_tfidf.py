@@ -75,9 +75,43 @@ _TRAIN_TEXTS: list[str] = [
     "Cualquiera de las partes podrá resolverlo mediante preaviso por escrito.",
     "La información confidencial revelada no podrá comunicarse a terceros ajenos.",
     "Las controversias se resolverán conforme a la legislación vigente aplicable.",
+    # purchase_order
+    "Official requisition for goods to be delivered to our warehouse facility.",
+    "Please supply the items listed below at the agreed pricing schedule.",
+    "Purchase order authorizing delivery of hardware components per quote.",
+    "Authorized procurement order detailing item quantities, prices, and ship-to location.",
+    "Orden de compra autorizada para el suministro de material según presupuesto acordado.",
+    "Petición formal de aprovisionamiento con detalle de cantidades y precios unitarios.",
+    # bank_statement
+    "Monthly record of account debits and credits showing opening and closing ledger balances.",
+    "Consolidated ledger of financial transactions, incoming wire transfers, and withdrawals.",
+    "Account activity summary showing starting balance, daily movements, and ending funds.",
+    "Official banking record of all funds transferred, fees deducted, and interest credited.",
+    "Resumen de movimientos bancarios con desglose de cargos, abonos y saldo final.",
+    "Registro mensual de cuenta bancaria con saldo inicial y transferencias recibidas.",
+    # acceptance_act
+    "Certificate confirming that services have been rendered in full and accepted without objection.",
+    "Formal act of completion confirming delivered scope of work meets technical specifications.",
+    "Both parties confirm all contracted obligations have been completed with no mutual claims.",
+    "Document certifying delivery of services rendered and authorising final commercial settlement.",
+    "Acta de recepción de trabajos confirmando la conformidad de los servicios prestados sin reservas.",
+    "Certificado de fin de obra y entrega de servicios sin reclamaciones mutuas pendientes.",
+    # waybill
+    "Carrier consignment document detailing cargo packages, gross weight, and consignee destination.",
+    "Freight transport manifest accompanying goods in transit from warehouse to delivery address.",
+    "Shipping bill of lading recording package counts, gross kilograms, and truck driver sign-off.",
+    "Goods dispatch documentation with transport details, consignee receipt, and net weight.",
+    "Albarán de entrega y transporte de mercancías con detalle de bultos y peso bruto.",
+    "Documento de porte y carta de consignación con recepción de mercancía por el destinatario.",
 ]
 _TRAIN_LABELS: list[str] = (
-    ["invoice"] * 16 + ["receipt"] * 16 + ["contract"] * 16
+    ["invoice"] * 16
+    + ["receipt"] * 16
+    + ["contract"] * 16
+    + ["purchase_order"] * 6
+    + ["bank_statement"] * 6
+    + ["acceptance_act"] * 6
+    + ["waybill"] * 6
 )
 
 
