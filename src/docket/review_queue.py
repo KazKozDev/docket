@@ -104,7 +104,9 @@ def enqueue(result: PipelineResult, reasons: list[str]) -> str:
         existing = _records().get(document_id)
         if source.is_file():
             config.REVIEW_DOCUMENTS_DIR.mkdir(parents=True, exist_ok=True)
-            destination = config.REVIEW_DOCUMENTS_DIR / f"{document_id}{source.suffix.lower()}"
+            destination = (
+                config.REVIEW_DOCUMENTS_DIR / f"{document_id}{source.suffix.lower()}"
+            )
             if source.resolve() != destination.resolve() and not destination.exists():
                 shutil.copy2(source, destination)
             original_path = str(destination)
@@ -122,7 +124,12 @@ def enqueue(result: PipelineResult, reasons: list[str]) -> str:
         }
         if existing is None:
             _append(
-                {"event": "created", "document_id": document_id, "at": _now(), "record": record}
+                {
+                    "event": "created",
+                    "document_id": document_id,
+                    "at": _now(),
+                    "record": record,
+                }
             )
         else:
             _append(
@@ -142,7 +149,11 @@ def enqueue(result: PipelineResult, reasons: list[str]) -> str:
 def list_pending() -> list[dict]:
     with _LOCK:
         records = _records().values()
-        return [r for r in records if r.get("status") in {"pending", "in_review", "corrected"}]
+        return [
+            r
+            for r in records
+            if r.get("status") in {"pending", "in_review", "corrected"}
+        ]
 
 
 def get(document_id: str) -> dict | None:

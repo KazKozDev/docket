@@ -23,12 +23,48 @@ import re
 
 _STOPWORDS = {
     "en": {
-        "the", "and", "of", "to", "in", "for", "is", "are", "be", "with",
-        "this", "that", "shall", "from", "by", "on", "as", "at", "or", "an",
+        "the",
+        "and",
+        "of",
+        "to",
+        "in",
+        "for",
+        "is",
+        "are",
+        "be",
+        "with",
+        "this",
+        "that",
+        "shall",
+        "from",
+        "by",
+        "on",
+        "as",
+        "at",
+        "or",
+        "an",
     },
     "es": {
-        "de", "la", "el", "los", "las", "y", "en", "que", "por", "con",
-        "del", "para", "se", "un", "una", "al", "es", "son", "su", "lo",
+        "de",
+        "la",
+        "el",
+        "los",
+        "las",
+        "y",
+        "en",
+        "que",
+        "por",
+        "con",
+        "del",
+        "para",
+        "se",
+        "un",
+        "una",
+        "al",
+        "es",
+        "son",
+        "su",
+        "lo",
     },
 }
 
@@ -51,7 +87,9 @@ def detect_language(text: str) -> tuple[str, float]:
     if not words:
         return "unknown", 0.0
 
-    hits = {lang: sum(1 for w in words if w in stops) for lang, stops in _STOPWORDS.items()}
+    hits = {
+        lang: sum(1 for w in words if w in stops) for lang, stops in _STOPWORDS.items()
+    }
     total = sum(hits.values())
     if total == 0:
         return "unknown", 0.0

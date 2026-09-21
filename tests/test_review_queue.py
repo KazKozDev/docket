@@ -2,13 +2,21 @@ from datetime import date
 from pathlib import Path
 
 from docket import review_queue
-from docket.schemas import ClassificationResult, DocType, Invoice, PipelineResult, ValidationIssue
+from docket.schemas import (
+    ClassificationResult,
+    DocType,
+    Invoice,
+    PipelineResult,
+    ValidationIssue,
+)
 
 
 def _result(**overrides) -> PipelineResult:
     defaults = dict(
         source="doc.txt",
-        classification=ClassificationResult(doc_type=DocType.INVOICE, confidence=0.9, method="rules"),
+        classification=ClassificationResult(
+            doc_type=DocType.INVOICE, confidence=0.9, method="rules"
+        ),
         extracted=Invoice(
             invoice_number="INV-1",
             issue_date=date(2026, 1, 1),
@@ -32,7 +40,9 @@ def test_clean_result_has_no_review_reasons():
 
 def test_low_confidence_triggers_review():
     result = _result(
-        classification=ClassificationResult(doc_type=DocType.INVOICE, confidence=0.2, method="llm")
+        classification=ClassificationResult(
+            doc_type=DocType.INVOICE, confidence=0.2, method="llm"
+        )
     )
     reasons = review_queue.reasons_for(result)
     assert any("confidence" in r for r in reasons)
@@ -40,7 +50,9 @@ def test_low_confidence_triggers_review():
 
 def test_unknown_doc_type_triggers_review():
     result = _result(
-        classification=ClassificationResult(doc_type=DocType.UNKNOWN, confidence=0.9, method="llm")
+        classification=ClassificationResult(
+            doc_type=DocType.UNKNOWN, confidence=0.9, method="llm"
+        )
     )
     reasons = review_queue.reasons_for(result)
     assert any("unrecognized" in r for r in reasons)
@@ -53,21 +65,31 @@ def test_failed_extraction_triggers_review():
 
 
 def test_error_severity_validation_issue_triggers_review():
-    result = _result(validation_issues=[ValidationIssue(field="total_amount", message="bad total")])
+    result = _result(
+        validation_issues=[ValidationIssue(field="total_amount", message="bad total")]
+    )
     reasons = review_queue.reasons_for(result)
     assert any("validation error" in r for r in reasons)
 
 
 def test_warning_severity_alone_does_not_trigger_review():
     result = _result(
-        validation_issues=[ValidationIssue(field="vendor_tax_id", message="looks odd", severity="warning")]
+        validation_issues=[
+            ValidationIssue(
+                field="vendor_tax_id", message="looks odd", severity="warning"
+            )
+        ]
     )
     assert review_queue.reasons_for(result) == []
 
 
 def test_enqueue_and_list_pending_roundtrip(tmp_path, monkeypatch):
-    monkeypatch.setattr(review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "queue.jsonl")
-    monkeypatch.setattr(review_queue.config, "REVIEW_DOCUMENTS_DIR", tmp_path / "documents")
+    monkeypatch.setattr(
+        review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "queue.jsonl"
+    )
+    monkeypatch.setattr(
+        review_queue.config, "REVIEW_DOCUMENTS_DIR", tmp_path / "documents"
+    )
     result = _result(extracted=None)
     review_queue.enqueue(result, review_queue.reasons_for(result))
 
@@ -79,9 +101,15 @@ def test_enqueue_and_list_pending_roundtrip(tmp_path, monkeypatch):
     assert review_queue.list_pending() == []
 
 
-def test_review_preserves_original_and_records_correction_history(tmp_path, monkeypatch):
-    monkeypatch.setattr(review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "queue.jsonl")
-    monkeypatch.setattr(review_queue.config, "REVIEW_DOCUMENTS_DIR", tmp_path / "documents")
+def test_review_preserves_original_and_records_correction_history(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(
+        review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "queue.jsonl"
+    )
+    monkeypatch.setattr(
+        review_queue.config, "REVIEW_DOCUMENTS_DIR", tmp_path / "documents"
+    )
     source = tmp_path / "invoice.txt"
     source.write_text("INVOICE")
     result = _result(source=str(source), extracted=None)

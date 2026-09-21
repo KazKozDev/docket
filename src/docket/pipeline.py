@@ -5,7 +5,7 @@ import hashlib
 from pathlib import Path
 from typing import Any, Callable
 
-from . import ocr, review_queue
+from . import config, ocr, review_queue
 from .classify import classify
 from .extract import extract_pages
 from .llm_client import LLMError
@@ -65,13 +65,20 @@ def _run_once(
         classification = classify(ocr_result.text)
     log.info(
         "document classified",
-        extra={**doc, "doc_type": classification.doc_type.value,
-               "method": classification.method, "confidence": classification.confidence},
+        extra={
+            **doc,
+            "doc_type": classification.doc_type.value,
+            "method": classification.method,
+            "confidence": classification.confidence,
+        },
     )
     _notify(on_stage, "classify", classification)
 
     language, lang_confidence = detect_language(ocr_result.text)
-    log.info("language detected", extra={**doc, "language": language, "confidence": lang_confidence})
+    log.info(
+        "language detected",
+        extra={**doc, "language": language, "confidence": lang_confidence},
+    )
 
     common = {
         "source": str(path),
@@ -81,7 +88,8 @@ def _run_once(
         "language": language,
         "pages_total": len(ocr_result.pages or []),
         "pages_processed": len(ocr_result.pages or []),
-        "complete": bool(ocr_result.pages) and all(page.strip() for page in ocr_result.pages),
+        "complete": bool(ocr_result.pages)
+        and all(page.strip() for page in ocr_result.pages),
         "page_methods": ocr_result.page_methods or [],
         "document_id": f"doc_{hashlib.sha256(path.read_bytes()).hexdigest()[:20]}",
     }
@@ -104,7 +112,9 @@ def _run_once(
         )
 
     with log_stage(log, "extract", **doc, schema=schema_cls.__name__):
-        instance, attempts = extract_pages(ocr_result.pages or [ocr_result.text], schema_cls)
+        instance, attempts = extract_pages(
+            ocr_result.pages or [ocr_result.text], schema_cls
+        )
     _notify(on_stage, "extract", instance)
 
     # A VLM transcript no confident OCR reading backs is unconfirmed, even
@@ -115,7 +125,12 @@ def _run_once(
     unconfirmed = bool(vlm_pages) and not any(ocr_result.witness_numbers or [])
     with log_stage(log, "validate", **doc):
         if instance is None:
-            issues = [ValidationIssue(field="*", message="extraction failed to produce valid structured output")]
+            issues = [
+                ValidationIssue(
+                    field="*",
+                    message="extraction failed to produce valid structured output",
+                )
+            ]
         else:
             issues = validate(
                 instance,
@@ -144,10 +159,20 @@ def _run_once(
     )
 
 
-def process(path: str | Path, *, on_stage: StageCallback | None = None) -> PipelineResult:
+def process(
+    path: str | Path,
+    *,
+    on_stage: StageCallback | None = None,
+    enqueue_review: bool | None = None,
+) -> PipelineResult:
     """Run the full pipeline. `on_stage(stage_name, result)` fires after each
     stage completes ("ocr", "classify", "extract", "validate") — used by the
     CLI/TUI to render live progress without duplicating this logic.
+
+    Documents that need a human look are appended to the file-based review
+    queue unless `enqueue_review` is False (default: `config.REVIEW_QUEUE_ENABLED`).
+    Applications with their own review workflow should pass False and act on
+    `result.needs_review` / `result.review_reasons` themselves.
 
     If Tesseract's text passes its confidence gate but the result then fails
     validation, the document is re-read with the vision model and the better
@@ -181,8 +206,12 @@ def process(path: str | Path, *, on_stage: StageCallback | None = None) -> Pipel
             result = escalated.model_copy(update={"escalated_to_vlm": True})
 
     reasons = review_queue.reasons_for(result)
-    result = result.model_copy(update={"needs_review": bool(reasons), "review_reasons": reasons})
-    if result.needs_review:
+    result = result.model_copy(
+        update={"needs_review": bool(reasons), "review_reasons": reasons}
+    )
+    if enqueue_review is None:
+        enqueue_review = config.REVIEW_QUEUE_ENABLED
+    if result.needs_review and enqueue_review:
         review_queue.enqueue(result, reasons)
     log.info(
         "document processed",

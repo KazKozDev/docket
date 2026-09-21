@@ -1,0 +1,19 @@
+# Run the docket API against Mistral (EU-hosted, GDPR-friendly).
+#   MISTRAL_API_KEY=... DOCKET_API_KEY=... docker compose -f examples/docker-compose.yml up
+# For a fully local setup, drop the DOCKET_LLM_* lines and run Ollama on the host.
+services:
+  docket:
+    image: ghcr.io/kazkozdev/docket:latest
+    ports: ["8000:8000"]
+    environment:
+      DOCKET_API_KEY: ${DOCKET_API_KEY:?set an API key for the service}
+      DOCKET_LLM_PROVIDER: openai
+      DOCKET_LLM_BASE_URL: https://api.mistral.ai/v1
+      DOCKET_LLM_API_KEY: ${MISTRAL_API_KEY:?}
+      DOCKET_TEXT_MODEL: mistral-small-latest
+      DOCKET_VISION_MODEL: pixtral-12b-latest
+      DOCKET_OCR_LANG: eng+deu+fra+spa+ita
+    volumes:
+      - docket-data:/app/data
+volumes:
+  docket-data:

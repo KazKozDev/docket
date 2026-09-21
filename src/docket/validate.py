@@ -12,9 +12,22 @@ import re
 from datetime import date
 
 from . import amounts, checksums
-from .schemas import BoardingPass, Contract, Invoice, Receipt, ValidationIssue
+from .schemas import (
+    AcceptanceAct,
+    BankStatement,
+    BoardingPass,
+    Contract,
+    DocType,
+    DocumentForensicReport,
+    Invoice,
+    PurchaseOrder,
+    Receipt,
+    ValidationIssue,
+    Waybill,
+)
 
 _TAX_ID_RE = re.compile(r"^[A-Z0-9][A-Z0-9\-\.]{4,20}$", re.I)
+_BIC_RE = re.compile(r"^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$")
 _AMOUNT_TOLERANCE = 0.01
 
 # A number that is a rate, not an amount. Not a keyword heuristic — it's the
@@ -268,6 +281,25 @@ def _check_witness_contradicts(
         # known weakness, not evidence the value was altered.
         if any(_digit_signature(value) == _digit_signature(n) for n in witnessed):
             continue
+        is_verified_arithmetic = False
+        if (
+            field == "total_amount"
+            and hasattr(document, "subtotal")
+            and hasattr(document, "tax_amount")
+        ):
+            sub = getattr(document, "subtotal", 0.0) or 0.0
+            tax = getattr(document, "tax_amount", 0.0) or 0.0
+            ship = getattr(document, "shipping_amount", 0.0) or 0.0
+            disc = getattr(document, "discount_amount", 0.0) or 0.0
+            items_sum = sum(
+                getattr(li, "total", 0.0) for li in getattr(document, "line_items", [])
+            )
+            if _isclose(sub + tax + ship - disc, value) and (
+                not getattr(document, "line_items", None) or _isclose(items_sum, sub)
+            ):
+                is_verified_arithmetic = True
+
+        severity = "warning" if is_verified_arithmetic else "error"
         issues.append(
             ValidationIssue(
                 field=field,
@@ -276,6 +308,7 @@ def _check_witness_contradicts(
                     f"{', '.join(f'{n:.2f}' for n in witnessed)}, but {field}={value:.2f} — "
                     f"the transcripts disagree; check against the original page"
                 ),
+                severity=severity,
             )
         )
     return issues
@@ -434,6 +467,59 @@ def validate_invoice(
                 )
             )
 
+    if inv.customer_tax_id:
+        tax_ok, scheme = checksums.validate_tax_id(inv.customer_tax_id)
+        if tax_ok is False:
+            issues.append(
+                ValidationIssue(
+                    field="customer_tax_id",
+                    message=f"{inv.customer_tax_id!r} fails the {scheme} checksum or format",
+                    severity="error",
+                )
+            )
+        elif tax_ok is None and not _TAX_ID_RE.match(inv.customer_tax_id):
+            issues.append(
+                ValidationIssue(
+                    field="customer_tax_id",
+                    message=f"{inv.customer_tax_id!r} doesn't look like a tax ID",
+                    severity="warning",
+                )
+            )
+
+    if inv.vendor_bic:
+        clean_bic = inv.vendor_bic.replace(" ", "").upper()
+        if not _BIC_RE.match(clean_bic):
+            issues.append(
+                ValidationIssue(
+                    field="vendor_bic",
+                    message=f"{inv.vendor_bic!r} is not a valid 8- or 11-character SWIFT/BIC code",
+                    severity="warning",
+                )
+            )
+
+    if inv.tax_rate_percent is not None:
+        if inv.tax_rate_percent < 0 or inv.tax_rate_percent > 100:
+            issues.append(
+                ValidationIssue(
+                    field="tax_rate_percent",
+                    message=f"tax_rate_percent ({inv.tax_rate_percent}) is out of reasonable range (0-100%)",
+                    severity="warning",
+                )
+            )
+        elif inv.subtotal > 0:
+            expected_tax = round(inv.subtotal * (inv.tax_rate_percent / 100.0), 2)
+            if abs(inv.tax_amount - expected_tax) > 0.05:
+                issues.append(
+                    ValidationIssue(
+                        field="tax_rate_percent",
+                        message=(
+                            f"tax_rate_percent ({inv.tax_rate_percent}%) on subtotal ({inv.subtotal:.2f}) "
+                            f"yields {expected_tax:.2f}, but tax_amount is {inv.tax_amount:.2f}"
+                        ),
+                        severity="warning",
+                    )
+                )
+
     for n, li in enumerate(inv.line_items, start=1):
         # quantity × unit_price must equal the line total. Cheap, always true,
         # and the only check that catches a garbled *price* — a wrong unit
@@ -552,13 +638,74 @@ def validate_receipt(
         _check_date_range("transaction_date", rec.transaction_date, max_years_ahead=1)
     )
 
+    if rec.merchant_tax_id:
+        if checksums.is_vat_shaped(rec.merchant_tax_id):
+            vat_ok = checksums.validate_vat(rec.merchant_tax_id)
+            if vat_ok is False:
+                issues.append(
+                    ValidationIssue(
+                        field="merchant_tax_id",
+                        message=f"{rec.merchant_tax_id!r} fails its country's VAT checksum",
+                        severity="error",
+                    )
+                )
+            elif vat_ok is None:
+                issues.append(
+                    ValidationIssue(
+                        field="merchant_tax_id",
+                        message=(
+                            f"{rec.merchant_tax_id!r} — format looks plausible but no checksum "
+                            "algorithm is implemented for this country, so it isn't verified"
+                        ),
+                        severity="warning",
+                    )
+                )
+        else:
+            tax_ok, scheme = checksums.validate_tax_id(rec.merchant_tax_id)
+            if tax_ok is False:
+                issues.append(
+                    ValidationIssue(
+                        field="merchant_tax_id",
+                        message=f"{rec.merchant_tax_id!r} fails the {scheme} checksum or format",
+                        severity="error",
+                    )
+                )
+            elif tax_ok is None and not _TAX_ID_RE.match(rec.merchant_tax_id):
+                issues.append(
+                    ValidationIssue(
+                        field="merchant_tax_id",
+                        message=f"{rec.merchant_tax_id!r} doesn't look like a tax ID",
+                        severity="warning",
+                    )
+                )
+
     if rec.items:
+        for idx, item in enumerate(rec.items):
+            if item.unit_price is not None and item.quantity > 0:
+                expected_line_total = round(item.quantity * item.unit_price, 2)
+                if not _isclose(expected_line_total, item.price):
+                    issues.append(
+                        ValidationIssue(
+                            field=f"items[{idx}]",
+                            message=(
+                                f"quantity ({item.quantity}) * unit_price ({item.unit_price:.2f}) = "
+                                f"{expected_line_total:.2f}, does not match line price {item.price:.2f}"
+                            ),
+                            severity="error",
+                        )
+                    )
+
         items_sum = sum(i.price for i in rec.items)
-        # Line items are pre-tax. Comparing them straight to the total flags
-        # every taxed receipt — which is most retail receipts — as broken.
-        # Compare against the stated subtotal, or back the tax out of the
-        # total when the receipt didn't print a subtotal line.
-        base = rec.subtotal if rec.subtotal > 0 else rec.total_amount - rec.tax_amount
+        # Line items are pre-tax and pre-tip, after line discounts.
+        # Compare against the stated subtotal, or back tax, tip and discount out
+        # of the total when the receipt didn't print a subtotal line.
+        base = (
+            rec.subtotal
+            if rec.subtotal > 0
+            else (
+                rec.total_amount - rec.tax_amount - rec.tip_amount + rec.discount_amount
+            )
+        )
         if not _isclose(items_sum, base):
             issues.append(
                 ValidationIssue(
@@ -570,18 +717,20 @@ def validate_receipt(
                 )
             )
 
-    if rec.subtotal > 0 and not _isclose(
-        rec.subtotal + rec.tax_amount, rec.total_amount
-    ):
-        issues.append(
-            ValidationIssue(
-                field="total_amount",
-                message=(
-                    f"subtotal + tax = {rec.subtotal + rec.tax_amount:.2f}, "
-                    f"total_amount says {rec.total_amount:.2f}"
-                ),
-            )
+    if rec.subtotal > 0:
+        expected_total = (
+            rec.subtotal + rec.tax_amount + rec.tip_amount - rec.discount_amount
         )
+        if not _isclose(expected_total, rec.total_amount):
+            issues.append(
+                ValidationIssue(
+                    field="total_amount",
+                    message=(
+                        f"subtotal + tax + tip - discount = {expected_total:.2f}, "
+                        f"total_amount says {rec.total_amount:.2f}"
+                    ),
+                )
+            )
 
     if raw_text is not None:
         issues.extend(
@@ -594,12 +743,20 @@ def validate_receipt(
             numeric_fields["subtotal"] = rec.subtotal
         if rec.tax_amount:
             numeric_fields["tax_amount"] = rec.tax_amount
+        if rec.tip_amount:
+            numeric_fields["tip_amount"] = rec.tip_amount
+        if rec.discount_amount:
+            numeric_fields["discount_amount"] = rec.discount_amount
         issues.extend(_check_cited_sources(rec, raw_text, numeric_fields))
         witness_fields = [("total_amount", rec.total_amount)]
         if rec.subtotal:
             witness_fields.append(("subtotal", rec.subtotal))
         if rec.tax_amount:
             witness_fields.append(("tax_amount", rec.tax_amount))
+        if rec.tip_amount:
+            witness_fields.append(("tip_amount", rec.tip_amount))
+        if rec.discount_amount:
+            witness_fields.append(("discount_amount", rec.discount_amount))
         for n, item in enumerate(rec.items):
             witness_fields.append((f"items[{n}].price", item.price))
         issues.extend(_check_witness_contradicts(rec, witness_pages, witness_fields))
@@ -818,12 +975,24 @@ def _check_contract_against_raw_text(
     for field, value in (
         ("contract_title", c.contract_title),
         ("governing_law", c.governing_law),
+        ("payment_terms", c.payment_terms),
+        ("liability_cap", c.liability_cap),
     ):
         if value and value.strip() and not _appears_in(value, normalized_text):
             issues.append(
                 ValidationIssue(
                     field=field,
                     message=f"{value!r} does not appear in the document text",
+                    severity="warning",
+                )
+            )
+
+    for i, sig in enumerate(c.signatories):
+        if sig and sig.strip() and not _appears_in(sig, normalized_text):
+            issues.append(
+                ValidationIssue(
+                    field=f"signatories[{i}]",
+                    message=f"{sig!r} does not appear in the document text",
                     severity="warning",
                 )
             )
@@ -849,6 +1018,37 @@ def _check_contract_against_raw_text(
         )
 
     return issues
+
+
+def assess_contract_risks(c: Contract) -> list[str]:
+    """Identifies business and legal risk factors deterministically from contract terms."""
+    risks: list[str] = []
+
+    # 1. High value with unlimited liability
+    if c.contract_value is not None and c.contract_value > 0 and not c.liability_cap:
+        risks.append(
+            "unlimited liability: high-value contract has no liability cap specified"
+        )
+
+    # 2. Auto-renewal trap: agreement auto-renews without unilateral termination for convenience
+    if c.auto_renewal and not c.termination_for_convenience:
+        risks.append(
+            "auto-renewal trap: agreement auto-renews without unilateral termination for convenience"
+        )
+
+    # 3. Short notice period: notice period is under 14 days
+    if c.notice_period_days is not None and c.notice_period_days < 14:
+        risks.append(
+            f"short notice period: notice period ({c.notice_period_days} days) is under 14 days"
+        )
+
+    # 4. Long cure period: grace period to fix breaches exceeds 60 days
+    if c.cure_period_days is not None and c.cure_period_days > 60:
+        risks.append(
+            f"long cure period: breach cure period ({c.cure_period_days} days) exceeds 60 days"
+        )
+
+    return risks
 
 
 def validate_contract(
@@ -905,6 +1105,79 @@ def validate_contract(
     issues.extend(
         _check_date_range("expiration_date", c.expiration_date, max_years_ahead=100)
     )
+
+    if c.contract_value is not None:
+        if c.contract_value < 0:
+            issues.append(
+                ValidationIssue(
+                    field="contract_value",
+                    message="contract_value cannot be negative",
+                )
+            )
+        elif c.contract_value > 0 and not c.currency:
+            issues.append(
+                ValidationIssue(
+                    field="currency",
+                    message="currency is missing when contract_value is specified",
+                    severity="warning",
+                )
+            )
+
+    if c.currency is not None and c.contract_value is None:
+        issues.append(
+            ValidationIssue(
+                field="contract_value",
+                message="currency is specified without a contract_value",
+                severity="warning",
+            )
+        )
+
+    if c.notice_period_days is not None:
+        if c.notice_period_days < 0:
+            issues.append(
+                ValidationIssue(
+                    field="notice_period_days",
+                    message="notice_period_days cannot be negative",
+                )
+            )
+        elif c.notice_period_days > 365:
+            issues.append(
+                ValidationIssue(
+                    field="notice_period_days",
+                    message=f"notice_period_days ({c.notice_period_days}) exceeds 365 days",
+                    severity="warning",
+                )
+            )
+
+    if c.cure_period_days is not None:
+        if c.cure_period_days < 0:
+            issues.append(
+                ValidationIssue(
+                    field="cure_period_days",
+                    message="cure_period_days cannot be negative",
+                )
+            )
+        elif c.cure_period_days > 180:
+            issues.append(
+                ValidationIssue(
+                    field="cure_period_days",
+                    message=f"cure_period_days ({c.cure_period_days}) exceeds 180 days",
+                    severity="warning",
+                )
+            )
+
+    # Assess and record contract risk factors
+    risks = assess_contract_risks(c)
+    for risk in risks:
+        if risk not in c.risk_factors:
+            c.risk_factors.append(risk)
+        issues.append(
+            ValidationIssue(
+                field="risk_factors",
+                message=risk,
+                severity="warning",
+            )
+        )
 
     if not c.key_obligations:
         issues.append(
@@ -1021,10 +1294,468 @@ def validate_boarding_pass(
     return issues
 
 
+def validate_purchase_order(
+    po: PurchaseOrder, raw_text: str | None = None
+) -> list[ValidationIssue]:
+    issues: list[ValidationIssue] = []
+    if not po.po_number.strip():
+        issues.append(
+            ValidationIssue(
+                field="po_number", message="empty PO number", severity="error"
+            )
+        )
+    if not po.vendor_name.strip():
+        issues.append(
+            ValidationIssue(
+                field="vendor_name", message="empty vendor name", severity="error"
+            )
+        )
+    if not po.customer_name.strip():
+        issues.append(
+            ValidationIssue(
+                field="customer_name", message="empty customer name", severity="error"
+            )
+        )
+
+    if _core_name(po.vendor_name) == _core_name(po.customer_name):
+        issues.append(
+            ValidationIssue(
+                field="customer_name",
+                message="vendor and customer resolve to the same entity",
+                severity="error",
+            )
+        )
+
+    issues.extend(_check_date_range("po_date", po.po_date, max_years_ahead=1))
+
+    expected_total = round(po.subtotal + po.tax_amount, 2)
+    if not _isclose(expected_total, po.total_amount):
+        issues.append(
+            ValidationIssue(
+                field="total_amount",
+                message=f"subtotal ({po.subtotal:.2f}) + tax ({po.tax_amount:.2f}) = {expected_total:.2f}, total_amount says {po.total_amount:.2f}",
+                severity="error",
+            )
+        )
+
+    if po.line_items:
+        for idx, item in enumerate(po.line_items):
+            expected_line = round(item.quantity * item.unit_price, 2)
+            if not _isclose(expected_line, item.total):
+                issues.append(
+                    ValidationIssue(
+                        field=f"line_items[{idx}]",
+                        message=f"quantity ({item.quantity}) * unit_price ({item.unit_price:.2f}) = {expected_line:.2f}, total says {item.total:.2f}",
+                        severity="error",
+                    )
+                )
+        items_sum = round(sum(i.total for i in po.line_items), 2)
+        if not _isclose(items_sum, po.subtotal):
+            issues.append(
+                ValidationIssue(
+                    field="line_items",
+                    message=f"line items sum to {items_sum:.2f}, subtotal is {po.subtotal:.2f}",
+                    severity="error",
+                )
+            )
+
+    return issues
+
+
+def validate_bank_statement(
+    stmt: BankStatement, raw_text: str | None = None
+) -> list[ValidationIssue]:
+    issues: list[ValidationIssue] = []
+
+    if not stmt.bank_name.strip():
+        issues.append(
+            ValidationIssue(
+                field="bank_name", message="empty bank name", severity="error"
+            )
+        )
+    if not stmt.account_holder.strip():
+        issues.append(
+            ValidationIssue(
+                field="account_holder",
+                message="empty account holder name",
+                severity="error",
+            )
+        )
+
+    if stmt.statement_period_start > stmt.statement_period_end:
+        issues.append(
+            ValidationIssue(
+                field="statement_period_start",
+                message=f"statement period start ({stmt.statement_period_start}) is after end ({stmt.statement_period_end})",
+                severity="error",
+            )
+        )
+
+    # IBAN validation
+    if stmt.account_iban:
+        if not checksums.validate_iban(stmt.account_iban):
+            issues.append(
+                ValidationIssue(
+                    field="account_iban",
+                    message=f"{stmt.account_iban!r} fails IBAN checksum or format",
+                    severity="error",
+                )
+            )
+
+    # Balance reconciliation formula:
+    # opening_balance + total_deposits - total_withdrawals == closing_balance
+    expected_closing = round(
+        stmt.opening_balance + stmt.total_deposits - stmt.total_withdrawals, 2
+    )
+    if not _isclose(expected_closing, stmt.closing_balance):
+        diff = round(abs(expected_closing - stmt.closing_balance), 2)
+        issues.append(
+            ValidationIssue(
+                field="closing_balance",
+                message=(
+                    f"opening_balance ({stmt.opening_balance:.2f}) + deposits ({stmt.total_deposits:.2f}) - "
+                    f"withdrawals ({stmt.total_withdrawals:.2f}) = {expected_closing:.2f}, "
+                    f"does not match closing_balance {stmt.closing_balance:.2f} (diff: {diff:.2f})"
+                ),
+                severity="error",
+            )
+        )
+
+    # If transactions are listed, verify sum of deposits and withdrawals
+    if stmt.transactions:
+        calc_deposits = round(
+            sum(tx.amount for tx in stmt.transactions if tx.amount > 0), 2
+        )
+        calc_withdrawals = round(
+            sum(abs(tx.amount) for tx in stmt.transactions if tx.amount < 0), 2
+        )
+
+        if stmt.total_deposits > 0 and not _isclose(calc_deposits, stmt.total_deposits):
+            issues.append(
+                ValidationIssue(
+                    field="total_deposits",
+                    message=f"sum of deposit transactions ({calc_deposits:.2f}) does not match total_deposits ({stmt.total_deposits:.2f})",
+                    severity="error",
+                )
+            )
+        if stmt.total_withdrawals > 0 and not _isclose(
+            calc_withdrawals, stmt.total_withdrawals
+        ):
+            issues.append(
+                ValidationIssue(
+                    field="total_withdrawals",
+                    message=f"sum of withdrawal transactions ({calc_withdrawals:.2f}) does not match total_withdrawals ({stmt.total_withdrawals:.2f})",
+                    severity="error",
+                )
+            )
+
+        # Continuity check if balance_after is provided
+        running_balance = stmt.opening_balance
+        for idx, tx in enumerate(stmt.transactions):
+            running_balance = round(running_balance + tx.amount, 2)
+            if tx.balance_after is not None and not _isclose(
+                running_balance, tx.balance_after
+            ):
+                issues.append(
+                    ValidationIssue(
+                        field=f"transactions[{idx}].balance_after",
+                        message=(
+                            f"transaction {idx} balance_after says {tx.balance_after:.2f}, "
+                            f"but running balance calculates to {running_balance:.2f}"
+                        ),
+                        severity="error",
+                    )
+                )
+
+    if raw_text is not None:
+        issues.extend(
+            _check_material_locations(
+                stmt, raw_text, ("bank_name", "account_holder", "closing_balance")
+            )
+        )
+
+    return issues
+
+
+def validate_acceptance_act(
+    act: AcceptanceAct, raw_text: str | None = None
+) -> list[ValidationIssue]:
+    issues: list[ValidationIssue] = []
+
+    if not act.act_number.strip():
+        issues.append(
+            ValidationIssue(
+                field="act_number", message="empty act number", severity="error"
+            )
+        )
+    if not act.customer_name.strip():
+        issues.append(
+            ValidationIssue(
+                field="customer_name", message="empty customer name", severity="error"
+            )
+        )
+    if not act.contractor_name.strip():
+        issues.append(
+            ValidationIssue(
+                field="contractor_name",
+                message="empty contractor name",
+                severity="error",
+            )
+        )
+
+    if _core_name(act.customer_name) == _core_name(act.contractor_name):
+        issues.append(
+            ValidationIssue(
+                field="contractor_name",
+                message="customer and contractor resolve to the same entity",
+                severity="error",
+            )
+        )
+
+    issues.extend(_check_date_range("act_date", act.act_date, max_years_ahead=1))
+
+    # Total check: subtotal + tax_amount == total_amount
+    expected_total = round(act.subtotal + act.tax_amount, 2)
+    if not _isclose(expected_total, act.total_amount):
+        issues.append(
+            ValidationIssue(
+                field="total_amount",
+                message=f"subtotal ({act.subtotal:.2f}) + tax ({act.tax_amount:.2f}) = {expected_total:.2f}, total_amount says {act.total_amount:.2f}",
+                severity="error",
+            )
+        )
+
+    # Line items check
+    if act.items:
+        for idx, item in enumerate(act.items):
+            expected_item_total = round(item.quantity * item.unit_price, 2)
+            if not _isclose(expected_item_total, item.total):
+                issues.append(
+                    ValidationIssue(
+                        field=f"items[{idx}]",
+                        message=(
+                            f"quantity ({item.quantity}) * unit_price ({item.unit_price:.2f}) = {expected_item_total:.2f}, "
+                            f"does not match line total {item.total:.2f}"
+                        ),
+                        severity="error",
+                    )
+                )
+        items_sum = round(sum(i.total for i in act.items), 2)
+        if not _isclose(items_sum, act.subtotal):
+            issues.append(
+                ValidationIssue(
+                    field="items",
+                    message=f"items sum to {items_sum:.2f}, but subtotal is {act.subtotal:.2f}",
+                    severity="error",
+                )
+            )
+
+    # Check contractor and customer tax IDs if present
+    for field_name, tax_val in [
+        ("contractor_tax_id", act.contractor_tax_id),
+        ("customer_tax_id", act.customer_tax_id),
+    ]:
+        if tax_val:
+            tax_ok, scheme = checksums.validate_tax_id(tax_val)
+            if tax_ok is False:
+                issues.append(
+                    ValidationIssue(
+                        field=field_name,
+                        message=f"{tax_val!r} fails the {scheme} checksum or format",
+                        severity="error",
+                    )
+                )
+
+    if not act.claims_waived:
+        issues.append(
+            ValidationIssue(
+                field="claims_waived",
+                message="act records reservations or outstanding claims between parties",
+                severity="warning",
+            )
+        )
+
+    if raw_text is not None:
+        issues.extend(
+            _check_material_locations(
+                act, raw_text, ("customer_name", "contractor_name", "total_amount")
+            )
+        )
+
+    return issues
+
+
+def validate_waybill(wb: Waybill, raw_text: str | None = None) -> list[ValidationIssue]:
+    issues: list[ValidationIssue] = []
+
+    if not wb.waybill_number.strip():
+        issues.append(
+            ValidationIssue(
+                field="waybill_number", message="empty waybill number", severity="error"
+            )
+        )
+    if not wb.shipper_name.strip():
+        issues.append(
+            ValidationIssue(
+                field="shipper_name", message="empty shipper name", severity="error"
+            )
+        )
+    if not wb.consignee_name.strip():
+        issues.append(
+            ValidationIssue(
+                field="consignee_name", message="empty consignee name", severity="error"
+            )
+        )
+
+    if _core_name(wb.shipper_name) == _core_name(wb.consignee_name):
+        issues.append(
+            ValidationIssue(
+                field="consignee_name",
+                message="shipper and consignee resolve to the same entity",
+                severity="error",
+            )
+        )
+
+    issues.extend(_check_date_range("waybill_date", wb.waybill_date, max_years_ahead=1))
+
+    if wb.items:
+        # Check quantities
+        calc_qty = sum(item.quantity for item in wb.items)
+        if wb.total_quantity is not None and not _isclose(calc_qty, wb.total_quantity):
+            issues.append(
+                ValidationIssue(
+                    field="total_quantity",
+                    message=f"sum of item quantities ({calc_qty}) does not match total_quantity ({wb.total_quantity})",
+                    severity="error",
+                )
+            )
+
+        # Check weights if provided
+        items_with_weight = [
+            i.gross_weight_kg for i in wb.items if i.gross_weight_kg is not None
+        ]
+        if items_with_weight and wb.total_gross_weight_kg is not None:
+            sum_weight = sum(items_with_weight)
+            if not _isclose(sum_weight, wb.total_gross_weight_kg):
+                issues.append(
+                    ValidationIssue(
+                        field="total_gross_weight_kg",
+                        message=f"sum of item gross weights ({sum_weight:.2f} kg) does not match total_gross_weight_kg ({wb.total_gross_weight_kg:.2f} kg)",
+                        severity="error",
+                    )
+                )
+
+        # Check pricing if provided
+        for idx, item in enumerate(wb.items):
+            if item.unit_price is not None and item.total_price is not None:
+                expected_p = round(item.quantity * item.unit_price, 2)
+                if not _isclose(expected_p, item.total_price):
+                    issues.append(
+                        ValidationIssue(
+                            field=f"items[{idx}].total_price",
+                            message=f"quantity ({item.quantity}) * unit_price ({item.unit_price:.2f}) = {expected_p:.2f}, does not match total_price {item.total_price:.2f}",
+                            severity="error",
+                        )
+                    )
+
+        if wb.total_amount is not None:
+            items_prices = [
+                i.total_price for i in wb.items if i.total_price is not None
+            ]
+            if items_prices:
+                calc_total = round(sum(items_prices), 2)
+                if not _isclose(calc_total, wb.total_amount):
+                    issues.append(
+                        ValidationIssue(
+                            field="total_amount",
+                            message=f"sum of item prices ({calc_total:.2f}) does not match total_amount ({wb.total_amount:.2f})",
+                            severity="error",
+                        )
+                    )
+
+    if raw_text is not None:
+        issues.extend(
+            _check_material_locations(
+                wb, raw_text, ("shipper_name", "consignee_name", "waybill_number")
+            )
+        )
+
+    return issues
+
+
+def validate_forensic_report(
+    report: DocumentForensicReport,
+    doc_type: DocType | None = None,
+) -> list[ValidationIssue]:
+    """Validate a document's physical execution, signatures, stamps, and alterations.
+
+    Args:
+        report: Extracted forensic report.
+        doc_type: Target document classification.
+
+    Returns:
+        List of forensic validation issues.
+    """
+    issues: list[ValidationIssue] = []
+
+    if report.is_empty_template:
+        severity = (
+            "error"
+            if doc_type in {DocType.CONTRACT, DocType.ACCEPTANCE_ACT, DocType.WAYBILL}
+            else "warning"
+        )
+        issues.append(
+            ValidationIssue(
+                field="forensics.is_empty_template",
+                message="Document appears to be an unexecuted blank template without signatures or stamps",
+                severity=severity,
+            )
+        )
+
+    if "MISSING_SIGNATURE" in report.risk_flags and doc_type in {
+        DocType.CONTRACT,
+        DocType.ACCEPTANCE_ACT,
+    }:
+        issues.append(
+            ValidationIssue(
+                field="forensics.signatures",
+                message="No handwritten or physical signatures detected on formal legal document",
+                severity="warning",
+            )
+        )
+
+    if "MISSING_STAMP" in report.risk_flags and doc_type in {
+        DocType.ACCEPTANCE_ACT,
+        DocType.WAYBILL,
+    }:
+        issues.append(
+            ValidationIssue(
+                field="forensics.stamps",
+                message="No organizational seal or rubber stamp detected",
+                severity="warning",
+            )
+        )
+
+    if report.alterations_detected:
+        issues.append(
+            ValidationIssue(
+                field="forensics.alterations",
+                message="Handwritten corrections or alterations detected on document body",
+                severity="warning",
+            )
+        )
+
+    return issues
+
+
 _VALIDATORS = {
     Invoice: validate_invoice,
     Receipt: validate_receipt,
     Contract: validate_contract,
+    PurchaseOrder: validate_purchase_order,
+    BankStatement: validate_bank_statement,
+    AcceptanceAct: validate_acceptance_act,
+    Waybill: validate_waybill,
     BoardingPass: validate_boarding_pass,
 }
 
@@ -1036,6 +1767,7 @@ def validate(
     pages: list[str] | None = None,
     witness_pages: list[str | None] | None = None,
     vlm_unconfirmed: bool = False,
+    forensic_report: DocumentForensicReport | None = None,
 ) -> list[ValidationIssue]:
     # Page identity comes from acquisition, never from whether OCR happened
     # to include a synthetic marker. Serialize the same 1-based page contract
@@ -1048,5 +1780,12 @@ def validate(
     if validator is None:
         raise TypeError(f"No validator registered for {type(document)}")
     if validator in (validate_invoice, validate_receipt):
-        return validator(document, raw_text, witness_pages, vlm_unconfirmed)
-    return validator(document, raw_text)
+        issues = validator(document, raw_text, witness_pages, vlm_unconfirmed)
+    else:
+        issues = validator(document, raw_text)
+
+    if forensic_report is not None:
+        doc_type = getattr(document, "doc_type", None)
+        issues.extend(validate_forensic_report(forensic_report, doc_type))
+
+    return issues

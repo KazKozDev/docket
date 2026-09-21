@@ -75,12 +75,20 @@ def log_stage(logger: logging.Logger, stage: str, **fields):
     except Exception as exc:
         logger.error(
             f"{stage} failed",
-            extra={"stage": stage, "latency_ms": round((time.perf_counter() - start) * 1000, 1),
-                   "error": type(exc).__name__, **fields},
+            extra={
+                "stage": stage,
+                "latency_ms": round((time.perf_counter() - start) * 1000, 1),
+                "error": type(exc).__name__,
+                **fields,
+            },
         )
         raise
     else:
         logger.info(
             f"{stage} done",
-            extra={"stage": stage, "latency_ms": round((time.perf_counter() - start) * 1000, 1), **fields},
+            extra={
+                "stage": stage,
+                "latency_ms": round((time.perf_counter() - start) * 1000, 1),
+                **fields,
+            },
         )

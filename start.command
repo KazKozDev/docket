@@ -100,7 +100,7 @@ ok "ports $API_PORT and $UI_PORT are clear"
 
 # -------------------------------------------------------------------- api
 say "Starting the API"
-./.venv/bin/uvicorn api:app --host 127.0.0.1 --port "$API_PORT" >/tmp/docket-api.log 2>&1 &
+./.venv/bin/uvicorn docket.api:app --host 127.0.0.1 --port "$API_PORT" >/tmp/docket-api.log 2>&1 &
 PIDS+=($!)
 wait_for_port "$API_PORT" "API"
 echo "      docs:  http://localhost:$API_PORT/docs"

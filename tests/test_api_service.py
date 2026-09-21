@@ -5,8 +5,7 @@ import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
-import api
-from docket import job_store, review_queue
+from docket import api, job_store, review_queue
 from docket.schemas import ClassificationResult, DocType, PipelineResult
 
 
@@ -70,8 +69,12 @@ def test_durable_job_runs_pipeline_off_event_loop(tmp_path, monkeypatch):
 
 def test_review_api_exposes_original_and_accepts_decision(tmp_path, monkeypatch):
     monkeypatch.setattr(job_store.config, "JOB_STORE_PATH", tmp_path / "jobs.json")
-    monkeypatch.setattr(review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "reviews.jsonl")
-    monkeypatch.setattr(review_queue.config, "REVIEW_DOCUMENTS_DIR", tmp_path / "originals")
+    monkeypatch.setattr(
+        review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "reviews.jsonl"
+    )
+    monkeypatch.setattr(
+        review_queue.config, "REVIEW_DOCUMENTS_DIR", tmp_path / "originals"
+    )
     monkeypatch.setattr(api.config, "API_KEY", None)
     source = tmp_path / "doc.txt"
     source.write_text("source document")

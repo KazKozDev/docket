@@ -14,11 +14,9 @@ log = get_logger()
 _EXTRACT_PROMPT = """Extract structured data from the complete document below.
 Respond with one JSON object matching the JSON Schema exactly. Copy values;
 do not repair contradictions in the source. Copy every digit exactly as
-printed — never adjust a number to make totals reconcile. Interpret every
-ambiguous numeric date under a single consistent convention: prefer the one
-under which each date in the document is calendar-valid, and never mix
-conventions within one document. Page markers are part of the
-provenance and must be retained in source citations.
+printed — never adjust a number to make totals reconcile.
+{date_instruction}
+Page markers are part of the provenance and must be retained in source citations.
 
 JSON Schema:
 {schema}
@@ -26,6 +24,7 @@ JSON Schema:
 Document:
 {text}
 """
+
 
 _PARTIAL_PROMPT = """Extract every field explicitly present in this document chunk.
 Return a JSON object containing only fields supported by this chunk. Do not
@@ -81,14 +80,23 @@ def _validated_call(
         try:
             raw = chat_json(prompt, schema=schema)
         except Exception as exc:
-            log.warning("extraction request failed", extra={"attempt": attempt, "error_type": type(exc).__name__})
+            log.warning(
+                "extraction request failed",
+                extra={"attempt": attempt, "error_type": type(exc).__name__},
+            )
             if attempt > max_retries:
                 return None, attempt
             continue
         try:
             return model_cls.model_validate(raw), attempt
         except ValidationError as exc:
-            log.warning("extraction schema validation failed", extra={"attempt": attempt, "fields": [str(error['loc']) for error in exc.errors()]})
+            log.warning(
+                "extraction schema validation failed",
+                extra={
+                    "attempt": attempt,
+                    "fields": [str(error["loc"]) for error in exc.errors()],
+                },
+            )
             if attempt > max_retries:
                 return None, attempt
             prompt = _RETRY_PROMPT.format(
@@ -107,7 +115,9 @@ def _page_chunks(pages: list[str], limit: int) -> list[str]:
         marker = f"\n[PAGE {page_number}]\n"
         body_limit = max(1, limit - len(marker))
         body = page.strip()
-        pieces = [marker + body[i : i + body_limit] for i in range(0, len(body), body_limit)] or [marker]
+        pieces = [
+            marker + body[i : i + body_limit] for i in range(0, len(body), body_limit)
+        ] or [marker]
         for piece in pieces:
             if current and len(current) + len(piece) > limit:
                 chunks.append(current)
@@ -116,6 +126,30 @@ def _page_chunks(pages: list[str], limit: int) -> list[str]:
     if current:
         chunks.append(current)
     return chunks
+
+
+def _date_instruction_for(text: str) -> str:
+    from .validate import _document_date_convention
+
+    convention = _document_date_convention(text)
+    if convention == "dmy":
+        return (
+            "IMPORTANT: This document uses DMY (Day/Month/Year) date format based on "
+            "unambiguous dates (e.g. DD/MM/YYYY). Interpret ALL ambiguous numeric dates "
+            "(such as 11/02/2019 -> February 11, 2019) strictly as Day/Month/Year. "
+            "Never mix conventions within one document."
+        )
+    if convention == "mdy":
+        return (
+            "IMPORTANT: This document uses MDY (Month/Day/Year) date format based on "
+            "unambiguous dates (e.g. MM/DD/YYYY). Interpret ALL ambiguous numeric dates "
+            "strictly as Month/Day/Year. Never mix conventions within one document."
+        )
+    return (
+        "Interpret every ambiguous numeric date under a single consistent convention: "
+        "prefer the one under which each date in the document is calendar-valid, and "
+        "never mix conventions within one document."
+    )
 
 
 def extract_pages(
@@ -130,10 +164,13 @@ def extract_pages(
     chunks = _page_chunks(pages, max(1000, config.EXTRACT_CHUNK_CHARS)) or [""]
 
     if len(chunks) == 1:
+        full_text = chunks[0]
         prompt = _EXTRACT_PROMPT.format(
-            schema=json.dumps(schema, ensure_ascii=False), text=chunks[0]
+            schema=json.dumps(schema, ensure_ascii=False),
+            text=full_text,
+            date_instruction=_date_instruction_for(full_text),
         )
-        return _validated_call(prompt, chunks[0], model_cls, max_retries=max_retries)
+        return _validated_call(prompt, full_text, model_cls, max_retries=max_retries)
 
     candidates: list[dict] = []
     attempts = 0

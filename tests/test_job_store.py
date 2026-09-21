@@ -8,7 +8,9 @@ def test_jobs_are_durable_and_idempotent(tmp_path, monkeypatch):
 
     first = job_store.create(source, "invoice.txt", idempotency_key="request-1")
     second = job_store.create(source, "invoice.txt", idempotency_key="request-1")
-    completed = job_store.update(first["job_id"], status="completed", result={"ok": True})
+    completed = job_store.update(
+        first["job_id"], status="completed", result={"ok": True}
+    )
 
     assert first["job_id"] == second["job_id"]
     assert job_store.get(first["job_id"])["result"] == {"ok": True}

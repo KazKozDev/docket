@@ -1,36 +1,97 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "docket"
-version = "0.1.0"
-description = "Invoice and receipt data extraction with OCR and LLMs — validated JSON, source citations, human review"
+dynamic = ["version"]
+description = "Invoice and receipt data extraction with OCR and LLMs — validated JSON, source citations, human review, EU e-invoicing export"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Artem Kazakov Kozlov" }]
 requires-python = ">=3.10"
+keywords = [
+    "invoice", "receipt", "ocr", "llm", "document-ai", "idp",
+    "e-invoicing", "ubl", "peppol", "zugferd", "factur-x", "xrechnung", "facturae",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial :: Accounting",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+    "Topic :: Text Processing",
+    "Typing :: Typed",
+]
 dependencies = [
     "pydantic>=2.6",
     "pdfplumber>=0.11",
+    "pypdfium2>=4.20",
     "pytesseract>=0.3.10",
-    "pymupdf>=1.24",
     "pillow>=10.0",
     "httpx>=0.27",
     "python-dotenv>=1.0",
-    "streamlit>=1.38",
-    "rich>=13.7",
     "scikit-learn>=1.4",
-    "fastapi>=0.110",
-    "uvicorn>=0.29",
-    "python-multipart>=0.0.9",
     "python-stdnum>=2.0",
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=8.0",
-    "datasets>=2.19",
+api = [
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    "python-multipart>=0.0.9",
 ]
-eval = [
-    "datasets>=2.19",
+ui = [
+    "streamlit>=1.38",
+]
+tui = [
+    "rich>=13.7",
 ]
 tracing = [
     "langfuse>=2.0",
 ]
+all = [
+    "docket[api,ui,tui,tracing]",
+]
+eval = [
+    "datasets>=2.19",
+]
+dev = [
+    "docket[api,ui,tui,eval]",
+    "pytest>=8.0",
+    # Test fixtures only (builds PDFs with a text layer); never a runtime
+    # dependency, so its AGPL license does not reach installed users.
+    "pymupdf>=1.24",
+    "build>=1.2",
+    "twine>=5.0",
+]
+
+[project.scripts]
+docket = "docket.cli:main"
+docket-api = "docket.api:run"
+
+[project.urls]
+Homepage = "https://github.com/KazKozDev/docket"
+Documentation = "https://github.com/KazKozDev/docket#readme"
+Repository = "https://github.com/KazKozDev/docket"
+Issues = "https://github.com/KazKozDev/docket/issues"
+Changelog = "https://github.com/KazKozDev/docket/blob/master/CHANGELOG.md"
+
+[tool.setuptools.dynamic]
+version = { attr = "docket.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+docket = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -69,7 +69,9 @@ def test_cloud_fenced_json_is_parsed(monkeypatch):
             return {"message": {"content": '```json\n{"total_amount": 10}\n```'}}
 
     monkeypatch.setattr(llm_client.httpx, "post", lambda *args, **kwargs: Response())
-    assert llm_client.chat_json("synthetic", model="example:cloud") == {"total_amount": 10}
+    assert llm_client.chat_json("synthetic", model="example:cloud") == {
+        "total_amount": 10
+    }
 
 
 def _fake_tags(models: list[dict]):
@@ -112,7 +114,12 @@ def test_unreachable_ollama_returns_no_choices_rather_than_raising(monkeypatch):
 def test_a_document_run_uses_the_selected_vision_model(monkeypatch):
     captured = _capture_payload(monkeypatch)
     monkeypatch.setattr(config, "VISION_MODEL", "picked-vision:v9")
-    monkeypatch.setattr(llm_client, "open", lambda *a, **k: __import__("io").BytesIO(b"img"), raising=False)
+    monkeypatch.setattr(
+        llm_client,
+        "open",
+        lambda *a, **k: __import__("io").BytesIO(b"img"),
+        raising=False,
+    )
 
     llm_client.vision_transcribe("page.png")
     assert captured["model"] == "picked-vision:v9"
