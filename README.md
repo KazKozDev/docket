@@ -209,6 +209,8 @@ Every setting and its environment variable is in [`docket.example.toml`](https:/
 - The TF-IDF tier is trained on a small embedded corpus (about 20 phrases per type), so it only answers when confident and leaves the rest to the LLM.
 - `--forensics` is a pixel heuristic, not a trained vision model. It finds colored stamps and seals and handwriting in colored or black ink, but never reports black stamps, which it can't tell apart from logos or table graphics. Its confidence scores come from geometry and aren't calibrated probabilities.
 - The vision model has been observed changing digits so that a page reconciles (a printed `450.00` read as `480.00` three times out of three). There is no fix for that in this repo.
+- A silent wrong answer is possible: on the 198-scan extended corpus, 46% of documents that come back "succeeded, no review" had at least one wrong graded field (23 of 50; the golden set understates it at 3/16). Measured drivers: ambiguous US dates read day-first, merchant names and totals on degraded thermal receipts.
+- Classification is the weak tier on out-of-distribution documents: Malaysian SROIE "receipts" are tax-invoice till slips and 82/120 classify as `tax_invoice` — every graded field of those documents then counts wrong. Where classification is right, field accuracy is 0.80–0.97.
 - Line items and nested fields carry citations that are grounded and located like top-level amounts (golden set: every item row cited, 0.98 located; top-level fields 0.97 / 0.92), and a wrong or ungrounded item value fails validation like any other amount.
 - The review queue is a single file: durable on one node, not across hosts.
 - Windows is untested. A document takes a median of 6.4–22.7 s depending on the OCR backend (measured over 33 scans), longer when a page needs the vision model.
@@ -268,6 +270,48 @@ top-level fields 0.97 cited / 0.92 located. Before stage 1 the items were at
 design (purchase order); two receipt scans still extract wrong values from
 garbled Tesseract text without triggering review — the false-success metric
 that stage 2 measures.
+
+**The extended corpus** (`eval/download_real_samples.py --n` per source,
+then the same benchmark): 198 scans — the golden set plus real documents
+from Hugging Face (DocILE, donut-style invoices, SROIE receipts, CORD,
+FUNSD, RVL-CDIP), with field-level ground truth where the source dataset
+carries it. Tesseract config, same code:
+
+| metric | golden only | extended corpus |
+|---|---|---|
+| documents | 17 | 198 |
+| field accuracy | 0.97 | 0.53 |
+| documents in review | 1 (6%) | 148 (75%) |
+| false successes (silent wrong answers) | 3/16 (19%) | 23/50 (46%) |
+
+Real scans are the honest test, and classification is the bottleneck:
+SROIE "receipts" are Malaysian tax-invoice till slips and 82/120 classify
+as `tax_invoice`; where docket classifies right, field accuracy is
+0.80–0.97 by source. The top false-success drivers, measured: ambiguous
+dates read day-first on US documents (`06/02/2015` → 2015-02-06 instead of
+2015-06-02) and merchant names/totals on degraded thermal receipts.
+
+**Against the pip-installable competition** (`eval/benchmark_competitors.py`):
+same documents, graded with the same field metric on the intersection of
+each tool's schema with the ground truth. docket's column is recomputed on
+exactly those docs and fields; the LLM-backed tools ran against the same
+Ollama daemon and model; they are handed the correct schema, while docket
+must classify its way there; a tool's error counts as every graded field
+wrong.
+
+| tool | docs | field accuracy | docket, same docs+fields |
+|---|---|---|---|
+| docket, full comparable set | 179 | 0.53 | — |
+| docpick 0.1.3 | 55 \* | 0.61 | 0.45 |
+| ocrcontext 0.1.5 | 55 \* | 0.04 (16 parse errors) | 0.40 |
+| invoice2data 1.0.1 | 44 | 0.00 (0 built-in template matches) | 0.86 |
+
+\* evenly-spaced subsample — these tools read 60–80 s per document against
+docket's 17 s mean. Per source, docket vs the best competitor: golden
+1.00 vs 0.62 (docpick), donut 0.93 vs 0.48 (docpick), docile 0.50 vs 0.50
+(ocrcontext), SROIE 0.10 vs 0.75 (docpick — the classification collapse
+above; on the 17 SROIE docs docket does classify as receipts, its fields
+are 0.80).
 
 </details>
 

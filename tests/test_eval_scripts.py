@@ -128,6 +128,34 @@ def test_line_item_precision_only_grades_documents_with_markup():
     assert s["line_items"]["documents_graded"] == 1
 
 
+def test_false_success_rate_counts_only_silent_clean_claims():
+    """A false success is a wrong answer nobody was told to check. Docs that
+    went to review or failed made no clean claim, so they stay out of the
+    denominator — the rate answers 'when docket says nothing is wrong, how
+    often is it?'."""
+    import sys
+
+    sys.path.insert(0, str(ROOT / "eval"))
+    from benchmark_ocr import summarize
+
+    def row(status, success, review=False):
+        return {"seconds": 1.0, "acquire_seconds": 0.5, "fields": {"correct": 1, "total": 2},
+                "line_items": {"correct": 0, "extracted": 0, "expected": 0},
+                "table_cells": {"matched": 0, "expected": 0}, "pages": 1, "vlm_pages": 0,
+                "escalated_to_vlm": False, "llm_calls": 1, "needs_review": review, "success": success,
+                "status": status}
+
+    s = summarize([
+        row("succeeded", True),                    # clean claim, right
+        row("succeeded", False),                   # clean claim, wrong — the false success
+        row("succeeded", False, review=True),     # caught: review means no clean claim
+        row("failed", False),                      # no claim at all
+    ])
+    assert s["silent_successes"] == 2
+    assert s["false_successes"] == 1
+    assert s["false_success_rate"] == 0.5
+
+
 def test_variance_summary_counts_missing_fields_as_disagreement():
     import sys
 
