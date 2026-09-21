@@ -10,14 +10,16 @@ born-digital PDF skip OCR entirely. The same chain from the shell:
 """
 import sys
 
-from docket import process_document
+from docket import OcrOptions, ProcessOptions, ReviewOptions, process_document
 
-result = process_document(
-    sys.argv[1],
-    ocr_backend="auto",  # first installed of tesseract, paddle
-    ocr_fallbacks=["vlm"],  # e.g. ["paddle", "vlm"] to try a second engine first
-    enqueue_review=False,
+options = ProcessOptions(
+    ocr=OcrOptions(
+        backend="auto",  # first installed of tesseract, paddle
+        fallbacks=["vlm"],  # e.g. ["paddle", "vlm"] to try a second engine first
+    ),
+    review=ReviewOptions(enqueue=False),
 )
+result = process_document(sys.argv[1], options)
 
 print("primary:", result.ocr.primary_backend, "| fallbacks used:", result.ocr.fallbacks_applied or "none")
 for page in result.ocr.pages:

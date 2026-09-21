@@ -19,6 +19,7 @@ from docket import (
     register_exporter,
 )
 from docket import api, classify as classify_module, extract as extract_module, validate
+from docket.options import ProcessOptions, ReviewOptions
 from docket.result import DocumentResult, SourceLocation
 from docket.schemas import ClassificationResult, DocType
 from tests.factories import make_result
@@ -77,7 +78,7 @@ def _run(tmp_path, monkeypatch, payload):
     source = tmp_path / "note.txt"
     source.write_text(NOTE_TEXT)
     monkeypatch.setattr(extract_module, "chat_json", lambda *a, **k: payload)
-    return process_document(source, enqueue_review=False)
+    return process_document(source, ProcessOptions(review=ReviewOptions(enqueue=False)))
 
 
 def test_rules_tier_recognises_custom_keywords():
@@ -197,7 +198,7 @@ def test_exporter_for_custom_type():
     register_exporter("note-csv", lambda n: f"{n.note_number};{n.supplier_name}",
                       accepts=(DeliveryNote,))
     note = DeliveryNote(note_number="LS-1", supplier_name="X", delivery_date=date(2026, 1, 1))
-    assert export_document(note, "note-csv") == "LS-1;X"
+    assert export_document(note, "note-csv").content == "LS-1;X"
 
 
 @pytest.mark.parametrize(

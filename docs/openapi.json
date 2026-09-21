@@ -231,8 +231,8 @@
     },
     "/process": {
       "post": {
-        "summary": "Process Document",
-        "operationId": "process_document_process_post",
+        "summary": "Process Upload",
+        "operationId": "process_upload_process_post",
         "parameters": [
           {
             "name": "Idempotency-Key",
@@ -288,7 +288,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Body_process_document_process_post"
+                "$ref": "#/components/schemas/Body_process_upload_process_post"
               }
             }
           }
@@ -881,7 +881,7 @@
         ],
         "title": "Body_create_job_jobs_post"
       },
-      "Body_process_document_process_post": {
+      "Body_process_upload_process_post": {
         "properties": {
           "file": {
             "type": "string",
@@ -893,7 +893,7 @@
         "required": [
           "file"
         ],
-        "title": "Body_process_document_process_post"
+        "title": "Body_process_upload_process_post"
       },
       "BoundingBox": {
         "properties": {

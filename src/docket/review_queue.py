@@ -16,7 +16,14 @@ _LOCK = threading.RLock()
 _STATUSES = {"pending", "in_review", "corrected", "approved", "rejected"}
 
 
-def reasons_for(result: DocumentResult) -> list[str]:
+def reasons_for(
+    result: DocumentResult, *, min_classification_confidence: float | None = None
+) -> list[str]:
+    floor = (
+        config.MIN_CLASSIFICATION_CONFIDENCE
+        if min_classification_confidence is None
+        else min_classification_confidence
+    )
     reasons: list[str] = []
     if result.error is not None:
         reasons.append(f"{result.error.stage} failed: {result.error.message}")
@@ -26,10 +33,9 @@ def reasons_for(result: DocumentResult) -> list[str]:
         reasons.append(f"incomplete processing (no text on page(s) {', '.join(map(str, empty)) or '?'})")
     classification = result.classification
     if classification is not None:
-        if classification.confidence < config.MIN_CLASSIFICATION_CONFIDENCE:
+        if classification.confidence < floor:
             reasons.append(
-                f"low classification confidence ({classification.confidence:.2f} "
-                f"< {config.MIN_CLASSIFICATION_CONFIDENCE:.2f})"
+                f"low classification confidence ({classification.confidence:.2f} < {floor:.2f})"
             )
         if classification.type_name == "unknown":
             reasons.append("unrecognized document type")
@@ -59,17 +65,23 @@ def _document_id(path: Path) -> str:
     return f"doc_{uuid4().hex[:20]}"
 
 
-def _append(event: dict) -> None:
-    config.REVIEW_QUEUE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with config.REVIEW_QUEUE_PATH.open("a", encoding="utf-8") as handle:
+def _queue(path: Path | None) -> Path:
+    return config.REVIEW_QUEUE_PATH if path is None else Path(path)
+
+
+def _append(event: dict, queue_path: Path | None = None) -> None:
+    path = _queue(queue_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(event, ensure_ascii=False) + "\n")
 
 
-def _records() -> dict[str, dict]:
+def _records(queue_path: Path | None = None) -> dict[str, dict]:
     records: dict[str, dict] = {}
-    if not config.REVIEW_QUEUE_PATH.exists():
+    path = _queue(queue_path)
+    if not path.exists():
         return records
-    for line in config.REVIEW_QUEUE_PATH.read_text(encoding="utf-8").splitlines():
+    for line in path.read_text(encoding="utf-8").splitlines():
         if not line.strip():
             continue
         event = json.loads(line)
@@ -102,17 +114,24 @@ def _records() -> dict[str, dict]:
     return records
 
 
-def enqueue(result: DocumentResult, reasons: list[str]) -> str:
+def enqueue(
+    result: DocumentResult,
+    reasons: list[str],
+    *,
+    queue_path: Path | None = None,
+    documents_dir: Path | None = None,
+) -> str:
+    """Append the document to the review queue, preserving the original
+    file next to it. Re-queuing the same document id records a new event."""
+    documents_dir = config.REVIEW_DOCUMENTS_DIR if documents_dir is None else Path(documents_dir)
     source = Path(result.source)
     document_id = result.document_id or _document_id(source)
     original_path: str | None = None
     with _LOCK:
-        existing = _records().get(document_id)
+        existing = _records(queue_path).get(document_id)
         if source.is_file():
-            config.REVIEW_DOCUMENTS_DIR.mkdir(parents=True, exist_ok=True)
-            destination = (
-                config.REVIEW_DOCUMENTS_DIR / f"{document_id}{source.suffix.lower()}"
-            )
+            documents_dir.mkdir(parents=True, exist_ok=True)
+            destination = documents_dir / f"{document_id}{source.suffix.lower()}"
             if source.resolve() != destination.resolve() and not destination.exists():
                 shutil.copy2(source, destination)
             original_path = str(destination)
@@ -135,7 +154,8 @@ def enqueue(result: DocumentResult, reasons: list[str]) -> str:
                     "document_id": document_id,
                     "at": _now(),
                     "record": record,
-                }
+                },
+                queue_path,
             )
         else:
             _append(
@@ -147,24 +167,21 @@ def enqueue(result: DocumentResult, reasons: list[str]) -> str:
                         **record,
                         "original_path": original_path or existing.get("original_path"),
                     },
-                }
+                },
+                queue_path,
             )
     return document_id
 
 
-def list_pending() -> list[dict]:
+def list_pending(*, queue_path: Path | None = None) -> list[dict]:
     with _LOCK:
-        records = _records().values()
-        return [
-            r
-            for r in records
-            if r.get("status") in {"pending", "in_review", "corrected"}
-        ]
+        records = _records(queue_path).values()
+        return [r for r in records if r.get("status") in {"pending", "in_review", "corrected"}]
 
 
-def get(document_id: str) -> dict | None:
+def get(document_id: str, *, queue_path: Path | None = None) -> dict | None:
     with _LOCK:
-        return _records().get(document_id)
+        return _records(queue_path).get(document_id)
 
 
 def update(
@@ -174,11 +191,12 @@ def update(
     corrections: dict | None = None,
     actor: str = "reviewer",
     note: str | None = None,
+    queue_path: Path | None = None,
 ) -> dict:
     if status not in _STATUSES:
         raise ValueError(f"invalid review status: {status}")
     with _LOCK:
-        if document_id not in _records():
+        if document_id not in _records(queue_path):
             raise KeyError(document_id)
         changes = {"status": status, "updated_at": _now()}
         if corrections is not None:
@@ -191,11 +209,12 @@ def update(
                 "actor": actor,
                 "note": note,
                 "changes": changes,
-            }
+            },
+            queue_path,
         )
-        return _records()[document_id]
+        return _records(queue_path)[document_id]
 
 
-def clear() -> None:
+def clear(*, queue_path: Path | None = None) -> None:
     with _LOCK:
-        config.REVIEW_QUEUE_PATH.unlink(missing_ok=True)
+        _queue(queue_path).unlink(missing_ok=True)

@@ -6,7 +6,12 @@ import pytest
 
 from docket import extract as extract_module, pipeline
 from docket.ocr import BackendUnavailable, OcrBackendError, UnknownLanguage
+from docket.options import OcrOptions, ProcessOptions, ReviewOptions
 from docket.result import DocumentResult, DocumentStatus
+
+
+def _options(**ocr):
+    return ProcessOptions(ocr=OcrOptions(fallbacks=[], **ocr), review=ReviewOptions(enqueue=False))
 
 LINES = [
     "INVOICE",
@@ -56,7 +61,7 @@ def _payload():
 @pytest.fixture
 def invoice_result(tmp_path, monkeypatch) -> DocumentResult:
     monkeypatch.setattr(extract_module, "chat_json", lambda *a, **k: _payload())
-    return pipeline.process_document(_pdf(tmp_path / "inv.pdf"), ocr_fallbacks=[], enqueue_review=False)
+    return pipeline.process_document(_pdf(tmp_path / "inv.pdf"), _options())
 
 
 def test_result_carries_layout_and_acquisition_report(invoice_result):
@@ -93,7 +98,7 @@ def test_result_round_trips_through_json(invoice_result):
 def test_unsupported_file_is_a_structured_failure(tmp_path):
     path = tmp_path / "doc.docx"
     path.write_bytes(b"PK")
-    result = pipeline.process_document(path, ocr_fallbacks=[], enqueue_review=False)
+    result = pipeline.process_document(path, _options())
     assert result.status == DocumentStatus.FAILED
     assert result.error.code == "unsupported_document" and result.error.stage == "acquire"
     assert result.needs_review and not result.is_valid
@@ -103,33 +108,29 @@ def test_unreadable_document_is_a_structured_failure(tmp_path, monkeypatch):
     from tests.factories import ScriptedBackend, write_png
 
     blank = ScriptedBackend("blank")
-    result = pipeline.process_document(
-        write_png(tmp_path / "blank.png"), ocr_backend=blank, ocr_fallbacks=[], enqueue_review=False
-    )
+    result = pipeline.process_document(write_png(tmp_path / "blank.png"), _options(backend=blank))
     assert result.status == DocumentStatus.FAILED and result.error.code == "no_text"
 
 
 @pytest.mark.parametrize(
     "kwargs, error",
     [
-        ({"ocr_backend": "nope"}, OcrBackendError),
-        ({"ocr_languages": "klingon"}, UnknownLanguage),
-        ({"ocr_fallbacks": ["nope"]}, OcrBackendError),
+        ({"backend": "nope"}, OcrBackendError),
+        ({"languages": "klingon"}, UnknownLanguage),
+        ({"fallbacks": ["nope"]}, OcrBackendError),
     ],
 )
 def test_configuration_errors_raise_before_reading(tmp_path, kwargs, error):
     path = tmp_path / "never-read.pdf"  # does not exist: nothing may touch it
     with pytest.raises(error):
-        pipeline.process_document(path, enqueue_review=False, **kwargs)
+        pipeline.process_document(path, ProcessOptions(ocr=OcrOptions(**kwargs)))
 
 
 def test_unavailable_explicit_backend_raises(tmp_path):
     from tests.factories import ScriptedBackend
 
     with pytest.raises(BackendUnavailable):
-        pipeline.process_document(
-            tmp_path / "x.png", ocr_backend=ScriptedBackend("gone", available=False), enqueue_review=False
-        )
+        pipeline.process_document(tmp_path / "x.png", _options(backend=ScriptedBackend("gone", available=False)))
 
 
 def test_cli_reports_configuration_errors_with_exit_code_3(capsys):

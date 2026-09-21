@@ -239,7 +239,8 @@ from docket.pipeline import process_document
 info = {i.name: i for i in list_ocr_backends()}["paddle"]
 assert not info.status.available, info
 try:
-    process_document("x.png", ocr_backend="paddle")
+    from docket.options import OcrOptions, ProcessOptions
+    process_document("x.png", ProcessOptions(ocr=OcrOptions(backend="paddle")))
 except BackendUnavailable as exc:
     assert "docket-idp[paddle]" in str(exc), exc
     print("OK")

@@ -19,9 +19,9 @@ import json
 from dataclasses import dataclass
 from functools import partial
 from importlib.metadata import entry_points
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from ..schemas import AcceptanceAct, BankStatement, Invoice, Receipt
 from .einvoice import (
@@ -40,6 +40,9 @@ from .erp import (
     export_to_xero_json,
 )
 
+if TYPE_CHECKING:
+    from ..result import DocumentResult
+
 ENTRY_POINT_GROUP = "docket.exporters"
 
 
@@ -53,6 +56,7 @@ class Exporter:
     func: Callable[[Any], Any]
     accepts: tuple[type[BaseModel], ...]
     description: str = ""
+    media_type: str = "text/plain"
 
     def __call__(self, document: BaseModel) -> str:
         if not isinstance(document, self.accepts):
@@ -76,16 +80,17 @@ def register_exporter(
     *,
     accepts: tuple[type[BaseModel], ...],
     description: str = "",
+    media_type: str | None = None,
     replace: bool = False,
 ) -> Exporter:
     """Make `func` available as export format `name`.
 
     `func` takes one document and returns a string, or a JSON-serializable
-    object that is rendered as JSON.
+    object that is rendered as JSON (media type application/json by default).
     """
     if name in _REGISTRY and not replace:
         raise ExportError(f"exporter {name!r} is already registered")
-    exporter = Exporter(name, func, tuple(accepts), description)
+    exporter = Exporter(name, func, tuple(accepts), description, media_type or "text/plain")
     _REGISTRY[name] = exporter
     return exporter
 
@@ -113,40 +118,80 @@ def get_exporter(name: str) -> Exporter:
         raise ExportError(f"unknown export format {name!r}; known: {known}") from None
 
 
-def export_document(document: BaseModel, fmt: str) -> str:
-    """Render `document` in the named format, e.g. `export_document(invoice, "xrechnung")`."""
-    return get_exporter(fmt)(document)
+class ExportOptions(BaseModel):
+    require_valid: bool = Field(
+        default=True,
+        description=(
+            "Refuse to export a DocumentResult that failed, has validation errors, or "
+            "needs review. Never emit a binding e-invoice from unchecked data."
+        ),
+    )
+
+
+class ExportResult(BaseModel):
+    format: str
+    media_type: str
+    content: str
+
+
+def export_document(
+    source: "DocumentResult | BaseModel", format: str, options: ExportOptions | None = None
+) -> ExportResult:
+    """Render a processed document in the named format.
+
+    `source` is a DocumentResult (its typed document is exported) or a schema
+    instance you built yourself (exported as is, no validity check).
+    """
+    from ..result import DocumentResult
+
+    options = options or ExportOptions()
+    exporter = get_exporter(format)
+    if isinstance(source, DocumentResult):
+        if options.require_valid and (not source.is_valid or source.needs_review):
+            problems = [f"{i.field}: {i.message}" for i in source.validation_issues if i.severity == "error"]
+            problems += source.review_reasons
+            raise ExportError(
+                f"not exporting {source.source}: " + ("; ".join(dict.fromkeys(problems)) or source.status.value)
+            )
+        document = source.document
+        if document is None:
+            raise ExportError(f"{source.source} has no extracted document to export")
+    else:
+        document = source
+    return ExportResult(format=exporter.name, media_type=exporter.media_type, content=exporter(document))
 
 
 # EU e-invoicing standards first: they are what most integrators need.
 register_exporter("ubl", export_to_ubl_xml, accepts=(Invoice,),
-                  description="UBL 2.1 invoice (Peppol BIS Billing 3.0 compatible)")
+                  description="UBL 2.1 invoice (Peppol BIS Billing 3.0 compatible)", media_type="application/xml")
 register_exporter("zugferd", partial(export_to_zugferd_xml, profile="EN16931"),
-                  accepts=(Invoice,), description="ZUGFeRD 2.2 / Factur-X CII, EN 16931 profile")
+                  accepts=(Invoice,), description="ZUGFeRD 2.2 / Factur-X CII, EN 16931 profile", media_type="application/xml")
 register_exporter("xrechnung", partial(export_to_zugferd_xml, profile="XRECHNUNG"),
-                  accepts=(Invoice,), description="XRechnung CII (German public sector)")
+                  accepts=(Invoice,), description="XRechnung CII (German public sector)", media_type="application/xml")
 register_exporter("facturae", export_to_facturae_xml, accepts=(Invoice,),
-                  description="Facturae 3.2.2 (Spain)")
+                  description="Facturae 3.2.2 (Spain)", media_type="application/xml")
 register_exporter("sap-idoc", export_to_sap_idoc, accepts=(Invoice,),
-                  description="SAP INVOIC IDoc XML")
+                  description="SAP INVOIC IDoc XML", media_type="application/xml")
 register_exporter("sap-csv", export_to_sap_journal_csv, accepts=(Invoice, BankStatement),
-                  description="SAP journal entry CSV")
+                  description="SAP journal entry CSV", media_type="text/csv")
 register_exporter("xero-csv", export_to_xero_csv, accepts=(Invoice, Receipt),
-                  description="Xero bills import CSV")
+                  description="Xero bills import CSV", media_type="text/csv")
 register_exporter("xero-json", export_to_xero_json, accepts=(Invoice, Receipt),
-                  description="Xero API invoice JSON")
+                  description="Xero API invoice JSON", media_type="application/json")
 register_exporter("quickbooks-iif", export_to_quickbooks_iif, accepts=(Invoice, Receipt),
-                  description="QuickBooks Desktop IIF")
+                  description="QuickBooks Desktop IIF", media_type="text/plain")
 register_exporter("quickbooks-json", export_to_quickbooks_json, accepts=(Invoice, Receipt),
-                  description="QuickBooks Online API bill JSON")
+                  description="QuickBooks Online API bill JSON", media_type="application/json")
 register_exporter("1c-bank", export_to_1c_client_bank, accepts=(BankStatement,),
-                  description="1C Client-Bank exchange file")
+                  description="1C Client-Bank exchange file", media_type="text/plain")
 register_exporter("1c-enterprise", export_to_1c_enterprise_xml,
-                  accepts=(Invoice, AcceptanceAct), description="1C:Enterprise XML")
+                  accepts=(Invoice, AcceptanceAct), description="1C:Enterprise XML", media_type="application/xml")
 
 __all__ = [
     "ENTRY_POINT_GROUP",
     "ExportError",
+    "ExportOptions",
+    "ExportResult",
     "Exporter",
     "export_document",
     "export_to_1c_client_bank",

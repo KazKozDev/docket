@@ -1,14 +1,21 @@
 """Add your own output format at runtime.
 
 After registration it works everywhere docket resolves formats by name:
-`export_document(doc, "my-erp-csv")` and `docket file.pdf --export my-erp-csv`
+`export_document(result, "my-erp-csv")` and `docket file.pdf --export my-erp-csv`
 (the latter only if registered via a plugin package, see exporter_plugin/).
 """
 import csv
 import io
 import sys
 
-from docket import Invoice, export_document, process_document, register_exporter
+from docket import (
+    Invoice,
+    ProcessOptions,
+    ReviewOptions,
+    export_document,
+    process_document,
+    register_exporter,
+)
 
 
 def to_my_erp_csv(invoice: Invoice) -> str:
@@ -32,5 +39,5 @@ register_exporter(
 )
 
 if __name__ == "__main__":
-    result = process_document(sys.argv[1], enqueue_review=False)
-    print(export_document(result.document, "my-erp-csv"))
+    result = process_document(sys.argv[1], ProcessOptions(review=ReviewOptions(enqueue=False)))
+    print(export_document(result, "my-erp-csv").content)

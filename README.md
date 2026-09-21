@@ -34,16 +34,21 @@ docket invoice.pdf --export xrechnung    # e-invoice XML on stdout
 **Python library**
 
 ```python
-from docket import Invoice, export_document, process_document
+from docket import ExportError, OcrOptions, ProcessOptions, ReviewOptions, export_document, process_document
 
-result = process_document("invoice.pdf", enqueue_review=False)  # your app owns the review flow
-if result.is_valid and isinstance(result.document, Invoice):
-    xml = export_document(result.document, "xrechnung")
-else:
-    print(result.review_reasons, result.validation_issues)
+options = ProcessOptions(
+    document_type="invoice",                      # skip classification (or schema_model=YourModel)
+    ocr=OcrOptions(backend="tesseract", fallbacks=["vlm"]),
+    review=ReviewOptions(enqueue=False),          # your app owns the review flow
+)
+result = process_document("invoice.pdf", options)
+try:
+    xml = export_document(result, "xrechnung").content   # refuses invalid or unreviewed results
+except ExportError:
+    print(result.status, result.review_reasons)
 ```
 
-`result.document` is the typed schema (`Invoice`, `Receipt`, `Contract`, …). `result.field_sources` gives the page, quote and bounding box each value was read from, and `result.layout` holds every page's words, lines, columns and tables with normalized coordinates.
+`result.document` is the typed schema (`Invoice`, `Receipt`, `Contract`, …) and `result.status` is `succeeded`, `needs_review` or `failed` (with a structured `error`); unset options fall back to the `DOCKET_*` environment. `result.field_sources` gives the page, quote and bounding box each value was read from, and `result.layout` holds every page's words, lines, columns and tables with normalized coordinates.
 
 **HTTP service (any language)**
 
@@ -76,7 +81,7 @@ register_document_type(
 )
 ```
 
-Registered types are classified, extracted, citation-checked and exported like the built-in ones. `add_validator("invoice", fn)` adds your own rules to any type, and the `docket.document_types` entry point lets a separate package ship types. See [`examples/custom_document_type.py`](https://github.com/KazKozDev/docket/blob/master/examples/custom_document_type.py).
+Registered types are classified, extracted, citation-checked and exported like the built-in ones. A model can also be used without registering it: `ProcessOptions(schema_model=DeliveryNote)`, or `docket file.pdf --schema mypkg.models:DeliveryNote`. `add_validator("invoice", fn)` adds your own rules to any type, and the `docket.document_types` entry point lets a separate package ship types. See [`examples/custom_document_type.py`](https://github.com/KazKozDev/docket/blob/master/examples/custom_document_type.py).
 
 ## Export formats
 

@@ -164,7 +164,7 @@ def ocr_backends() -> list[dict]:
 
 
 @app.post("/process", response_model=DocumentResult, dependencies=[Depends(require_api_key)])
-async def process_document(
+async def process_upload(
     file: UploadFile = File(...),
     idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
 ) -> DocumentResult:

@@ -6,6 +6,8 @@ at configuration time, not a silent fallback to English.
 """
 from __future__ import annotations
 
+from ..errors import ConfigurationError
+
 TESSERACT = {
     "bg": "bul", "cs": "ces", "da": "dan", "de": "deu", "el": "ell", "en": "eng",
     "es": "spa", "et": "est", "fi": "fin", "fr": "fra", "ga": "gle", "hr": "hrv",
@@ -16,7 +18,7 @@ TESSERACT = {
 }
 
 
-class UnknownLanguage(ValueError):
+class UnknownLanguage(ConfigurationError):
     pass
 
 
