@@ -5,7 +5,7 @@ import hashlib
 from pathlib import Path
 from typing import Any, Callable
 
-from . import config, ocr, review_queue
+from . import config, doctypes, ocr, review_queue
 from .classify import classify
 from .extract import extract_pages
 from .llm_client import LLMError
@@ -13,7 +13,7 @@ from .language import detect_language
 from .llm_client import usage as llm_usage
 from .logging_setup import get_logger, log_stage
 from .ocr_quality import looks_garbled
-from .schemas import SCHEMA_BY_DOC_TYPE, PipelineResult, ValidationIssue
+from .schemas import PipelineResult, ValidationIssue
 from .validate import validate
 
 StageCallback = Callable[[str, Any], None]
@@ -67,7 +67,7 @@ def _run_once(
         "document classified",
         extra={
             **doc,
-            "doc_type": classification.doc_type.value,
+            "doc_type": classification.type_name,
             "method": classification.method,
             "confidence": classification.confidence,
         },
@@ -94,7 +94,8 @@ def _run_once(
         "document_id": f"doc_{hashlib.sha256(path.read_bytes()).hexdigest()[:20]}",
     }
 
-    schema_cls = SCHEMA_BY_DOC_TYPE.get(classification.doc_type)
+    doc_type = doctypes.get_document_type(classification.doc_type)
+    schema_cls = doc_type.schema if doc_type is not None else None
     if schema_cls is None:
         _notify(on_stage, "extract", None)
         return PipelineResult(
@@ -104,7 +105,7 @@ def _run_once(
             validation_issues=[
                 ValidationIssue(
                     field="doc_type",
-                    message=f"unrecognized document type: {classification.doc_type.value}",
+                    message=f"unrecognized document type: {classification.type_name}",
                 )
             ],
             llm_calls=llm_usage.calls,
@@ -217,7 +218,7 @@ def process(
         "document processed",
         extra={
             "document": Path(result.source).name,
-            "doc_type": result.classification.doc_type.value,
+            "doc_type": result.classification.type_name,
             "ocr_method": result.ocr_method,
             "escalated_to_vlm": result.escalated_to_vlm,
             "llm_calls": result.llm_calls,

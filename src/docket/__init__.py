@@ -1,4 +1,4 @@
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 from .export import (
     ExportError,
@@ -24,6 +24,16 @@ from .matching import (
     match_receipt_to_transactions,
     match_three_way,
 )
+from .doctypes import (
+    CitedDocument,
+    DocumentType,
+    DocumentTypeError,
+    add_validator,
+    get_document_type,
+    list_document_types,
+    register_document_type,
+    unregister_document_type,
+)
 from .forensics import analyze_document_forensics
 from .pipeline import process
 from .schemas import (
@@ -45,6 +55,8 @@ from .schemas import (
     SignatureDetection,
     StampDetection,
     Waybill,
+    SourceLocation,
+    ValidationIssue,
 )
 
 __all__ = [
@@ -55,6 +67,16 @@ __all__ = [
     "get_exporter",
     "list_exporters",
     "register_exporter",
+    "CitedDocument",
+    "DocumentType",
+    "DocumentTypeError",
+    "add_validator",
+    "get_document_type",
+    "list_document_types",
+    "register_document_type",
+    "unregister_document_type",
+    "SourceLocation",
+    "ValidationIssue",
     "AcceptanceAct",
     "BankStatement",
     "BankTransaction",

@@ -81,7 +81,7 @@ def main() -> None:
         latency_s = time.perf_counter() - start
 
         correct, total, mismatches = field_accuracy(result.extracted, expected)
-        classification_ok = result.classification.doc_type.value == expected.get("doc_type")
+        classification_ok = result.classification.type_name == expected.get("doc_type")
 
         # A document whose correct answer is "unknown" has no fields to
         # extract — grading one anyway would count a correct abstention as a
@@ -106,7 +106,7 @@ def main() -> None:
             {
                 "doc": doc_path.name,
                 "classification_ok": classification_ok,
-                "classified_as": result.classification.doc_type.value,
+                "classified_as": result.classification.type_name,
                 "classification_method": result.classification.method,
                 "ocr_method": result.ocr_method + ("*" if result.escalated_to_vlm else ""),
                 "field_accuracy": "n/a" if correctly_abstained else f"{correct}/{total}",

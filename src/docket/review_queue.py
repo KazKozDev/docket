@@ -27,7 +27,7 @@ def reasons_for(result: PipelineResult) -> list[str]:
             f"low classification confidence ({result.classification.confidence:.2f} "
             f"< {config.MIN_CLASSIFICATION_CONFIDENCE:.2f})"
         )
-    if result.classification.doc_type.value == "unknown":
+    if result.classification.type_name == "unknown":
         reasons.append("unrecognized document type")
     if result.ocr_method == "ocr_degraded" or "ocr_degraded" in result.page_methods:
         reasons.append(
@@ -117,7 +117,7 @@ def enqueue(result: PipelineResult, reasons: list[str]) -> str:
             "status": "pending",
             "source": result.source,
             "original_path": original_path,
-            "doc_type": result.classification.doc_type.value,
+            "doc_type": result.classification.type_name,
             "reasons": reasons,
             "result": result.model_dump(mode="json"),
             "corrections": None,

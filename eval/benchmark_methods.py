@@ -62,7 +62,7 @@ def _bench_classifier(name: str, fn, pairs: list[tuple[str, str]]) -> dict:
         if result is None:
             continue
         attempted += 1
-        if result.doc_type.value == expected_type:
+        if result.type_name == expected_type:
             correct += 1
     n = len(pairs)
     return {

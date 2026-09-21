@@ -121,7 +121,7 @@ with col_result:
         if stage == "ocr":
             stage_log.append(f"Text acquired via **{payload.method}** ({len(payload.text)} chars) — {elapsed_so_far:.1f}s")
         elif stage == "classify":
-            stage_log.append(f"Classified as **{payload.doc_type.value}** via {payload.method} — {elapsed_so_far:.1f}s")
+            stage_log.append(f"Classified as **{payload.type_name}** via {payload.method} — {elapsed_so_far:.1f}s")
         elif stage == "extract":
             label = "schema validated" if payload is not None else "failed"
             stage_log.append(f"Extraction {label} — {elapsed_so_far:.1f}s")
@@ -141,7 +141,7 @@ with col_result:
 
     stage_cols = st.columns(4)
     stage_cols[0].metric("OCR method", result.ocr_method)
-    stage_cols[1].metric("Doc type", result.classification.doc_type.value)
+    stage_cols[1].metric("Doc type", result.classification.type_name)
     stage_cols[2].metric("Classified via", result.classification.method)
     stage_cols[3].metric("Extract attempts", result.extract_attempts)
 

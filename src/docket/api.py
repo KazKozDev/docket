@@ -16,6 +16,8 @@ from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
 from . import __version__, config, job_store, review_queue
+from .doctypes import list_document_types
+from .export import list_exporters
 from .logging_setup import configure, get_logger
 from .pdf import page_count
 from .pipeline import process
@@ -126,6 +128,32 @@ def _schedule(job_id: str) -> asyncio.Task:
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok"}
+
+
+@app.get("/document-types", dependencies=[Depends(require_api_key)])
+def document_types() -> list[dict]:
+    """Document types this deployment recognises, with the JSON Schema of each."""
+    return [
+        {
+            "name": t.name,
+            "description": t.description,
+            "builtin": t.builtin,
+            "schema": t.schema.model_json_schema(),
+        }
+        for t in list_document_types()
+    ]
+
+
+@app.get("/export-formats", dependencies=[Depends(require_api_key)])
+def export_formats() -> list[dict]:
+    return [
+        {
+            "name": e.name,
+            "description": e.description,
+            "accepts": [t.__name__ for t in e.accepts],
+        }
+        for e in list_exporters()
+    ]
 
 
 @app.post("/process", response_model=PipelineResult, dependencies=[Depends(require_api_key)])

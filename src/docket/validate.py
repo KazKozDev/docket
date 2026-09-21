@@ -11,7 +11,7 @@ from __future__ import annotations
 import re
 from datetime import date
 
-from . import amounts, checksums
+from . import amounts, checksums, doctypes
 from .schemas import (
     AcceptanceAct,
     BankStatement,
@@ -1778,11 +1778,14 @@ def validate(
         )
     validator = _VALIDATORS.get(type(document))
     if validator is None:
-        raise TypeError(f"No validator registered for {type(document)}")
-    if validator in (validate_invoice, validate_receipt):
+        if doctypes.for_schema(type(document)) is None:
+            raise TypeError(f"No validator registered for {type(document)}")
+        issues = []  # a custom type: its checks all come from the registry
+    elif validator in (validate_invoice, validate_receipt):
         issues = validator(document, raw_text, witness_pages, vlm_unconfirmed)
     else:
         issues = validator(document, raw_text)
+    issues.extend(doctypes.validate_extra(document, raw_text))
 
     if forensic_report is not None:
         doc_type = getattr(document, "doc_type", None)

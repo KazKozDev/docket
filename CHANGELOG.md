@@ -8,6 +8,27 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-21
+
+### Added
+- Custom document types: `register_document_type()` adds a type with its own
+  Pydantic schema, LLM description, keyword rules and validators; it is
+  classified, extracted, citation-checked, validated and exported like the
+  built-in ones. `CitedDocument` base class for schemas with source citations.
+- `add_validator()` attaches extra rules to any type, built-in included.
+- `docket.document_types` entry point for shipping types as packages.
+- `docket --list-types`; `GET /document-types` and `GET /export-formats` API endpoints.
+- `ClassificationResult.type_name`, and `SourceLocation` / `ValidationIssue`
+  exported from the package root.
+
+### Changed
+- `ClassificationResult.doc_type` is `DocType | str`: built-in types stay
+  `DocType` members, custom types are plain strings. Code comparing against
+  strings (`doc_type == "invoice"`) works unchanged; use `type_name` instead
+  of `doc_type.value` to handle both.
+- With any custom type registered, classification skips the TF-IDF tier
+  (trained on built-in types only) and falls through to the LLM.
+
 ## [0.1.0] - 2026-09-21
 
 First packaged release.
@@ -31,5 +52,6 @@ First packaged release.
 ### Fixed
 - `docket <file> --export <format>` crashed because `PipelineResult` had no `document` attribute.
 
-[Unreleased]: https://github.com/KazKozDev/docket/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/KazKozDev/docket/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/KazKozDev/docket/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/KazKozDev/docket/releases/tag/v0.1.0
