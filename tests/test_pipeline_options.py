@@ -332,9 +332,9 @@ def test_cli_document_type_and_schema(txt, monkeypatch, capsys):
     _no_classifier(monkeypatch)
     monkeypatch.setattr(config, "REVIEW_QUEUE_ENABLED", False)
     monkeypatch.setattr(extract_module, "chat_json", lambda *a, **k: _invoice_payload())
-    cli.main(["process", str(txt()), "--document-type", "invoice", "--no-ocr-fallback", "--no-layout"])
+    cli.main(["process", str(txt()), "--document-type", "invoice", "--no-ocr-fallback"])
     out = json.loads(capsys.readouterr().out)
-    assert out["schema_id"] == "invoice" and out["layout"] is None
+    assert out["schema_id"] == "invoice" and "layout" not in out
 
     cli.main(["process", str(txt()), "--schema", "docket.catalog:Invoice", "--no-ocr-fallback"])
     assert json.loads(capsys.readouterr().out)["schema_id"] == "invoice"
@@ -352,8 +352,7 @@ def test_http_process_runs_the_real_pipeline(txt, tmp_path, monkeypatch):
     from docket import api, job_store
 
     monkeypatch.setattr(api.config, "API_KEY", None)
-    monkeypatch.setattr(job_store.config, "JOB_STORE_PATH", tmp_path / "jobs.json")
-    monkeypatch.setattr(api.config, "JOB_UPLOADS_DIR", tmp_path / "uploads")
+    monkeypatch.setattr(job_store.config, "JOBS_DIR", tmp_path / "jobs")
     monkeypatch.setattr(config, "REVIEW_QUEUE_ENABLED", False)
     monkeypatch.setattr(config, "OCR_FALLBACKS", [])
     monkeypatch.setattr(extract_module, "chat_json", lambda *a, **k: _invoice_payload())

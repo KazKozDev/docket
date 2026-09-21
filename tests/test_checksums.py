@@ -221,3 +221,21 @@ def test_brazil_cnpj_and_cpf():
     invalid_cpf, scheme = validate_tax_id("123.456.789-00")
     assert invalid_cpf is False
     assert scheme == "Brazilian CPF"
+
+
+import pytest as _pytest
+
+
+@_pytest.mark.parametrize(
+    "value, ok",
+    [
+        ("GB123456789", True), ("GB123456789012", True), ("GBGD123", True), ("GB-771-4402", False),
+        ("DE136695976", True), ("DE13669597", False), ("ATU12345678", True), ("AT12345678", False),
+        ("NL123456789B01", True), ("FR40303265045", True), ("CHE-123.456.789 MWST", True),
+        ("US-77-4412200", None), ("not a number", False),
+    ],
+)
+def test_vat_formats_follow_the_country(value, ok):
+    from docket.checksums import vat_format_ok
+
+    assert vat_format_ok(value) is ok

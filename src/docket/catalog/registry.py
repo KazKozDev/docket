@@ -96,6 +96,36 @@ class Migration:
     upgrade: Callable[[dict], dict] | None = None
 
 
+SUMMARY_COLUMNS = (
+    "document_number",
+    "document_date",
+    "issuer",
+    "recipient",
+    "currency",
+    "subtotal",
+    "tax_amount",
+    "total_amount",
+)
+LINE_ITEM_COLUMNS = (
+    "description",
+    "sku",
+    "quantity",
+    "unit_of_measure",
+    "unit_price",
+    "total",
+    "tax_rate_percent",
+)
+
+
+@dataclass(frozen=True)
+class LineItems:
+    """Where a schema keeps its item-like rows, and which item field feeds
+    each line-item CSV column (see LINE_ITEM_COLUMNS)."""
+
+    path: str
+    columns: dict[str, str]
+
+
 @dataclass(frozen=True)
 class SchemaSpec:
     schema_id: str
@@ -113,6 +143,11 @@ class SchemaSpec:
     cited_fields: tuple[str, ...] | None = None
     validators: tuple[Validator, ...] = ()
     migrations: tuple[Migration, ...] = ()
+    summary: dict[str, str] = field(
+        default_factory=dict,
+        metadata={"doc": "Summary CSV column (SUMMARY_COLUMNS) -> field path in this schema."},
+    )
+    line_items: LineItems | None = None
     builtin: bool = False
     registered: bool = True
 
@@ -162,6 +197,12 @@ class SchemaSpec:
             keywords=[k.text for k in self.keywords],
             validators=[getattr(v, "__qualname__", repr(v)) for v in self.validators],
             exporters=self.exporters,
+            summary=dict(self.summary),
+            line_items=(
+                {"path": self.line_items.path, "columns": dict(self.line_items.columns)}
+                if self.line_items
+                else None
+            ),
             migrations=[
                 MigrationInfo(
                     from_version=m.from_version,
@@ -196,6 +237,8 @@ class SchemaInfo(BaseModel):
     keywords: list[str]
     validators: list[str]
     exporters: list[str]
+    summary: dict[str, str]
+    line_items: dict | None
     migrations: list[MigrationInfo]
 
 
@@ -273,6 +316,18 @@ def _register(spec: SchemaSpec, *, replace_existing: bool = False) -> SchemaSpec
     if not spec.description.strip():
         raise SchemaError("a description is required: the LLM classifier reads it")
     check_model(spec.model, cited_fields=spec.cited_fields)
+    bad_columns = set(spec.summary) - set(SUMMARY_COLUMNS)
+    if bad_columns:
+        raise SchemaError(f"unknown summary columns {sorted(bad_columns)}; allowed: {', '.join(SUMMARY_COLUMNS)}")
+    missing = [p for p in spec.summary.values() if not _check_path(spec.model, p)]
+    if spec.line_items is not None:
+        if not _check_path(spec.model, spec.line_items.path):
+            missing.append(spec.line_items.path)
+        bad = set(spec.line_items.columns) - set(LINE_ITEM_COLUMNS)
+        if bad:
+            raise SchemaError(f"unknown line-item columns {sorted(bad)}; allowed: {', '.join(LINE_ITEM_COLUMNS)}")
+    if missing:
+        raise SchemaError(f"summary/line-item paths not in {spec.model.__name__}: {missing}")
     for other in list_schemas(all_versions=True):
         if other.model is spec.model and other.schema_id != spec.schema_id:
             raise SchemaError(f"{spec.model.__name__} is already registered as {other.schema_id!r}")
@@ -463,11 +518,14 @@ def migrate(schema_id: str, data: dict, from_version: str, to_version: str | Non
 __all__ = [
     "ENTRY_POINT_GROUP",
     "Keyword",
+    "LINE_ITEM_COLUMNS",
+    "LineItems",
     "Migration",
     "MigrationInfo",
     "SchemaError",
     "SchemaInfo",
     "SchemaSpec",
+    "SUMMARY_COLUMNS",
     "UNKNOWN",
     "ValidationContext",
     "Validator",
