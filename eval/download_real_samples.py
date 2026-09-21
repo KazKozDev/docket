@@ -67,6 +67,17 @@ def _parse_date_mdy(raw: str | None) -> str | None:
         return None
 
 
+# The katanaml invoices print the party name above a Faker-generated address,
+# and the ground truth joins both into one string. Invoice 2.0 grades the name
+# alone (seller.name), so it is cut where the address begins: a house number,
+# "Unit N" / "PSC N", or a military vessel ("USS Kramer FPO AA 81651").
+_ADDRESS_START = re.compile(r"\s(?=\d|(?:Unit|PSC) \d|(?:USNS|USNV|USS|USCGC) )")
+
+
+def _party_name(block: str) -> str:
+    return _ADDRESS_START.split(block.strip(), maxsplit=1)[0]
+
+
 def download_invoices(n: int) -> None:
     print(f"katanaml-org/invoices-donut-data-v1 -> {n} invoice(s)")
     ds = load_dataset("katanaml-org/invoices-donut-data-v1", split="test", streaming=True)
@@ -81,11 +92,13 @@ def download_invoices(n: int) -> None:
         if (d := _parse_date_mdy(header.get("invoice_date"))) is not None:
             expected["issue_date"] = d
         if header.get("seller"):
-            expected["vendor_name"] = header["seller"]
+            expected["seller.name"] = _party_name(header["seller"])
+            expected["_seller_block"] = header["seller"]
         if header.get("client"):
-            expected["customer_name"] = header["client"]
+            expected["buyer.name"] = _party_name(header["client"])
+            expected["_buyer_block"] = header["client"]
         if header.get("seller_tax_id"):
-            expected["vendor_tax_id"] = header["seller_tax_id"]
+            expected["seller.tax_ids[0].value"] = header["seller_tax_id"]
         if (v := _parse_amount(summary.get("total_net_worth"))) is not None:
             expected["subtotal"] = v
         if (v := _parse_amount(summary.get("total_vat"))) is not None:
@@ -228,7 +241,7 @@ def download_docile(n: int) -> None:
         except (json.JSONDecodeError, TypeError, AttributeError):
             vendor = {}
         if vendor.get("vendorName"):
-            expected["vendor_name"] = vendor["vendorName"]
+            expected["seller.name"] = vendor["vendorName"]
         if vendor.get("invoiceNumber"):
             expected["invoice_number"] = str(vendor["invoiceNumber"])
         if (d := _parse_date_flex(vendor.get("invoiceDate"))) is not None:
