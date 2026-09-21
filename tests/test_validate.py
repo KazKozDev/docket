@@ -1168,3 +1168,19 @@ def test_purchase_order_validates_cleanly():
         ],
     )
     assert validate(po) == []
+
+
+def test_a_non_vat_shaped_number_filed_as_vat_is_checked_as_a_tax_id():
+    """The scheme comes from the model's reading of the label. "Vendor Tax
+    ID: GB-771-4402" was filed as VAT for its GB prefix and then failed the
+    VAT checksum it was never claiming to satisfy."""
+    from docket.catalog import Party, TaxIdentifier
+
+    inv = flat_invoice(
+        invoice_number="INV-1", issue_date=date(2026, 6, 2), vendor_name="Northgate",
+        customer_name="Iberia", subtotal=100.0, total_amount=100.0,
+    )
+    inv = inv.model_copy(update={"seller": Party(name="Northgate", tax_ids=[TaxIdentifier(value="GB-771-4402", scheme="vat")])})
+    assert not [i for i in validate(inv) if i.severity == "error"]
+    shaped = inv.model_copy(update={"seller": Party(name="Northgate", tax_ids=[TaxIdentifier(value="GB123456789", scheme="vat")])})
+    assert any(i.field == "seller.tax_ids[0]" and i.severity == "error" for i in validate(shaped))

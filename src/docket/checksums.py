@@ -250,6 +250,32 @@ _VAT_CHECKERS = {
 _VAT_RE = re.compile(r"^(CHE|[A-Z]{2})([0-9A-Z]{2,14})$")
 
 
+# VAT number bodies per country (after the country prefix), from the formats
+# the EU VIES service documents, plus GB/XI, CH and NO.
+_VAT_FORMATS = {
+    "AT": r"U\d{8}", "BE": r"[01]\d{9}", "BG": r"\d{9,10}", "CY": r"\d{8}[A-Z]",
+    "CZ": r"\d{8,10}", "DE": r"\d{9}", "DK": r"\d{8}", "EE": r"\d{9}", "EL": r"\d{9}",
+    "ES": r"[0-9A-Z]\d{7}[0-9A-Z]", "FI": r"\d{8}", "FR": r"[0-9A-HJ-NP-Z]{2}\d{9}", "HR": r"\d{11}",
+    "HU": r"\d{8}", "IE": r"\d{7}[A-W][A-I]?|\d[A-Z+*]\d{5}[A-W]", "IT": r"\d{11}", "LT": r"\d{9}|\d{12}",
+    "LU": r"\d{8}", "LV": r"\d{11}", "MT": r"\d{8}", "NL": r"\d{9}B\d{2}", "PL": r"\d{10}",
+    "PT": r"\d{9}", "RO": r"\d{2,10}", "SE": r"\d{12}", "SI": r"\d{8}", "SK": r"\d{10}",
+    "GB": r"\d{9}|\d{12}|GD\d{3}|HA\d{3}", "XI": r"\d{9}|\d{12}|GD\d{3}|HA\d{3}",
+    "CHE": r"\d{9}(?:MWST|TVA|IVA)?", "NO": r"\d{9}(?:MVA)?",
+}
+
+
+def vat_format_ok(value: str) -> bool | None:
+    """Whether a VAT number has its country's format: True / False for a
+    country with a known format, None for any other prefix."""
+    match = _VAT_RE.match(value.replace(" ", "").replace("-", "").replace(".", "").upper())
+    if not match:
+        return False
+    fmt = _VAT_FORMATS.get(match.group(1))
+    if fmt is None:
+        return None
+    return re.fullmatch(fmt, match.group(2)) is not None
+
+
 def is_vat_shaped(value: str) -> bool:
     """Whether a string could be a VAT number at all — see is_iban_shaped."""
     return bool(

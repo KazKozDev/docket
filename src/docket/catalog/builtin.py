@@ -32,7 +32,7 @@ from .models import (
     UtilityBill,
     Waybill,
 )
-from .registry import Keyword, Migration, SchemaSpec, _register, keywords, pattern
+from .registry import Keyword, LineItems, Migration, SchemaSpec, _register, keywords, pattern
 from .rules import (
     validate_certificate_of_origin,
     validate_credit_note,
@@ -129,6 +129,18 @@ _INVOICE_MIGRATION = (
     ),
 )
 
+_BILL_ITEMS = LineItems("line_items", {c: c for c in ("description", "sku", "quantity", "unit_of_measure", "unit_price", "total", "tax_rate_percent")})
+_BILLING_SUMMARY = {
+    "document_number": "invoice_number",
+    "document_date": "issue_date",
+    "issuer": "seller.name",
+    "recipient": "buyer.name",
+    "currency": "currency",
+    "subtotal": "subtotal",
+    "tax_amount": "tax_amount",
+    "total_amount": "total_amount",
+}
+
 _BILLING_CITED = ("invoice_number", "issue_date", "seller.name", "buyer.name", "subtotal", "total_amount")
 
 
@@ -147,6 +159,8 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             pattern(r"\bpo number\b|\bpurchase order\b|\bpedido\b", 1.0),
             pattern(r"\bbase imponible\b|\bn[úu]mero de factura\b", 2.0),
         ) + _names(r"rechnung|rechnungsnummer|facture|fattura|factuur|fatura|faktura"),
+        summary={"document_number": "invoice_number", "document_date": "issue_date", "issuer": "seller.name", "recipient": "buyer.name", "currency": "currency", "subtotal": "subtotal", "tax_amount": "tax_amount", "total_amount": "total_amount"},
+        line_items=_BILL_ITEMS,
         cited_fields=_BILLING_CITED,
         migrations=_INVOICE_MIGRATION,
     ),
@@ -167,6 +181,8 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         keywords=keywords("tax invoice", "factura fiscal", "steuerrechnung", "facture fiscale", "fattura fiscale",
                           "belastingfactuur", "fatura fiscal", "faktura vat")
         + keywords("gstin", "gst reg", "gst no", "abn", weight=1.0),
+        summary=_BILLING_SUMMARY,
+        line_items=_BILL_ITEMS,
         cited_fields=_BILLING_CITED,
         validators=(),  # filled below: the billing rules plus the tax-invoice ones
     ),
@@ -184,6 +200,8 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             "rechnungskorrektur", "avoir", "facture d'avoir", "nota di credito", "creditnota", "creditfactuur",
             "faktura korygująca", "корректировочный счет", weight=6.0,
         ),
+        summary={**_BILLING_SUMMARY, "document_number": "credit_note_number"},
+        line_items=_BILL_ITEMS,
         cited_fields=("credit_note_number", "issue_date", "seller.name", "buyer.name", "total_amount"),
     ),
     SchemaSpec(
@@ -202,6 +220,8 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             r"kassenbon|kassenbeleg|quittung|ticket de caisse|re[çc]u|scontrino|"
             r"ricevuta|kassabon|kassabonnetje|tal[ãa]o|paragon"
         ),
+        summary={"document_number": "receipt_number", "document_date": "transaction_date", "issuer": "merchant_name", "currency": "currency", "subtotal": "subtotal", "tax_amount": "tax_amount", "total_amount": "total_amount"},
+        line_items=LineItems("items", {"description": "description", "quantity": "quantity", "unit_price": "unit_price", "total": "price"}),
         cited_fields=("merchant_name", "transaction_date", "total_amount"),
         migrations=_FLAT_MIGRATION,
     ),
@@ -218,6 +238,7 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             pattern(r"\bgoverning law\b|\blegislaci[óo]n aplicable\b|\bley aplicable\b", 2.0),
             pattern(r"\bparty of the first part\b|\bthe parties\b|\blas partes\b|\bde una parte\b", 1.0),
         ) + _names(r"vertrag|vereinbarung|contrat|contratto|overeenkomst|umowa"),
+        summary={"document_number": "contract_title", "document_date": "effective_date", "issuer": "parties_a[0]", "recipient": "parties_b[0]", "currency": "currency", "total_amount": "contract_value"},
         cited_fields=("contract_title", "parties_a", "parties_b", "effective_date"),
         migrations=_FLAT_MIGRATION,
     ),
@@ -236,6 +257,8 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             r"bestellung|bon de commande|ordine d'acquisto|ordine di acquisto|"
             r"inkooporder|bestelbon|nota de encomenda|zam[óo]wienie"
         ),
+        summary={"document_number": "po_number", "document_date": "po_date", "issuer": "buyer.name", "recipient": "supplier.name", "currency": "currency", "subtotal": "subtotal", "tax_amount": "tax_amount", "total_amount": "total_amount"},
+        line_items=_BILL_ITEMS,
         cited_fields=("po_number", "po_date", "buyer.name", "supplier.name", "total_amount"),
         migrations=(
             Migration(
@@ -260,6 +283,8 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             r"kontoauszug|relev[ée] de compte|relev[ée] bancaire|estratto conto|"
             r"rekeningafschrift|extrato banc[áa]rio|wyci[ąa]g bankowy"
         ),
+        summary={"document_date": "statement_period_end", "issuer": "bank_name", "recipient": "account_holder", "currency": "currency", "total_amount": "closing_balance"},
+        line_items=LineItems("transactions", {"description": "description", "total": "amount"}),
         cited_fields=("bank_name", "account_holder", "closing_balance"),
         migrations=_FLAT_MIGRATION,
     ),
@@ -285,6 +310,8 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             r"verbale di collaudo|certificato di collaudo|opleveringsrapport|"
             r"protocolo de aceita[çc][ãa]o|protok[óo][łl] odbioru"
         ),
+        summary={"document_number": "act_number", "document_date": "act_date", "issuer": "contractor_name", "recipient": "customer_name", "currency": "currency", "subtotal": "subtotal", "tax_amount": "tax_amount", "total_amount": "total_amount"},
+        line_items=LineItems("items", {c: c for c in ("description", "quantity", "unit_of_measure", "unit_price", "total")}),
         cited_fields=("customer_name", "contractor_name", "total_amount"),
         migrations=_FLAT_MIGRATION,
     ),
@@ -308,6 +335,8 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         ) + _names(
             r"frachtbrief|lettre de voiture|documento di trasporto|vrachtbrief|guia de transporte|list przewozowy"
         ),
+        summary={"document_number": "waybill_number", "document_date": "waybill_date", "issuer": "shipper_name", "recipient": "consignee_name", "currency": "currency", "total_amount": "total_amount"},
+        line_items=LineItems("items", {"description": "item_name", "sku": "sku", "quantity": "quantity", "unit_of_measure": "unit_of_measure", "unit_price": "unit_price", "total": "total_price"}),
         cited_fields=("shipper_name", "consignee_name", "waybill_number"),
         migrations=_FLAT_MIGRATION,
     ),
@@ -326,6 +355,7 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         ) + _names(
             r"bordkarte|carte d'embarquement|carta d'imbarco|instapkaart|cart[ãa]o de embarque|karta pok[łl]adowa"
         ),
+        summary={"document_number": "booking_reference", "document_date": "departure_datetime", "recipient": "passenger_name"},
         cited_fields=(
             "passenger_name", "booking_reference", "flight_number",
             "departure_airport", "arrival_airport", "departure_datetime",
@@ -349,6 +379,8 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             "meter reading", "zählerstand", "relevé de compteur", "lectura del contador", "lettura del contatore",
             "meterstand", "leitura do contador", "kwh", "billing period", "abrechnungszeitraum", weight=2.0,
         ),
+        summary={"document_number": "bill_number", "document_date": "issue_date", "issuer": "provider.name", "recipient": "customer.name", "currency": "currency", "tax_amount": "tax_amount", "total_amount": "amount_due"},
+        line_items=LineItems("charges", {"description": "description", "total": "amount"}),
         cited_fields=("account_number", "issue_date", "provider.name", "amount_due"),
     ),
     SchemaSpec(
@@ -363,6 +395,8 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             "albarán de entrega", "nota de entrega", "bolla di consegna", "pakbon", "leveringsbon",
             "guia de remessa", "dowód dostawy",
         ) + keywords("received by", "empfangen", "quantity delivered", "gelieferte menge", weight=1.0),
+        summary={"document_number": "delivery_note_number", "document_date": "delivery_date", "issuer": "supplier.name", "recipient": "recipient.name"},
+        line_items=LineItems("items", {"description": "description", "sku": "sku", "quantity": "quantity_delivered", "unit_of_measure": "unit_of_measure"}),
         cited_fields=("delivery_note_number", "delivery_date", "supplier.name", "recipient.name"),
     ),
     SchemaSpec(
@@ -378,6 +412,8 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             "świadectwo pochodzenia", "сертификат происхождения", "eur.1",
         ) + keywords("country of origin", "ursprungsland", "pays d'origine", "país de origen", weight=2.0)
         + keywords("chamber of commerce", "handelskammer", "chambre de commerce", "cámara de comercio", weight=1.0),
+        summary={"document_number": "certificate_number", "document_date": "issue_date", "issuer": "exporter.name", "recipient": "consignee.name", "currency": "goods_value.currency", "total_amount": "goods_value.amount"},
+        line_items=LineItems("goods", {"description": "description", "quantity": "quantity", "unit_of_measure": "unit_of_measure"}),
         cited_fields=("certificate_number", "issue_date", "exporter.name", "country_of_origin"),
     ),
     SchemaSpec(
@@ -401,6 +437,7 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         ) + (Keyword(re.compile(r"\b[PIAC][A-Z<][A-Z]{3}[A-Z]*<<[A-Z<]*"), 3.0),)
         + keywords("date of birth", "geburtsdatum", "date de naissance", "fecha de nacimiento", weight=2.0)
         + keywords("nationality", "staatsangehörigkeit", "nationalité", "nacionalidad", weight=1.0),
+        summary={"document_number": "document_number", "document_date": "date_of_issue", "issuer": "issuing_country", "recipient": "surname"},
         cited_fields=("document_number", "surname", "given_names", "date_of_birth"),
     ),
 )

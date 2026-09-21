@@ -30,6 +30,7 @@ from typing import Literal, Union
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from .. import limits
 from ..layout import DocumentLayout, PageLayout, text_only_page
 from .base import BackendUnavailable, OcrBackend, OcrError, OcrSettings
 from .pdftext import PDFTextBackend, text_layer_problem
@@ -175,10 +176,16 @@ def _read_page(
 
     if page.kind == "text":
         layout = text_only_page(page_number=page.number, text=page.text(), backend="text")
+        empty = not layout.text.strip()
         return layout, PageAcquisition(
             page=page.number,
             backend="text",
-            attempts=[Attempt(backend="text", outcome="accepted")],
+            degraded=empty,
+            attempts=[
+                Attempt(backend="text", outcome="rejected", reason="the page is empty")
+                if empty
+                else Attempt(backend="text", outcome="accepted")
+            ],
         )
 
     if page.kind == "pdf" and options.use_pdf_text and not options.escalate:
@@ -199,7 +206,13 @@ def _read_page(
     for position, backend in enumerate(runnable):
         start = time.monotonic()
         try:
-            layout = backend.recognize_page(page)
+            if backend.capabilities.word_coordinates:
+                # An OCR engine: bounded process-wide. (The vision model is
+                # bounded by the LLM limit inside llm_client instead.)
+                with limits.slot("ocr"):
+                    layout = backend.recognize_page(page)
+            else:
+                layout = backend.recognize_page(page)
         except OcrError as exc:
             attempts.append(
                 Attempt(

@@ -201,6 +201,51 @@ told otherwise.
 
 ---
 
+### Batches
+
+`process_batch(sources, ProcessOptions, BatchOptions)` runs
+`process_document` over a directory (optionally recursive and
+glob-filtered), a glob pattern or any iterable of paths:
+
+- Sources are discovered lazily and at most `2 × workers` documents are
+  submitted ahead of the one being returned, so a large directory is never
+  listed or loaded into memory whole; `keep_results=False` plus `on_result`
+  streams results out without keeping them.
+- Results come back in input order. Each document runs in a fresh context,
+  so its LLM usage counters are its own.
+- A failing or crashing document becomes a failed `DocumentResult` and a
+  `BatchError`; `fail_fast` stops submitting after the first one and counts
+  the rest as `skipped`.
+- `docket.limits` bounds the expensive calls process-wide: at most
+  `DOCKET_LLM_CONCURRENCY` LLM requests and `DOCKET_OCR_CONCURRENCY` OCR
+  engines at once, whatever the number of workers or HTTP jobs.
+- A checkpoint (JSON Lines of finished results) is appended as documents
+  finish; a rerun reuses the result of any source whose content hash is
+  unchanged. Failed results are retried.
+- `BatchResult` carries counts (`total`, `succeeded`, `needs_review`,
+  `failed`, `skipped`), errors, elapsed time and aggregate metrics (pages,
+  LLM calls and tokens, VLM pages, escalations, mean/median seconds per
+  document, time per stage).
+
+`docket.export.tabular` renders results as a fixed-column summary CSV (each
+schema's `summary` map fills `document_number`, `document_date`, `issuer`,
+`recipient`, `currency`, `subtotal`, `tax_amount`, `total_amount`), a
+line-item CSV linked by `document_id` (each schema's `line_items` map), and
+JSON Lines.
+
+### HTTP jobs
+
+A job is a batch of uploaded files stored under `DOCKET_JOBS_DIR/<job_id>/`:
+`job.json` (options, per-document index, counts, status), `results.jsonl`
+(the batch checkpoint, so a restarted server resumes unfinished jobs
+without redoing finished documents) and `uploads/`, which is deleted when
+the job finishes. Uploads stream to random file names — only the original
+suffix is kept — and are checked against per-file, per-job and page limits
+before a job exists; anything rejected is deleted. Callers choose schemas by
+registered id only. `DOCKET_MAX_CONCURRENT_JOBS` jobs run at once.
+
+---
+
 ## 3. Schema catalog
 
 `docket.catalog` holds every schema docket can extract, as `SchemaSpec`s

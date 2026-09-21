@@ -82,6 +82,7 @@ from .ocr import (
     list_ocr_backends,
     register_ocr_backend,
 )
+from .batch import BatchError, BatchMetrics, BatchOptions, BatchResult, process_batch
 from .errors import ConfigurationError
 from .options import OcrOptions, ProcessOptions, ReviewOptions
 from .pipeline import process_document
@@ -108,6 +109,11 @@ from .schemas import (
 
 __all__ = [
     "__version__",
+    "BatchError",
+    "BatchMetrics",
+    "BatchOptions",
+    "BatchResult",
+    "process_batch",
     "AcceptanceAct",
     "add_validator",
     "Address",

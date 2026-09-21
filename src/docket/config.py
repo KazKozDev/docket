@@ -85,6 +85,15 @@ OCR_DPI = int(os.getenv("DOCKET_OCR_DPI", "200"))
 MAX_FILE_BYTES = int(os.getenv("DOCKET_MAX_FILE_BYTES", str(20 * 1024 * 1024)))
 MAX_PDF_PAGES = int(os.getenv("DOCKET_MAX_PDF_PAGES", "100"))
 MAX_CONCURRENT_JOBS = int(os.getenv("DOCKET_MAX_CONCURRENT_JOBS", "2"))
+# Batch processing: documents in flight per batch, and process-wide limits on
+# the two expensive calls (see limits.py). Workers beyond the LLM limit only
+# help while other documents are in OCR.
+BATCH_WORKERS = int(os.getenv("DOCKET_BATCH_WORKERS", "4"))
+LLM_CONCURRENCY = int(os.getenv("DOCKET_LLM_CONCURRENCY", "4"))
+OCR_CONCURRENCY = int(os.getenv("DOCKET_OCR_CONCURRENCY", str(max(1, (os.cpu_count() or 2) // 2))))
+# HTTP batch uploads.
+MAX_BATCH_FILES = int(os.getenv("DOCKET_MAX_BATCH_FILES", "100"))
+MAX_BATCH_BYTES = int(os.getenv("DOCKET_MAX_BATCH_BYTES", str(200 * 1024 * 1024)))
 API_KEY = os.getenv("DOCKET_API_KEY")
 
 # Confidence floor the TF-IDF classifier must clear to be trusted over an
@@ -105,8 +114,8 @@ REVIEW_QUEUE_PATH = Path(os.getenv("DOCKET_REVIEW_QUEUE", "data/review_queue.jso
 REVIEW_DOCUMENTS_DIR = Path(
     os.getenv("DOCKET_REVIEW_DOCUMENTS", "data/review_documents")
 )
-JOB_STORE_PATH = Path(os.getenv("DOCKET_JOB_STORE", "data/jobs.json"))
-JOB_UPLOADS_DIR = Path(os.getenv("DOCKET_JOB_UPLOADS", "data/job_uploads"))
+# HTTP jobs: one directory per job (metadata, results, uploads until done).
+JOBS_DIR = Path(os.getenv("DOCKET_JOBS_DIR", "data/jobs"))
 
 # Illustrative only: what the LLM calls in this run would have cost against a
 # small hosted model, at a blended $/1M-token rate. The actual cost of a local

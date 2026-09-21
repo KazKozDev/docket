@@ -58,14 +58,30 @@ except ExportError:
 
 `result.document` is the typed schema (`Invoice`, `Receipt`, `Contract`, …) and `result.status` is `succeeded`, `needs_review` or `failed` (with a structured `error`); unset options fall back to the `DOCKET_*` environment. `result.field_sources` gives the page, quote and bounding box each value was read from, and `result.layout` holds every page's words, lines, columns and tables with normalized coordinates.
 
+**Batches**
+
+```python
+from docket import BatchOptions, process_batch
+
+batch = process_batch("scans/", options, BatchOptions(recursive=True, workers=4, checkpoint="run.jsonl"))
+print(batch.succeeded, batch.needs_review, batch.failed, batch.metrics.document_seconds_median)
+```
+
+```bash
+docket batch scans/ --recursive --format csv --output results.csv   # + results.line_items.csv
+```
+
+Results keep input order, one failing document never stops the rest (unless `--fail-fast`), and rerunning after an interruption skips documents already in the checkpoint. CSV columns are the same for every document type (`document_number`, `document_date`, `issuer`, `recipient`, `currency`, `subtotal`, `tax_amount`, `total_amount` plus status and review columns); line items go to a second CSV linked by `document_id`. Exit codes: 0 all succeeded, 1 partial (some failed or need review), 2 all failed, 3 configuration error.
+
 **HTTP service (any language)**
 
 ```bash
 docker run -p 8000:8000 -e DOCKET_API_KEY=secret ghcr.io/kazkozdev/docket
 curl -H "Authorization: Bearer secret" -F file=@invoice.pdf localhost:8000/process
+curl -H "Authorization: Bearer secret" -F files=@a.pdf -F files=@b.jpg localhost:8000/jobs
 ```
 
-`POST /process` is synchronous. `POST /jobs` returns 202 and a job id to poll at `GET /jobs/{id}`, and an `Idempotency-Key` header makes retries safe. `/review-queue` serves flagged documents. Generate a typed client from [`docs/openapi.json`](https://github.com/KazKozDev/docket/blob/master/docs/openapi.json); interactive docs are at `/docs`. Without Docker: `pip install "docket-idp[api]" && docket-api`.
+`POST /process` is synchronous. `POST /jobs` takes one or more files and returns 202 with a job to poll at `GET /jobs/{id}`; results come from `/jobs/{id}/results/{index}`, `results.jsonl`, `results.csv` and `line-items.csv`. Form fields choose a registered schema (`document_type`), the OCR chain and `include_layout`; an `Idempotency-Key` header makes retries safe; errors are `{"error": {"code", "message"}}`. `/schemas`, `/ocr-backends` and `/export-formats` describe the deployment, `/review-queue` serves flagged documents. Generate a typed client from [`docs/openapi.json`](https://github.com/KazKozDev/docket/blob/master/docs/openapi.json); interactive docs are at `/docs`. Without Docker: `pip install "docket-idp[api]" && docket-api`.
 
 [`examples/`](https://github.com/KazKozDev/docket/blob/master/examples/) has runnable scripts, a TypeScript client, a Mistral-backed `docker-compose.yml` and plugin packages.
 
@@ -145,6 +161,9 @@ Set in the environment or `.env`. [`.env.example`](https://github.com/KazKozDev/
 | `DOCKET_MIN_CONFIDENCE` | `0.55` | Classification confidence below which a document goes to review |
 | `DOCKET_REVIEW_QUEUE_ENABLED` | `true` | Write flagged documents to the file-based review queue |
 | `DOCKET_API_KEY` | unset | Bearer token the HTTP API requires when set |
+| `DOCKET_BATCH_WORKERS` | `4` | Documents in flight per batch |
+| `DOCKET_LLM_CONCURRENCY` / `DOCKET_OCR_CONCURRENCY` | `4` / half the CPUs | Process-wide limits on simultaneous LLM requests and OCR engines |
+| `DOCKET_MAX_BATCH_FILES` / `DOCKET_MAX_BATCH_BYTES` | `100` / 200 MB | HTTP upload limits per job (`DOCKET_MAX_FILE_BYTES` per file) |
 
 ## Limitations
 
