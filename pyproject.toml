@@ -59,14 +59,20 @@ paddle = [
     "paddleocr>=3.0,<4",
     "paddlex[ocr]>=3.0,<4",
 ]
+# Official e-invoice validation (XSD via lxml, Schematron via SaxonC-HE).
+# The validation artifacts themselves ship with the base package.
+einvoice = [
+    "lxml>=5.0",
+    "saxonche>=12.5",
+]
 all = [
-    "docket-idp[api,tracing]",
+    "docket-idp[api,tracing,einvoice]",
 ]
 eval = [
     "datasets>=2.19",
 ]
 dev = [
-    "docket-idp[api,eval]",
+    "docket-idp[api,eval,einvoice]",
     # The Streamlit demo (examples/streamlit_demo.py) is a repo-only dev tool.
     "streamlit>=1.49",
     "pytest>=8.0",
@@ -95,7 +101,7 @@ version = { attr = "docket.__version__" }
 where = ["src"]
 
 [tool.setuptools.package-data]
-docket = ["py.typed"]
+docket = ["py.typed", "einvoice/resources/**/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -84,6 +84,7 @@ class Party(BaseModel):
     name: str
     address: Address | None = None
     tax_ids: list[TaxIdentifier] = Field(default_factory=list)
+    contact_name: str | None = Field(default=None, description="Contact person or department, if printed.")
     email: str | None = None
     phone: str | None = None
     electronic_address: str | None = Field(

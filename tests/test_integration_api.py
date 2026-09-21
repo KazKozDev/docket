@@ -21,15 +21,15 @@ from tests.test_export import sample_bank_statement, sample_invoice
 
 def test_eu_formats_are_registered():
     names = {e.name for e in list_exporters()}
-    assert {"ubl", "zugferd", "xrechnung", "facturae"} <= names
+    assert {"ubl", "peppol", "xrechnung-ubl", "xrechnung-cii", "factur-x-en16931", "factur-x-basic", "facturae"} <= names
 
 
 def test_export_by_name_matches_direct_call():
-    from docket.export import export_to_ubl_xml
+    from docket.export import export_to_facturae_xml
 
     invoice = sample_invoice()
-    exported = export_document(invoice, "ubl")
-    assert exported.content == export_to_ubl_xml(invoice)
+    exported = export_document(invoice, "facturae")
+    assert exported.content == export_to_facturae_xml(invoice)
     assert exported.media_type == "application/xml"
 
 
@@ -40,7 +40,7 @@ def test_json_exporters_return_text():
 
 def test_wrong_document_type_is_rejected():
     with pytest.raises(ExportError, match="requires Invoice"):
-        export_document(sample_bank_statement(), "xrechnung")
+        export_document(sample_bank_statement(), "xrechnung-ubl")
 
 
 def test_unknown_format_is_rejected():
@@ -145,7 +145,7 @@ def test_cli_exports_extracted_document(monkeypatch, capsys):
 
     result = make_result(source="x.pdf", extracted=sample_invoice().model_dump(mode="json"))
     monkeypatch.setattr(cli, "process_document", lambda _path, _options: result)
-    cli.main(["process", "x.pdf", "--export", "ubl"])
+    cli.main(["process", "x.pdf", "--export", "facturae"])
     assert "INV-2026-001" in capsys.readouterr().out
 
 

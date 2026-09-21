@@ -24,11 +24,8 @@ from typing import TYPE_CHECKING, Any, Callable
 from pydantic import BaseModel, Field
 
 from ..catalog.models import AcceptanceAct, BankStatement, CreditNote, Invoice, Receipt
-from .einvoice import (
-    export_to_facturae_xml,
-    export_to_ubl_xml,
-    export_to_zugferd_xml,
-)
+from . import en16931
+from .facturae import export_to_facturae_xml
 from .erp import (
     export_to_1c_client_bank,
     export_to_1c_enterprise_xml,
@@ -39,6 +36,8 @@ from .erp import (
     export_to_xero_csv,
     export_to_xero_json,
 )
+
+from ..einvoice.validator import EInvoiceValidationResult
 
 if TYPE_CHECKING:
     from ..result import DocumentResult
@@ -57,6 +56,7 @@ class Exporter:
     accepts: tuple[type[BaseModel], ...]
     description: str = ""
     media_type: str = "text/plain"
+    einvoice_profile: str | None = None  # docket.einvoice Profile value the output must satisfy
 
     def __call__(self, document: BaseModel) -> str:
         if not isinstance(document, self.accepts):
@@ -64,7 +64,10 @@ class Exporter:
             raise ExportError(
                 f"{self.name} export requires {wanted}, got {type(document).__name__}"
             )
-        output = self.func(document)
+        try:
+            output = self.func(document)
+        except en16931.EN16931Error as exc:
+            raise ExportError(f"{self.name}: {exc}") from exc
         if isinstance(output, str):
             return output
         return json.dumps(output, indent=2, ensure_ascii=False)
@@ -81,6 +84,7 @@ def register_exporter(
     accepts: tuple[type[BaseModel], ...],
     description: str = "",
     media_type: str | None = None,
+    einvoice_profile: str | None = None,
     replace: bool = False,
 ) -> Exporter:
     """Make `func` available as export format `name`.
@@ -90,7 +94,7 @@ def register_exporter(
     """
     if name in _REGISTRY and not replace:
         raise ExportError(f"exporter {name!r} is already registered")
-    exporter = Exporter(name, func, tuple(accepts), description, media_type or "text/plain")
+    exporter = Exporter(name, func, tuple(accepts), description, media_type or "text/plain", einvoice_profile)
     _REGISTRY[name] = exporter
     return exporter
 
@@ -128,10 +132,17 @@ class ExportOptions(BaseModel):
     )
 
 
+    validate_einvoice: bool = Field(
+        default=False,
+        description="Validate an e-invoice format's output with the official rules (needs the [einvoice] extra).",
+    )
+
+
 class ExportResult(BaseModel):
     format: str
     media_type: str
     content: str
+    einvoice_validation: EInvoiceValidationResult | None = None
 
 
 def export_document(
@@ -158,16 +169,35 @@ def export_document(
             raise ExportError(f"{source.source} has no extracted document to export")
     else:
         document = source
-    return ExportResult(format=exporter.name, media_type=exporter.media_type, content=exporter(document))
+    content = exporter(document)
+    validation = None
+    if options.validate_einvoice:
+        if exporter.einvoice_profile is None:
+            raise ExportError(f"{exporter.name} is not an e-invoice format; there are no official rules to validate it against")
+        from ..einvoice.validator import EInvoiceValidationOptions, validate_einvoice
+
+        validation = validate_einvoice(
+            content.encode("utf-8"), EInvoiceValidationOptions(profile=exporter.einvoice_profile)
+        )
+    return ExportResult(
+        format=exporter.name, media_type=exporter.media_type, content=content, einvoice_validation=validation
+    )
 
 
 # EU e-invoicing standards first: they are what most integrators need.
-register_exporter("ubl", export_to_ubl_xml, accepts=(Invoice,),
-                  description="UBL 2.1 invoice (Peppol BIS Billing 3.0 compatible)", media_type="application/xml")
-register_exporter("zugferd", partial(export_to_zugferd_xml, profile="EN16931"),
-                  accepts=(Invoice,), description="ZUGFeRD 2.2 / Factur-X CII, EN 16931 profile", media_type="application/xml")
-register_exporter("xrechnung", partial(export_to_zugferd_xml, profile="XRECHNUNG"),
-                  accepts=(Invoice,), description="XRechnung CII (German public sector)", media_type="application/xml")
+_EINVOICE = (
+    ("ubl", "en16931", "en16931", "UBL 2.1 invoice / credit note, EN 16931 core"),
+    ("peppol", "peppol", "peppol", "Peppol BIS Billing 3.0 (UBL 2.1)"),
+    ("xrechnung-ubl", "xrechnung-ubl", "xrechnung", "XRechnung 3.0, UBL syntax (German public sector)"),
+    ("xrechnung-cii", "xrechnung-cii", "factur-x-xrechnung", "XRechnung 3.0, CII syntax (= Factur-X/ZUGFeRD XRECHNUNG)"),
+    ("factur-x-en16931", "factur-x-en16931", "factur-x-en16931", "Factur-X 1.0 / ZUGFeRD 2.x EN16931 (COMFORT) CII XML"),
+    ("factur-x-basic", "factur-x-basic", "factur-x-basic", "Factur-X 1.0 / ZUGFeRD 2.x BASIC CII XML"),
+)
+for _name, _profile, _rules, _description in _EINVOICE:
+    register_exporter(
+        _name, partial(en16931.render, profile=_profile), accepts=(Invoice, CreditNote),
+        description=_description, media_type="application/xml", einvoice_profile=_rules,
+    )
 register_exporter("facturae", export_to_facturae_xml, accepts=(Invoice,),
                   description="Facturae 3.2.2 (Spain)", media_type="application/xml")
 register_exporter("sap-idoc", export_to_sap_idoc, accepts=(Invoice,),
@@ -201,10 +231,8 @@ __all__ = [
     "export_to_quickbooks_json",
     "export_to_sap_idoc",
     "export_to_sap_journal_csv",
-    "export_to_ubl_xml",
     "export_to_xero_csv",
     "export_to_xero_json",
-    "export_to_zugferd_xml",
     "get_exporter",
     "list_exporters",
     "register_exporter",

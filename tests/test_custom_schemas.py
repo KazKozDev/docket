@@ -374,7 +374,7 @@ def test_api_lists_schemas_and_json_schema(monkeypatch):
     assert one["cited_fields"] == ["ticket_number", "issued_by", "fine"]
     assert "ticket_number" in json_schema["properties"]
     assert missing.status_code == 404
-    assert "invoice" in formats["xrechnung"]["schemas"]
+    assert "invoice" in formats["xrechnung-ubl"]["schemas"]
 
 
 def test_source_location_is_public():

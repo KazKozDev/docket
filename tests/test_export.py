@@ -13,10 +13,8 @@ from docket.export import (
     export_to_quickbooks_json,
     export_to_sap_idoc,
     export_to_sap_journal_csv,
-    export_to_ubl_xml,
     export_to_xero_csv,
     export_to_xero_json,
-    export_to_zugferd_xml,
 )
 from docket.catalog import AcceptanceAct, AcceptanceActItem, BankStatement, BankStatementTransaction, Invoice, LineItem, Receipt, ReceiptItem
 from tests.factories import flat_invoice, flat_po
@@ -343,43 +341,8 @@ def test_xero_json_export():
 
 
 # ==========================================
-# International e-Invoicing Tests (UBL, Facturae, ZUGFeRD)
+# Facturae (EN 16931 formats are covered by tests/test_einvoice.py)
 # ==========================================
-
-
-def test_ubl_xml_export():
-    inv = sample_invoice()
-    xml_str = export_to_ubl_xml(inv)
-
-    root = ET.fromstring(xml_str)
-    # Check UBL 2.1 root and namespaces
-    assert root.tag == "{urn:oasis:names:specification:ubl:schema:xsd:Invoice-2}Invoice"
-
-    # Find elements using namespaces
-    ns = {
-        "inv": "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2",
-        "cac": "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
-        "cbc": "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
-    }
-
-    cust_id = root.find("cbc:CustomizationID", ns)
-    assert cust_id is not None
-    assert "peppol" in cust_id.text.lower()
-
-    id_elem = root.find("cbc:ID", ns)
-    assert id_elem.text == "INV-2026-001"
-
-    supp_name = root.find(
-        "cac:AccountingSupplierParty/cac:Party/cac:PartyName/cbc:Name", ns
-    )
-    assert supp_name.text == "Acme Solutions SL"
-
-    payable_amt = root.find("cac:LegalMonetaryTotal/cbc:PayableAmount", ns)
-    assert payable_amt.text == "1765.00"
-
-    lines = root.findall("cac:InvoiceLine", ns)
-    assert len(lines) == 2
-    assert lines[0].find("cac:Item/cbc:Name", ns).text == "Consulting Services"
 
 
 def test_facturae_xml_export():
@@ -409,52 +372,3 @@ def test_facturae_xml_export():
     items = root.findall("fe:Invoices/fe:Invoice/fe:Items/fe:InvoiceLine", ns)
     assert len(items) == 2
     assert items[0].find("fe:ItemDescription", ns).text == "Consulting Services"
-
-
-def test_zugferd_xml_export_en16931():
-    inv = sample_invoice()
-    xml_str = export_to_zugferd_xml(inv, profile="EN16931")
-
-    root = ET.fromstring(xml_str)
-    assert (
-        root.tag
-        == "{urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100}CrossIndustryInvoice"
-    )
-
-    ns = {
-        "rsm": "urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100",
-        "ram": "urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100",
-        "udt": "urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100",
-    }
-
-    guideline = root.find(
-        "rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID",
-        ns,
-    )
-    assert guideline.text == "urn:cen.eu:en16931:2017"
-
-    inv_id = root.find("rsm:ExchangedDocument/ram:ID", ns)
-    assert inv_id.text == "INV-2026-001"
-
-    grand_total = root.find(
-        "rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount",
-        ns,
-    )
-    assert grand_total.text == "1765.00"
-
-
-def test_zugferd_xml_export_xrechnung():
-    inv = sample_invoice()
-    xml_str = export_to_zugferd_xml(inv, profile="XRECHNUNG")
-
-    root = ET.fromstring(xml_str)
-    ns = {
-        "rsm": "urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100",
-        "ram": "urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100",
-    }
-
-    guideline = root.find(
-        "rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID",
-        ns,
-    )
-    assert "xrechnung" in guideline.text.lower()

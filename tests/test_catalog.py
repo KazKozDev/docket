@@ -123,16 +123,18 @@ def test_citations_in_the_fixture_are_checked(schema_id):
 def test_exporters_are_listed(schema_id):
     spec = get_schema(schema_id)
     expected = {
-        "invoice": {"ubl", "xrechnung", "zugferd", "facturae"},
-        "tax_invoice": {"ubl", "xrechnung"},
+        "invoice": {"ubl", "peppol", "xrechnung-ubl", "xrechnung-cii", "factur-x-en16931", "factur-x-basic", "facturae"},
+        "tax_invoice": {"ubl", "peppol", "xrechnung-ubl", "xrechnung-cii", "factur-x-en16931", "factur-x-basic"},
+        "credit_note": {"ubl", "peppol", "xrechnung-ubl", "xrechnung-cii", "factur-x-en16931", "factur-x-basic"},
         "receipt": {"xero-csv", "quickbooks-json"},
         "bank_statement": {"1c-bank", "sap-csv"},
         "acceptance_act": {"1c-enterprise"},
     }.get(schema_id, set())
     assert expected <= set(spec.exporters)
     if schema_id == "credit_note":
-        # A credit note is not an invoice: exporting it as one would bill the buyer.
-        assert "ubl" not in spec.exporters
+        # EN 16931 carries credit notes (UBL CreditNote, CII type 381); invoice-only
+        # accounting formats would bill the buyer instead.
+        assert "facturae" not in spec.exporters
 
 
 # ---- migrations -----------------------------------------------------------------

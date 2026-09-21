@@ -1,0 +1,141 @@
+{
+  "generated_by": "scripts/update_einvoice_resources.py",
+  "compiler": {
+    "id": "schxslt",
+    "name": "SchXslt Schematron-to-XSLT compiler (used to compile the Peppol rules; not shipped)",
+    "version": "1.10.1",
+    "url": "https://repo1.maven.org/maven2/name/dmaus/schxslt/schxslt/1.10.1/schxslt-1.10.1.jar",
+    "sha256": "4f4f21edab7b37f96ad59ae12a344d3510f1092ac46b6d81a4efa0120b73cb58",
+    "license": "MIT"
+  },
+  "artifacts": [
+    {
+      "id": "kosit-configuration",
+      "name": "KoSIT validator configuration for XRechnung (UBL 2.1 and UN/CEFACT CII D16B XML Schemas)",
+      "version": "XRechnung 3.0.2, release 2026-08-31",
+      "url": "https://github.com/itplr-kosit/validator-configuration-xrechnung/releases/download/v2026-08-31/xrechnung-3.0.2-validator-configuration-2026-08-31.zip",
+      "sha256": "2530cd107c414511c5d0462ec10f886910395abfca820db82e83d70bf01221a8",
+      "license": "Apache-2.0 (configuration); bundled OASIS UBL 2.1 schemas under the OASIS IPR Policy; UN/CEFACT D16B schemas published by UNECE for free use",
+      "files": {
+        "cii-d16b/xsd/CrossIndustryInvoice_100pD16B.xsd": "3baf143b90f289d62c5dfb086aa51fa183490a2d0b38a40c6b31dcae0760f2ba",
+        "cii-d16b/xsd/CrossIndustryInvoice_QualifiedDataType_100pD16B.xsd": "6649215914728652e883662bec1d3eab008c215e86a59f3bb417db9723ee8c5c",
+        "cii-d16b/xsd/CrossIndustryInvoice_ReusableAggregateBusinessInformationEntity_100pD16B.xsd": "1c42244298a863bcc0b5196983ff0a5d084fcabe58aea77ef82b242e7cd0ddfd",
+        "cii-d16b/xsd/CrossIndustryInvoice_UnqualifiedDataType_100pD16B.xsd": "04fce6f6f28521886731294be18a4e6bb5cb3003456457d99ad5c4d3e652f497",
+        "ubl-2.1/xsd/common/CCTS_CCT_SchemaModule-2.1.xsd": "dd546e4809df86b6445589f69f0d6c9df162840ae386574ddfc1da7638103e15",
+        "ubl-2.1/xsd/common/UBL-CommonAggregateComponents-2.1.xsd": "580b5af6f68f7f556bd15945ba0e819cbf561442c81694f9b9468036ebedec4d",
+        "ubl-2.1/xsd/common/UBL-CommonBasicComponents-2.1.xsd": "a3b349bf92e5cff26e303d2f05b7e00c884dcafcfd9e12755fb80289abf5e22e",
+        "ubl-2.1/xsd/common/UBL-CommonExtensionComponents-2.1.xsd": "ad7a4e490978adfbcfc5ec0bb20941cf11ac960ccf0c4de8791a7c731a8dbe87",
+        "ubl-2.1/xsd/common/UBL-CommonSignatureComponents-2.1.xsd": "4fa9e2370100040fe14c43e135ef77e2eb66b21cb8dbfc2ffb8d82ae991fe92e",
+        "ubl-2.1/xsd/common/UBL-CoreComponentParameters-2.1.xsd": "8be3379dbdcbcc7802fafdd16bac72c48fff1c0bb364213a31a17911dd06100b",
+        "ubl-2.1/xsd/common/UBL-ExtensionContentDataType-2.1.xsd": "fcee77a11870208e6377ea6311b9f2a050bca24bdad8606ea02d71e9f9e72f8d",
+        "ubl-2.1/xsd/common/UBL-QualifiedDataTypes-2.1.xsd": "7dcb156e610239c97ae70940cf4653b88e48c3595bf5f56a2204a32e2893e6cf",
+        "ubl-2.1/xsd/common/UBL-SignatureAggregateComponents-2.1.xsd": "9234c2ca48dbfa9a22a786112bb075c5922a305170920eaab1e3c04fa0b7344b",
+        "ubl-2.1/xsd/common/UBL-SignatureBasicComponents-2.1.xsd": "0fbe2d7afff0c1e11164b8ec83e13f18801021c3c87e390a9d76f9cf862f6a64",
+        "ubl-2.1/xsd/common/UBL-UnqualifiedDataTypes-2.1.xsd": "09052d406b4293e2a5f9c2bfee6df10ad4d8d5f0b36e24a6349d7f7936d89eb6",
+        "ubl-2.1/xsd/common/UBL-XAdESv132-2.1.xsd": "a4f726bcf8cc3f7d9ffa4dab99e005535a8e8b60dced1e5d94578d2e05afa96e",
+        "ubl-2.1/xsd/common/UBL-XAdESv141-2.1.xsd": "1fa4625e9cefcb7a9abb5ac1b64315547450031eece8a55bd584e4ba4b79dbc1",
+        "ubl-2.1/xsd/common/UBL-xmldsig-core-schema-2.1.xsd": "101909c9f06456d61ddcc4fb982f1d40dc357b439f393b1a2eb46e42acd60809",
+        "ubl-2.1/xsd/maindoc/UBL-CreditNote-2.1.xsd": "1e117b6c1ab713604b29b0d685442a81a0c78a82575445ee8c43e6050cda7454",
+        "ubl-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd": "3a5aacd823f0e5b8f25ae7b5191c2002d5333ba351d87de9371ed62dca2b2b0c"
+      }
+    },
+    {
+      "id": "en16931-ubl",
+      "name": "CEN EN 16931 validation artefacts, UBL syntax",
+      "version": "1.3.16",
+      "url": "https://github.com/ConnectingEurope/eInvoicing-EN16931/releases/download/validation-1.3.16/en16931-ubl-1.3.16.zip",
+      "sha256": "bafada015efbc5248bf5e05ad2191e1d9833ef96e9dd5f4bce420a747342da85",
+      "license": "EUPL-1.2",
+      "files": {
+        "en16931/EN16931-UBL-validation.xslt": "39f9d282867f1a49e7708d9e29a53da89643e1ee56f10cec1ebcf1277595fcbd"
+      }
+    },
+    {
+      "id": "en16931-cii",
+      "name": "CEN EN 16931 validation artefacts, UN/CEFACT CII syntax",
+      "version": "1.3.16",
+      "url": "https://github.com/ConnectingEurope/eInvoicing-EN16931/releases/download/validation-1.3.16/en16931-cii-1.3.16.zip",
+      "sha256": "1cd53cb8a84d38aedc82c0caede217da983a7934dd663f793a092fd66443c561",
+      "license": "EUPL-1.2",
+      "files": {
+        "en16931/EN16931-CII-validation.xslt": "0b234dea2bbfee739b7761e607a992c17fab88773014ef56355b6158cfb1cc53"
+      }
+    },
+    {
+      "id": "xrechnung-schematron",
+      "name": "KoSIT Schematron rules for CIUS XRechnung",
+      "version": "XRechnung 3.0.2, schematron 2.6.0",
+      "url": "https://github.com/itplr-kosit/xrechnung-schematron/releases/download/v2.6.0/xrechnung-3.0.2-schematron-2.6.0.zip",
+      "sha256": "ca5e07afd04e72cd283d581590ffff3a15f4aac9d2f40c993345d78e67ea22b4",
+      "license": "Apache-2.0",
+      "files": {
+        "xrechnung/LICENSE": "57e93bb611b8aeb93ff0f23b271a23291217b0016f6e66297dfd5e9467538a5f",
+        "xrechnung/XRechnung-CII-validation.xsl": "30e64d8bddf0bebded89e2bedab0b4856f0c4f1e852bd303e1957a7d627c0e6c",
+        "xrechnung/XRechnung-UBL-validation.xsl": "aa7d495e02990d88a9dc91b5eceb3349f7ee5565241d93ef99e90e1760fdd70f"
+      }
+    },
+    {
+      "id": "xrechnung-testsuite",
+      "name": "KoSIT XRechnung test suite (test fixtures only, not shipped)",
+      "version": "XRechnung 3.0.2, release 2026-08-31",
+      "url": "https://github.com/itplr-kosit/xrechnung-testsuite/releases/download/v2026-08-31/xrechnung-3.0.2-testsuite-2026-08-31.zip",
+      "sha256": "1e81ef7563e0fa04c0e0b0631318a7e0843a3c0beb57d83ef95ac0c4a095e3d7",
+      "license": "Apache-2.0",
+      "files": {}
+    },
+    {
+      "id": "peppol-bis-billing",
+      "name": "OpenPeppol BIS Billing 3.0 Schematron",
+      "version": "3.0.20",
+      "url": "https://github.com/OpenPEPPOL/peppol-bis-invoice-3/archive/refs/tags/v3.0.20.zip",
+      "sha256": "4c43040f0654abd789bb0c9a2ffbb9e795acd94f20282af8ca1db3dda832f656",
+      "license": "no license file in the repository; published by OpenPeppol for implementers of Peppol BIS Billing 3.0",
+      "files": {
+        "peppol/PEPPOL-EN16931-CII.sch": "a15bea71add713a425f0fab0043fdd5b03d54a62d27c4252ed6d8a4863da218d",
+        "peppol/PEPPOL-EN16931-CII.xsl": "d80c86adf8a15ed7fefb4124d1cf7d88f7933af5f2a5ec48a3a058554a4470cb",
+        "peppol/PEPPOL-EN16931-UBL.sch": "5ddf3a2f6633147b20b7805df9902d825af1a984f10014fcee186d4170364b1d",
+        "peppol/PEPPOL-EN16931-UBL.xsl": "f60890e1d90e07a254a448e4a87abf90a930181d9734645ab68a9ff5d6bd7b5b"
+      }
+    },
+    {
+      "id": "factur-x",
+      "name": "Factur-X 1.09 / ZUGFeRD XML Schemas and Schematron per profile (FNFE-MPE and FeRD), as redistributed in the factur-x 6.8 Python package",
+      "version": "Factur-X 1.09 (factur-x 6.8)",
+      "url": "https://files.pythonhosted.org/packages/37/be/9a9020187e4805d61668b5d8c4c263731b3697f9eba2aa6a689d3e7eea4b/factur_x-6.8-py3-none-any.whl",
+      "sha256": "02b57dd57f59d0cdd87f034a538bf30a4b9241a72a19cd75fe1538233163ee15",
+      "license": "artefacts published free of charge by FNFE-MPE / FeRD (official download is form-gated, no license file); the factur-x package that redistributes them is BSD-2-Clause",
+      "files": {
+        "factur-x/basic/FACTUR-X_BASIC_codedb.xml": "2c3b0f04ab30c5c6632bb3966d53481ebc7222d6e0394cf0ce78aa9090cf0da2",
+        "factur-x/basic/Factur-X_1.09_BASIC.xsl": "75855eb72fe605130dcc9b4c6e4b182fc7d157becbb24ede364e0356ab298b5d",
+        "factur-x/basic/Factur-X_1.09_BASIC_urn_un_unece_uncefact_data_standard_QualifiedDataType_100.xsd": "fd6958ad55567fbffb127b62b80d9cc76039a6f90315b81cba890646b824743f",
+        "factur-x/basic/Factur-X_1.09_BASIC_urn_un_unece_uncefact_data_standard_ReusableAggregateBusinessInformationEntity_100.xsd": "69304e326166e4daf02b0f3822d302327dfeff07f0ef16df5b100aa4bdfc5da7",
+        "factur-x/basic/Factur-X_1.09_BASIC_urn_un_unece_uncefact_data_standard_UnqualifiedDataType_100.xsd": "0386218417686704266ee06991ab0312d46317757a87378246593c328bc64fd6",
+        "factur-x/basic/Factur-X_BASIC.xsd": "5323ab1d1bb8f42ee8180cc153b29246b6fe1cec6446d048fd34d6f33a8f7512",
+        "factur-x/basicwl/FACTUR-X_BASIC-WL_codedb.xml": "fc044aa713dad2598d4202a6e04adc141ded5c4b682893d3a0d34bd76c59df38",
+        "factur-x/basicwl/Factur-X_1.09_BASICWL.xsl": "b8fc6601f5355237dbadafec6dbca36db0adf8033fc879bb63b2a0e58b80c9f2",
+        "factur-x/basicwl/Factur-X_1.09_BASICWL_urn_un_unece_uncefact_data_standard_QualifiedDataType_100.xsd": "fd6958ad55567fbffb127b62b80d9cc76039a6f90315b81cba890646b824743f",
+        "factur-x/basicwl/Factur-X_1.09_BASICWL_urn_un_unece_uncefact_data_standard_ReusableAggregateBusinessInformationEntity_100.xsd": "5e26c4724def9aae349865d8ad35c9bf583f16decbf59376893ff79363f0c415",
+        "factur-x/basicwl/Factur-X_1.09_BASICWL_urn_un_unece_uncefact_data_standard_UnqualifiedDataType_100.xsd": "412f67846ce8d9af2c83e55b83a9aed8d56a0939135a38a61fbe641b3dd99814",
+        "factur-x/basicwl/Factur-X_BASICWL.xsd": "d3b7fbffa49a3f24289f8c3eff0a7322cd0b7c8d2d3d4ca360dcc26fc7228303",
+        "factur-x/en16931/FACTUR-X_EN16931_codedb.xml": "faa3ef78a23a5910e9c90bbcd3c3de5e45b6a84a3d62e11e1e6097fa466d52d8",
+        "factur-x/en16931/Factur-X_1.09_EN16931.xsl": "ad17794b088dfb89a5e92c9e3b9a2f6663b95bd12b23677667e3e7996d1c4b1f",
+        "factur-x/en16931/Factur-X_1.09_EN16931_urn_un_unece_uncefact_data_standard_QualifiedDataType_100.xsd": "5a3ce756cfa8d4f2ff3165d68123cfb7fbf3c7b64664edb0de38cca64d5c413b",
+        "factur-x/en16931/Factur-X_1.09_EN16931_urn_un_unece_uncefact_data_standard_ReusableAggregateBusinessInformationEntity_100.xsd": "99ee1a2a2857babcb4ab74a64fc65a816fe25d2209291d403a8d0dc85542abd8",
+        "factur-x/en16931/Factur-X_1.09_EN16931_urn_un_unece_uncefact_data_standard_UnqualifiedDataType_100.xsd": "f87a1b78d2b7177955957002f8c2a7917e326038d38803f875266cc7579ea857",
+        "factur-x/en16931/Factur-X_EN16931.xsd": "977654a4e0442885a3d622ca198cff414f467eebc93098654b98127f2349f066",
+        "factur-x/extended/FACTUR-X_EXTENDED_codedb.xml": "1fe24c1adc4572fe3296c84d49c839fa4f99c24696fe3559dfa3419fcb3c9d2d",
+        "factur-x/extended/Factur-X_1.09.2_EXTENDED_urn_un_unece_uncefact_data_standard_ReusableAggregateBusinessInformationEntity_100.xsd": "d2d8c5db8b2a398c076f64d06a24db2d110c8fdce336dff8a747b1fdf7a95d58",
+        "factur-x/extended/Factur-X_1.09_EXTENDED.xsl": "32651d4e96726c78820e27e75c84c121c5459ff7dcfddc0477313a097803d106",
+        "factur-x/extended/Factur-X_1.09_EXTENDED_urn_un_unece_uncefact_data_standard_QualifiedDataType_100.xsd": "fd1e3ae9d887ce4e17f7056e6f7bccee1ff54040ff41069ff85710782d0df640",
+        "factur-x/extended/Factur-X_1.09_EXTENDED_urn_un_unece_uncefact_data_standard_UnqualifiedDataType_100.xsd": "4600ae4633a5467e4d302b80bc91362a901be9bcdfe49584de72295428d39de3",
+        "factur-x/extended/Factur-X_EXTENDED.xsd": "b1ac3c8e7830d7c0502245251a124aca38e267bb4fe0712c12f0887f8372c9e8",
+        "factur-x/minimum/FACTUR-X_MINIMUM_codedb.xml": "cc785beb1199c7ad95af35501dddb44935fd8eb3a20c3bdb244a86cd13e11a1a",
+        "factur-x/minimum/Factur-X_1.09_MINIMUM.xsl": "9531a573099a8335cbfe142965604782725ee31af09d44f45b893965e95082c6",
+        "factur-x/minimum/Factur-X_1.09_MINIMUM_urn_un_unece_uncefact_data_standard_QualifiedDataType_100.xsd": "7830de0041e47dd035fb482d369414422768ff215a3cf668f9fa83f720cec2cc",
+        "factur-x/minimum/Factur-X_1.09_MINIMUM_urn_un_unece_uncefact_data_standard_ReusableAggregateBusinessInformationEntity_100.xsd": "f669cd8fc2adb1ebbc983bbfe0beed56d0bdf40e5792eb2d79f7256bcc65ab3a",
+        "factur-x/minimum/Factur-X_1.09_MINIMUM_urn_un_unece_uncefact_data_standard_UnqualifiedDataType_100.xsd": "06d4245cc75927b3cf016fae8162249c95167158ed2e512dc63d6e7e5c89fed3",
+        "factur-x/minimum/Factur-X_MINIMUM.xsd": "dbd1e4cafb4e8c5a3e58c05649ab7009b0c8fcbc5c41b652f3b3fc96207e87f3"
+      }
+    }
+  ]
+}

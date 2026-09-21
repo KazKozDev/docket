@@ -7,6 +7,7 @@
     docket formats
     docket ocr-backends
     docket forensics FILE
+    docket validate-einvoice FILE [--profile PROFILE] [--format text|json]
 
 Both processing commands take the OCR (--ocr-backend, --ocr-fallback, ...)
 and schema (--document-type, --schema, --schema-version) options, and
@@ -18,6 +19,7 @@ Exit codes:
      the document needs review)
   2  every document failed (for `process`: the document failed)
   3  configuration error — nothing was processed
+For `validate-einvoice`: 0 valid, 2 invalid, 3 configuration error.
 """
 from __future__ import annotations
 
@@ -131,16 +133,18 @@ class _Sink:
 def _cmd_process(args: argparse.Namespace) -> int:
     result = process_document(args.document, _options(args))
     if args.export:
+        from .export import ExportOptions
+
         try:
-            content = export_document(result, args.export).content
+            exported = export_document(result, args.export, ExportOptions(validate_einvoice=args.validate_export))
         except ExportError as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return EXIT_FAILED if result.status.value == "failed" else EXIT_PARTIAL
         if args.output:
-            Path(args.output).write_text(content, encoding="utf-8")
+            Path(args.output).write_text(exported.content, encoding="utf-8")
         else:
-            print(content)
-        return EXIT_OK
+            print(exported.content)
+        return _print_export_validation(exported)
     if args.format == "json":
         text = json.dumps(
             result.model_dump(mode="json", exclude=None if args.include_layout else {"layout": True}),
@@ -239,6 +243,40 @@ def _cmd_ocr_backends(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_validate_einvoice(args: argparse.Namespace) -> int:
+    from .einvoice import EInvoiceValidationOptions, Profile, validate_einvoice
+
+    options = EInvoiceValidationOptions(profile=Profile(args.profile) if args.profile else None)
+    report = validate_einvoice(Path(args.document), options)
+    if args.format == "json":
+        _print_json(report.model_dump(mode="json"))
+    else:
+        verdict = "VALID" if report.valid else "INVALID"
+        print(f"{verdict}  {args.document}  {report.detected_format or '?'}  profile={report.profile.value if report.profile else '?'}")
+        for layer in report.layers:
+            state = "skipped: " + (layer.skipped_reason or "") if not layer.ran else ("passed" if layer.passed else "failed")
+            print(f"  {layer.layer:10} {layer.artifact}  {state}")
+        for issue in report.issues:
+            print(f"  [{issue.severity}] {issue.code} {issue.message}")
+            if issue.location:
+                print(f"      at {issue.location}")
+        print(f"  rules: {report.validation_resource_version}")
+    return EXIT_OK if report.valid else EXIT_FAILED
+
+
+def _print_export_validation(result) -> int:
+    report = result.einvoice_validation
+    if report is None:
+        return EXIT_OK
+    if report.valid:
+        print(f"e-invoice valid ({report.profile.value})", file=sys.stderr)
+        return EXIT_OK
+    print(f"e-invoice INVALID ({report.profile.value if report.profile else '?'}):", file=sys.stderr)
+    for issue in report.errors:
+        print(f"  {issue.code} {issue.message}", file=sys.stderr)
+    return EXIT_PARTIAL
+
+
 def _cmd_forensics(args: argparse.Namespace) -> int:
     from .forensics import analyze_document_forensics
 
@@ -259,6 +297,8 @@ def build_parser() -> argparse.ArgumentParser:
     process.add_argument("document", help="PDF, image (PNG/JPG/TIFF/BMP/WebP) or text file")
     process.add_argument("--export", metavar="FORMAT",
                          help="Print the document in this format instead of JSON; see `docket formats`")
+    process.add_argument("--validate-export", action="store_true",
+                         help="Validate an e-invoice export with the official rules (needs the [einvoice] extra)")
     _add_processing_options(process)
     process.set_defaults(func=_cmd_process)
 
@@ -286,6 +326,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     backends = commands.add_parser("ocr-backends", help="List OCR backends, capabilities and availability")
     backends.set_defaults(func=_cmd_ocr_backends)
+
+    einvoice = commands.add_parser("validate-einvoice",
+                                   help="Validate an e-invoice (XML or Factur-X PDF) with the official rules")
+    einvoice.add_argument("document")
+    einvoice.add_argument("--profile", choices=[p.value for p in __import__("docket.einvoice", fromlist=["Profile"]).Profile],
+                          help="Validate as this profile; default: the one the document declares")
+    einvoice.add_argument("--format", choices=["text", "json"], default="text")
+    einvoice.set_defaults(func=_cmd_validate_einvoice)
 
     forensics = commands.add_parser("forensics", help="Stamp, signature and alteration heuristics for one file")
     forensics.add_argument("document")

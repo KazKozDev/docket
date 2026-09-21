@@ -1,6 +1,6 @@
 # docket — local document AI, invoice & receipt OCR parser with LLMs
 
-Turn scanned invoices, receipts, and contracts into structured, validated JSON using OCR and LLMs, then export them as EU e-invoices (XRechnung, ZUGFeRD / Factur-X, Peppol UBL, Facturae). Use it as a Python library, an HTTP service, or a CLI. Apache-2.0, so commercial use is fine.
+Turn scanned invoices, receipts, and contracts into structured, validated JSON using OCR and LLMs, then export them as EU e-invoices (XRechnung, Factur-X / ZUGFeRD, Peppol BIS, UBL, Facturae) and check them with the official EN 16931, Peppol, XRechnung and Factur-X rules. Use it as a Python library, an HTTP service, or a CLI. Apache-2.0, so commercial use is fine.
 
 <img width="1653" height="961" alt="demo" src="https://github.com/user-attachments/assets/86355d41-34a7-4201-9699-0fd62080c488" />
 
@@ -13,7 +13,8 @@ Requirements: Python 3.10+, Tesseract on PATH (`brew install tesseract` / `apt i
 ```bash
 pip install docket-idp
 docket process invoice.pdf                       # JSON result on stdout, exit code 2 if validation fails
-docket process invoice.pdf --export xrechnung    # e-invoice XML on stdout
+docket process invoice.pdf --export xrechnung-ubl --validate-export   # e-invoice XML, checked with the official rules
+docket validate-einvoice invoice.xml              # XSD + Schematron report for any UBL/CII XML or Factur-X PDF
 docket schemas list                              # every document type, with its version
 ```
 
@@ -51,7 +52,7 @@ options = ProcessOptions(
 )
 result = process_document("invoice.pdf", options)
 try:
-    xml = export_document(result, "xrechnung").content   # refuses invalid or unreviewed results
+    xml = export_document(result, "xrechnung-ubl").content   # refuses invalid or unreviewed results
 except ExportError:
     print(result.status, result.review_reasons)
 ```
@@ -119,16 +120,40 @@ Registered schemas are classified, extracted, citation-checked and exported like
 
 ## Export formats
 
-| Format | Name |
-|---|---|
-| XRechnung (CII) | `xrechnung` |
-| ZUGFeRD 2.2 / Factur-X, EN 16931 | `zugferd` |
-| UBL 2.1 / Peppol BIS Billing 3.0 | `ubl` |
-| Facturae 3.2.2 (Spain) | `facturae` |
+| Format | Name | Checked against |
+|---|---|---|
+| UBL 2.1, EN 16931 core | `ubl` | EN 16931 |
+| Peppol BIS Billing 3.0 (UBL) | `peppol` | EN 16931 + Peppol BIS 3.0.20 |
+| XRechnung 3.0, UBL / CII | `xrechnung-ubl`, `xrechnung-cii` | EN 16931 + XRechnung 3.0.2 |
+| Factur-X 1.0 / ZUGFeRD 2.x CII XML, EN16931 / BASIC | `factur-x-en16931`, `factur-x-basic` | Factur-X 1.09 profile rules |
+| Facturae 3.2.2 (Spain) | `facturae` | — |
 | SAP IDoc / journal CSV | `sap-idoc`, `sap-csv` |
 | Xero, QuickBooks | `xero-csv`, `xero-json`, `quickbooks-iif`, `quickbooks-json` |
 
-Add your own with `register_exporter("my-erp", func, accepts=(Invoice,))` or the `docket.exporters` entry point. `docket formats` shows everything available. Validate generated XML with the recipient's official validator (e.g. KoSIT for XRechnung) before going live.
+The EN 16931 exporters take an `Invoice`, `TaxInvoice` or `CreditNote` (a credit note becomes a UBL `CreditNote` or CII type 381). They refuse a document they can't represent faithfully instead of guessing: no line items (BR-16), a tax rate that can't be determined, tax that doesn't match the lines, or a discount spread over several rates. Only standard-rated (`S`) and zero-rated (`Z`) VAT is written. Recipients still check routing data the extraction can't know, e.g. a Peppol endpoint (`seller.electronic_address` with an EAS `electronic_address_scheme`) or the XRechnung Leitweg-ID (`buyer_reference`).
+
+Add your own with `register_exporter("my-erp", func, accepts=(Invoice,))` or the `docket.exporters` entry point. `docket formats` shows everything available.
+
+## E-invoice validation
+
+`pip install "docket-idp[einvoice]"` adds offline validation with the official artifacts, vendored with their versions, licenses and SHA-256 checksums in [`src/docket/einvoice/resources/manifest.json`](https://github.com/KazKozDev/docket/blob/master/src/docket/einvoice/resources/manifest.json): the UBL 2.1 and CII D16B XML Schemas, the CEN EN 16931 Schematron 1.3.16, KoSIT XRechnung Schematron 2.6.0 (XRechnung 3.0.2), OpenPeppol BIS Billing 3.0.20 and the Factur-X 1.09 profile schemas and Schematron. XSD runs in lxml, Schematron (XSLT 2.0) in SaxonC-HE; no Java, no network.
+
+```bash
+docket validate-einvoice invoice.xml                     # exit 0 valid, 2 invalid, 3 extra missing
+docket validate-einvoice invoice.pdf --profile factur-x-en16931 --format json
+curl -F file=@invoice.xml -F profile=xrechnung localhost:8000/validate/einvoice
+```
+
+```python
+from docket import EInvoiceValidationOptions, validate_einvoice
+
+report = validate_einvoice("invoice.xml", EInvoiceValidationOptions(profile="peppol"))
+report.valid, report.detected_format, report.profile, report.validation_resource_version
+for issue in report.issues:        # code (BR-CO-15, PEPPOL-EN16931-R001, BR-DE-15, XSD), severity,
+    print(issue.code, issue.layer, issue.location, issue.message)   # layer xsd/schematron, rule source
+```
+
+The profile comes from the document's specification identifier (BT-24) unless you pass one; when you do and the document declares another, the report carries `DOCKET-PROFILE-MISMATCH`. Schematron only runs on XML that passed the XML Schema. Factur-X / ZUGFeRD PDFs are validated from their embedded `factur-x.xml` / `zugferd-invoice.xml`; the PDF/A-3 container itself is not checked. `export_document(..., ExportOptions(validate_einvoice=True))` validates right after export, and `docket process --export FORMAT --validate-export` does the same on the command line. `python scripts/update_einvoice_resources.py` rebuilds the artifacts from their pinned official downloads (`--check` verifies the vendored copy). See [`examples/validate_xrechnung.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_xrechnung.py) and [`examples/validate_peppol.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_peppol.py).
 
 ## How it works
 
@@ -139,7 +164,7 @@ document → text layer / OCR / VLM → classify → extract + cite → validate
 - **Text** comes from the cheapest source that works, page by page: the PDF text layer, then the OCR backend (Tesseract by default; pluggable), then a vision model, which is used only when OCR confidence is low or a cheap text model judges the scan unusable. Every backend returns the same layout model — words with boxes, lines, columns, tables.
 - **Classification** tries keyword rules, then TF-IDF, then an LLM. Each tier runs only when the one before it was unsure. Rules and TF-IDF cover English, Spanish, German, French, Italian, Dutch and Portuguese; any other language falls through to the LLM.
 - **Extraction** fills a Pydantic schema under a JSON Schema contract and cites the verbatim line for every value. Output that fails the schema goes back to the model with the error attached.
-- **Validation** never calls a model. It checks arithmetic, dates, IBAN mod-97, VAT check digits (all 27 EU states, UK, CH, NO), national tax IDs, and that every cited line exists and contains the claimed value. Contracts also get counterparty, grounding and risk checks (unlimited liability, auto-renewal, notice periods).
+- **Validation** never calls a model. It checks arithmetic (to the cent: an absolute 0.01 tolerance), dates, IBAN mod-97, VAT check digits (all 27 EU states, UK, CH, NO), national tax IDs, and that every cited line exists and contains the claimed value. Contracts also get counterparty, grounding and risk checks (unlimited liability, auto-renewal, notice periods).
 - **Review**: low confidence, failed extraction or a validation error sends the document to a review queue that keeps the original and an audit history. Nothing is silently reconciled. An invoice whose `Amount Due: 500.00` disagrees with its own 270.60 subtotal and tax is flagged, not fixed.
 
 Also included: cross-document matching (invoice ↔ PO, three-way PO/waybill/invoice, invoice ↔ contract, receipt ↔ bank transactions) and a heuristic stamp, signature and alteration check (`docket forensics file.pdf`). Details are in [ARCHITECTURE.md](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md).
@@ -164,6 +189,7 @@ Set in the environment or `.env`. [`.env.example`](https://github.com/KazKozDev/
 | `DOCKET_BATCH_WORKERS` | `4` | Documents in flight per batch |
 | `DOCKET_LLM_CONCURRENCY` / `DOCKET_OCR_CONCURRENCY` | `4` / half the CPUs | Process-wide limits on simultaneous LLM requests and OCR engines |
 | `DOCKET_MAX_BATCH_FILES` / `DOCKET_MAX_BATCH_BYTES` | `100` / 200 MB | HTTP upload limits per job (`DOCKET_MAX_FILE_BYTES` per file) |
+| `DOCKET_EINVOICE_RESOURCES` | bundled | Directory with your own copy of the validation artifacts (same layout and `manifest.json`) |
 
 ## Limitations
 
@@ -180,8 +206,9 @@ Set in the environment or `.env`. [`.env.example`](https://github.com/KazKozDev/
 ```bash
 pip install docket-idp            # library + CLI
 pip install "docket-idp[api]"     # + HTTP service (docket-api)
-pip install "docket-idp[all]"     # + Langfuse tracing
+pip install "docket-idp[all]"     # + Langfuse tracing and e-invoice validation
 pip install "docket-idp[paddle]"  # + PaddleOCR backend (--ocr-backend paddle)
+pip install "docket-idp[einvoice]" # + official EN 16931 / Peppol / XRechnung / Factur-X validation
 ```
 
 From source:

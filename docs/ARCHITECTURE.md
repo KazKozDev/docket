@@ -36,7 +36,7 @@ Docket converts unstructured or semi-structured documents (invoices, receipts, c
                                            v
 +---------------------------------------------------------------------------------------+
 |                             Deterministic Validation Tier                             |
-|   - Arithmetic verification (subtotal + tax + shipping - discount = total)           |
+|   - Arithmetic verification to the cent (subtotal + tax + shipping - discount)       |
 |   - Date logic & future bounds checks                                                 |
 |   - IBAN mod-97 check digits (ISO 7064) across all European countries & Brazil        |
 |   - VAT check digits (all 27 EU member states, GB, CH, NO)                            |
@@ -305,7 +305,7 @@ Every tier reads the schema catalog, so a registered schema takes part in all th
 
 Validation never calls a model. It executes deterministic arithmetic and mathematical checksum algorithms:
 
-- **Totals & Line Items**: Verifies `subtotal + tax + shipping - discount == total_amount` within 1 % of the stated amount (a relative tolerance, `validate._isclose`; at least 0.01). On a total of 1,100 a 10-unit discrepancy passes this check.
+- **Totals & Line Items**: Verifies `subtotal + tax + shipping - discount == total_amount` and the other sums to the cent: `validate._isclose` allows an absolute difference of 0.01 (one rounding step of a printed two-decimal amount), whatever the size of the amount. A relative tolerance was used before; it let a 10.00 gap through on a 1,100 total. The EN 16931 rules downstream compare exact decimals, so a looser check here would only move the failure to export time.
 - **IBAN**: ISO 7064 MOD 97-10 check digits for all European nations and Brazil. Identifies non-IBAN systems (US, Canada) and requests routing numbers instead.
 - **VAT / Sales Tax**: Algorithmic check-digit verification across all 27 EU member states, the UK, Switzerland, and Norway.
 - **Americas Tax IDs**: Modulo-11 CNPJ/CPF checks for Brazil, Luhn mod-10 checks for Canadian Business Numbers (BN), and prefix verification for US EINs.
@@ -367,10 +367,102 @@ Extracted and validated records can be deterministically converted to corporate 
 - **Xero**:
   - `export_to_xero_csv`: Official Xero Bills CSV import format with account codes and tax types.
   - `export_to_xero_json`: Xero Accounting API Invoices payload with ACCPAY type and contact details.
-- **International e-Invoicing Standards**:
-  - **UBL 2.1 (Peppol BIS Billing 3.0 / EN 16931)**: OASIS Universal Business Language XML for cross-border European public procurement and B2B billing.
-  - **Facturae 3.2.2**: Official Spanish electronic invoice standard (FACe) with complete Party Tax Identification and TaxesOutputs breakdown.
-  - **ZUGFeRD 2.2 / XRechnung**: German UN/CEFACT Cross Industry Invoice (CII) XML supporting both EN 16931 and official German B2G XRechnung profiles.
+- **Facturae 3.2.2** (`docket.export.facturae`): Spanish electronic invoice (FACe) with Party Tax Identification and TaxesOutputs breakdown.
+- **EN 16931 e-invoices** (`docket.export.en16931`), see below.
+
+### EN 16931 exporters
+
+One semantic model, two syntaxes. `en16931.semantic(doc)` maps an `Invoice`,
+`TaxInvoice` or `CreditNote` onto EN 16931 business terms (BT/BG): parties
+with VAT (BT-31/48), tax registration and legal ids, contacts, electronic
+addresses, the payment account as credit transfer (BG-17), references
+(order BT-13, preceding invoice BG-3), lines with unit codes
+mapped to UN/ECE Rec 20, document-level allowance and charge for discount
+and shipping, and one VAT breakdown per rate. It computes every total the
+standard defines from the lines and refuses (`EN16931Error`, surfaced as
+`ExportError`) whatever it cannot represent without inventing data: no
+lines (BR-16), no determinable rate, tax or line sums that disagree with
+the stated amounts (BR-CO-10/14), a discount or charge over several rates.
+Only VAT categories `S` and `Z` are produced; exemptions (`E`, `AE`, `K`,
+`G`, `O`) need an exemption reason the extraction schema doesn't carry.
+
+`_Ubl` and `_Cii` render that model. The registered formats differ only in
+syntax, specification identifier (BT-24) and business process (BT-23):
+
+| Format | Syntax | BT-24 | Validated as |
+|---|---|---|---|
+| `ubl` | UBL 2.1 | `urn:cen.eu:en16931:2017` | `en16931` |
+| `peppol` | UBL 2.1 | `...#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0` | `peppol` |
+| `xrechnung-ubl` | UBL 2.1 | `...#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0` | `xrechnung` |
+| `xrechnung-cii` | CII D16B | same | `factur-x-xrechnung` |
+| `factur-x-en16931` | CII D16B | `urn:cen.eu:en16931:2017` | `factur-x-en16931` |
+| `factur-x-basic` | CII D16B | `...#compliant#urn:factur-x.eu:1p0:basic` | `factur-x-basic` |
+
+A credit note becomes a UBL `CreditNote` (type 381) or CII `TypeCode` 381.
+The BASIC profile omits what its schema doesn't allow (seller item id,
+contacts, BIC). The Factur-X formats produce the XML only; embedding it in a
+PDF/A-3 is left to the caller. Every format above passes its official rules
+on the complete test invoice (`tests/test_einvoice.py`).
+
+## 9a. E-invoice validation
+
+`docket.einvoice` (extra `[einvoice]`: lxml, saxonche) validates an
+e-invoice with the official artifacts, vendored in
+`src/docket/einvoice/resources/`:
+
+| Artifact | Version | License | Used for |
+|---|---|---|---|
+| KoSIT validator configuration | XRechnung 3.0.2, 2026-08-31 | Apache-2.0 (+ OASIS / UN/CEFACT schema terms) | UBL 2.1 and CII D16B XML Schemas |
+| CEN EN 16931 validation artefacts | 1.3.16 | EUPL-1.2 | EN 16931 Schematron, UBL and CII |
+| KoSIT XRechnung Schematron | 2.6.0 | Apache-2.0 | CIUS XRechnung (BR-DE-*) |
+| OpenPeppol BIS Billing 3.0 | 3.0.20 | no license file (see below) | Peppol rules, compiled from .sch with SchXslt 1.10.1 (MIT) |
+| Factur-X / ZUGFeRD | 1.09 (from the factur-x 6.8 package, BSD-2) | FNFE-MPE / FeRD, free download behind a form | profile XSD and Schematron, MINIMUM to EXTENDED |
+
+`resources/manifest.json` records every file's SHA-256, the archive URL and
+hash it came from, version and license; `artifacts.verify()` checks the
+installed copy. `scripts/update_einvoice_resources.py` downloads the pinned
+archives (refusing a hash mismatch), extracts only what validation needs,
+compiles the Peppol Schematron and rewrites the manifest; test fixtures
+(official examples, the XRechnung test suite, Peppol's unit tests) go to
+`tests/fixtures/einvoice/official/`. To update: change the pinned URL and
+hash, rerun, run the tests, commit the diff. The Peppol and Factur-X
+artifacts ship without an explicit redistribution license; check that before
+distributing a build that contains them.
+
+`validate_einvoice(source, options)`:
+
+1. Reads XML, or the embedded `factur-x.xml` / `zugferd-invoice.xml` /
+   `xrechnung.xml` of a PDF (pypdfium2). XML with a DOCTYPE is refused;
+   entities are never resolved and nothing is fetched from the network.
+2. Detects the syntax from the root element (UBL Invoice, UBL CreditNote,
+   CII) and the declared profile from BT-24. A requested profile that
+   differs from the declared one is reported as `DOCKET-PROFILE-MISMATCH`
+   and validation continues with the requested rules.
+3. Runs the XML Schema (lxml), then each Schematron (SaxonC-HE, XSLT 2.0,
+   SVRL output) of the profile's plan: EN 16931 core, plus Peppol or
+   XRechnung rules; Factur-X profiles use their own combined Schematron.
+   Schematron is skipped when the XML Schema fails, because its rules
+   assume a schema-valid tree.
+4. Returns `EInvoiceValidationResult`: `valid`, `detected_format`,
+   `syntax`, `profile`, `declared_profile_id`, `validator` /
+   `validator_version`, `validation_resource_version`, one `LayerReport` per
+   layer (artifact, version, ran, passed, rules fired) and `issues` (code,
+   severity from the Schematron flag, message, XPath or XSD line, rule
+   source with version, layer).
+
+Compiled stylesheets and schemas are cached per process behind a lock
+(SaxonC is not thread-safe). The same function serves
+`docket validate-einvoice`, `POST /validate/einvoice` and
+`ExportOptions(validate_einvoice=True)`. Without the extra it raises
+`EInvoiceUnavailable`, a `ConfigurationError` (CLI exit 3, HTTP 503
+`einvoice_unavailable`).
+
+The tests run all official examples of each artifact, all 227 cases of
+Peppol's own UBL unit suite (expected rule ids fire, expected successes
+don't), and negative cases: missing mandatory field (BR-07, BR-DE-15),
+wrong totals on XSD-valid XML (BR-CO-15/16), wrong or unknown tax category
+(BR-Z-05, BR-CL-18), bad endpoint scheme (PEPPOL-EN16931-CL008), unknown
+and mismatched profile identifiers.
 
 ---
 

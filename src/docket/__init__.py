@@ -15,10 +15,8 @@ from .export import (
     export_to_quickbooks_json,
     export_to_sap_idoc,
     export_to_sap_journal_csv,
-    export_to_ubl_xml,
     export_to_xero_csv,
     export_to_xero_json,
-    export_to_zugferd_xml,
 )
 from .matching import (
     match_invoice_to_po,
@@ -83,6 +81,13 @@ from .ocr import (
     register_ocr_backend,
 )
 from .batch import BatchError, BatchMetrics, BatchOptions, BatchResult, process_batch
+from .einvoice import (
+    EInvoiceUnavailable,
+    EInvoiceValidationOptions,
+    EInvoiceValidationResult,
+    validate_einvoice,
+)
+from .einvoice import Profile as EInvoiceProfile
 from .errors import ConfigurationError
 from .options import OcrOptions, ProcessOptions, ReviewOptions
 from .pipeline import process_document
@@ -109,6 +114,11 @@ from .schemas import (
 
 __all__ = [
     "__version__",
+    "EInvoiceProfile",
+    "EInvoiceUnavailable",
+    "EInvoiceValidationOptions",
+    "EInvoiceValidationResult",
+    "validate_einvoice",
     "BatchError",
     "BatchMetrics",
     "BatchOptions",
@@ -149,10 +159,8 @@ __all__ = [
     "export_to_quickbooks_json",
     "export_to_sap_idoc",
     "export_to_sap_journal_csv",
-    "export_to_ubl_xml",
     "export_to_xero_csv",
     "export_to_xero_json",
-    "export_to_zugferd_xml",
     "ExportError",
     "ExportOptions",
     "ExportResult",

@@ -93,6 +93,21 @@ each stage; see the Breaking changes list.
 - `review_queue.reasons_for`, `enqueue`, `list_pending`, `get`, `update` and
   `clear` take the threshold / queue location as keyword arguments.
 - CLI: a configuration error exits with code 3.
+- E-invoice export formats are renamed and rewritten on one EN 16931 model:
+  `ubl` (EN 16931 core), `peppol`, `xrechnung-ubl`, `xrechnung-cii`,
+  `factur-x-en16931`, `factur-x-basic`. `zugferd` and `xrechnung` are gone
+  (use `factur-x-en16931` / `xrechnung-cii`), as are `export_to_ubl_xml` and
+  `export_to_zugferd_xml`; use `export_document(doc, format)`.
+  `docket.export.einvoice` is now `docket.export.facturae` (Facturae only).
+- The EN 16931 exporters raise `ExportError` for an invoice they can't
+  represent faithfully (no line items, no determinable VAT rate, tax or line
+  sums that disagree with the stated amounts, a discount over several VAT
+  rates) instead of writing XML that fails the standard. They also accept
+  `CreditNote` (UBL `CreditNote` / CII type 381).
+- Amount checks use an absolute tolerance of 0.01 instead of 1 % of the
+  amount: a 10.00 gap on a 1,100 total is now a validation error.
+- `Invoice` (2.0) gains `buyer_reference` (BT-10, the XRechnung Leitweg-ID)
+  and `Party` gains `contact_name`; both are optional.
 
 ### Added
 - Layout model (`docket.layout`): `BoundingBox`, `WordToken`, `TextLine`,
@@ -164,6 +179,27 @@ each stage; see the Breaking changes list.
   (`DOCKET_LLM_CONCURRENCY`, `DOCKET_OCR_CONCURRENCY`); `DOCKET_BATCH_WORKERS`,
   `DOCKET_MAX_BATCH_FILES`, `DOCKET_MAX_BATCH_BYTES`.
 - `checksums.vat_format_ok`: per-country VAT formats (VIES, plus GB/XI, CH, NO).
+- Official e-invoice validation (`pip install "docket-idp[einvoice]"`):
+  `validate_einvoice()` / `docket validate-einvoice FILE [--profile]
+  [--format json]` (exit 0 valid, 2 invalid, 3 extra missing) /
+  `POST /validate/einvoice`. Profiles EN 16931, Peppol BIS Billing 3.0,
+  XRechnung 3.0 (UBL and CII) and Factur-X / ZUGFeRD MINIMUM, BASIC WL,
+  BASIC, EN16931, EXTENDED, XRECHNUNG. XML Schema (lxml) plus the official
+  Schematron (SaxonC-HE): CEN 1.3.16, KoSIT XRechnung 2.6.0, Peppol 3.0.20,
+  Factur-X 1.09, vendored with versions, licenses and SHA-256 checksums in
+  `einvoice/resources/manifest.json`; offline, no Java. Factur-X / ZUGFeRD
+  PDFs are validated from their embedded XML. `EInvoiceValidationResult`
+  reports detected format, declared and applied profile, validator and rule
+  versions, per-layer results and each issue's rule id, severity, location,
+  rule source and layer; a declared profile that differs from the requested
+  one is `DOCKET-PROFILE-MISMATCH`.
+- `ExportOptions(validate_einvoice=True)` and `docket process --export FORMAT
+  --validate-export` validate an e-invoice right after export
+  (`ExportResult.einvoice_validation`).
+- `scripts/update_einvoice_resources.py` rebuilds the vendored artifacts from
+  their pinned official downloads; `--check` verifies them.
+  `DOCKET_EINVOICE_RESOURCES` points to a separately maintained copy.
+- Examples `validate_xrechnung.py` and `validate_peppol.py`.
 - `docket --ocr-backend`, `--ocr-fallback`, `--no-ocr-fallback`,
   `--ocr-languages`, `--list-ocr-backends`; `GET /ocr-backends`.
 
@@ -174,6 +210,10 @@ each stage; see the Breaking changes list.
   matches several schemas. Not yet measured on the eval sets.
 
 ### Fixed
+- The UBL and ZUGFeRD/XRechnung exporters produced XML that failed the
+  official EN 16931 rules (the README called it Peppol BIS compatible). The
+  new exporters pass the official XSD and Schematron of every profile they
+  declare, checked in the test suite.
 - A tax number the extraction filed as VAT (e.g. "Tax ID: GB-771-4402",
   filed as VAT for its GB prefix) failed the VAT checksum it never claimed;
   only a value with its country's VAT format is now held to that checksum.
@@ -243,6 +283,10 @@ First packaged release.
 - The HTTP service moved to `docket.api` (`uvicorn docket.api:app`); the root `api.py` remains as a shim.
 
 ### Fixed
+- The UBL and ZUGFeRD/XRechnung exporters produced XML that failed the
+  official EN 16931 rules (the README called it Peppol BIS compatible). The
+  new exporters pass the official XSD and Schematron of every profile they
+  declare, checked in the test suite.
 - A tax number the extraction filed as VAT (e.g. "Tax ID: GB-771-4402",
   filed as VAT for its GB prefix) failed the VAT checksum it never claimed;
   only a value with its country's VAT format is now held to that checksum.
