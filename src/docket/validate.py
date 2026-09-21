@@ -691,17 +691,19 @@ def validate_receipt(rec: Receipt, ctx: ValidationContext) -> list[ValidationIss
                     )
 
         items_sum = sum(i.price for i in rec.items)
-        # Line items are pre-tax and pre-tip, after line discounts.
-        # Compare against the stated subtotal, or back tax, tip and discount out
-        # of the total when the receipt didn't print a subtotal line.
-        base = (
-            rec.subtotal
-            if rec.subtotal > 0
-            else (
-                rec.total_amount - rec.tax_amount - rec.tip_amount + rec.discount_amount
-            )
-        )
-        if not _isclose(items_sum, base):
+        # Line items are pre-tax and pre-tip, after line discounts. Coupons are
+        # extracted as discount_amount, but receipts print them either above
+        # the SUBTOTAL (the stated subtotal is then items_sum - discount) or
+        # below it (the stated subtotal is then items_sum). Either reading is
+        # consistent; only flag when neither closes.
+        if rec.subtotal > 0:
+            base = rec.subtotal
+            ok = any(_isclose(items_sum, b) for b in (rec.subtotal, rec.subtotal + rec.discount_amount))
+        else:
+            # No subtotal line: back tax, tip and discount out of the total.
+            base = rec.total_amount - rec.tax_amount - rec.tip_amount + rec.discount_amount
+            ok = _isclose(items_sum, base)
+        if not ok:
             issues.append(
                 ValidationIssue(
                     field="items",
@@ -713,17 +715,20 @@ def validate_receipt(rec: Receipt, ctx: ValidationContext) -> list[ValidationIss
             )
 
     if rec.subtotal > 0:
-        expected_total = (
-            rec.subtotal + rec.tax_amount + rec.tip_amount - rec.discount_amount
-        )
-        if not _isclose(expected_total, rec.total_amount):
+        # Same ambiguity: the stated subtotal may already have the discount
+        # applied, so accept the printed-total arithmetic under either layout.
+        without_discount = rec.subtotal + rec.tax_amount + rec.tip_amount
+        with_discount = without_discount - rec.discount_amount
+        if not any(_isclose(e, rec.total_amount) for e in (with_discount, without_discount)):
             issues.append(
                 ValidationIssue(
                     field="total_amount",
                     message=(
-                        f"subtotal + tax + tip - discount = {expected_total:.2f}, "
-                        f"total_amount says {rec.total_amount:.2f}"
+                        f"subtotal + tax + tip - discount = {with_discount:.2f} "
+                        f"(or, with the discount already in the subtotal, "
+                        f"{without_discount:.2f}), total_amount says {rec.total_amount:.2f}"
                     ),
+                    severity="error",
                 )
             )
 
