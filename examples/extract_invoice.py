@@ -1,6 +1,6 @@
 """Use docket as a library inside your own application.
 
-    pip install docket
+    pip install docket-idp
     python examples/extract_invoice.py path/to/invoice.pdf
 """
 import sys

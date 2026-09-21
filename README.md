@@ -16,7 +16,7 @@ and a vision model pulled, or an OpenAI-compatible API key (see
 [Configuration](#configuration)).
 
 ```bash
-pip install docket
+pip install docket-idp
 docket invoice.pdf
 ```
 
@@ -61,7 +61,7 @@ else:
 
 ```bash
 docker run -p 8000:8000 -e DOCKET_API_KEY=secret ghcr.io/kazkozdev/docket
-# or: pip install "docket[api]" && docket-api --port 8000
+# or: pip install "docket-idp[api]" && docket-api --port 8000
 curl -H "Authorization: Bearer secret" -F file=@invoice.pdf localhost:8000/process
 ```
 
@@ -239,9 +239,9 @@ Full list in [`src/docket/config.py`](https://github.com/KazKozDev/docket/blob/m
 ### Install options
 
 ```bash
-pip install docket            # library + CLI
-pip install "docket[api]"     # + HTTP service (docket-api)
-pip install "docket[all]"     # + Streamlit UI, terminal UI, Langfuse tracing
+pip install docket-idp            # library + CLI
+pip install "docket-idp[api]"     # + HTTP service (docket-api)
+pip install "docket-idp[all]"     # + Streamlit UI, terminal UI, Langfuse tracing
 ```
 
 ### From source
@@ -283,7 +283,7 @@ python eval/benchmark_methods.py      # the rules vs TF-IDF vs LLM comparison
 
 ![macOS](https://img.shields.io/badge/macOS-333?style=flat-square&logo=apple&logoColor=fff) ![Linux](https://img.shields.io/badge/Linux-333?style=flat-square&logo=linux&logoColor=fff)
 
-![Python](https://img.shields.io/badge/Python-3.10+-333?style=flat-square&logo=python&logoColor=fff) [![PyPI](https://img.shields.io/pypi/v/docket?style=flat-square)](https://pypi.org/project/docket/) [![License](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/LICENSE) [![Tests](https://github.com/KazKozDev/docket/actions/workflows/ci.yml/badge.svg)](https://github.com/KazKozDev/docket/actions)
+![Python](https://img.shields.io/badge/Python-3.10+-333?style=flat-square&logo=python&logoColor=fff) [![PyPI](https://img.shields.io/pypi/v/docket-idp?style=flat-square)](https://pypi.org/project/docket-idp/) [![License](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/LICENSE) [![Tests](https://github.com/KazKozDev/docket/actions/workflows/ci.yml/badge.svg)](https://github.com/KazKozDev/docket/actions)
 
 [Issues](https://github.com/KazKozDev/docket/issues) · [ARCHITECTURE](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md) · [CONTRIBUTING](https://github.com/KazKozDev/docket/blob/master/CONTRIBUTING.md) · [CHANGELOG](https://github.com/KazKozDev/docket/blob/master/CHANGELOG.md) · [LICENSE](https://github.com/KazKozDev/docket/blob/master/LICENSE) · [LinkedIn](https://www.linkedin.com/in/kazkozdev/)
 
