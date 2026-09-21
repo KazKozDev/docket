@@ -177,3 +177,21 @@ def test_review_queue_can_be_disabled_per_call(monkeypatch, tmp_path):
     assert result.needs_review and enqueued == []
     run(True)
     assert len(enqueued) == 1
+
+
+@pytest.mark.parametrize("empty, altered, code", [(False, False, None), (True, False, 2), (False, True, 2)])
+def test_cli_forensics_exit_codes(monkeypatch, capsys, empty, altered, code):
+    """Regression: a finding used to crash with NameError (EXIT_INVALID)."""
+    from docket import forensics
+    from docket.schemas import DocumentForensicReport
+
+    report = DocumentForensicReport.model_construct(is_empty_template=empty, alterations_detected=altered)
+    monkeypatch.setattr(report.__class__, "model_dump", lambda self, **kw: {"empty": empty, "altered": altered})
+    monkeypatch.setattr(forensics, "analyze_document_forensics", lambda _path: report)
+    if code is None:
+        cli.main(["forensics", "x.pdf"])
+    else:
+        with pytest.raises(SystemExit) as exc:
+            cli.main(["forensics", "x.pdf"])
+        assert exc.value.code == code
+    assert json.loads(capsys.readouterr().out) == {"empty": empty, "altered": altered}

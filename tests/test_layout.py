@@ -149,6 +149,16 @@ def test_table_serializes_with_a_marker_and_cell_separators():
     ]
 
 
+def test_markers_can_be_switched_off(monkeypatch):
+    from docket import config
+
+    monkeypatch.setattr(config, "LAYOUT_MARKERS", False)
+    page = _page(_invoice_table([]))
+    assert len(page.tables) == 1  # the structure is kept; only the text loses the marker
+    assert not any(line.startswith("[TABLE") for line in page.text.splitlines())
+    assert "Widget large | 2 | 4.00 | 8.00" in page.text
+
+
 def test_markdown_rendering_of_a_table():
     table = _page(_invoice_table([])).tables[0]
     assert table.to_markdown().splitlines()[1] == "| Widget large | 2 | 4.00 | 8.00 |"

@@ -171,7 +171,19 @@ Also included: cross-document matching (invoice ↔ PO, three-way PO/waybill/inv
 
 ## Configuration
 
-Set in the environment or `.env`. [`.env.example`](https://github.com/KazKozDev/docket/blob/master/.env.example) and [`config.py`](https://github.com/KazKozDev/docket/blob/master/src/docket/config.py) have the full list.
+Settings come from, in rising priority: built-in defaults, a TOML config file, the environment (or `.env`), and explicit arguments (`ProcessOptions`, CLI flags, HTTP form fields). The config file is `--config PATH` (`docket` and `docket-api`), else `DOCKET_CONFIG`, else `./docket.toml`:
+
+```toml
+[ocr]
+backend = "paddle"
+fallbacks = ["tesseract", "vlm"]
+languages = ["en", "de"]
+
+[batch]
+workers = 8
+```
+
+Every setting and its environment variable is in [`docket.example.toml`](https://github.com/KazKozDev/docket/blob/master/docket.example.toml); `docket config show` prints the effective values and where each came from, `docket config check` validates them. An invalid value, an unknown key or a missing config file stops the CLI (exit 3), `docket-api` and `process_document()` before any document is read, with every problem listed at once.
 
 | Option | Default | What it does |
 |---|---|---|
@@ -189,6 +201,7 @@ Set in the environment or `.env`. [`.env.example`](https://github.com/KazKozDev/
 | `DOCKET_BATCH_WORKERS` | `4` | Documents in flight per batch |
 | `DOCKET_LLM_CONCURRENCY` / `DOCKET_OCR_CONCURRENCY` | `4` / half the CPUs | Process-wide limits on simultaneous LLM requests and OCR engines |
 | `DOCKET_MAX_BATCH_FILES` / `DOCKET_MAX_BATCH_BYTES` | `100` / 200 MB | HTTP upload limits per job (`DOCKET_MAX_FILE_BYTES` per file) |
+| `DOCKET_INCLUDE_LAYOUT` / `DOCKET_LAYOUT_MARKERS` | `true` / `true` | Keep page layouts in results; mark `[TABLE n]` / `[COLUMN n]` in the text the LLM reads |
 | `DOCKET_EINVOICE_RESOURCES` | bundled | Directory with your own copy of the validation artifacts (same layout and `manifest.json`) |
 
 ## Limitations

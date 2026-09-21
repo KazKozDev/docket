@@ -246,6 +246,23 @@ registered id only. `DOCKET_MAX_CONCURRENT_JOBS` jobs run at once.
 
 ---
 
+### Configuration
+
+`docket.config` declares every setting once (`SETTINGS`: attribute, TOML
+key, environment variable, type, bounds, default, help) and loads them as
+defaults < config file < environment into module attributes that the rest
+of the package reads at call time; explicit arguments are applied on top by
+`options.resolve()`, the CLI and the HTTP form handling. The file is TOML
+(`--config`, else `DOCKET_CONFIG`, else `./docket.toml`), with paths
+relative to the file. Loading never raises: an invalid value keeps its
+default and is recorded; `config.check()` raises one `ConfigurationError`
+naming every problem, with its source (`DOCKET_OCR_DPI='x'`,
+`docket.toml: [ocr] dpi = 'x'`, unknown keys, unknown OCR language, malformed
+Paddle device). The CLI checks before any command but `config`, `docket-api`
+before starting the server and the app's lifespan before accepting a
+request, and `resolve()` before `process_document()` reads a file.
+`docket config show` lists values with sources, secrets masked.
+
 ## 3. Schema catalog
 
 `docket.catalog` holds every schema docket can extract, as `SchemaSpec`s

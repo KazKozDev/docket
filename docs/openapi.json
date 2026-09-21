@@ -2378,10 +2378,16 @@
             "description": "ISO 639-1 codes, comma-separated."
           },
           "include_layout": {
-            "type": "boolean",
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Include Layout",
-            "description": "Keep page layouts in results.",
-            "default": false
+            "description": "Keep page layouts in results; default DOCKET_INCLUDE_LAYOUT."
           }
         },
         "type": "object",
@@ -2458,10 +2464,16 @@
             "description": "ISO 639-1 codes, comma-separated."
           },
           "include_layout": {
-            "type": "boolean",
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Include Layout",
-            "description": "Keep page layouts in results.",
-            "default": false
+            "description": "Keep page layouts in results; default DOCKET_INCLUDE_LAYOUT."
           }
         },
         "type": "object",

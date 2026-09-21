@@ -8,10 +8,16 @@
     docket ocr-backends
     docket forensics FILE
     docket validate-einvoice FILE [--profile PROFILE] [--format text|json]
+    docket config show [--format text|json] | check
+
+`docket --config PATH COMMAND ...` reads settings from a TOML file (else
+DOCKET_CONFIG, else ./docket.toml); environment variables override the file
+and command-line options override both. Invalid settings stop every command
+except `config` before anything is read.
 
 Both processing commands take the OCR (--ocr-backend, --ocr-fallback, ...)
-and schema (--document-type, --schema, --schema-version) options, and
-leave page layouts out of the output unless --include-layout.
+and schema (--document-type, --schema, --schema-version) options;
+--include-layout / --no-include-layout override DOCKET_INCLUDE_LAYOUT.
 
 Exit codes:
   0  every document succeeded
@@ -20,6 +26,8 @@ Exit codes:
   2  every document failed (for `process`: the document failed)
   3  configuration error — nothing was processed
 For `validate-einvoice`: 0 valid, 2 invalid, 3 configuration error.
+For `forensics`: 0 nothing found, 2 empty template or alteration detected.
+For `config check`: 0 valid, 3 invalid.
 """
 from __future__ import annotations
 
@@ -28,7 +36,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import __version__, catalog
+from . import __version__, catalog, config
 from .errors import ConfigurationError
 from .export import ExportError, export_document, list_exporters
 from .ocr import list_ocr_backends
@@ -67,8 +75,8 @@ def _add_processing_options(parser: argparse.ArgumentParser) -> None:
                         help="json (default), jsonl (one result per line) or csv (summary; see --line-items)")
     output.add_argument("--line-items", metavar="PATH",
                         help="csv: also write line items here (default: <output>.line_items.csv when --output is set)")
-    output.add_argument("--include-layout", action="store_true",
-                        help="Include page layouts (words, lines, tables) in json/jsonl output")
+    output.add_argument("--include-layout", action=argparse.BooleanOptionalAction, default=None,
+                        help="Keep page layouts (words, lines, tables) in results; default DOCKET_INCLUDE_LAYOUT")
 
 
 def _options(args: argparse.Namespace) -> ProcessOptions:
@@ -282,7 +290,25 @@ def _cmd_forensics(args: argparse.Namespace) -> int:
 
     report = analyze_document_forensics(args.document)
     _print_json(report.model_dump(mode="json"))
-    return EXIT_INVALID if report.is_empty_template or report.alterations_detected else EXIT_OK
+    return EXIT_FAILED if report.is_empty_template or report.alterations_detected else EXIT_OK
+
+
+def _cmd_config(args: argparse.Namespace) -> int:
+    problems = config.ERRORS + config._semantic_errors()
+    if args.action == "show":
+        rows = config.describe()
+        if args.format == "json":
+            _print_json({"config_file": str(config.CONFIG_FILE) if config.CONFIG_FILE else None,
+                         "settings": rows, "errors": problems})
+        else:
+            print(f"config file: {config.CONFIG_FILE or '(none)'}")
+            for row in rows:
+                print(f"  {row['key']:34} {row['value']!s:32} {row['source']}")
+    for problem in problems:
+        print(f"error: {problem}", file=sys.stderr)
+    if args.action == "check" and not problems:
+        print(f"ok ({config.CONFIG_FILE or 'no config file'})")
+    return EXIT_CONFIG if problems else EXIT_OK
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -291,6 +317,8 @@ def build_parser() -> argparse.ArgumentParser:
         description="Extract, validate and export structured data from business documents.",
     )
     parser.add_argument("--version", action="version", version=f"docket {__version__}")
+    parser.add_argument("--config", metavar="PATH",
+                        help="TOML settings file (default: DOCKET_CONFIG, else ./docket.toml if present)")
     commands = parser.add_subparsers(dest="command", required=True, metavar="COMMAND")
 
     process = commands.add_parser("process", help="Process one document into a JSON result")
@@ -338,12 +366,23 @@ def build_parser() -> argparse.ArgumentParser:
     forensics = commands.add_parser("forensics", help="Stamp, signature and alteration heuristics for one file")
     forensics.add_argument("document")
     forensics.set_defaults(func=_cmd_forensics)
+
+    settings = commands.add_parser("config", help="Show or check the effective settings and where they come from")
+    settings.add_argument("action", choices=["show", "check"])
+    settings.add_argument("--format", choices=["text", "json"], default="text")
+    settings.set_defaults(func=_cmd_config)
     return parser
 
 
 def main(argv: list[str] | None = None) -> None:
     args = build_parser().parse_args(argv)
     try:
+        if args.config:
+            config.configure(args.config)
+        if args.command != "config":
+            config.check()
+        if getattr(args, "include_layout", False) is None:
+            args.include_layout = config.INCLUDE_LAYOUT
         code = args.func(args)
     except ConfigurationError as exc:
         print(f"Configuration error: {exc}", file=sys.stderr)
