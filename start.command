@@ -111,7 +111,7 @@ say "Starting the UI (a browser tab will open)"
 echo
 printf "\033[1;32m  Everything is up. Press Ctrl+C here to stop it all.\033[0m\n\n"
 
-./.venv/bin/streamlit run app.py \
+./.venv/bin/streamlit run examples/streamlit_demo.py \
     --server.port "$UI_PORT" \
     --server.headless false \
     --browser.gatherUsageStats false

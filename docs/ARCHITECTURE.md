@@ -19,7 +19,7 @@ Docket converts unstructured or semi-structured documents (invoices, receipts, c
                                            v
 +---------------------------------------------------------------------------------------+
 |                                  Classification Tier                                  |
-|   1. Fast Deterministic Keyword Rules (confidence 1.0)                                |
+|   1. Fast Deterministic Keyword Rules (clear margin over the runner-up)               |
 |   2. TF-IDF Classifier (scikit-learn, confidence floor threshold)                     |
 |   3. LLM Zero-shot Classifier (fallback when confidence < floor)                      |
 +---------------------------------------------------------------------------------------+
@@ -69,8 +69,8 @@ To minimize inference costs and latency, Docket selects the cheapest extraction 
 
 Classification determines which Pydantic schema will govern extraction:
 
-1. **Keyword Rules**: High-precision header and structural pattern matching. If a document matches definitive rules (e.g., unambiguous invoice headers or boarding pass markers), it classifies immediately with confidence `1.0`.
-2. **TF-IDF Classifier**: Trained on standard document classes. If prediction confidence exceeds `DOCKET_TFIDF_CONFIDENCE_FLOOR`, it skips the LLM call entirely.
+1. **Keyword Rules**: Weighted patterns (English and Spanish cues, plus each document's own name in German, French, Italian, Dutch, Portuguese and Polish). If the top type leads the runner-up by a clear margin, it classifies immediately; confidence is the winner's share of all matched weight.
+2. **TF-IDF Classifier**: Word and character n-grams over a small embedded corpus of paraphrases in seven languages (EN, ES, DE, FR, IT, NL, PT) for every built-in type. If prediction confidence exceeds `DOCKET_TFIDF_CONFIDENCE_FLOOR`, it skips the LLM call entirely. Skipped when custom document types are registered, since it only knows the built-in ones.
 3. **LLM Fallback**: Invoked only when rule-based and TF-IDF classifiers cannot make a confident decision.
 
 ---
@@ -156,21 +156,38 @@ Extracted and validated records can be deterministically converted to corporate 
 
 ---
 
-## 8. Computer Vision & Document Forensics Tier
+## 8. Document Forensics (stamps, signatures, alterations)
 
-Physical execution verification and forensic analysis are performed on digital scans and photos:
+`docket.forensics` is a pixel heuristic over Pillow and Tesseract, not a
+trained vision model. What it does, and deliberately does not do:
 
-- **Stamp & Seal Detection (`_detect_stamps`)**:
-  - Distinguishes chromatic ink (blue, violet, red) from monochrome printed body text using RGB/HSV chromatic isolation.
-  - Measures bounding dimensions, cluster ink density, and geometry (circular/oval organization seals vs rectangular approval stamps).
-- **Signature Detection (`_detect_signatures`)**:
-  - Analyzes cursive ink strokes with high angular variance in signatory regions (footer zones near "Подпись", "M.P.", "Signature").
-- **Blank Template Gate (`is_empty_template` / `UNEXECUTED_TEMPLATE`)**:
-  - Identifies unexecuted contracts, acts, and delivery notes that have no physical signatures or organization stamps.
-  - Generates validation errors and flags for human review, preventing automated payments on draft templates.
-- **Handwritten Alterations & Payment Stamps**:
-  - Detects status stamps ("ОПЛАЧЕНО", "PAID", "ПОЛУЧЕНО", "VOID", "APPROVED").
-  - Detects unauthorized handwritten price/quantity corrections and strike-through annotations on document bodies.
+- **Colored stamps and seals**: blue, violet and red ink is separated from
+  black print by hue, grouped into clusters on a 16 px grid, and classified by
+  geometry: round-ish clusters are seals, red ink is a stamp of any shape.
+- **Handwriting and signatures**: colored clusters that are not stamp-shaped,
+  plus *black* ink that Tesseract did not recognise as printed words, after
+  long straight runs (table rules, signature lines) are removed. Black ink is
+  only considered in the signing zone (lower part of the page or next to a
+  "Signature / Unterschrift / Firma / Подпись" label), must be at least twice
+  as tall as a line of print, wider than tall, away from the page edges and
+  not made of straight segments.
+- **No black stamps**: to this method a black seal looks like a logo, a table
+  cell or a chart, so none are reported.
+- **Status stamps**: PAID / BEZAHLT / PAYÉ / PAGADO / ОПЛАЧЕНО, APPROVED /
+  GENEHMIGT, VOID / STORNIERT and equivalents are reported only when the word
+  is read *inside* a detected stamp (`PAYMENT_STAMP_PRESENT`,
+  `VOID_STAMP_PRESENT`).
+- **Corrections**: marker words ("corrected", "korrigiert", "corrigé",
+  "исправлено", ...) anywhere in the OCR text. Strike-throughs are not detected.
+- **Blank template gate**: no signature and no stamp gives
+  `UNEXECUTED_TEMPLATE`, which validation turns into an error for contracts,
+  acceptance acts and waybills.
+- **Confidence** is a score from geometry and position (roundness, size,
+  elongation, signing zone, label nearby; lower for black ink), useful for
+  ranking and thresholds, not a calibrated probability.
+
+Keyword detection depends on the Tesseract language packs in `DOCKET_OCR_LANG`
+(Russian markers need `rus`).
 
 
 

@@ -2,12 +2,35 @@
 
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 from docket.forensics import (
     analyze_document_forensics,
     analyze_page_forensics,
 )
+
+FONT = ImageFont.load_default(size=16)
+
+
+def _black_signed_contract(tmp_path: Path, *, with_seal: bool = False) -> Path:
+    """A contract printed in black and signed in black ballpoint."""
+    img = Image.new("RGB", (600, 800), color=(255, 255, 255))
+    draw = ImageDraw.Draw(img)
+    draw.text((50, 50), "SERVICE AGREEMENT 2026-07", fill=(0, 0, 0), font=FONT)
+    draw.text((50, 100), "Customer: Global Corp GmbH", fill=(0, 0, 0), font=FONT)
+    draw.text((50, 660), "Signature:", fill=(0, 0, 0), font=FONT)
+    # Cursive strokes well taller than a line of print.
+    draw.line(
+        [(150, 680), (165, 640), (180, 690), (195, 645), (215, 685), (240, 640), (270, 675), (300, 660)],
+        fill=(15, 15, 15),
+        width=3,
+    )
+    if with_seal:
+        draw.ellipse([400, 600, 520, 720], outline=(20, 20, 20), width=4)
+        draw.ellipse([420, 620, 500, 700], outline=(20, 20, 20), width=2)
+    path = tmp_path / "black_signed.png"
+    img.save(path)
+    return path
 
 
 def _create_blank_contract_template(tmp_path: Path) -> Path:
@@ -67,21 +90,25 @@ def _create_signed_and_stamped_contract(tmp_path: Path) -> Path:
     return path
 
 
-def _create_paid_stamp_invoice(tmp_path: Path) -> Path:
-    """Creates an invoice with a red 'ОПЛАЧЕНО' stamp."""
+def _stamp_invoice(tmp_path: Path, stamp_text: str | None, name: str) -> Path:
+    """An invoice with a red rectangular stamp, optionally carrying a status word."""
     img = Image.new("RGB", (600, 800), color=(255, 255, 255))
     draw = ImageDraw.Draw(img)
 
     draw.text((50, 50), "INVOICE # 9988", fill=(0, 0, 0))
     draw.text((50, 100), "Total: 5,000.00 EUR", fill=(0, 0, 0))
 
-    # Red rectangular stamp "ОПЛАЧЕНО" at (300, 250)
     draw.rectangle([250, 200, 450, 280], outline=(220, 20, 20), width=5)
-    draw.text((280, 230), "ОПЛАЧЕНО", fill=(220, 20, 20))
+    if stamp_text:
+        draw.text((275, 222), stamp_text, fill=(220, 20, 20), font=ImageFont.load_default(size=30))
 
-    path = tmp_path / "paid_invoice.png"
+    path = tmp_path / name
     img.save(path)
     return path
+
+
+def _create_paid_stamp_invoice(tmp_path: Path) -> Path:
+    return _stamp_invoice(tmp_path, "PAID", "paid_invoice.png")
 
 
 def _create_handwritten_correction_document(tmp_path: Path) -> Path:
@@ -186,3 +213,55 @@ def test_validate_with_forensic_report(tmp_path: Path):
     issues = validate(act, forensic_report=report)
     error_messages = [i.message for i in issues if i.severity == "error"]
     assert any("blank template" in m.lower() for m in error_messages)
+
+
+def test_red_stamp_without_status_word_is_not_a_payment_stamp(tmp_path: Path):
+    report = analyze_document_forensics(_stamp_invoice(tmp_path, None, "plain.png"))
+    assert report.has_stamps is True
+    assert "PAYMENT_STAMP_PRESENT" not in report.risk_flags
+
+
+def test_status_word_in_eu_language(tmp_path: Path):
+    report = analyze_document_forensics(_stamp_invoice(tmp_path, "BEZAHLT", "bezahlt.png"))
+    assert "PAYMENT_STAMP_PRESENT" in report.risk_flags
+    void = analyze_document_forensics(_stamp_invoice(tmp_path, "STORNIERT", "storniert.png"))
+    assert "VOID_STAMP_PRESENT" in void.risk_flags
+
+
+def test_printed_paid_text_is_not_a_stamp(tmp_path: Path):
+    img = Image.new("RGB", (600, 800), color=(255, 255, 255))
+    draw = ImageDraw.Draw(img)
+    draw.text((50, 50), "RECEIPT 00123", fill=(0, 0, 0), font=FONT)
+    draw.text((50, 100), "Amount paid: 12.00 EUR", fill=(0, 0, 0), font=FONT)
+    path = tmp_path / "receipt.png"
+    img.save(path)
+
+    report = analyze_document_forensics(path)
+    assert "PAYMENT_STAMP_PRESENT" not in report.risk_flags
+    assert report.has_stamps is False
+
+
+def test_black_ink_signature_is_detected(tmp_path: Path):
+    report = analyze_document_forensics(_black_signed_contract(tmp_path))
+    assert report.has_signatures is True
+    assert report.is_empty_template is False
+    assert all(0 < s.confidence < 0.9 for s in report.signatures)
+
+
+def test_black_seal_is_not_claimed_as_a_stamp(tmp_path: Path):
+    # Black rings look like logos or table graphics to a pixel heuristic, so
+    # the detector deliberately never reports black stamps.
+    report = analyze_document_forensics(_black_signed_contract(tmp_path, with_seal=True))
+    assert not any(s.color == "black" for s in report.stamps)
+    assert report.has_signatures is True
+
+
+def test_confidence_reflects_geometry():
+    img = Image.new("RGB", (600, 800), color=(255, 255, 255))
+    draw = ImageDraw.Draw(img)
+    draw.ellipse([60, 500, 180, 620], outline=(10, 40, 220), width=4)  # round seal
+    draw.rectangle([300, 500, 560, 540], outline=(220, 20, 20), width=4)  # flat red box
+    stamps, _, _ = analyze_page_forensics(img)
+    by_color = {s.color: s.confidence for s in stamps}
+    assert by_color["blue"] > by_color["red"]
+    assert len({s.confidence for s in stamps}) == len(stamps)

@@ -48,23 +48,19 @@ api = [
     "uvicorn>=0.29",
     "python-multipart>=0.0.9",
 ]
-ui = [
-    "streamlit>=1.38",
-]
-tui = [
-    "rich>=13.7",
-]
 tracing = [
     "langfuse>=2.0",
 ]
 all = [
-    "docket-idp[api,ui,tui,tracing]",
+    "docket-idp[api,tracing]",
 ]
 eval = [
     "datasets>=2.19",
 ]
 dev = [
-    "docket-idp[api,ui,tui,eval]",
+    "docket-idp[api,eval]",
+    # The Streamlit demo (examples/streamlit_demo.py) is a repo-only dev tool.
+    "streamlit>=1.49",
     "pytest>=8.0",
     # Test fixtures only (builds PDFs with a text layer); never a runtime
     # dependency, so its AGPL license does not reach installed users.
