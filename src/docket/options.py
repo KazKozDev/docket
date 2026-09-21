@@ -82,9 +82,10 @@ class ProcessOptions(BaseModel):
         default=True,
         description="Classify when no type or schema is given. False requires document_type or schema_model.",
     )
-    include_layout: bool = Field(
-        default=True,
-        description="Keep page layouts (and OCR witnesses) in the result. Field locations are kept either way.",
+    include_layout: bool | None = Field(
+        default=None,
+        description="Keep page layouts (and OCR witnesses) in the result. Field locations are kept either way. "
+        "Env: DOCKET_INCLUDE_LAYOUT.",
     )
     escalate: bool = Field(
         default=True,
@@ -127,6 +128,7 @@ def resolve(options: ProcessOptions | None = None) -> ResolvedOptions:
     ConfigurationError on anything that would fail later."""
     from . import catalog
 
+    config.check()
     options = options or ProcessOptions()
     ocr = options.ocr
     settings = OcrSettings(
@@ -164,7 +166,7 @@ def resolve(options: ProcessOptions | None = None) -> ResolvedOptions:
         acquisition=acquisition,
         document_type=doc_type,
         classify=options.classify,
-        include_layout=options.include_layout,
+        include_layout=_pick(options.include_layout, config.INCLUDE_LAYOUT),
         escalate=options.escalate,
         review=ResolvedReview(
             enqueue=_pick(review.enqueue, config.REVIEW_QUEUE_ENABLED),

@@ -1,0 +1,135 @@
+# docket settings. Copy to docket.toml (read from the working directory), or
+# pass --config PATH / set DOCKET_CONFIG. Environment variables override this
+# file; command-line options and ProcessOptions override both.
+# Every line below shows the built-in default; uncomment what you change.
+# `docket config show` prints the effective values and where each came from.
+
+[llm]
+# 'ollama' (local or cloud Ollama) or 'openai' (any OpenAI-compatible Chat Completions
+# API: Mistral, OpenAI, Azure OpenAI, vLLM, LM Studio). Env: DOCKET_LLM_PROVIDER.
+# provider = "ollama"
+# Ollama server URL. Env: OLLAMA_HOST.
+# ollama_host = "http://localhost:11434"
+# Base URL of the OpenAI-compatible API. Env: DOCKET_LLM_BASE_URL.
+# base_url = "https://api.openai.com/v1"
+# API key for the OpenAI-compatible API. Env: DOCKET_LLM_API_KEY.
+# api_key = ""  # unset
+# Model for classification and extraction. Env: DOCKET_TEXT_MODEL.
+# text_model = "deepseek-v4.1-flash:cloud"
+# Model that reads page images (the vlm OCR backend). Env: DOCKET_VISION_MODEL.
+# vision_model = "deepseek-v4.1-flash:cloud"
+# Extra attempts when the model's output fails the schema. Env:
+# DOCKET_MAX_EXTRACT_RETRIES.
+# max_extract_retries = 2
+# Longest text sent in one extraction call; longer documents are chunked. Env:
+# DOCKET_EXTRACT_CHUNK_CHARS.
+# extract_chunk_chars = 12000
+# Timeout for one vision-model page, seconds. Env: DOCKET_VISION_TIMEOUT_S.
+# vision_timeout_s = 300.0
+# Let reasoning models think before answering. Env: DOCKET_ENABLE_THINKING.
+# enable_thinking = false
+# Process-wide limit on simultaneous LLM requests. Env: DOCKET_LLM_CONCURRENCY.
+# concurrency = 4
+
+[ocr]
+# Primary OCR backend: tesseract, paddle, auto (first installed) or a plugin name. Env:
+# DOCKET_OCR_BACKEND.
+# backend = "auto"
+# Backends tried in order when a page's reading is rejected (env: comma-separated). Env:
+# DOCKET_OCR_FALLBACKS.
+# fallbacks = ["vlm"]
+# ISO 639-1 language codes; each extra language slows Tesseract. Env:
+# DOCKET_OCR_LANGUAGES.
+# languages = ["en"]
+# A page reading is accepted at this confidence (0..1). Env: DOCKET_OCR_MIN_CONFIDENCE.
+# min_confidence = 0.6
+# Detect and undo page rotation on scans (Tesseract OSD). Env:
+# DOCKET_OCR_DETECT_ROTATION.
+# detect_rotation = true
+# Resolution PDF pages are rendered at for OCR. Env: DOCKET_OCR_DPI.
+# dpi = 200
+# Tesseract page-segmentation mode (3 automatic; 6 can suit dense tables). Env:
+# DOCKET_TESSERACT_PSM.
+# tesseract_psm = 3
+# Process-wide limit on simultaneously running OCR engines (default: half the CPUs).
+# Env: DOCKET_OCR_CONCURRENCY.
+# concurrency = 4  # default: half the CPUs
+# Ask a text model whether OCR text is garbled. Env: DOCKET_OCR_QUALITY_CHECK.
+# quality_check = true
+# Confidence the quality check needs to call text garbled. Env:
+# DOCKET_OCR_QUALITY_MIN_CONFIDENCE.
+# quality_min_confidence = 0.7
+
+[paddle]
+# PaddleOCR device: cpu, gpu or gpu:N. Env: DOCKET_PADDLE_DEVICE.
+# device = "cpu"
+# PaddleOCR model size. Env: DOCKET_PADDLE_MODEL.
+# model = "mobile"
+# Run PaddleOCR's table-structure pipeline. Env: DOCKET_PADDLE_TABLES.
+# tables = false
+
+[layout]
+# Keep page layouts (words, lines, tables with coordinates) in results. Env:
+# DOCKET_INCLUDE_LAYOUT.
+# include = true
+# Mark tables and columns ([TABLE n], [COLUMN n]) in the page text the LLM reads. Env:
+# DOCKET_LAYOUT_MARKERS.
+# markers = true
+
+[classify]
+# Confidence TF-IDF needs to answer instead of the LLM. Env:
+# DOCKET_TFIDF_CONFIDENCE_FLOOR.
+# tfidf_confidence_floor = 0.65
+# Below this classification confidence a document goes to review. Env:
+# DOCKET_MIN_CONFIDENCE.
+# min_confidence = 0.55
+
+[review]
+# Write flagged documents to the review queue. Env: DOCKET_REVIEW_QUEUE_ENABLED.
+# enabled = true
+# Review queue file (JSON Lines). Env: DOCKET_REVIEW_QUEUE.
+# queue = "data/review_queue.jsonl"
+# Where copies of flagged documents are kept. Env: DOCKET_REVIEW_DOCUMENTS.
+# documents = "data/review_documents"
+
+[input]
+# Largest accepted file. Env: DOCKET_MAX_FILE_BYTES.
+# max_file_bytes = 20971520
+# Most pages read from one PDF. Env: DOCKET_MAX_PDF_PAGES.
+# max_pdf_pages = 100
+
+[batch]
+# Documents in flight per batch; beyond the LLM limit they only help while others are in
+# OCR. Env: DOCKET_BATCH_WORKERS.
+# workers = 4
+
+[api]
+# Most files in one HTTP job. Env: DOCKET_MAX_BATCH_FILES.
+# max_batch_files = 100
+# Largest total upload of one HTTP job. Env: DOCKET_MAX_BATCH_BYTES.
+# max_batch_bytes = 209715200
+# HTTP jobs processed at once; the rest wait. Env: DOCKET_MAX_CONCURRENT_JOBS.
+# max_concurrent_jobs = 2
+# Bearer token the HTTP API requires when set. Env: DOCKET_API_KEY.
+# key = ""  # unset
+# One directory per HTTP job: metadata, results, uploads until done. Env:
+# DOCKET_JOBS_DIR.
+# jobs_dir = "data/jobs"
+
+[einvoice]
+# Your own copy of the validation artifacts (default: the one in the package). Env:
+# DOCKET_EINVOICE_RESOURCES.
+# resources = ""  # unset
+
+[eval]
+# Blended $/1M tokens used for the illustrative cost in eval reports. Env:
+# DOCKET_CLOUD_COST_PER_1M_TOKENS.
+# cloud_cost_per_1m_tokens = 0.2
+
+[tracing]
+# Langfuse tracing (optional). Env: LANGFUSE_PUBLIC_KEY.
+# langfuse_public_key = ""  # unset
+# Langfuse tracing (optional). Env: LANGFUSE_SECRET_KEY.
+# langfuse_secret_key = ""  # unset
+# Langfuse server. Env: LANGFUSE_HOST.
+# langfuse_host = "https://cloud.langfuse.com"
