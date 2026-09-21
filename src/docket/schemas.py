@@ -10,7 +10,7 @@ from datetime import date, datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class DocType(str, Enum):
@@ -39,8 +39,11 @@ class LineItem(BaseModel):
     )
 
 
-class SourceLocation(BaseModel):
-    """Auditable link from a field to the original page region."""
+class Citation(BaseModel):
+    """What the extraction model returns for a field: the page and the exact
+    text it read the value from. Geometry is never asked of the model — the
+    pipeline resolves the quote against the page layout into a
+    `docket.SourceLocation`."""
 
     page: int = Field(ge=1)
     quote: str = Field(
@@ -103,7 +106,7 @@ class Invoice(BaseModel):
         description="Positive shipping/handling charge; added to subtotal+tax to get total_amount.",
     )
     total_amount: float
-    field_locations: dict[str, SourceLocation] = Field(
+    field_locations: dict[str, Citation] = Field(
         default_factory=dict,
         description="Page and exact source region for each material extracted field.",
     )
@@ -180,7 +183,7 @@ class Receipt(BaseModel):
         default=None,
         description="Expense category (e.g. 'meals', 'travel', 'lodging', 'fuel', 'office_supplies', 'groceries', 'other').",
     )
-    field_locations: dict[str, SourceLocation] = Field(default_factory=dict)
+    field_locations: dict[str, Citation] = Field(default_factory=dict)
 
     @field_validator("discount_amount")
     @classmethod
@@ -265,7 +268,7 @@ class Contract(BaseModel):
         description="Identified legal or business risk factors (e.g. unlimited liability, auto-renewal trap).",
     )
     key_obligations: list[str] = Field(default_factory=list)
-    field_locations: dict[str, SourceLocation] = Field(default_factory=dict)
+    field_locations: dict[str, Citation] = Field(default_factory=dict)
 
 
 class BoardingPass(BaseModel):
@@ -294,7 +297,7 @@ class BoardingPass(BaseModel):
     seat: str | None = None
     gate: str | None = None
     cabin_class: str | None = None
-    field_locations: dict[str, SourceLocation] = Field(default_factory=dict)
+    field_locations: dict[str, Citation] = Field(default_factory=dict)
 
 
 class PurchaseOrder(BaseModel):
@@ -309,7 +312,7 @@ class PurchaseOrder(BaseModel):
     tax_amount: float = 0
     total_amount: float
     payment_terms: str | None = None
-    field_locations: dict[str, SourceLocation] = Field(default_factory=dict)
+    field_locations: dict[str, Citation] = Field(default_factory=dict)
 
 
 class MatchingStatus(str, Enum):
@@ -390,7 +393,7 @@ class BankStatement(BaseModel):
     total_deposits: float = 0.0
     total_withdrawals: float = 0.0
     transactions: list[BankStatementTransaction] = Field(default_factory=list)
-    field_locations: dict[str, SourceLocation] = Field(default_factory=dict)
+    field_locations: dict[str, Citation] = Field(default_factory=dict)
 
 
 class AcceptanceActItem(BaseModel):
@@ -421,7 +424,7 @@ class AcceptanceAct(BaseModel):
         description="Whether the document confirms services were rendered satisfactorily with no mutual claims.",
     )
     signatories: list[str] = Field(default_factory=list)
-    field_locations: dict[str, SourceLocation] = Field(default_factory=dict)
+    field_locations: dict[str, Citation] = Field(default_factory=dict)
 
 
 class WaybillItem(BaseModel):
@@ -453,7 +456,7 @@ class Waybill(BaseModel):
     total_packages: int | None = None
     total_amount: float | None = None
     currency: str | None = Field(default=None, min_length=3, max_length=3)
-    field_locations: dict[str, SourceLocation] = Field(default_factory=dict)
+    field_locations: dict[str, Citation] = Field(default_factory=dict)
 
 
 SCHEMA_BY_DOC_TYPE: dict[DocType, type[BaseModel]] = {
@@ -581,48 +584,3 @@ class DocumentForensicReport(BaseModel):
         default_factory=list,
         description="Forensic risk flags (e.g. UNEXECUTED_TEMPLATE, MISSING_STAMP, HANDWRITTEN_ALTERATION).",
     )
-
-
-class PipelineResult(BaseModel):
-    source: str
-    classification: ClassificationResult
-    extracted: dict | None
-    field_sources: dict[str, SourceLocation] = Field(
-        default_factory=dict,
-        description="Where each extracted field was read from — kept beside the data, not inside it.",
-    )
-    extract_attempts: int
-    validation_issues: list[ValidationIssue] = Field(default_factory=list)
-    ocr_method: str  # "pdf_text" | "ocr" | "vlm" | "ocr_degraded"
-    raw_text_chars: int
-    language: str = "unknown"  # "en" | "es" | "unknown"
-    escalated_to_vlm: bool = False
-    needs_review: bool = False
-    review_reasons: list[str] = Field(default_factory=list)
-    llm_calls: int = 0
-    llm_estimated_tokens: int = 0
-    pages_total: int = 1
-    pages_processed: int = 1
-    complete: bool = True
-    document_id: str | None = None
-    page_methods: list[str] = Field(default_factory=list)
-    forensic_report: DocumentForensicReport | None = None
-
-    @property
-    def is_valid(self) -> bool:
-        return not any(i.severity == "error" for i in self.validation_issues)
-
-    @property
-    def document(self) -> BaseModel | None:
-        """`extracted` as its typed schema (Invoice, Receipt, …), or None if
-        extraction failed or no longer matches the schema."""
-        from .doctypes import get_document_type
-
-        doc_type = get_document_type(self.classification.doc_type)
-        if doc_type is None or self.extracted is None:
-            return None
-        schema = doc_type.schema
-        try:
-            return schema.model_validate(self.extracted)
-        except ValidationError:
-            return None

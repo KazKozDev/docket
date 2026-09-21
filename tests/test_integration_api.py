@@ -109,7 +109,7 @@ def test_openai_vision_sends_data_url(monkeypatch, tmp_path):
     monkeypatch.setattr(config, "LLM_PROVIDER", "openai")
     monkeypatch.setattr(llm_client.httpx, "post", fake_post)
 
-    assert llm_client.vision_transcribe(str(image), model="pixtral-12b") == "text"
+    assert llm_client.vision_transcribe(image.read_bytes(), model="pixtral-12b") == "text"
     parts = captured["messages"][0]["content"]
     assert parts[1]["image_url"]["url"].startswith("data:image/png;base64,")
 
@@ -129,55 +129,42 @@ def test_pdf_render_and_count(tmp_path):
 
 
 def test_pipeline_result_exposes_typed_document():
-    from docket.schemas import ClassificationResult, DocType, PipelineResult
+    from tests.factories import make_result
 
     invoice = sample_invoice()
-    result = PipelineResult(
-        source="x.pdf",
-        classification=ClassificationResult(doc_type=DocType.INVOICE, confidence=1.0, method="rules"),
-        extracted=invoice.model_dump(mode="json"),
-        extract_attempts=1,
-        ocr_method="pdf_text",
-        raw_text_chars=10,
-    )
+    result = make_result(source="x.pdf", extracted=invoice.model_dump(mode="json"))
     assert isinstance(result.document, Invoice)
     assert result.document.invoice_number == invoice.invoice_number
     assert result.model_copy(update={"extracted": None}).document is None
 
 
 def test_cli_exports_extracted_document(monkeypatch, capsys):
-    from docket.schemas import ClassificationResult, DocType, PipelineResult
+    from tests.factories import make_result
 
-    result = PipelineResult(
-        source="x.pdf",
-        classification=ClassificationResult(doc_type=DocType.INVOICE, confidence=1.0, method="rules"),
-        extracted=sample_invoice().model_dump(mode="json"),
-        extract_attempts=1,
-        ocr_method="pdf_text",
-        raw_text_chars=10,
-    )
-    monkeypatch.setattr(cli, "process", lambda _path: result)
+    result = make_result(source="x.pdf", extracted=sample_invoice().model_dump(mode="json"))
+    monkeypatch.setattr(cli, "process_document", lambda _path, **_kw: result)
     cli.main(["x.pdf", "--export", "ubl"])
     assert "INV-2026-001" in capsys.readouterr().out
 
 
 def test_review_queue_can_be_disabled_per_call(monkeypatch, tmp_path):
     from docket import pipeline, review_queue
-    from docket.schemas import ClassificationResult, DocType, PipelineResult
+    from docket.schemas import ClassificationResult, DocType
+    from tests.factories import make_result, text_acquisition
 
-    flagged = PipelineResult(
-        source=str(tmp_path / "x.pdf"),
+    source = tmp_path / "x.txt"
+    source.write_text("x")
+    flagged = make_result(
+        source=str(source),
         classification=ClassificationResult(doc_type=DocType.INVOICE, confidence=0.1, method="rules"),
         extracted=None,
-        extract_attempts=1,
-        ocr_method="pdf_text",
-        raw_text_chars=10,
     )
+    monkeypatch.setattr(pipeline, "_acquire", lambda *a, **k: text_acquisition("x"))
     monkeypatch.setattr(pipeline, "_run_once", lambda *a, **k: flagged)
     enqueued: list = []
     monkeypatch.setattr(review_queue, "enqueue", lambda *a: enqueued.append(a) or "id")
 
-    result = pipeline.process(tmp_path / "x.pdf", enqueue_review=False)
+    result = pipeline.process_document(source, ocr_fallbacks=[], enqueue_review=False)
     assert result.needs_review and enqueued == []
-    pipeline.process(tmp_path / "x.pdf", enqueue_review=True)
+    pipeline.process_document(source, ocr_fallbacks=[], enqueue_review=True)
     assert len(enqueued) == 1

@@ -16,8 +16,7 @@ from pathlib import Path
 import streamlit as st
 
 from docket import config, llm_client, pdf
-from docket.pipeline import process
-from docket.schemas import PipelineResult
+from docket import DocumentResult, process_document
 
 GOLDEN_DIR = Path(__file__).resolve().parent.parent / "eval" / "golden_dataset"
 PREVIEW_DPI = 110
@@ -143,8 +142,9 @@ with col_result:
 
     def on_stage(stage: str, payload: object) -> None:
         elapsed_so_far = time.time() - start
-        if stage == "ocr":
-            stage_log.append(f"Text acquired via **{payload.method}** ({len(payload.text)} chars) — {elapsed_so_far:.1f}s")
+        if stage == "acquire":
+            backends = ", ".join(payload.report.backends_used)
+            stage_log.append(f"Text acquired via **{backends}** ({len(payload.text)} chars) — {elapsed_so_far:.1f}s")
         elif stage == "classify":
             stage_log.append(f"Classified as **{payload.type_name}** via {payload.method} — {elapsed_so_far:.1f}s")
         elif stage == "extract":
@@ -157,7 +157,7 @@ with col_result:
     start = time.time()
     with st.spinner("Running OCR/VLM → classify → extract → validate..."):
         try:
-            result: PipelineResult = process(uploaded_path, on_stage=on_stage)
+            result: DocumentResult = process_document(uploaded_path, on_stage=on_stage)
         except Exception as exc:  # noqa: BLE001 — surface any pipeline failure to the demo UI
             st.error(f"Pipeline failed: {exc}")
             st.stop()
@@ -165,14 +165,19 @@ with col_result:
     progress.empty()
 
     stage_cols = st.columns(4)
-    stage_cols[0].metric("OCR method", result.ocr_method)
-    stage_cols[1].metric("Doc type", result.classification.type_name)
+    if result.error is not None:
+        st.error(f"{result.error.stage} failed ({result.error.code}): {result.error.message}")
+        st.stop()
+
+    stage_cols = st.columns(4)
+    stage_cols[0].metric("OCR", ", ".join(result.ocr.backends_used))
+    stage_cols[1].metric("Doc type", result.document_type)
     stage_cols[2].metric("Classified via", result.classification.method)
-    stage_cols[3].metric("Extract attempts", result.extract_attempts)
+    stage_cols[3].metric("Extract attempts", result.metrics.extract_attempts)
 
     st.caption(
         f"Classification confidence: {result.classification.confidence:.0%} · "
-        f"{result.raw_text_chars} chars of text acquired · {result.llm_calls} LLM call(s) · "
+        f"{len(result.layout.text)} chars of text acquired · {result.metrics.llm_calls} LLM call(s) · "
         f"{elapsed:.1f}s total"
     )
 

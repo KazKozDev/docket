@@ -14,12 +14,14 @@ from docket import (
     ValidationIssue,
     add_validator,
     export_document,
-    process,
+    process_document,
     register_document_type,
     register_exporter,
 )
 from docket import api, classify as classify_module, extract as extract_module, validate
-from docket.schemas import ClassificationResult, DocType, PipelineResult, SourceLocation
+from docket.result import DocumentResult, SourceLocation
+from docket.schemas import ClassificationResult, DocType
+from tests.factories import make_result
 from tests.test_export import sample_invoice
 
 NOTE_TEXT = """LIEFERSCHEIN / DELIVERY NOTE
@@ -75,7 +77,7 @@ def _run(tmp_path, monkeypatch, payload):
     source = tmp_path / "note.txt"
     source.write_text(NOTE_TEXT)
     monkeypatch.setattr(extract_module, "chat_json", lambda *a, **k: payload)
-    return process(source, enqueue_review=False)
+    return process_document(source, enqueue_review=False)
 
 
 def test_rules_tier_recognises_custom_keywords():
@@ -177,17 +179,15 @@ def test_unregistered_llm_answer_becomes_unknown(monkeypatch):
 
 
 def test_custom_type_survives_json_round_trip():
-    result = PipelineResult(
+    result = make_result(
         source="x.txt",
+        document_type="delivery_note",
         classification=ClassificationResult(
             doc_type="delivery_note", confidence=1.0, method="rules"
         ),
         extracted=None,
-        extract_attempts=0,
-        ocr_method="text",
-        raw_text_chars=1,
     )
-    restored = PipelineResult.model_validate_json(result.model_dump_json())
+    restored = DocumentResult.model_validate_json(result.model_dump_json())
     assert restored.classification.doc_type == "delivery_note"
     assert restored.classification.type_name == "delivery_note"
 
@@ -242,4 +242,5 @@ def test_api_lists_document_types(monkeypatch):
 
 
 def test_source_location_is_public():
-    assert SourceLocation(page=1, quote="x").page == 1
+    location = SourceLocation(page=1, quote="x")
+    assert location.page == 1 and location.bbox is None

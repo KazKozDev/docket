@@ -8,6 +8,68 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+Redesign in progress (layout-first model, pluggable OCR, schema catalog,
+batch processing, official e-invoice validation). This section grows with
+each stage; see the Breaking changes list.
+
+### Breaking changes
+- `process()` is replaced by `process_document()`, which returns a
+  `DocumentResult` instead of `PipelineResult`. `PipelineResult` is removed.
+  `DocumentResult` carries `status` (`succeeded` / `needs_review` / `failed`),
+  `document_type`, `schema_id`, `ocr` (per-page acquisition report),
+  `layout`, `metrics` (timings, LLM calls, `escalated_to_vlm`,
+  `extract_attempts`) and a structured `error`. The old `ocr_method`,
+  `page_methods`, `raw_text_chars`, `pages_total`, `pages_processed`,
+  `llm_calls`, `llm_estimated_tokens`, `extract_attempts` and
+  `escalated_to_vlm` fields are gone; their data lives in `ocr` and `metrics`.
+- A document that cannot be read now comes back as a `DocumentResult` with
+  `status="failed"` and an `error` instead of raising. Configuration errors
+  (unknown or unavailable OCR backend, unknown language code) raise before
+  any page is read.
+- `SourceLocation` now describes a resolved location (`page`, `quote`,
+  `bbox`, `word_ids`, `confidence`) and lives in `docket.result`. The
+  `{page, quote}` model the extraction LLM fills is `Citation`
+  (`CitedDocument.field_locations: dict[str, Citation]`).
+- The `docket.ocr` module is now a package; `extract_text()` and `OcrResult`
+  are removed in favour of `docket.ocr.acquire()` and OCR backends.
+- `DOCKET_OCR_LANG` (`eng+deu`) is replaced by `DOCKET_OCR_LANGUAGES`
+  (ISO 639-1, `en,de`); `DOCKET_OCR_PSM` is renamed `DOCKET_TESSERACT_PSM`.
+- `llm_client.vision_transcribe()` takes encoded image bytes, not a path.
+- On-stage callback: the `"ocr"` stage is now `"acquire"` and receives an
+  `Acquisition`.
+- CLI: a configuration error exits with code 3.
+
+### Added
+- Layout model (`docket.layout`): `BoundingBox`, `WordToken`, `TextLine`,
+  `TextBlock`, `Column`, `TableCell`, `Table`, `PageLayout`,
+  `DocumentLayout`, with normalized 0..1 coordinates and each page's
+  original size for conversion back to pixels or points.
+- Layout analysis shared by every backend: rows, blocks, text columns with
+  column-major reading order, tables from PDF rulings or word alignment, and
+  a text serialization with `[TABLE n]` / `[COLUMN n]` markers for the LLM.
+- Extracted fields' citations resolve to page regions (`bbox`, `word_ids`,
+  match confidence) by matching the quote against the page's words; the
+  model is never asked for coordinates.
+- OCR backend interface (`OcrBackend`, `Capabilities`, `availability()`),
+  built-in `pdf_text`, `tesseract` and `vlm` backends, a registry
+  (`register_ocr_backend`, `get_ocr_backend`, `list_ocr_backends`), plugins
+  through the `docket.ocr_backends` entry point, and backend objects passed
+  straight to `process_document(ocr_backend=...)`.
+- Per-page fallback chain: `DOCKET_OCR_BACKEND`, `DOCKET_OCR_FALLBACKS`,
+  `DOCKET_OCR_MIN_CONFIDENCE`; `auto` picks the first installed engine.
+  Mixed PDFs use the text layer where it is usable and OCR elsewhere.
+- Rotation: Tesseract OSD for scans (`DOCKET_OCR_DETECT_ROTATION`), glyph
+  matrices for rotated PDF pages. Multi-frame TIFFs are read as multipage.
+- A PDF text layer made of unmapped `(cid:N)` glyphs is treated as unusable.
+- `docket --ocr-backend`, `--ocr-fallback`, `--no-ocr-fallback`,
+  `--ocr-languages`, `--list-ocr-backends`; `GET /ocr-backends`.
+
+### Fixed
+- Scanned pages sent to the vision model were written as temporary PNGs next
+  to the input file; pages are now encoded in memory.
+- A blank page (e.g. an empty back side) no longer fails the whole document
+  when the vision model is unavailable; it is reported as degraded.
+
 ## [0.2.0] - 2026-09-21
 
 ### Added

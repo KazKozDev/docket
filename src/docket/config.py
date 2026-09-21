@@ -52,13 +52,32 @@ OCR_QUALITY_MIN_CONFIDENCE = float(
 # scan (no text layer) and fall back to OCR / VLM instead of pdfplumber text.
 MIN_CHARS_PER_PAGE = 20
 
-# Tesseract page-segmentation mode and PDF render resolution. Defaults
-# preserve the long-standing behavior (PSM 3 = fully automatic, 200 DPI);
-# a dense table scan may read better at PSM 6 / higher DPI via the env.
-OCR_PSM = os.getenv("DOCKET_OCR_PSM", "3")
-# Tesseract language packs, "+"-joined (e.g. "eng+deu+fra"). Each extra
-# language slows OCR, so list only the ones your documents use.
-OCR_LANG = os.getenv("DOCKET_OCR_LANG", "eng")
+# OCR backend chain. DOCKET_OCR_BACKEND names the primary engine ("auto"
+# picks the first installed of tesseract, paddle); DOCKET_OCR_FALLBACKS is a
+# comma-separated list tried in order when a page's reading is rejected.
+# An explicitly named backend that cannot run is a startup error.
+OCR_BACKEND = os.getenv("DOCKET_OCR_BACKEND", "auto").strip().lower()
+OCR_FALLBACKS = [
+    b.strip().lower()
+    for b in os.getenv("DOCKET_OCR_FALLBACKS", "vlm").split(",")
+    if b.strip()
+]
+# ISO 639-1 codes, comma-separated (e.g. "en,de,fr"). Each backend maps them
+# to its own names; each extra language slows Tesseract, so list only the
+# ones your documents use.
+OCR_LANGUAGES = os.getenv("DOCKET_OCR_LANGUAGES", "en")
+# A page reading is accepted when its confidence (0..1) reaches this.
+OCR_MIN_CONFIDENCE = float(os.getenv("DOCKET_OCR_MIN_CONFIDENCE", "0.60"))
+OCR_DETECT_ROTATION = os.getenv("DOCKET_OCR_DETECT_ROTATION", "true").lower() in {
+    "1",
+    "true",
+    "yes",
+}
+# Compute device for PaddleOCR ("cpu", "gpu", "gpu:0").
+PADDLE_DEVICE = os.getenv("DOCKET_PADDLE_DEVICE", "cpu")
+# Tesseract page-segmentation mode and PDF render resolution. PSM 3 = fully
+# automatic; a dense table scan may read better at PSM 6 / higher DPI.
+TESSERACT_PSM = os.getenv("DOCKET_TESSERACT_PSM", "3")
 OCR_DPI = int(os.getenv("DOCKET_OCR_DPI", "200"))
 MAX_FILE_BYTES = int(os.getenv("DOCKET_MAX_FILE_BYTES", str(20 * 1024 * 1024)))
 MAX_PDF_PAGES = int(os.getenv("DOCKET_MAX_PDF_PAGES", "100"))

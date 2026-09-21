@@ -34,16 +34,16 @@ docket invoice.pdf --export xrechnung    # e-invoice XML on stdout
 **Python library**
 
 ```python
-from docket import Invoice, export_document, process
+from docket import Invoice, export_document, process_document
 
-result = process("invoice.pdf", enqueue_review=False)  # your app owns the review flow
+result = process_document("invoice.pdf", enqueue_review=False)  # your app owns the review flow
 if result.is_valid and isinstance(result.document, Invoice):
     xml = export_document(result.document, "xrechnung")
 else:
     print(result.review_reasons, result.validation_issues)
 ```
 
-`result.document` is the typed schema (`Invoice`, `Receipt`, `Contract`, …), and `result.field_sources` gives the page and quote each value was read from.
+`result.document` is the typed schema (`Invoice`, `Receipt`, `Contract`, …). `result.field_sources` gives the page, quote and bounding box each value was read from, and `result.layout` holds every page's words, lines, columns and tables with normalized coordinates.
 
 **HTTP service (any language)**
 
@@ -97,7 +97,7 @@ Add your own with `register_exporter("my-erp", func, accepts=(Invoice,))` or the
 document → text layer / OCR / VLM → classify → extract + cite → validate → JSON or review
 ```
 
-- **Text** comes from the cheapest source that works: the PDF text layer, then Tesseract, then a vision model, which is used only when OCR confidence is low or a cheap text model judges the scan unusable.
+- **Text** comes from the cheapest source that works, page by page: the PDF text layer, then the OCR backend (Tesseract by default; pluggable), then a vision model, which is used only when OCR confidence is low or a cheap text model judges the scan unusable. Every backend returns the same layout model — words with boxes, lines, columns, tables.
 - **Classification** tries keyword rules, then TF-IDF, then an LLM. Each tier runs only when the one before it was unsure. Rules and TF-IDF cover English, Spanish, German, French, Italian, Dutch and Portuguese; any other language falls through to the LLM.
 - **Extraction** fills a Pydantic schema under a JSON Schema contract and cites the verbatim line for every value. Output that fails the schema goes back to the model with the error attached.
 - **Validation** never calls a model. It checks arithmetic, dates, IBAN mod-97, VAT check digits (all 27 EU states, UK, CH, NO), national tax IDs, and that every cited line exists and contains the claimed value. Contracts also get counterparty, grounding and risk checks (unlimited liability, auto-renewal, notice periods).
@@ -115,7 +115,9 @@ Set in the environment or `.env`. [`.env.example`](https://github.com/KazKozDev/
 | `DOCKET_LLM_BASE_URL` / `DOCKET_LLM_API_KEY` | OpenAI / unset | Endpoint and key for `openai`, e.g. `https://api.mistral.ai/v1` (EU-hosted) |
 | `DOCKET_TEXT_MODEL` / `DOCKET_VISION_MODEL` | `deepseek-v4.1-flash:cloud` | Models for extraction and for reading scans |
 | `OLLAMA_HOST` | `http://localhost:11434` | Where Ollama is listening |
-| `DOCKET_OCR_LANG` | `eng` | Tesseract languages, e.g. `eng+deu+fra+spa+ita` |
+| `DOCKET_OCR_BACKEND` | `auto` | Primary OCR backend: `tesseract`, `auto`, or a plugin name |
+| `DOCKET_OCR_FALLBACKS` | `vlm` | Comma-separated backends tried when a page's reading is rejected |
+| `DOCKET_OCR_LANGUAGES` | `en` | ISO 639-1 codes, e.g. `en,de,fr,es,it` |
 | `DOCKET_MIN_CONFIDENCE` | `0.55` | Classification confidence below which a document goes to review |
 | `DOCKET_REVIEW_QUEUE_ENABLED` | `true` | Write flagged documents to the file-based review queue |
 | `DOCKET_API_KEY` | unset | Bearer token the HTTP API requires when set |
