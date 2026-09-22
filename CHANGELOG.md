@@ -23,6 +23,12 @@ top-level amount. Measured on the 17 golden scans (tesseract,
 
 ### Added
 
+- Production review workflow backed by SQLite or PostgreSQL: transactional
+  task leases, optimistic versions, append-only correction history and
+  mandatory schema/business revalidation before approval.
+- Live `/verify` workbench using the review API, with rendered document pages,
+  field editing, revision history and source bbox highlights.
+
 - Factur-X PDF/A-3 generation through the official `factur-x` engine, including
   embedded `factur-x.xml`, AF relationship and Factur-X XMP metadata.
 - Structured veraPDF PDF/A-3 validation and strict generate -> extract ->

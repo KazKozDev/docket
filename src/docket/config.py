@@ -140,8 +140,12 @@ SETTINGS: tuple[Setting, ...] = (
             "Below this classification confidence a document goes to review.", minimum=0, maximum=1),
     Setting("REVIEW_QUEUE_ENABLED", "review.enabled", "DOCKET_REVIEW_QUEUE_ENABLED", "bool", True,
             "Write flagged documents to the review queue."),
-    Setting("REVIEW_QUEUE_PATH", "review.queue", "DOCKET_REVIEW_QUEUE", "path", Path("data/review_queue.jsonl"),
-            "Review queue file (JSON Lines)."),
+    Setting("REVIEW_DATABASE_URL", "review.database_url", "DOCKET_REVIEW_DATABASE_URL", "str",
+            "sqlite:///data/review.db", "SQLAlchemy URL for SQLite or PostgreSQL review storage."),
+    Setting("REVIEW_QUEUE_PATH", "review.queue", "DOCKET_REVIEW_QUEUE", "path", Path("data/review.db"),
+            "Deprecated test/embedding override for the SQLite review database."),
+    Setting("REVIEW_LOCK_SECONDS", "review.lock_seconds", "DOCKET_REVIEW_LOCK_SECONDS", "int", 300,
+            "Review task lease duration before another reviewer can claim it.", minimum=10, maximum=3600),
     Setting("REVIEW_DOCUMENTS_DIR", "review.documents", "DOCKET_REVIEW_DOCUMENTS", "path",
             Path("data/review_documents"), "Where copies of flagged documents are kept."),
     # ---- input, batches, HTTP --------------------------------------------------------
@@ -160,6 +164,8 @@ SETTINGS: tuple[Setting, ...] = (
             "HTTP jobs processed at once; the rest wait.", minimum=1, maximum=64),
     Setting("API_KEY", "api.key", "DOCKET_API_KEY", "secret", None,
             "Bearer token the HTTP API requires when set.", optional=True),
+    Setting("API_CORS_ORIGINS", "api.cors_origins", "DOCKET_API_CORS_ORIGINS", "list",
+            ["http://localhost:3000", "http://127.0.0.1:3000"], "Browser origins allowed to call the HTTP API."),
     Setting("JOBS_DIR", "api.jobs_dir", "DOCKET_JOBS_DIR", "path", Path("data/jobs"),
             "One directory per HTTP job: metadata, results, uploads until done."),
     # ---- e-invoices ------------------------------------------------------------------
@@ -386,7 +392,9 @@ LAYOUT_MARKERS: bool
 TFIDF_CONFIDENCE_FLOOR: float
 MIN_CLASSIFICATION_CONFIDENCE: float
 REVIEW_QUEUE_ENABLED: bool
+REVIEW_DATABASE_URL: str
 REVIEW_QUEUE_PATH: Path
+REVIEW_LOCK_SECONDS: int
 REVIEW_DOCUMENTS_DIR: Path
 MAX_FILE_BYTES: int
 MAX_PDF_PAGES: int
@@ -395,6 +403,7 @@ MAX_BATCH_FILES: int
 MAX_BATCH_BYTES: int
 MAX_CONCURRENT_JOBS: int
 API_KEY: str | None
+API_CORS_ORIGINS: list[str]
 JOBS_DIR: Path
 EINVOICE_RESOURCES: Path | None
 CLOUD_EQUIVALENT_USD_PER_1M_TOKENS: float

@@ -1,56 +1,76 @@
-"""Durable human-review records with preserved originals and audit history."""
+"""Transactional human-review workflow backed by SQLite or PostgreSQL."""
 from __future__ import annotations
 
 import hashlib
-import json
 import shutil
 import threading
+import time
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 from uuid import uuid4
+
+from sqlalchemy import JSON, Column, Float, Integer, MetaData, String, Table, Text, create_engine, delete, insert, select, update as sql_update
+from sqlalchemy.engine import Engine
 
 from . import config
 from .result import DocumentResult
 
 _LOCK = threading.RLock()
 _STATUSES = {"pending", "in_review", "corrected", "approved", "rejected"}
+_ENGINES: dict[str, Engine] = {}
+_METADATA = MetaData()
+_TASKS = Table(
+    "review_tasks", _METADATA,
+    Column("document_id", String(80), primary_key=True), Column("status", String(24), nullable=False, index=True),
+    Column("queued_at", String(40), nullable=False), Column("updated_at", String(40), nullable=False),
+    Column("source", Text, nullable=False), Column("original_path", Text), Column("doc_type", String(100)),
+    Column("reasons", JSON, nullable=False), Column("result", JSON, nullable=False), Column("corrections", JSON),
+    Column("validation_issues", JSON, nullable=False, default=list), Column("lock_owner", String(200)),
+    Column("lock_token", String(80)), Column("lock_expires_at", Float),
+    Column("version", Integer, nullable=False, default=1),
+)
+_REVISIONS = Table(
+    "review_revisions", _METADATA,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("document_id", String(80), nullable=False, index=True), Column("at", String(40), nullable=False),
+    Column("action", String(40), nullable=False), Column("actor", String(200)), Column("note", Text),
+    Column("corrections", JSON), Column("validation_issues", JSON), Column("version", Integer, nullable=False),
+)
 
 
-def reasons_for(
-    result: DocumentResult, *, min_classification_confidence: float | None = None
-) -> list[str]:
-    floor = (
-        config.MIN_CLASSIFICATION_CONFIDENCE
-        if min_classification_confidence is None
-        else min_classification_confidence
-    )
+class ReviewConflict(RuntimeError):
+    """The task is locked by another reviewer or changed concurrently."""
+
+
+class ReviewValidationError(ValueError):
+    def __init__(self, message: str, issues: list[dict] | None = None):
+        super().__init__(message)
+        self.issues = issues or []
+
+
+def reasons_for(result: DocumentResult, *, min_classification_confidence: float | None = None) -> list[str]:
+    floor = config.MIN_CLASSIFICATION_CONFIDENCE if min_classification_confidence is None else min_classification_confidence
     reasons: list[str] = []
     if result.error is not None:
-        reasons.append(f"{result.error.stage} failed: {result.error.message}")
-        return reasons
+        return [f"{result.error.stage} failed: {result.error.message}"]
     if not result.complete:
         empty = [p.page_number for p in (result.layout.pages if result.layout else []) if not p.text.strip()]
         reasons.append(f"incomplete processing (no text on page(s) {', '.join(map(str, empty)) or '?'})")
-    classification = result.classification
-    if classification is not None:
-        if classification.confidence < floor:
-            reasons.append(
-                f"low classification confidence ({classification.confidence:.2f} < {floor:.2f})"
-            )
-        if classification.doc_type == "unknown":
+    if result.classification is not None:
+        if result.classification.confidence < floor:
+            reasons.append(f"low classification confidence ({result.classification.confidence:.2f} < {floor:.2f})")
+        if result.classification.doc_type == "unknown":
             reasons.append("unrecognized document type")
     degraded = result.ocr.degraded_pages if result.ocr else []
     if degraded:
         reasons.append(
             f"text on page(s) {', '.join(map(str, degraded))} came from a reading below "
-            "the confidence gate — every backend that should have read it better "
-            "failed or was unavailable"
+            "the confidence gate — every backend that should have read it better failed or was unavailable"
         )
     if result.extracted is None:
         reasons.append("extraction failed to produce valid structured output")
-    for issue in result.validation_issues:
-        if issue.severity == "error":
-            reasons.append(f"validation error: {issue.field} — {issue.message}")
+    reasons.extend(f"validation error: {i.field} — {i.message}" for i in result.validation_issues if i.severity == "error")
     return reasons
 
 
@@ -59,162 +79,197 @@ def _now() -> str:
 
 
 def _document_id(path: Path) -> str:
-    if path.is_file():
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()[:20]
-        return f"doc_{digest}"
-    return f"doc_{uuid4().hex[:20]}"
+    return f"doc_{hashlib.sha256(path.read_bytes()).hexdigest()[:20]}" if path.is_file() else f"doc_{uuid4().hex[:20]}"
 
 
-def _queue(path: Path | None) -> Path:
-    return config.REVIEW_QUEUE_PATH if path is None else Path(path)
+def _database_url(queue_path: Path | None = None) -> str:
+    return f"sqlite:///{Path(queue_path).resolve()}" if queue_path is not None else config.REVIEW_DATABASE_URL
 
 
-def _append(event: dict, queue_path: Path | None = None) -> None:
-    path = _queue(queue_path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(event, ensure_ascii=False) + "\n")
-
-
-def _records(queue_path: Path | None = None) -> dict[str, dict]:
-    records: dict[str, dict] = {}
-    path = _queue(queue_path)
-    if not path.exists():
-        return records
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        event = json.loads(line)
-        document_id = event.get("document_id")
-        if not document_id:
-            # Backward compatibility for queues written by the original demo.
-            document_id = f"legacy_{len(records) + 1}"
-            event = {
-                "event": "created",
-                "document_id": document_id,
-                "at": event.get("queued_at", _now()),
-                "record": {**event, "document_id": document_id, "status": "pending"},
-            }
-        if event.get("event") == "created":
-            records[document_id] = event["record"]
-            records[document_id].setdefault("history", []).append(
-                {"at": event["at"], "action": "queued"}
-            )
-        elif document_id in records:
-            record = records[document_id]
-            record.update(event.get("changes", {}))
-            record.setdefault("history", []).append(
-                {
-                    "at": event["at"],
-                    "action": event.get("event", "updated"),
-                    "actor": event.get("actor"),
-                    "note": event.get("note"),
-                }
-            )
-    return records
-
-
-def enqueue(
-    result: DocumentResult,
-    reasons: list[str],
-    *,
-    queue_path: Path | None = None,
-    documents_dir: Path | None = None,
-) -> str:
-    """Append the document to the review queue, preserving the original
-    file next to it. Re-queuing the same document id records a new event."""
-    documents_dir = config.REVIEW_DOCUMENTS_DIR if documents_dir is None else Path(documents_dir)
-    source = Path(result.source)
-    document_id = result.document_id or _document_id(source)
-    original_path: str | None = None
+def _engine(queue_path: Path | None = None) -> Engine:
+    url = _database_url(queue_path)
     with _LOCK:
-        existing = _records(queue_path).get(document_id)
-        if source.is_file():
-            documents_dir.mkdir(parents=True, exist_ok=True)
-            destination = documents_dir / f"{document_id}{source.suffix.lower()}"
-            if source.resolve() != destination.resolve() and not destination.exists():
-                shutil.copy2(source, destination)
-            original_path = str(destination)
-        record = {
-            "document_id": document_id,
-            "queued_at": _now(),
-            "updated_at": _now(),
-            "status": "pending",
-            "source": result.source,
-            "original_path": original_path,
-            "doc_type": result.document_type,
-            "reasons": reasons,
-            "result": result.model_dump(mode="json"),
-            "corrections": None,
-        }
+        engine = _ENGINES.get(url)
+        if engine is None:
+            if url.startswith("sqlite:///"):
+                Path(url.removeprefix("sqlite:///")).parent.mkdir(parents=True, exist_ok=True)
+            engine = create_engine(url, future=True, pool_pre_ping=True)
+            _METADATA.create_all(engine)
+            _ENGINES[url] = engine
+        return engine
+
+
+def _history(conn, document_id: str) -> list[dict]:
+    rows = conn.execute(select(_REVISIONS).where(_REVISIONS.c.document_id == document_id).order_by(_REVISIONS.c.id)).mappings()
+    return [dict(row) for row in rows]
+
+
+def _record(conn, document_id: str) -> dict | None:
+    row = conn.execute(select(_TASKS).where(_TASKS.c.document_id == document_id)).mappings().first()
+    if row is None:
+        return None
+    record = dict(row)
+    record["history"] = _history(conn, document_id)
+    record["locked"] = bool(record["lock_token"] and (record["lock_expires_at"] or 0) > time.time())
+    return record
+
+
+def _revision(conn, document_id: str, action: str, version: int, *, actor: str | None = None,
+              note: str | None = None, corrections: dict | None = None,
+              validation_issues: list[dict] | None = None) -> None:
+    conn.execute(insert(_REVISIONS).values(document_id=document_id, at=_now(), action=action, actor=actor,
+                                           note=note, corrections=corrections,
+                                           validation_issues=validation_issues, version=version))
+
+
+def enqueue(result: DocumentResult, reasons: list[str], *, queue_path: Path | None = None,
+            documents_dir: Path | None = None) -> str:
+    documents_dir = config.REVIEW_DOCUMENTS_DIR if documents_dir is None else Path(documents_dir)
+    source, document_id = Path(result.source), result.document_id or _document_id(Path(result.source))
+    original_path: str | None = None
+    if source.is_file():
+        documents_dir.mkdir(parents=True, exist_ok=True)
+        destination = documents_dir / f"{document_id}{source.suffix.lower()}"
+        if source.resolve() != destination.resolve() and not destination.exists():
+            shutil.copy2(source, destination)
+        original_path = str(destination)
+    with _engine(queue_path).begin() as conn:
+        existing = conn.execute(select(_TASKS.c.version, _TASKS.c.original_path).where(_TASKS.c.document_id == document_id)).mappings().first()
+        now = _now()
+        values = dict(status="pending", updated_at=now, source=result.source, original_path=original_path,
+                      doc_type=result.document_type, reasons=reasons, result=result.model_dump(mode="json"),
+                      corrections=None, validation_issues=[], lock_owner=None, lock_token=None, lock_expires_at=None)
         if existing is None:
-            _append(
-                {
-                    "event": "created",
-                    "document_id": document_id,
-                    "at": _now(),
-                    "record": record,
-                },
-                queue_path,
-            )
+            version, action = 1, "queued"
+            conn.execute(insert(_TASKS).values(document_id=document_id, queued_at=now, version=version, **values))
         else:
-            _append(
-                {
-                    "event": "requeued",
-                    "document_id": document_id,
-                    "at": _now(),
-                    "changes": {
-                        **record,
-                        "original_path": original_path or existing.get("original_path"),
-                    },
-                },
-                queue_path,
-            )
+            version, action = existing["version"] + 1, "requeued"
+            values["original_path"] = original_path or existing["original_path"]
+            conn.execute(sql_update(_TASKS).where(_TASKS.c.document_id == document_id).values(version=version, **values))
+        _revision(conn, document_id, action, version)
     return document_id
 
 
 def list_pending(*, queue_path: Path | None = None) -> list[dict]:
-    with _LOCK:
-        records = _records(queue_path).values()
-        return [r for r in records if r.get("status") in {"pending", "in_review", "corrected"}]
+    with _engine(queue_path).connect() as conn:
+        ids = list(conn.execute(select(_TASKS.c.document_id).where(
+            _TASKS.c.status.in_(("pending", "in_review", "corrected"))).order_by(_TASKS.c.queued_at)).scalars())
+        return [_record(conn, document_id) for document_id in ids]
 
 
 def get(document_id: str, *, queue_path: Path | None = None) -> dict | None:
-    with _LOCK:
-        return _records(queue_path).get(document_id)
+    with _engine(queue_path).connect() as conn:
+        return _record(conn, document_id)
 
 
-def update(
-    document_id: str,
-    *,
-    status: str,
-    corrections: dict | None = None,
-    actor: str = "reviewer",
-    note: str | None = None,
-    queue_path: Path | None = None,
-) -> dict:
+def claim(document_id: str, *, actor: str, lease_seconds: int | None = None,
+          queue_path: Path | None = None) -> dict:
+    lease = lease_seconds or config.REVIEW_LOCK_SECONDS
+    if lease < 10 or lease > 3600:
+        raise ValueError("lease_seconds must be between 10 and 3600")
+    engine = _engine(queue_path)
+    with engine.begin() as conn:
+        row = conn.execute(select(_TASKS).where(_TASKS.c.document_id == document_id).with_for_update()).mappings().first()
+        if row is None:
+            raise KeyError(document_id)
+        now = time.time()
+        if row["lock_token"] and (row["lock_expires_at"] or 0) > now and row["lock_owner"] != actor:
+            raise ReviewConflict(f"task is locked by {row['lock_owner']}")
+        token, version = uuid4().hex, row["version"] + 1
+        result = conn.execute(sql_update(_TASKS).where(
+            (_TASKS.c.document_id == document_id) &
+            ((_TASKS.c.lock_token.is_(None)) | (_TASKS.c.lock_expires_at <= now) | (_TASKS.c.lock_owner == actor))
+        ).values(status="in_review", lock_owner=actor, lock_token=token, lock_expires_at=now + lease,
+                 updated_at=_now(), version=version))
+        if result.rowcount != 1:
+            raise ReviewConflict("task was claimed concurrently")
+        _revision(conn, document_id, "claimed", version, actor=actor)
+        return _record(conn, document_id)
+
+
+def _require_lock(row: Any, token: str | None) -> None:
+    if not token or token != row["lock_token"] or (row["lock_expires_at"] or 0) <= time.time():
+        raise ReviewConflict("a current lock_token is required")
+
+
+def release(document_id: str, *, lock_token: str, actor: str, queue_path: Path | None = None) -> dict:
+    with _engine(queue_path).begin() as conn:
+        row = conn.execute(select(_TASKS).where(_TASKS.c.document_id == document_id).with_for_update()).mappings().first()
+        if row is None:
+            raise KeyError(document_id)
+        _require_lock(row, lock_token)
+        version, status = row["version"] + 1, "corrected" if row["corrections"] else "pending"
+        conn.execute(sql_update(_TASKS).where(_TASKS.c.document_id == document_id).values(
+            status=status, lock_owner=None, lock_token=None, lock_expires_at=None, updated_at=_now(), version=version))
+        _revision(conn, document_id, "released", version, actor=actor)
+        return _record(conn, document_id)
+
+
+def _merge(base: dict, changes: dict) -> dict:
+    merged = dict(base)
+    for key, value in changes.items():
+        merged[key] = _merge(merged.get(key, {}), value) if isinstance(value, dict) and isinstance(merged.get(key), dict) else value
+    return merged
+
+
+def _revalidate(row: Any, corrections: dict | None) -> list[dict]:
+    from pydantic import ValidationError
+    from . import catalog
+    from .validate import validate
+    saved = DocumentResult.model_validate(row["result"])
+    spec = catalog.get_schema(saved.schema_id, saved.schema_version) if saved.schema_id else None
+    if spec is None:
+        raise ReviewValidationError(f"schema {saved.schema_id!r} is not available")
+    try:
+        document = spec.model.model_validate(_merge(saved.extracted or {}, corrections or {}))
+    except ValidationError as exc:
+        issues = [{"field": ".".join(map(str, e["loc"])), "message": e["msg"], "severity": "error"} for e in exc.errors()]
+        raise ReviewValidationError("corrections do not match the document schema", issues) from exc
+    pages = [page.text for page in saved.layout.pages] if saved.layout else None
+    return [i.model_dump(mode="json") for i in validate(document, pages=pages,
+            forensic_report=saved.forensic_report, spec=spec)]
+
+
+def update(document_id: str, *, status: str, corrections: dict | None = None, actor: str = "reviewer",
+           note: str | None = None, lock_token: str | None = None, expected_version: int | None = None,
+           queue_path: Path | None = None) -> dict:
     if status not in _STATUSES:
         raise ValueError(f"invalid review status: {status}")
-    with _LOCK:
-        if document_id not in _records(queue_path):
+    with _engine(queue_path).begin() as conn:
+        row = conn.execute(select(_TASKS).where(_TASKS.c.document_id == document_id).with_for_update()).mappings().first()
+        if row is None:
             raise KeyError(document_id)
-        changes = {"status": status, "updated_at": _now()}
-        if corrections is not None:
-            changes["corrections"] = corrections
-        _append(
-            {
-                "event": status,
-                "document_id": document_id,
-                "at": _now(),
-                "actor": actor,
-                "note": note,
-                "changes": changes,
-            },
-            queue_path,
-        )
-        return _records(queue_path)[document_id]
+        _require_lock(row, lock_token)
+        if expected_version is not None and expected_version != row["version"]:
+            raise ReviewConflict(f"task changed: expected version {expected_version}, current {row['version']}")
+        combined = _merge(row["corrections"] or {}, corrections or {})
+        issues = _revalidate(row, combined)
+        if status == "approved" and any(i["severity"] == "error" for i in issues):
+            raise ReviewValidationError("corrected document still has validation errors", issues)
+        version, terminal = row["version"] + 1, status in {"approved", "rejected"}
+        conn.execute(sql_update(_TASKS).where(_TASKS.c.document_id == document_id).values(
+            status=status, corrections=combined, validation_issues=issues, updated_at=_now(), version=version,
+            lock_owner=None if terminal else row["lock_owner"], lock_token=None if terminal else row["lock_token"],
+            lock_expires_at=None if terminal else row["lock_expires_at"]))
+        _revision(conn, document_id, status, version, actor=actor, note=note,
+                  corrections=corrections, validation_issues=issues)
+        return _record(conn, document_id)
+
+
+def revalidate(document_id: str, *, lock_token: str, actor: str = "reviewer",
+               queue_path: Path | None = None) -> dict:
+    record = get(document_id, queue_path=queue_path)
+    if record is None:
+        raise KeyError(document_id)
+    return update(document_id, status="corrected", corrections={}, actor=actor, lock_token=lock_token,
+                  expected_version=record["version"], queue_path=queue_path)
 
 
 def clear(*, queue_path: Path | None = None) -> None:
-    with _LOCK:
-        _queue(queue_path).unlink(missing_ok=True)
+    with _engine(queue_path).begin() as conn:
+        conn.execute(delete(_REVISIONS))
+        conn.execute(delete(_TASKS))
+
+
+__all__ = ["ReviewConflict", "ReviewValidationError", "claim", "clear", "enqueue", "get",
+           "list_pending", "reasons_for", "release", "revalidate", "update"]
