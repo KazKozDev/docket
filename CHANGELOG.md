@@ -8,6 +8,13 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+### Changed
+
+- Review-queue persistence is now opt-in for the Python API. Set
+  `ReviewOptions(enqueue=True)` or `DOCKET_REVIEW_QUEUE_ENABLED=true` when the
+  transactional review workflow is wanted. Logs no longer include the OCR
+  quality model's evidence text.
+
 Line-item provenance: every row of every repeated list now carries source
 citations that are grounded, located on the page and validated like any
 top-level amount. Measured on the 17 golden scans (tesseract,
@@ -23,6 +30,11 @@ top-level amount. Measured on the 17 golden scans (tesseract,
 
 ### Added
 
+- A documented SemVer, deprecation, and serialized-result compatibility policy,
+  enforced by a snapshot of the public Python API.
+- Audited notices and bundled license texts for vendored e-invoice validation
+  artefacts, with unresolved Peppol, Factur-X and UN/CEFACT redistribution
+  terms called out explicitly.
 - CycloneDX release SBOMs covering runtime dependencies, optional extras and
   bundled e-invoice artefacts, plus a CI gate against copyleft runtime packages.
 - Machine-readable PII categories on built-in schema fields and a public

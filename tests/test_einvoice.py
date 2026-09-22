@@ -396,6 +396,16 @@ def test_vendored_artifacts_match_their_manifest():
             "peppol-bis-billing", "factur-x"} <= ids
     for entry in manifest["artifacts"]:
         assert entry["version"] and entry["license"] and entry["url"].startswith("https://")
+
+
+def test_vendored_artifact_license_files_are_shipped():
+    manifest = artifacts.manifest()
+    for entry in manifest["artifacts"]:
+        assert isinstance(entry["license"], str) and entry["license"].strip()
+        for relative in entry.get("license_files", []):
+            license_path = artifacts.root() / relative
+            assert license_path.is_file(), f"{entry['id']}: missing {relative}"
+            assert license_path.read_text(encoding="utf-8").strip()
         assert len(entry["sha256"]) == 64
         # The XRechnung test suite only supplies test fixtures.
         assert entry["files"] or entry["id"] == "xrechnung-testsuite"
