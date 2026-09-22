@@ -37,7 +37,8 @@ SOURCES = [
         "version": "XRechnung 3.0.2, release 2026-08-31",
         "url": "https://github.com/itplr-kosit/validator-configuration-xrechnung/releases/download/v2026-08-31/xrechnung-3.0.2-validator-configuration-2026-08-31.zip",
         "sha256": "2530cd107c414511c5d0462ec10f886910395abfca820db82e83d70bf01221a8",
-        "license": "Apache-2.0 (configuration); bundled OASIS UBL 2.1 schemas under the OASIS IPR Policy; UN/CEFACT D16B schemas published by UNECE for free use",
+        "license": "Apache-2.0 (configuration); OASIS UBL 2.1 notice; UN/CEFACT D16B redistribution terms not located",
+        "license_files": ["licenses/Apache-2.0.txt", "licenses/OASIS-UBL-2.1.txt"],
         "files": {
             "resources/ubl/2.1/xsd/common/*.xsd": "ubl-2.1/xsd/common/",
             "resources/ubl/2.1/xsd/maindoc/UBL-Invoice-2.1.xsd": "ubl-2.1/xsd/maindoc/",
@@ -52,6 +53,7 @@ SOURCES = [
         "url": "https://github.com/ConnectingEurope/eInvoicing-EN16931/releases/download/validation-1.3.16/en16931-ubl-1.3.16.zip",
         "sha256": "bafada015efbc5248bf5e05ad2191e1d9833ef96e9dd5f4bce420a747342da85",
         "license": "EUPL-1.2",
+        "license_files": ["licenses/EUPL-1.2.txt"],
         "files": {"xslt/EN16931-UBL-validation.xslt": "en16931/"},
         "fixtures": {"examples/*.xml": "en16931-ubl/", "examples/*.XML": "en16931-ubl/"},
     },
@@ -62,6 +64,7 @@ SOURCES = [
         "url": "https://github.com/ConnectingEurope/eInvoicing-EN16931/releases/download/validation-1.3.16/en16931-cii-1.3.16.zip",
         "sha256": "1cd53cb8a84d38aedc82c0caede217da983a7934dd663f793a092fd66443c561",
         "license": "EUPL-1.2",
+        "license_files": ["licenses/EUPL-1.2.txt"],
         "files": {"xslt/EN16931-CII-validation.xslt": "en16931/"},
         "fixtures": {"examples/*.xml": "en16931-cii/"},
     },
@@ -72,6 +75,7 @@ SOURCES = [
         "url": "https://github.com/itplr-kosit/xrechnung-schematron/releases/download/v2.6.0/xrechnung-3.0.2-schematron-2.6.0.zip",
         "sha256": "ca5e07afd04e72cd283d581590ffff3a15f4aac9d2f40c993345d78e67ea22b4",
         "license": "Apache-2.0",
+        "license_files": ["licenses/Apache-2.0.txt"],
         "files": {
             "schematron/ubl/XRechnung-UBL-validation.xsl": "xrechnung/",
             "schematron/cii/XRechnung-CII-validation.xsl": "xrechnung/",
@@ -99,7 +103,8 @@ SOURCES = [
         "version": "3.0.20",
         "url": "https://github.com/OpenPEPPOL/peppol-bis-invoice-3/archive/refs/tags/v3.0.20.zip",
         "sha256": "4c43040f0654abd789bb0c9a2ffbb9e795acd94f20282af8ca1db3dda832f656",
-        "license": "no license file in the repository; published by OpenPeppol for implementers of Peppol BIS Billing 3.0",
+        "license": "UNKNOWN: no license or redistribution grant located in the v3.0.20 repository",
+        "license_files": [],
         "files": {
             "peppol-bis-invoice-3-3.0.20/rules/sch/PEPPOL-EN16931-UBL.sch": "peppol/",
             "peppol-bis-invoice-3-3.0.20/rules/sch/PEPPOL-EN16931-CII.sch": "peppol/",
@@ -116,7 +121,8 @@ SOURCES = [
         "version": "Factur-X 1.09 (factur-x 6.8)",
         "url": "https://files.pythonhosted.org/packages/37/be/9a9020187e4805d61668b5d8c4c263731b3697f9eba2aa6a689d3e7eea4b/factur_x-6.8-py3-none-any.whl",
         "sha256": "02b57dd57f59d0cdd87f034a538bf30a4b9241a72a19cd75fe1538233163ee15",
-        "license": "artefacts published free of charge by FNFE-MPE / FeRD (official download is form-gated, no license file); the factur-x package that redistributes them is BSD-2-Clause",
+        "license": "UNKNOWN: FNFE-MPE / FeRD artefact redistribution terms not located; source package is BSD-3-Clause",
+        "license_files": ["licenses/BSD-3-Clause-factur-x.txt"],
         "files": {
             f"facturx/xsd_and_schematron/facturx-{profile}/*": f"factur-x/{profile}/"
             for profile in ("minimum", "basicwl", "basic", "en16931", "extended")
@@ -187,9 +193,17 @@ def compile_schematron(sch: Path, schxslt_jar: bytes) -> Path:
 
 
 def build(cache: Path) -> None:
+    license_texts = {
+        path.name: path.read_bytes()
+        for path in (RESOURCES / "licenses").glob("*.txt")
+    }
     shutil.rmtree(RESOURCES, ignore_errors=True)
     shutil.rmtree(FIXTURES, ignore_errors=True)
     RESOURCES.mkdir(parents=True)
+    licenses = RESOURCES / "licenses"
+    licenses.mkdir()
+    for name, contents in license_texts.items():
+        (licenses / name).write_bytes(contents)
     schxslt_jar = fetch(SCHXSLT, cache)
     manifest = {"generated_by": "scripts/update_einvoice_resources.py", "compiler": _public(SCHXSLT), "artifacts": []}
     for source in SOURCES:
@@ -208,7 +222,11 @@ def build(cache: Path) -> None:
 
 
 def _public(source: dict) -> dict:
-    return {k: source[k] for k in ("id", "name", "version", "url", "sha256", "license")}
+    return {
+        k: source[k]
+        for k in ("id", "name", "version", "url", "sha256", "license", "license_files")
+        if k in source
+    }
 
 
 def check() -> int:

@@ -93,8 +93,10 @@
 # min_confidence = 0.55
 
 [review]
-# Write flagged documents to the review queue. Env: DOCKET_REVIEW_QUEUE_ENABLED.
-# enabled = true
+# Persist flagged documents in the review queue. Disabled by default for the
+# Python library; enable it explicitly for the review UI. Env:
+# DOCKET_REVIEW_QUEUE_ENABLED.
+# enabled = false
 # SQLAlchemy URL for SQLite or PostgreSQL review storage. Env: DOCKET_REVIEW_DATABASE_URL.
 # database_url = "sqlite:///data/review.db"
 # Deprecated test/embedding override for the SQLite review database. Env: DOCKET_REVIEW_QUEUE.

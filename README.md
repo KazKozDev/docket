@@ -238,7 +238,7 @@ Every setting and its environment variable is in [`docket.example.toml`](https:/
 | `DOCKET_DOCLING_TABLE_MODE` / `DOCKET_DOCLING_CELL_MATCHING` | `accurate` / `true` | TableFormer quality mode and mapping predicted cells back to document text |
 | `DOCKET_OCR_DESKEW` | `true` | Correct fine scan skew before raster OCR |
 | `DOCKET_MIN_CONFIDENCE` | `0.55` | Classification confidence below which a document goes to review |
-| `DOCKET_REVIEW_QUEUE_ENABLED` | `true` | Write flagged documents to the transactional review queue |
+| `DOCKET_REVIEW_QUEUE_ENABLED` | `false` | Persist flagged documents in the transactional review queue (opt-in) |
 | `DOCKET_REVIEW_DATABASE_URL` | `sqlite:///data/review.db` | SQLite by default; use `postgresql+psycopg://...` with the `[postgres]` extra |
 | `DOCKET_REVIEW_LOCK_SECONDS` | `300` | Lease duration for an exclusively claimed review task |
 | `DOCKET_API_KEY` | unset | Bearer token the HTTP API requires when set |
@@ -248,6 +248,15 @@ Every setting and its environment variable is in [`docket.example.toml`](https:/
 | `DOCKET_MAX_BATCH_FILES` / `DOCKET_MAX_BATCH_BYTES` | `100` / 200 MB | HTTP upload limits per job (`DOCKET_MAX_FILE_BYTES` per file) |
 | `DOCKET_INCLUDE_LAYOUT` / `DOCKET_LAYOUT_MARKERS` | `true` / `true` | Keep page layouts in results; mark `[TABLE n]` / `[COLUMN n]` in the text the LLM reads |
 | `DOCKET_EINVOICE_RESOURCES` | bundled | Directory with your own copy of the validation artifacts (same layout and `manifest.json`) |
+
+The Python API does not persist documents or extracted data by default.
+`process_document()` only reads its input unless review storage is explicitly
+enabled with `ReviewOptions(enqueue=True)`, `[review] enabled = true`, or
+`DOCKET_REVIEW_QUEUE_ENABLED=true`. Batch checkpoints and CLI output files are
+also written only when their paths are requested. The HTTP service is a
+persistent application: uploads are staged and deleted after processing, while
+job metadata and results are stored under `DOCKET_JOBS_DIR`. Enable the review
+queue explicitly when running its `/verify` UI.
 
 ## Limitations
 
