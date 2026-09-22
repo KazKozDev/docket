@@ -1,3 +1,10 @@
+"""Stable public Python API for :mod:`docket`.
+
+Only names listed in :data:`docket.__all__` are public and covered by the
+project's compatibility policy. Other modules, names, and implementation
+details are internal unless the documentation explicitly says otherwise.
+"""
+
 __version__ = "0.3.0"
 
 from .export import (

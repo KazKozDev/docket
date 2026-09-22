@@ -23,6 +23,9 @@ top-level amount. Measured on the 17 golden scans (tesseract,
 
 ### Added
 
+- A documented SemVer, deprecation, and serialized-result compatibility policy,
+  enforced by a snapshot of the public Python API.
+
 - Optional Docling/TableFormer layout backend with `fast` / `accurate` modes,
   cell matching control, wrapped cell text and merged row/column spans.
 - Fine-angle raster deskew with correction metadata, plus conservative
