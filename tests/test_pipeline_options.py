@@ -323,6 +323,22 @@ def test_export_of_a_failed_result_explains_why(tmp_path, quiet):
         export_document(failed, "xero-json")
 
 
+def test_process_document_does_not_persist_by_default(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    source = tmp_path / "invoice.txt"
+    source.write_text(INVOICE_TEXT)
+    before = {path.relative_to(tmp_path) for path in tmp_path.rglob("*")}
+    _no_classifier(monkeypatch)
+    monkeypatch.setattr(config, "REVIEW_QUEUE_ENABLED", False)
+    monkeypatch.setattr(config, "OCR_FALLBACKS", [])
+    monkeypatch.setattr(extract_module, "chat_json", lambda *a, **k: _invoice_payload(total_amount=999.0))
+
+    result = pipeline.process_document(source, ProcessOptions(document_type="invoice"))
+
+    assert result.status == DocumentStatus.NEEDS_REVIEW
+    assert {path.relative_to(tmp_path) for path in tmp_path.rglob("*")} == before
+
+
 # ---- CLI and HTTP use the same contract -----------------------------------------------
 
 
