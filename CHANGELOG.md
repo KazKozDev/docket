@@ -23,6 +23,10 @@ top-level amount. Measured on the 17 golden scans (tesseract,
 
 ### Added
 
+- Audited notices and bundled license texts for vendored e-invoice validation
+  artefacts, with unresolved Peppol, Factur-X and UN/CEFACT redistribution
+  terms called out explicitly.
+
 - Optional Docling/TableFormer layout backend with `fast` / `accurate` modes,
   cell matching control, wrapped cell text and merged row/column spans.
 - Fine-angle raster deskew with correction metadata, plus conservative
