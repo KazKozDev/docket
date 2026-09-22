@@ -457,8 +457,10 @@ syntax, specification identifier (BT-24) and business process (BT-23):
 
 A credit note becomes a UBL `CreditNote` (type 381) or CII `TypeCode` 381.
 The BASIC profile omits what its schema doesn't allow (seller item id,
-contacts, BIC). The Factur-X formats produce the XML only; embedding it in a
-PDF/A-3 is left to the caller. Every format above passes its official rules
+contacts, BIC). The Factur-X exporters produce CII XML; `docket.einvoice`
+can embed it with XMP into a source PDF, extract it again, and verify the
+complete round trip. XML uses the official profile rules and the PDF/A-3
+container uses the external veraPDF CLI. Every format above passes its official rules
 on the complete test invoice (`tests/test_einvoice.py`).
 
 ## 9a. E-invoice validation
@@ -555,4 +557,3 @@ trained vision model. What it does, and deliberately does not do:
 
 Keyword detection depends on the Tesseract language packs for `DOCKET_OCR_LANGUAGES`
 (Russian markers need `rus`).
-

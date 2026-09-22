@@ -15,6 +15,7 @@ pip install docket-idp
 docket process invoice.pdf                       # JSON result on stdout, exit code 2 if validation fails
 docket process invoice.pdf --export xrechnung-ubl --validate-export   # e-invoice XML, checked with the official rules
 docket validate-einvoice invoice.xml              # XSD + Schematron report for any UBL/CII XML or Factur-X PDF
+docket factur-x create invoice.pdf factur-x.xml -o hybrid.pdf          # PDF/A-3 + XML + XMP, then veraPDF round-trip
 docket schemas list                              # every document type, with its version
 ```
 
@@ -185,7 +186,11 @@ for issue in report.issues:        # code (BR-CO-15, PEPPOL-EN16931-R001, BR-DE-
     print(issue.code, issue.layer, issue.location, issue.message)   # layer xsd/schematron, rule source
 ```
 
-The profile comes from the document's specification identifier (BT-24) unless you pass one; when you do and the document declares another, the report carries `DOCKET-PROFILE-MISMATCH`. Schematron only runs on XML that passed the XML Schema. Factur-X / ZUGFeRD PDFs are validated from their embedded `factur-x.xml` / `zugferd-invoice.xml`; the PDF/A-3 container itself is not checked. `export_document(..., ExportOptions(validate_einvoice=True))` validates right after export, and `docket process --export FORMAT --validate-export` does the same on the command line. `python scripts/update_einvoice_resources.py` rebuilds the artifacts from their pinned official downloads (`--check` verifies the vendored copy). See [`examples/validate_xrechnung.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_xrechnung.py) and [`examples/validate_peppol.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_peppol.py).
+The profile comes from the document's specification identifier (BT-24) unless you pass one; when you do and the document declares another, the report carries `DOCKET-PROFILE-MISMATCH`. Schematron only runs on XML that passed the XML Schema. Factur-X / ZUGFeRD PDFs are validated from their embedded `factur-x.xml` / `zugferd-invoice.xml`.
+
+`generate_facturx_pdf()` creates the hybrid PDF with the XML attachment, AF relationship and Factur-X XMP metadata. `extract_facturx_xml()` performs the reverse operation, while `validate_pdfa()` invokes the official veraPDF CLI and returns structured PDF/A-3 rule failures. `verify_facturx_round_trip()` requires the extracted XML to match, pass the official XML rules and pass veraPDF. The source PDF must already be PDF/A compatible; embedding cannot repair missing fonts, colour profiles or output intents. The same workflow is available as `docket factur-x create|extract|validate`. Install veraPDF separately and pass `--verapdf PATH` when it is not on `PATH`.
+
+`export_document(..., ExportOptions(validate_einvoice=True))` validates XML right after export, and `docket process --export FORMAT --validate-export` does the same on the command line. `python scripts/update_einvoice_resources.py` rebuilds the artifacts from their pinned official downloads (`--check` verifies the vendored copy). See [`examples/validate_xrechnung.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_xrechnung.py) and [`examples/validate_peppol.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_peppol.py).
 
 ## How it works
 

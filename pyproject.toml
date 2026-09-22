@@ -63,6 +63,7 @@ paddle = [
 # Official e-invoice validation (XSD via lxml, Schematron via SaxonC-HE).
 # The validation artifacts themselves ship with the base package.
 einvoice = [
+    "factur-x>=6.8,<7",
     "lxml>=5.0",
     "saxonche>=12.5",
 ]

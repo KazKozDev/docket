@@ -9,6 +9,9 @@
     docket ocr-backends
     docket forensics FILE
     docket validate-einvoice FILE [--profile PROFILE] [--format text|json]
+    docket factur-x create PDF XML --output PDF [--level LEVEL] [--verapdf PATH]
+    docket factur-x extract PDF --output XML
+    docket factur-x validate PDF [--xml XML] [--verapdf PATH] [--format text|json]
     docket config show [--format text|json] | check
 
 `docket --config PATH COMMAND ...` reads settings from a TOML file (else
@@ -294,6 +297,53 @@ def _cmd_validate_einvoice(args: argparse.Namespace) -> int:
     return EXIT_OK if report.valid else EXIT_FAILED
 
 
+def _cmd_factur_x(args: argparse.Namespace) -> int:
+    from .einvoice import (
+        extract_facturx_xml,
+        generate_facturx_pdf,
+        verify_facturx_round_trip,
+    )
+
+    for label in ("pdf", "xml"):
+        value = getattr(args, label, None)
+        if value and not Path(value).is_file():
+            raise ConfigurationError(f"{label.upper()} file {value!r} does not exist")
+
+    if args.action == "create":
+        generated = generate_facturx_pdf(args.pdf, args.xml, level=args.level, lang=args.lang)
+        Path(args.output).write_bytes(generated)
+        report = verify_facturx_round_trip(
+            generated,
+            expected_xml=args.xml,
+            verapdf=args.verapdf,
+        )
+    elif args.action == "extract":
+        xml = extract_facturx_xml(args.pdf)
+        if args.output:
+            Path(args.output).write_bytes(xml)
+        else:
+            sys.stdout.buffer.write(xml)
+        return EXIT_OK
+    else:
+        report = verify_facturx_round_trip(
+            args.pdf,
+            expected_xml=args.xml,
+            verapdf=args.verapdf,
+        )
+    if args.format == "json":
+        _print_json(report.model_dump(mode="json"))
+    else:
+        print(f"{'VALID' if report.valid else 'INVALID'}  {args.output if args.action == 'create' else args.pdf}")
+        print(f"  embedded XML: {'matches' if report.xml_matches else 'differs'}; official rules: "
+              f"{'passed' if report.xml_validation.valid else 'failed'}")
+        print(f"  PDF/A-3: {'passed' if report.pdfa_validation.compliant else 'failed'} "
+              f"({report.pdfa_validation.profile}, veraPDF {report.pdfa_validation.validator_version or '?'})")
+        for issue in report.pdfa_validation.issues:
+            rule = "/".join(filter(None, (issue.clause, issue.test_number)))
+            print(f"  [PDF/A {rule or '?'}] {issue.description}")
+    return EXIT_OK if report.valid else EXIT_FAILED
+
+
 def _print_export_validation(result) -> int:
     report = result.einvoice_validation
     if report is None:
@@ -390,6 +440,29 @@ def build_parser() -> argparse.ArgumentParser:
                           help="Validate as this profile; default: the one the document declares")
     einvoice.add_argument("--format", choices=["text", "json"], default="text")
     einvoice.set_defaults(func=_cmd_validate_einvoice)
+
+    factur_x = commands.add_parser("factur-x", help="Create, extract or validate a Factur-X PDF/A-3 document")
+    factur_x_actions = factur_x.add_subparsers(dest="action", required=True)
+    fx_create = factur_x_actions.add_parser("create", help="Embed Factur-X XML and XMP into a PDF")
+    fx_create.add_argument("pdf", help="Source PDF (must itself be PDF/A compliant for a compliant result)")
+    fx_create.add_argument("xml", help="Factur-X CII XML")
+    fx_create.add_argument("--output", "-o", required=True, help="Generated hybrid PDF")
+    fx_create.add_argument("--level", choices=["minimum", "basicwl", "basic", "en16931", "extended", "autodetect"],
+                           default="autodetect")
+    fx_create.add_argument("--lang", help="PDF language, for example de-DE or fr-FR")
+    fx_create.add_argument("--verapdf", default="verapdf", help="Path to the veraPDF executable")
+    fx_create.add_argument("--format", choices=["text", "json"], default="text")
+    fx_create.set_defaults(func=_cmd_factur_x)
+    fx_extract = factur_x_actions.add_parser("extract", help="Extract factur-x.xml from a hybrid PDF")
+    fx_extract.add_argument("pdf")
+    fx_extract.add_argument("--output", "-o", help="Write XML here instead of stdout")
+    fx_extract.set_defaults(func=_cmd_factur_x)
+    fx_validate = factur_x_actions.add_parser("validate", help="Run XML rules and veraPDF PDF/A-3 validation")
+    fx_validate.add_argument("pdf")
+    fx_validate.add_argument("--xml", help="Also require the embedded XML to match this file byte-for-byte")
+    fx_validate.add_argument("--verapdf", default="verapdf", help="Path to the veraPDF executable")
+    fx_validate.add_argument("--format", choices=["text", "json"], default="text")
+    fx_validate.set_defaults(func=_cmd_factur_x)
 
     forensics = commands.add_parser("forensics", help="Stamp, signature and alteration heuristics for one file")
     forensics.add_argument("document")
