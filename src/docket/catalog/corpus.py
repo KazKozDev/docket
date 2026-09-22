@@ -37,6 +37,11 @@ CORPUS: dict[str, tuple[str, ...]] = {  # schema_id -> paraphrased sample senten
         'Serviços prestados no período, com base tributável, taxa de IVA e total a pagar.',
     ],
     "receipt": [
+        # Till receipts printed with a legal "TAX INVOICE" header (found by the
+        # extended benchmark: 82/120 Malaysian SROIE receipts went to tax_invoice).
+        'Cash-register till slip headed TAX INVOICE with cashier name and approval code, goods sold are not returnable.',
+        'Petrol station till receipt marked GST tax invoice, paid at the counter, terima kasih.',
+        'Point-of-sale slip: salesperson, terminal approval code, thank you and please come again.',
         "Here's your copy of today's purchase, keep it in case you need to return anything.",
         'Card ending 4477 approved. Have a nice day!',
         'Two items scanned at the register, change given in cash.',

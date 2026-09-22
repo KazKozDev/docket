@@ -85,7 +85,15 @@ from .einvoice import (
     EInvoiceUnavailable,
     EInvoiceValidationOptions,
     EInvoiceValidationResult,
+    FacturXPdfUnavailable,
+    FacturXRoundTripResult,
+    PdfAValidationIssue,
+    PdfAValidationResult,
+    extract_facturx_xml,
+    generate_facturx_pdf,
+    validate_pdfa,
     validate_einvoice,
+    verify_facturx_round_trip,
 )
 from .einvoice import Profile as EInvoiceProfile
 from .errors import ConfigurationError
@@ -111,6 +119,15 @@ from .schemas import (
     StampDetection,
     ValidationIssue,
 )
+from .templates import (
+    FieldRule,
+    ItemsRule,
+    VendorTemplate,
+    get_vendor_template,
+    list_vendor_templates,
+    register_vendor_template,
+    unregister_vendor_template,
+)
 
 __all__ = [
     "__version__",
@@ -118,7 +135,15 @@ __all__ = [
     "EInvoiceUnavailable",
     "EInvoiceValidationOptions",
     "EInvoiceValidationResult",
+    "FacturXPdfUnavailable",
+    "FacturXRoundTripResult",
+    "PdfAValidationIssue",
+    "PdfAValidationResult",
+    "extract_facturx_xml",
+    "generate_facturx_pdf",
+    "validate_pdfa",
     "validate_einvoice",
+    "verify_facturx_round_trip",
     "BatchError",
     "BatchMetrics",
     "BatchOptions",
@@ -209,6 +234,13 @@ __all__ = [
     "TaxIdentifier",
     "TaxInvoice",
     "TextLine",
+    "FieldRule",
+    "ItemsRule",
+    "VendorTemplate",
+    "get_vendor_template",
+    "list_vendor_templates",
+    "register_vendor_template",
+    "unregister_vendor_template",
     "unregister_schema",
     "UtilityBill",
     "ValidationContext",

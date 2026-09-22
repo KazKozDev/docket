@@ -243,3 +243,72 @@ def prf(correct: int, produced: int, expected: int) -> dict[str, float]:
     recall = correct / expected if expected else 0.0
     f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
     return {"precision": round(precision, 4), "recall": round(recall, 4), "f1": round(f1, 4)}
+
+
+# ---- Citation coverage (Stage 1 provenance benchmark) ------------------------------------------
+
+
+def citation_coverage(result, expected: dict) -> dict:
+    """How much of the golden document's material is backed by a provenance
+    record: the share of graded fields — and of line-item fields, keyed by
+    their schema paths (`items[0].price`, `transactions[0].amount`, ...) —
+    that carry a citation in `result.field_sources`, and of those how many
+    resolved to page geometry.
+
+    Paths come from the golden file's dotted keys and `_line_items`, mapped
+    through the registered schema's line-item spec, so the metric grades
+    exactly what the golden set grades."""
+    sources = getattr(result, "field_sources", None) or {}
+    fields = [k for k in expected if not k.startswith("_") and k != "doc_type"]
+
+    item_fields: list[str] = []
+    spec_items = None
+    try:
+        from docket.catalog import get_schema
+        spec = get_schema(result.schema_id) if result.schema_id else None
+        spec_items = spec.line_items if spec is not None else None
+    except Exception:
+        spec_items = None
+    if spec_items is not None:
+        item_fields = [
+            f"{spec_items.path}[{i}].{spec_items.columns.get(column, column)}"
+            for i, item in enumerate(expected.get("_line_items") or [])
+            for column in item
+        ]
+    else:  # no registered spec (custom schema): fall back to the canonical name
+        item_fields = [
+            f"line_items[{i}].{column}"
+            for i, item in enumerate(expected.get("_line_items") or [])
+            for column in item
+        ]
+
+    def covered(paths: list[str]) -> tuple[int, int, int]:
+        cited = [p for p in paths if p in sources]
+        located = [p for p in cited if getattr(sources[p], "bbox", None) is not None]
+        return len(cited), len(located), len(paths)
+
+    field_cited, field_located, field_total = covered(fields)
+    item_cited, item_located, item_total = covered(item_fields)
+    return {
+        "fields": {"cited": field_cited, "located": field_located, "total": field_total},
+        "line_items": {"cited": item_cited, "located": item_located, "total": item_total},
+    }
+
+
+def citation_coverage_summary(rows: list[dict]) -> dict:
+    """Aggregate the per-document coverage counts: the share of graded fields
+    and line-item fields cited and located, over every document that graded
+    anything. The line-item share is the Stage 1 acceptance number."""
+    def share(kind: str, key: str) -> float | None:
+        rows_with_counts = [r["citations"] for r in rows if r.get("citations")]
+        total = sum(c[kind]["total"] for c in rows_with_counts)
+        if not total:
+            return None
+        return round(sum(c[kind][key] for c in rows_with_counts) / total, 4)
+
+    return {
+        "field_citation_coverage": share("fields", "cited"),
+        "field_location_coverage": share("fields", "located"),
+        "line_item_citation_coverage": share("line_items", "cited"),
+        "line_item_location_coverage": share("line_items", "located"),
+    }

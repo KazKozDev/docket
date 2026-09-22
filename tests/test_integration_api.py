@@ -64,6 +64,14 @@ def test_cli_lists_formats(capsys):
     assert "xrechnung" in out and "ubl" in out
 
 
+def test_cli_lists_and_shows_vendor_templates(capsys):
+    cli.main(["templates", "list"])
+    assert "nordlicht-buerobedarf-invoice" in capsys.readouterr().out
+    cli.main(["templates", "show", "distribuciones-albufera-invoice"])
+    shown = json.loads(capsys.readouterr().out)
+    assert shown["schema_id"] == "invoice" and shown["builtin"] is True
+
+
 def test_cli_requires_document():
     with pytest.raises(SystemExit):
         cli.main([])

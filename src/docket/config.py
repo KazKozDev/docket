@@ -100,7 +100,7 @@ SETTINGS: tuple[Setting, ...] = (
             "Process-wide limit on simultaneous LLM requests.", minimum=1, maximum=256),
     # ---- OCR -----------------------------------------------------------------------
     Setting("OCR_BACKEND", "ocr.backend", "DOCKET_OCR_BACKEND", "str", "auto",
-            "Primary OCR backend: tesseract, paddle, auto (first installed) or a plugin name.", lower=True),
+            "Primary OCR backend: tesseract, paddle, docling, auto (first installed) or a plugin name.", lower=True),
     Setting("OCR_FALLBACKS", "ocr.fallbacks", "DOCKET_OCR_FALLBACKS", "list", ["vlm"],
             "Backends tried in order when a page's reading is rejected (env: comma-separated).", lower=True),
     Setting("OCR_LANGUAGES", "ocr.languages", "DOCKET_OCR_LANGUAGES", "list", ["en"],
@@ -109,6 +109,8 @@ SETTINGS: tuple[Setting, ...] = (
             "A page reading is accepted at this confidence (0..1).", minimum=0, maximum=1),
     Setting("OCR_DETECT_ROTATION", "ocr.detect_rotation", "DOCKET_OCR_DETECT_ROTATION", "bool", True,
             "Detect and undo page rotation on scans (Tesseract OSD)."),
+    Setting("OCR_DESKEW", "ocr.deskew", "DOCKET_OCR_DESKEW", "bool", True,
+            "Correct fine scan skew before raster OCR."),
     Setting("OCR_DPI", "ocr.dpi", "DOCKET_OCR_DPI", "int", 200,
             "Resolution PDF pages are rendered at for OCR.", minimum=72, maximum=600),
     Setting("TESSERACT_PSM", "ocr.tesseract_psm", "DOCKET_TESSERACT_PSM", "int", 3,
@@ -128,6 +130,10 @@ SETTINGS: tuple[Setting, ...] = (
             "PaddleOCR model size.", choices=("mobile", "medium"), lower=True),
     Setting("PADDLE_TABLES", "paddle.tables", "DOCKET_PADDLE_TABLES", "bool", False,
             "Run PaddleOCR's table-structure pipeline."),
+    Setting("DOCLING_TABLE_MODE", "docling.table_mode", "DOCKET_DOCLING_TABLE_MODE", "choice", "accurate",
+            "TableFormer speed/quality mode.", choices=("fast", "accurate"), lower=True),
+    Setting("DOCLING_CELL_MATCHING", "docling.cell_matching", "DOCKET_DOCLING_CELL_MATCHING", "bool", True,
+            "Match TableFormer cells back to recognized document text."),
     # ---- layout --------------------------------------------------------------------
     Setting("INCLUDE_LAYOUT", "layout.include", "DOCKET_INCLUDE_LAYOUT", "bool", True,
             "Keep page layouts (words, lines, tables with coordinates) in results."),
@@ -140,8 +146,12 @@ SETTINGS: tuple[Setting, ...] = (
             "Below this classification confidence a document goes to review.", minimum=0, maximum=1),
     Setting("REVIEW_QUEUE_ENABLED", "review.enabled", "DOCKET_REVIEW_QUEUE_ENABLED", "bool", True,
             "Write flagged documents to the review queue."),
-    Setting("REVIEW_QUEUE_PATH", "review.queue", "DOCKET_REVIEW_QUEUE", "path", Path("data/review_queue.jsonl"),
-            "Review queue file (JSON Lines)."),
+    Setting("REVIEW_DATABASE_URL", "review.database_url", "DOCKET_REVIEW_DATABASE_URL", "str",
+            "sqlite:///data/review.db", "SQLAlchemy URL for SQLite or PostgreSQL review storage."),
+    Setting("REVIEW_QUEUE_PATH", "review.queue", "DOCKET_REVIEW_QUEUE", "path", Path("data/review.db"),
+            "Deprecated test/embedding override for the SQLite review database."),
+    Setting("REVIEW_LOCK_SECONDS", "review.lock_seconds", "DOCKET_REVIEW_LOCK_SECONDS", "int", 300,
+            "Review task lease duration before another reviewer can claim it.", minimum=10, maximum=3600),
     Setting("REVIEW_DOCUMENTS_DIR", "review.documents", "DOCKET_REVIEW_DOCUMENTS", "path",
             Path("data/review_documents"), "Where copies of flagged documents are kept."),
     # ---- input, batches, HTTP --------------------------------------------------------
@@ -160,6 +170,8 @@ SETTINGS: tuple[Setting, ...] = (
             "HTTP jobs processed at once; the rest wait.", minimum=1, maximum=64),
     Setting("API_KEY", "api.key", "DOCKET_API_KEY", "secret", None,
             "Bearer token the HTTP API requires when set.", optional=True),
+    Setting("API_CORS_ORIGINS", "api.cors_origins", "DOCKET_API_CORS_ORIGINS", "list",
+            ["http://localhost:3000", "http://127.0.0.1:3000"], "Browser origins allowed to call the HTTP API."),
     Setting("JOBS_DIR", "api.jobs_dir", "DOCKET_JOBS_DIR", "path", Path("data/jobs"),
             "One directory per HTTP job: metadata, results, uploads until done."),
     # ---- e-invoices ------------------------------------------------------------------
@@ -373,6 +385,7 @@ OCR_FALLBACKS: list[str]
 OCR_LANGUAGES: list[str]
 OCR_MIN_CONFIDENCE: float
 OCR_DETECT_ROTATION: bool
+OCR_DESKEW: bool
 OCR_DPI: int
 TESSERACT_PSM: int
 OCR_CONCURRENCY: int
@@ -381,12 +394,16 @@ OCR_QUALITY_MIN_CONFIDENCE: float
 PADDLE_DEVICE: str
 PADDLE_MODEL: str
 PADDLE_TABLES: bool
+DOCLING_TABLE_MODE: str
+DOCLING_CELL_MATCHING: bool
 INCLUDE_LAYOUT: bool
 LAYOUT_MARKERS: bool
 TFIDF_CONFIDENCE_FLOOR: float
 MIN_CLASSIFICATION_CONFIDENCE: float
 REVIEW_QUEUE_ENABLED: bool
+REVIEW_DATABASE_URL: str
 REVIEW_QUEUE_PATH: Path
+REVIEW_LOCK_SECONDS: int
 REVIEW_DOCUMENTS_DIR: Path
 MAX_FILE_BYTES: int
 MAX_PDF_PAGES: int
@@ -395,6 +412,7 @@ MAX_BATCH_FILES: int
 MAX_BATCH_BYTES: int
 MAX_CONCURRENT_JOBS: int
 API_KEY: str | None
+API_CORS_ORIGINS: list[str]
 JOBS_DIR: Path
 EINVOICE_RESOURCES: Path | None
 CLOUD_EQUIVALENT_USD_PER_1M_TOKENS: float

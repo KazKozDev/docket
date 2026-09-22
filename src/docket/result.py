@@ -6,6 +6,7 @@ the same model, serialized the same way.
 from __future__ import annotations
 
 from enum import Enum
+from typing import Literal
 
 from pydantic import BaseModel, Field, ValidationError
 
@@ -14,19 +15,53 @@ from .ocr.acquire import AcquisitionReport
 from .schemas import ClassificationResult, DocumentForensicReport, ValidationIssue
 
 
+class SourceRegion(BaseModel):
+    """One contiguous place a quote was found on a page."""
+
+    page: int = Field(ge=1)
+    bbox: BoundingBox
+    word_ids: list[str] = Field(default_factory=list)
+
+
 class SourceLocation(BaseModel):
     """Where an extracted value was read: the quote the model cited, and the
-    page region it resolves to.
+    page region(s) it resolves to.
+
+    `regions` holds every place the quote was found — usually one; a value
+    that prints twice gives two, and `status` is then `conflicting` because
+    nothing in the document says which occurrence is the source.
 
     `bbox` and `word_ids` come from matching the quote against the page's
     word boxes, never from the model. A page read by the vision model has no
     boxes; its quote is then looked up in the OCR reading kept as the page's
-    witness (`located_by` says which). They are None / empty when neither has
-    the quote.
+    witness (`located_by` says which). `bbox` is None when no region
+    resolved; the top-level copy is the first region's, `regions` carries
+    the rest.
     """
 
     page: int = Field(ge=1)
     quote: str
+    status: Literal[
+        "verified", "fuzzy", "conflicting", "unlocated"
+    ] = Field(
+        default="unlocated",
+        description=(
+            "verified: exactly one exact match on the page. "
+            "fuzzy: no exact match, one close window. "
+            "conflicting: several exact matches, ambiguous. "
+            "unlocated: the page has no geometry or the quote is not on it."
+        ),
+    )
+    match: Literal["exact", "fuzzy"] | None = Field(
+        default=None, description="How the quote was found; None when unlocated."
+    )
+    regions: list[SourceRegion] = Field(
+        default_factory=list,
+        description=(
+            "Every place the quote was found on the page (usually one), with the "
+            "normalized coordinates needed to draw a highlight."
+        ),
+    )
     bbox: BoundingBox | None = None
     word_ids: list[str] = Field(default_factory=list)
     confidence: float | None = Field(
@@ -70,6 +105,10 @@ class ProcessingMetrics(BaseModel):
         default=False,
         description="OCR text passed its gate but failed validation, and a vision-model re-read won.",
     )
+    template_id: str | None = Field(
+        default=None,
+        description="Vendor template that read this document (no LLM extraction); None = model extraction.",
+    )
 
 
 class DocumentResult(BaseModel):
@@ -104,6 +143,18 @@ class DocumentResult(BaseModel):
         return self.error is None and not any(
             i.severity == "error" for i in self.validation_issues
         )
+
+    def highlights(self, page: int | None = None) -> list[tuple[str, "SourceLocation", "SourceRegion"]]:
+        """(field, source, region) triples for drawing provenance boxes over
+        the original pages — everything a viewer needs, straight from the
+        result, optionally filtered to one page. Fields without geometry
+        (vision-model pages, unresolved quotes) contribute nothing."""
+        return [
+            (field, source, region)
+            for field, source in sorted(self.field_sources.items())
+            for region in source.regions
+            if page is None or region.page == page
+        ]
 
     @property
     def complete(self) -> bool:
@@ -152,4 +203,5 @@ __all__ = [
     "DocumentStatus",
     "ProcessingMetrics",
     "SourceLocation",
+    "SourceRegion",
 ]

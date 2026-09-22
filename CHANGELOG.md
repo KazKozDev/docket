@@ -8,6 +8,177 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+Line-item provenance: every row of every repeated list now carries source
+citations that are grounded, located on the page and validated like any
+top-level amount. Measured on the 17 golden scans (tesseract,
+`eval/benchmark_ocr.py --dataset eval/golden_dataset`):
+
+| citation metric | before | after |
+|---|---|---|
+| line-item rows cited | 0.08 | **1.00** |
+| line-item rows located on the page | 0.06 | 0.98 |
+| top-level fields cited | 0.92 | 0.97 |
+| top-level fields located | 0.87 | 0.92 |
+| documents in review | 1 | 1 |
+
+### Added
+
+- Optional Docling/TableFormer layout backend with `fast` / `accurate` modes,
+  cell matching control, wrapped cell text and merged row/column spans.
+- Fine-angle raster deskew with correction metadata, plus conservative
+  borderless two-column table detection and wrapped-row reconstruction.
+
+- Production review workflow backed by SQLite or PostgreSQL: transactional
+  task leases, optimistic versions, append-only correction history and
+  mandatory schema/business revalidation before approval.
+- Live `/verify` workbench using the review API, with rendered document pages,
+  field editing, revision history and source bbox highlights.
+
+- Factur-X PDF/A-3 generation through the official `factur-x` engine, including
+  embedded `factur-x.xml`, AF relationship and Factur-X XMP metadata.
+- Structured veraPDF PDF/A-3 validation and strict generate -> extract ->
+  validate round trips in Python and `docket factur-x create|extract|validate`.
+
+- **Stage 4 vendor templates**: deterministic extraction for known vendor
+  layouts through `VendorTemplate`, `FieldRule` and `ItemsRule`. Successful
+  templates produce normal nested Pydantic documents and per-field/line-item
+  citations, skip structured LLM extraction, and are accepted only after the
+  existing business validation passes; an incomplete or invalid reading falls
+  back to the model.
+- Public template registry in Python, `docket templates list|show`, and
+  `GET /vendor-templates[/{id}]`. Two fictional golden-corpus invoice vendors
+  exercise German and noisy Spanish OCR layouts end to end.
+- Template metrics in the OCR benchmark: selected `template_id`, hit rate,
+  per-template counts, template-document latency and the minimum number of
+  structured-extraction LLM calls avoided.
+
+### Measured (stage 4 deterministic pass — 198 scans, Tesseract, no LLM)
+
+- Both built-in examples matched, extracted and passed normal validation:
+  Nordlicht and Distribuciones Albufera, 2/198 documents (1.01%).
+- No unrelated document matched either template. Seventeen scans produced no
+  Tesseract text and were counted as OCR errors rather than template misses.
+- Mean acquisition plus template time for the two accepted documents was
+  1.75 s. The full pipeline benchmark now records template usage, but was not
+  re-labelled with these OCR-only numbers.
+
+- Line-item and nested citations: the extraction prompt requires a citation
+  for every row of every repeated list, per field (`line_items[0].quantity`,
+  `items[0].price`, ...), the quote being that row's own text.
+- `SourceLocation.status` (`verified` / `fuzzy` / `conflicting` / `unlocated`)
+  and `SourceLocation.regions`: every place a quote was found is kept
+  (several exact matches mark the value `conflicting`), with `match` saying
+  how it was found.
+- `DocumentResult.highlights(page=None)`: `(field, source, region)` triples
+  for drawing provenance boxes over the original pages.
+- Citation coverage metrics in `eval/metrics.py` and `eval/benchmark_ocr.py`
+  (spec-aware paths, so `line_items[0].total` counts against the item rows).
+- Grounding of line-item numeric fields: a fabricated row that balances the
+  totals now fails validation like any invented top-level amount.
+- **Stage 2**: the false-success metric in `eval/benchmark_ocr.py` — documents
+  that come back "succeeded, no review needed" with wrong graded fields,
+  the wrong number nobody was told to check (rate taken over the silent
+  successes only; review and failed docs made no clean claim).
+- **Stage 2**: `eval/benchmark_competitors.py` — docket against docpick,
+  invoice2data and ocrcontext on the same corpus, graded with the same
+  field metric on each tool's own schema intersection; docket's number is
+  recomputed on exactly those docs and fields, tool errors count as every
+  graded field wrong, LLM-backed tools run against the same Ollama model
+  and are handed the correct schema while docket must classify its way
+  there.
+
+### Fixed (stage 3 — the two measured false-success drivers)
+
+- US-format dates read day-first on dollar documents: an ambiguous date
+  (`06/02/2015`) on a document that prints a bare dollar sign is now read
+  month-first even when the amounts use decimal commas (`$ 889,20` — the
+  donut corpus). The dollar sign outranks the decimal comma; `AU$`/`US$`/
+  `HK$`-style prefixed signs abstain (those countries write day-first).
+- A `TAX INVOICE` header no longer scores for the plain `invoice` schema
+  (`\binvoice\b` matched inside "tax invoice", adding 3.0 points — with
+  "Bill To" it won the rules tier outright on 19/120 Malaysian till
+  receipts). The multilingual invoice names are likewise guarded against
+  "factura fiscal" / "fattura fiscale" / "faktura VAT".
+- Till-receipt classification signals: a cashier + approval-code
+  combination (3.0), "please come again" (2.0), "terima kasih" (2.0) and
+  receipt corpus examples for tax-invoice till slips, so the rules and
+  TF-IDF tiers answer `receipt` on point-of-sale slips printed with a
+  legal TAX INVOICE header; the receipt and tax_invoice descriptions now
+  tell the LLM tier the same thing.
+
+### Measured (stage 3 re-run — same 198-scan corpus, tesseract)
+
+| | before stage 3 | after |
+|---|---|---|
+| field accuracy | 0.53 | **0.72** |
+| document success rate | 0.32 | 0.54 |
+| false successes | 23/50 silent (46%) | 19/55 silent (35%) |
+| SROIE docs classified receipt | 17/120 | **72/120** |
+| donut fields | 0.92 | 0.975 |
+| golden fields | 0.97 | 0.97 (no regression) |
+
+On the competitors' own docs+fields, docket now leads every tool:
+docket 0.71 vs docpick 0.61, 0.69 vs ocrcontext 0.04, 0.90 vs
+invoice2data 0.00. docpick still wins SROIE (0.75 vs 0.55) — the remaining
+39/120 misclassified till slips are the next classification margin;
+when docket does classify them receipt, its fields are 0.84.
+
+### Measured (stage 2 — extended corpus and the competition)
+
+The corpus grew from 17 golden scans to 198 scans (real documents from
+Hugging Face: DocILE, donut-style invoices, SROIE receipts, CORD, FUNSD,
+RVL-CDIP — `eval/download_real_samples.py --n` per source). Tesseract
+config throughout:
+
+| | golden only | extended corpus |
+|---|---|---|
+| field accuracy | 0.97 | 0.53 |
+| documents in review | 1 (6%) | 148 (75%) |
+| false successes | 3/16 silent (19%) | 23/50 silent (46%) |
+
+What the extended corpus says:
+
+- Classification is the bottleneck, not extraction: SROIE "receipts" are
+  Malaysian tax-invoice till slips, 82/120 classify as `tax_invoice` and
+  every graded field of those documents counts wrong. Where classification
+  is right, field accuracy is 0.80–0.97 per source.
+- The top false-success drivers are measured and actionable: a wrong or
+  missing date in 17 of the 23 docs — five are US-format day/month swaps
+  (`06/02/2015` → 2015-02-06 instead of 2015-06-02), the rest dates not
+  read at all from degraded thermal receipts and DocILE scans — plus
+  merchant names and totals on those same hard scans.
+
+Against the pip-installable competition, same documents and same graded
+fields (see the runner docstring for the fairness rules):
+
+| tool | docs | field accuracy | docket, same docs+fields |
+|---|---|---|---|
+| docpick 0.1.3 | 55 (subsample) | 0.61 | 0.45 |
+| ocrcontext 0.1.5 | 55 (subsample) | 0.04 (16 parse errors) | 0.40 |
+| invoice2data 1.0.1 | 44 | 0.00 (0 built-in template matches) | 0.86 |
+
+docket wins golden (1.00 vs docpick's 0.62), donut (0.93 vs 0.48) and
+docile (0.50 vs 0.08); docpick wins SROIE (0.75 vs 0.10) because it is
+handed the receipt schema. invoice2data matched none of its built-in
+vendor templates — authoring templates per vendor is its design.
+
+### Fixed (stage 1 — false citation-check flags that queued correct extractions for review)
+- a derived value (unit price 4.98 / 2 = 2.49, line total 2 × 58.50 = 117.00)
+  is grounded by its own row when both operands are printed on it;
+- `quantity == 1` is the implicit single item, not a fabricated amount;
+- an item value contradicted by a garbled witness is a warning, not a
+  blocker, when the rows close their own arithmetic (items sum to the
+  stated subtotal under either coupon layout);
+- a list cited element-wise (`parties_a[0]`) satisfies the citation
+  requirement on the whole list (`parties_a`).
+- Review queue after the fixes: 1 document (purchase order, by design),
+  down from 5 during development. Note: the intermediate run's higher
+  "docs ok" (0.94) was an artifact — the false flags escalated two garbled
+  receipt scans to a vision-model re-read that fixed fields by accident.
+  With honest flags those scans keep their Tesseract misreads
+  (`total 775.0`, `card_last_four` missing) without review; measuring that
+  false-success rate is the next stage.
+
 ## [0.3.0] - 2026-09-21
 
 Layout-first redesign: a layout model shared by every OCR backend,

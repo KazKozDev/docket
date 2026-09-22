@@ -19,9 +19,14 @@ from docket.catalog import CreditNote, Invoice
 from docket.einvoice import (
     EInvoiceUnavailable,
     EInvoiceValidationOptions,
+    PdfAValidationResult,
     Profile,
     artifacts,
+    extract_facturx_xml,
+    generate_facturx_pdf,
+    validate_pdfa,
     validate_einvoice,
+    verify_facturx_round_trip,
     validator,
 )
 from docket.export import ExportError, ExportOptions, export_document
@@ -290,6 +295,69 @@ def _facturx_pdf(tmp_path: Path, xml: bytes, name: str = "factur-x.xml") -> Path
     document.save(str(path))
     document.close()
     return path
+
+
+def _blank_pdf() -> bytes:
+    from io import BytesIO
+    from pypdf import PdfWriter
+
+    output = BytesIO()
+    writer = PdfWriter()
+    writer.add_blank_page(width=595, height=842)
+    writer.write(output)
+    return output.getvalue()
+
+
+def test_factur_x_pdf_generation_embeds_xml_and_xmp():
+    from io import BytesIO
+    from pypdf import PdfReader
+
+    xml = export_document(complete_invoice(), "factur-x-en16931").content.encode()
+    pdf = generate_facturx_pdf(_blank_pdf(), xml, level="en16931")
+    reader = PdfReader(BytesIO(pdf))
+    xmp = reader.root_object["/Metadata"].get_data()
+
+    assert extract_facturx_xml(pdf) == xml
+    assert reader.attachments["factur-x.xml"][0] == xml
+    assert b"urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#" in xmp
+
+
+def test_verapdf_report_is_parsed(monkeypatch, tmp_path):
+    report = b'''<?xml version="1.0"?><report><buildInformation>
+      <releaseDetails id="core" version="1.28.2"/></buildInformation><jobs><job>
+      <validationReport profileName="PDF/A-3b validation profile" isCompliant="false">
+      <details passedRules="99" failedRules="1" passedChecks="400" failedChecks="1">
+      <rule specification="ISO 19005-3:2012" clause="6.2.2" testNumber="1" status="failed">
+      <description>Output intent missing</description><check status="failed"><context>root</context></check>
+      </rule></details></validationReport></job></jobs></report>'''
+    executable = tmp_path / "verapdf"
+    executable.write_text("placeholder")
+    monkeypatch.setattr("docket.einvoice.facturx_pdf.subprocess.run", lambda *a, **k: type(
+        "Completed", (), {"stdout": report, "stderr": b"", "returncode": 0}
+    )())
+
+    result = validate_pdfa(_blank_pdf(), executable=str(executable))
+
+    assert not result.compliant
+    assert result.validator_version == "1.28.2"
+    assert result.failed_rules == 1
+    assert result.issues[0].clause == "6.2.2"
+    assert result.issues[0].context == "root"
+
+
+def test_factur_x_round_trip_checks_both_layers(monkeypatch):
+    xml = export_document(complete_invoice(), "factur-x-en16931").content.encode()
+    pdf = generate_facturx_pdf(_blank_pdf(), xml, level="en16931")
+    monkeypatch.setattr(
+        "docket.einvoice.facturx_pdf.validate_pdfa",
+        lambda *a, **k: PdfAValidationResult(compliant=True, profile="PDF/A-3b validation profile"),
+    )
+
+    result = verify_facturx_round_trip(pdf, expected_xml=xml)
+
+    assert result.valid
+    assert result.xml_matches
+    assert result.xml_validation.valid
 
 
 def test_factur_x_pdf_is_validated_from_its_attachment(tmp_path):

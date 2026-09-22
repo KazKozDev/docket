@@ -17,6 +17,12 @@ do not repair contradictions in the source. Copy every digit exactly as
 printed — never adjust a number to make totals reconcile.
 {date_instruction}
 Page markers are part of the provenance and must be retained in source citations.
+Every material value needs a citation: cite top-level fields by their dotted
+path, and cite every row of every repeated list per field, with its schema
+path — "line_items[0].quantity", "items[0].price", "transactions[0].amount", ...
+The quote for a row field is that row's own text on the page. A value with
+no verifiable source is a fabrication; cite what you read, and read what you
+cite.
 
 JSON Schema:
 {schema}
@@ -29,6 +35,9 @@ Document:
 _PARTIAL_PROMPT = """Extract every field explicitly present in this document chunk.
 Return a JSON object containing only fields supported by this chunk. Do not
 invent missing required fields and do not reconcile inconsistent numbers.
+Cite every material value in field_locations, including every row of every
+repeated list per field ("line_items[0].total", "items[0].price", ...), with
+the quote being that row's text.
 
 Target JSON Schema:
 {schema}
