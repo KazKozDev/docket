@@ -139,6 +139,10 @@
 # Your own copy of the validation artifacts (default: the one in the package). Env:
 # DOCKET_EINVOICE_RESOURCES.
 # resources = ""  # unset
+# Where `docket einvoice fetch` puts the artifacts Docket does not ship
+# (Peppol, CII D16B, Factur-X; default: ~/.cache/docket/einvoice). Env:
+# DOCKET_EINVOICE_DOWNLOADS.
+# downloads = ""  # unset
 
 [eval]
 # Blended $/1M tokens used for the illustrative cost in eval reports. Env:

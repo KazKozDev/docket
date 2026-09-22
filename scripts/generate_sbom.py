@@ -57,7 +57,8 @@ def build() -> dict:
             "licenses": [{"license": {"name": artifact["license"]}}],
             "externalReferences": [{"type": "distribution", "url": artifact["url"]}],
             "properties": [
-                {"name": "docket:dependency-scope", "value": "bundled-artifact"},
+                {"name": "docket:dependency-scope",
+                 "value": "bundled-artifact" if artifact.get("redistributable", True) else "downloaded-on-request"},
                 {"name": "docket:artifact-id", "value": artifact["id"]},
             ],
         })

@@ -2,8 +2,10 @@
 
 Turn scanned invoices, receipts, and contracts into structured, validated JSON using OCR and LLMs, then export them as EU e-invoices (XRechnung, Factur-X / ZUGFeRD, Peppol BIS, UBL, Facturae) and check them with the official EN 16931, Peppol, XRechnung and Factur-X rules. Docket is a Python library first; the CLI is its supported command-line interface. The HTTP service, review web UI, desktop packaging and Docker image are reference applications built on the same library contract.
 
-The project is Apache-2.0. Before redistributing bundled e-invoice artefacts,
-review the separate [third-party licence inventory](docs/THIRD_PARTY_LICENSES.md).
+The project is Apache-2.0. It ships only e-invoice artefacts with verified
+redistribution terms; Peppol, Factur-X and UN/CEFACT CII D16B artefacts are
+downloaded on request (`docket einvoice fetch`). See the
+[third-party licence inventory](docs/THIRD_PARTY_LICENSES.md).
 
 <img width="1653" height="961" alt="demo" src="https://github.com/user-attachments/assets/86355d41-34a7-4201-9699-0fd62080c488" />
 
@@ -172,10 +174,17 @@ Add your own with `register_exporter("my-erp", func, accepts=(Invoice,))` or the
 
 ## E-invoice validation
 
-`pip install "docket-idp[einvoice]"` adds offline validation with the official artifacts, vendored with their versions, licenses and SHA-256 checksums in [`src/docket/einvoice/resources/manifest.json`](https://github.com/KazKozDev/docket/blob/master/src/docket/einvoice/resources/manifest.json): the UBL 2.1 and CII D16B XML Schemas, the CEN EN 16931 Schematron 1.3.16, KoSIT XRechnung Schematron 2.6.0 (XRechnung 3.0.2), OpenPeppol BIS Billing 3.0.20 and the Factur-X 1.09 profile schemas and Schematron. XSD runs in lxml, Schematron (XSLT 2.0) in SaxonC-HE; no Java, no network.
+`pip install "docket-idp[einvoice]"` adds offline validation with the official artifacts, listed with their versions, licenses and SHA-256 checksums in [`src/docket/einvoice/resources/manifest.json`](https://github.com/KazKozDev/docket/blob/master/src/docket/einvoice/resources/manifest.json): the UBL 2.1 and CII D16B XML Schemas, the CEN EN 16931 Schematron 1.3.16, KoSIT XRechnung Schematron 2.6.0 (XRechnung 3.0.2), OpenPeppol BIS Billing 3.0.20 and the Factur-X 1.09 profile schemas and Schematron. XSD runs in lxml, Schematron (XSLT 2.0) in SaxonC-HE; no Java.
+
+UBL validation (EN 16931, XRechnung) works as installed. Peppol, every CII profile (including XRechnung CII) and Factur-X need artifacts whose redistribution terms Docket could not verify, so they are not in the package: download them once from their official upstream releases. Every file is checked against the manifest before it is installed, and their upstream terms apply. Until then those profiles raise `EInvoiceResourcesMissing` (CLI exit 3, HTTP 503). Validation itself stays offline.
 
 ```bash
-docket validate-einvoice invoice.xml                     # exit 0 valid, 2 invalid, 3 extra missing
+docket einvoice fetch        # Peppol, CII D16B, Factur-X into ~/.cache/docket/einvoice (DOCKET_EINVOICE_DOWNLOADS)
+docket einvoice status       # shipped / downloaded / missing per artifact
+```
+
+```bash
+docket validate-einvoice invoice.xml                     # exit 0 valid, 2 invalid, 3 extra or artifacts missing
 docket validate-einvoice invoice.pdf --profile factur-x-en16931 --format json
 curl -F file=@invoice.xml -F profile=xrechnung localhost:8000/validate/einvoice
 ```
@@ -193,7 +202,7 @@ The profile comes from the document's specification identifier (BT-24) unless yo
 
 `generate_facturx_pdf()` creates the hybrid PDF with the XML attachment, AF relationship and Factur-X XMP metadata. `extract_facturx_xml()` performs the reverse operation, while `validate_pdfa()` invokes the official veraPDF CLI and returns structured PDF/A-3 rule failures. `verify_facturx_round_trip()` requires the extracted XML to match, pass the official XML rules and pass veraPDF. The source PDF must already be PDF/A compatible; embedding cannot repair missing fonts, colour profiles or output intents. The same workflow is available as `docket factur-x create|extract|validate`. Install veraPDF separately and pass `--verapdf PATH` when it is not on `PATH`.
 
-`export_document(..., ExportOptions(validate_einvoice=True))` validates XML right after export, and `docket process --export FORMAT --validate-export` does the same on the command line. `python scripts/update_einvoice_resources.py` rebuilds the artifacts from their pinned official downloads (`--check` verifies the vendored copy). See [`examples/validate_xrechnung.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_xrechnung.py) and [`examples/validate_peppol.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_peppol.py).
+`export_document(..., ExportOptions(validate_einvoice=True))` validates XML right after export, and `docket process --export FORMAT --validate-export` does the same on the command line. `python scripts/update_einvoice_resources.py` rebuilds the artifacts from their pinned official downloads (`--check` verifies the installed copy). See [`examples/validate_xrechnung.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_xrechnung.py) and [`examples/validate_peppol.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_peppol.py).
 
 ## How it works
 
@@ -248,6 +257,7 @@ Every setting and its environment variable is in [`docket.example.toml`](https:/
 | `DOCKET_MAX_BATCH_FILES` / `DOCKET_MAX_BATCH_BYTES` | `100` / 200 MB | HTTP upload limits per job (`DOCKET_MAX_FILE_BYTES` per file) |
 | `DOCKET_INCLUDE_LAYOUT` / `DOCKET_LAYOUT_MARKERS` | `true` / `true` | Keep page layouts in results; mark `[TABLE n]` / `[COLUMN n]` in the text the LLM reads |
 | `DOCKET_EINVOICE_RESOURCES` | bundled | Directory with your own copy of the validation artifacts (same layout and `manifest.json`) |
+| `DOCKET_EINVOICE_DOWNLOADS` | `~/.cache/docket/einvoice` | Where `docket einvoice fetch` puts the artifacts Docket does not ship |
 
 The Python API does not persist documents or extracted data by default.
 `process_document()` only reads its input unless review storage is explicitly

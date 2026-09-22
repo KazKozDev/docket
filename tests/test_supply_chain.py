@@ -10,8 +10,15 @@ def test_sbom_marks_runtime_extras_and_vendored_artifacts():
         for prop in component.get("properties", [])
         if prop["name"] == "docket:dependency-scope"
     }
-    assert {"runtime", "optional", "bundled-artifact"} <= scopes
+    assert {"runtime", "optional", "bundled-artifact", "downloaded-on-request"} <= scopes
     artefacts = [c for c in components if c.get("bom-ref", "").startswith("docket-artifact:")]
+    scope_of = {
+        c["bom-ref"].split(":")[1].split("@")[0]: next(
+            p["value"] for p in c["properties"] if p["name"] == "docket:dependency-scope")
+        for c in artefacts
+    }
+    for artifact_id in ("peppol-bis-billing", "factur-x", "uncefact-cii-d16b"):
+        assert scope_of[artifact_id] == "downloaded-on-request"
     assert artefacts and all(c["hashes"][0]["alg"] == "SHA-256" for c in artefacts)
     assert all(c["licenses"][0]["license"]["name"] for c in artefacts)
 

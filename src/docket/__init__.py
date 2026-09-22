@@ -89,6 +89,7 @@ from .ocr import (
 )
 from .batch import BatchError, BatchMetrics, BatchOptions, BatchResult, process_batch
 from .einvoice import (
+    EInvoiceResourcesMissing,
     EInvoiceUnavailable,
     EInvoiceValidationOptions,
     EInvoiceValidationResult,
@@ -97,6 +98,7 @@ from .einvoice import (
     PdfAValidationIssue,
     PdfAValidationResult,
     extract_facturx_xml,
+    fetch_einvoice_resources,
     generate_facturx_pdf,
     validate_pdfa,
     validate_einvoice,
@@ -140,6 +142,7 @@ from .templates import (
 __all__ = [
     "__version__",
     "EInvoiceProfile",
+    "EInvoiceResourcesMissing",
     "EInvoiceUnavailable",
     "EInvoiceValidationOptions",
     "EInvoiceValidationResult",
@@ -148,6 +151,7 @@ __all__ = [
     "PdfAValidationIssue",
     "PdfAValidationResult",
     "extract_facturx_xml",
+    "fetch_einvoice_resources",
     "generate_facturx_pdf",
     "validate_pdfa",
     "validate_einvoice",
