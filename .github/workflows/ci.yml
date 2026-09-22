@@ -22,6 +22,21 @@ jobs:
       - name: Install docket
         run: pip install -e ".[dev]"
 
+      # Peppol, CII D16B and Factur-X artifacts are not in the repository or
+      # the wheel; fetch them the way users do, verified against the manifest.
+      - name: Cache downloaded e-invoice artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/docket/einvoice
+            .cache/einvoice-sources
+          key: einvoice-${{ hashFiles('src/docket/einvoice/resources/manifest.json', 'src/docket/einvoice/sources.py') }}
+
+      - name: Fetch e-invoice artifacts and fixtures
+        run: |
+          docket einvoice fetch
+          python scripts/update_einvoice_resources.py --fixtures-only
+
       - name: Run tests
         run: pytest -v
         env:
@@ -45,6 +60,11 @@ jobs:
           python -m venv /tmp/wheel-venv
           /tmp/wheel-venv/bin/pip install "$(ls dist/*.whl)[api]"
           cd /tmp && /tmp/wheel-venv/bin/docket formats
+          /tmp/wheel-venv/bin/docket einvoice status
+      - name: Wheel ships no artifacts without verified redistribution terms
+        run: |
+          if unzip -l dist/*.whl | grep -E 'einvoice/resources/(peppol|factur-x|cii-d16b)/'; then exit 1; fi
+          if tar tzf dist/*.tar.gz | grep -E 'einvoice/resources/(peppol|factur-x|cii-d16b)/|official/peppol/'; then exit 1; fi
           /tmp/wheel-venv/bin/python -c "import docket, docket.api; print(docket.__version__)"
       - name: Reject copyleft runtime dependencies
         run: |

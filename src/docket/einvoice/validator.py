@@ -23,7 +23,10 @@ requested profile's rules run. A Factur-X / ZUGFeRD PDF is accepted: its
 embedded XML is validated.
 
 Needs `pip install "docket-idp[einvoice]"` (lxml, saxonche). Everything runs
-offline from the vendored artifacts (see artifacts.py).
+offline from the official artifacts (see artifacts.py). The UBL profiles
+(EN 16931, XRechnung) work out of the box; Peppol, the CII syntax and the
+Factur-X profiles need artifacts Docket cannot redistribute, downloaded
+once with `docket einvoice fetch` (fetch.py).
 """
 from __future__ import annotations
 
@@ -131,6 +134,10 @@ class EInvoiceUnavailable(ConfigurationError):
     """The [einvoice] extra is not installed."""
 
 
+class EInvoiceResourcesMissing(EInvoiceUnavailable):
+    """The profile's artifacts are not shipped and have not been downloaded."""
+
+
 # ---- plans ----------------------------------------------------------------------
 
 
@@ -169,12 +176,12 @@ _PLANS: dict[tuple[str, Profile], _Plan] = {
     ("ubl", Profile.XRECHNUNG): _Plan(
         "kosit-configuration", _UBL_XSD, (_EN_UBL, _Rules("xrechnung-schematron", "xrechnung/XRechnung-UBL-validation.xsl"))
     ),
-    ("cii", Profile.EN16931): _Plan("kosit-configuration", _CII_XSD, (_EN_CII,)),
+    ("cii", Profile.EN16931): _Plan("uncefact-cii-d16b", _CII_XSD, (_EN_CII,)),
     ("cii", Profile.PEPPOL): _Plan(
-        "kosit-configuration", _CII_XSD, (_EN_CII, _Rules("peppol-bis-billing", "peppol/PEPPOL-EN16931-CII.xsl"))
+        "uncefact-cii-d16b", _CII_XSD, (_EN_CII, _Rules("peppol-bis-billing", "peppol/PEPPOL-EN16931-CII.xsl"))
     ),
     ("cii", Profile.FACTURX_XRECHNUNG): _Plan(
-        "kosit-configuration", _CII_XSD, (_EN_CII, _Rules("xrechnung-schematron", "xrechnung/XRechnung-CII-validation.xsl"))
+        "uncefact-cii-d16b", _CII_XSD, (_EN_CII, _Rules("xrechnung-schematron", "xrechnung/XRechnung-CII-validation.xsl"))
     ),
     ("cii", Profile.FACTURX_MINIMUM): _facturx("minimum", "MINIMUM"),
     ("cii", Profile.FACTURX_BASICWL): _facturx("basicwl", "BASICWL"),
@@ -428,6 +435,14 @@ def validate_einvoice(
             message=f"profile {profile.value} has no schema for a {kind}",
         )])
 
+    used = {plan.xsd_artifact} | {r.artifact for r in plan.rules}
+    absent = artifacts.missing(sorted(used))
+    if absent:
+        raise EInvoiceResourcesMissing(
+            f"profile {profile.value} needs validation artifacts that are not installed "
+            f"({', '.join(absent)}); {artifacts.FETCH_HINT}"
+        )
+
     layers: list[LayerReport] = []
     xsd_source = _version(plan.xsd_artifact)
     schema = engine.schema(plan.xsd[kind])
@@ -452,7 +467,6 @@ def validate_einvoice(
             passed=not any(i.severity in ("fatal", "error") for i in found),
         ))
 
-    used = {plan.xsd_artifact} | {r.artifact for r in plan.rules}
     return finish(
         profile=profile,
         layers=layers,
@@ -463,6 +477,7 @@ def validate_einvoice(
 
 __all__ = [
     "EInvoiceIssue",
+    "EInvoiceResourcesMissing",
     "EInvoiceUnavailable",
     "EInvoiceValidationOptions",
     "EInvoiceValidationResult",

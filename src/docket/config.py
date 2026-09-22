@@ -179,6 +179,9 @@ SETTINGS: tuple[Setting, ...] = (
     # ---- e-invoices ------------------------------------------------------------------
     Setting("EINVOICE_RESOURCES", "einvoice.resources", "DOCKET_EINVOICE_RESOURCES", "path", None,
             "Your own copy of the validation artifacts (default: the one in the package).", optional=True),
+    Setting("EINVOICE_DOWNLOADS", "einvoice.downloads", "DOCKET_EINVOICE_DOWNLOADS", "path", None,
+            "Where `docket einvoice fetch` puts the artifacts Docket does not ship "
+            "(default: ~/.cache/docket/einvoice).", optional=True),
     # ---- eval and tracing -----------------------------------------------------------------
     # Illustrative only: what this run's LLM calls would cost on a small hosted
     # model. A local Ollama run costs nothing; eval reports show the tradeoff.
@@ -418,6 +421,7 @@ API_KEY: str | None
 API_CORS_ORIGINS: list[str]
 JOBS_DIR: Path
 EINVOICE_RESOURCES: Path | None
+EINVOICE_DOWNLOADS: Path | None
 CLOUD_EQUIVALENT_USD_PER_1M_TOKENS: float
 LANGFUSE_PUBLIC_KEY: str | None
 LANGFUSE_SECRET_KEY: str | None
