@@ -924,17 +924,27 @@ _NUMERIC_DATE_RE = re.compile(r"(?<!\d)(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2,4})(?
 # "404,00" / "1.278,00": a decimal comma. "1,800.00" / "12.50": a decimal point.
 _DECIMAL_COMMA_RE = re.compile(r"\d,\d{2}(?!\d)")
 _DECIMAL_POINT_RE = re.compile(r"\d\.\d{2}(?!\d)")
+# A bare dollar sign on an amount. Currency prefixes are excluded one letter
+# back: AU$/US$/S$/HK$/C$ countries write day-first, and guessing month-first
+# for them would be a misread, not an abstention.
+_DOLLAR_RE = re.compile(r"(?<![A-Z])\$\s?\d")
 
 
 def _document_date_convention(raw_text: str) -> str | None:
     """"dmy", "mdy" or None, from the document's own evidence.
 
     First choice: a numeric date with a part above 12 fixes the order. When
-    every date is ambiguous (03/09/2026), amounts written only with a decimal
-    comma mark a continental-European document, where dates are day-first;
-    month-first countries write a decimal point. English documents with a
-    decimal point stay undecided (US and UK disagree)."""
-    return _convention_from_dates(raw_text) or _convention_from_amounts(raw_text)
+    every date is ambiguous (03/09/2026), a bare dollar sign marks a
+    month-first document (US-style invoices can print decimal commas too —
+    the donut corpus does). Amounts written only with a decimal comma mark a
+    continental-European document, where dates are day-first; month-first
+    countries write a decimal point. English documents with a decimal point
+    and no currency sign stay undecided (US and UK disagree)."""
+    return (
+        _convention_from_dates(raw_text)
+        or _convention_from_currency(raw_text)
+        or _convention_from_amounts(raw_text)
+    )
 
 
 def _convention_from_dates(raw_text: str) -> str | None:
@@ -957,6 +967,13 @@ def _convention_from_amounts(raw_text: str) -> str | None:
     return None
 
 
+def _convention_from_currency(raw_text: str) -> str | None:
+    """The dollar sign outranks the decimal comma when both appear: US-style
+    documents that print comma amounts (the donut invoices, and US vendors
+    pandering to European eyes) still write month-first dates."""
+    return "mdy" if _DOLLAR_RE.search(raw_text) else None
+
+
 def _check_date_convention(
     fields: list[tuple[str, date]], raw_text: str
 ) -> list[ValidationIssue]:
@@ -969,7 +986,9 @@ def _check_date_convention(
     (9 March extracted, "03/09/2026" printed), never merely for being absent.
     """
     from_dates = _convention_from_dates(raw_text)
-    convention = from_dates or _convention_from_amounts(raw_text)
+    convention = (
+        from_dates or _convention_from_currency(raw_text) or _convention_from_amounts(raw_text)
+    )
     if convention is None:
         return []
     normalized = _normalize(raw_text)

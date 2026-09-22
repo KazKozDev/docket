@@ -48,6 +48,42 @@ top-level amount. Measured on the 17 golden scans (tesseract,
   and are handed the correct schema while docket must classify its way
   there.
 
+### Fixed (stage 3 — the two measured false-success drivers)
+
+- US-format dates read day-first on dollar documents: an ambiguous date
+  (`06/02/2015`) on a document that prints a bare dollar sign is now read
+  month-first even when the amounts use decimal commas (`$ 889,20` — the
+  donut corpus). The dollar sign outranks the decimal comma; `AU$`/`US$`/
+  `HK$`-style prefixed signs abstain (those countries write day-first).
+- A `TAX INVOICE` header no longer scores for the plain `invoice` schema
+  (`\binvoice\b` matched inside "tax invoice", adding 3.0 points — with
+  "Bill To" it won the rules tier outright on 19/120 Malaysian till
+  receipts). The multilingual invoice names are likewise guarded against
+  "factura fiscal" / "fattura fiscale" / "faktura VAT".
+- Till-receipt classification signals: a cashier + approval-code
+  combination (3.0), "please come again" (2.0), "terima kasih" (2.0) and
+  receipt corpus examples for tax-invoice till slips, so the rules and
+  TF-IDF tiers answer `receipt` on point-of-sale slips printed with a
+  legal TAX INVOICE header; the receipt and tax_invoice descriptions now
+  tell the LLM tier the same thing.
+
+### Measured (stage 3 re-run — same 198-scan corpus, tesseract)
+
+| | before stage 3 | after |
+|---|---|---|
+| field accuracy | 0.53 | **0.72** |
+| document success rate | 0.32 | 0.54 |
+| false successes | 23/50 silent (46%) | 19/55 silent (35%) |
+| SROIE docs classified receipt | 17/120 | **72/120** |
+| donut fields | 0.92 | 0.975 |
+| golden fields | 0.97 | 0.97 (no regression) |
+
+On the competitors' own docs+fields, docket now leads every tool:
+docket 0.71 vs docpick 0.61, 0.69 vs ocrcontext 0.04, 0.90 vs
+invoice2data 0.00. docpick still wins SROIE (0.75 vs 0.55) — the remaining
+39/120 misclassified till slips are the next classification margin;
+when docket does classify them receipt, its fields are 0.84.
+
 ### Measured (stage 2 — extended corpus and the competition)
 
 The corpus grew from 17 golden scans to 198 scans (real documents from
@@ -87,16 +123,15 @@ docile (0.50 vs 0.08); docpick wins SROIE (0.75 vs 0.10) because it is
 handed the receipt schema. invoice2data matched none of its built-in
 vendor templates — authoring templates per vendor is its design.
 
-### Fixed
-- False citation-check flags that queued correct extractions for review:
-  - a derived value (unit price 4.98 / 2 = 2.49, line total 2 × 58.50 = 117.00)
-    is grounded by its own row when both operands are printed on it;
-  - `quantity == 1` is the implicit single item, not a fabricated amount;
-  - an item value contradicted by a garbled witness is a warning, not a
-    blocker, when the rows close their own arithmetic (items sum to the
-    stated subtotal under either coupon layout);
-  - a list cited element-wise (`parties_a[0]`) satisfies the citation
-    requirement on the whole list (`parties_a`).
+### Fixed (stage 1 — false citation-check flags that queued correct extractions for review)
+- a derived value (unit price 4.98 / 2 = 2.49, line total 2 × 58.50 = 117.00)
+  is grounded by its own row when both operands are printed on it;
+- `quantity == 1` is the implicit single item, not a fabricated amount;
+- an item value contradicted by a garbled witness is a warning, not a
+  blocker, when the rows close their own arithmetic (items sum to the
+  stated subtotal under either coupon layout);
+- a list cited element-wise (`parties_a[0]`) satisfies the citation
+  requirement on the whole list (`parties_a`).
 - Review queue after the fixes: 1 document (purchase order, by design),
   down from 5 during development. Note: the intermediate run's higher
   "docs ok" (0.94) was an artifact — the false flags escalated two garbled
