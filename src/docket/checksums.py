@@ -16,14 +16,6 @@ from __future__ import annotations
 
 import re
 
-import stdnum.br.cnpj as _stdnum_br_cnpj
-import stdnum.br.cpf as _stdnum_br_cpf
-import stdnum.ca.bn as _stdnum_ca_bn
-import stdnum.ch.vat as _stdnum_ch_vat
-import stdnum.eu.vat as _stdnum_eu_vat
-import stdnum.no.mva as _stdnum_no_mva
-import stdnum.us.ein as _stdnum_us_ein
-
 _IBAN_RE = re.compile(r"^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$")
 _IBAN_COUNTRY_LENGTHS: dict[str, int] = {
     # Western / Central / Northern Europe
@@ -239,7 +231,94 @@ def _fi_vat_checksum(digits: str) -> bool:
     return check == int(digits[7])
 
 
+def _at_vat_checksum(body: str) -> bool:
+    if not re.fullmatch(r"U\d{8}", body):
+        return False
+    digits = body[1:]
+    total = 0
+    for digit, weight in zip(digits[:7], (1, 2, 1, 2, 1, 2, 1)):
+        product = int(digit) * weight
+        total += product // 10 + product % 10
+    return (10 - (total + 4) % 10) % 10 == int(digits[-1])
+
+
+def _fr_vat_checksum(body: str) -> bool:
+    if not re.fullmatch(r"\d{11}", body):
+        return False
+    return int(body[:2]) == (12 + 3 * (int(body[2:]) % 97)) % 97
+
+
+def _it_vat_checksum(digits: str) -> bool:
+    if not re.fullmatch(r"\d{11}", digits):
+        return False
+    total = sum(int(digits[index]) for index in range(0, 10, 2))
+    for index in range(1, 10, 2):
+        doubled = int(digits[index]) * 2
+        total += doubled - 9 if doubled > 9 else doubled
+    return (10 - total % 10) % 10 == int(digits[-1])
+
+
+def _pl_vat_checksum(digits: str) -> bool:
+    if not re.fullmatch(r"\d{10}", digits):
+        return False
+    check = sum(int(d) * w for d, w in zip(digits[:9], (6, 5, 7, 2, 3, 4, 5, 6, 7))) % 11
+    return check != 10 and check == int(digits[-1])
+
+
+def _luhn_valid(digits: str) -> bool:
+    if not digits.isdigit():
+        return False
+    total = 0
+    parity = len(digits) % 2
+    for index, digit in enumerate(digits):
+        value = int(digit)
+        if index % 2 == parity:
+            value *= 2
+            if value > 9:
+                value -= 9
+        total += value
+    return total % 10 == 0
+
+
+def _se_vat_checksum(digits: str) -> bool:
+    return bool(re.fullmatch(r"\d{12}", digits)) and digits[-2:] == "01" and _luhn_valid(digits[:10])
+
+
+def _ch_vat_checksum(body: str) -> bool:
+    match = re.fullmatch(r"(\d{9})(?:MWST|TVA|IVA)?", body)
+    if not match:
+        return False
+    digits = match.group(1)
+    remainder = sum(int(d) * w for d, w in zip(digits[:8], (5, 4, 3, 2, 7, 6, 5, 4))) % 11
+    check = 11 - remainder
+    if check == 11:
+        check = 0
+    if check == 10:
+        return False
+    return check == int(digits[-1])
+
+
+def _no_vat_checksum(body: str) -> bool:
+    match = re.fullmatch(r"(\d{9})(?:MVA)?", body)
+    if not match:
+        return False
+    digits = match.group(1)
+    check = 11 - sum(int(d) * w for d, w in zip(digits[:8], (3, 2, 7, 6, 5, 4, 3, 2))) % 11
+    if check == 11:
+        check = 0
+    if check == 10:
+        return False
+    return check == int(digits[-1])
+
+
 _VAT_CHECKERS = {
+    "AT": _at_vat_checksum,
+    "FR": _fr_vat_checksum,
+    "IT": _it_vat_checksum,
+    "PL": _pl_vat_checksum,
+    "SE": _se_vat_checksum,
+    "CHE": _ch_vat_checksum,
+    "NO": _no_vat_checksum,
     "DE": _de_vat_checksum,
     "NL": _nl_vat_checksum,
     "GB": _gb_vat_checksum,
@@ -298,34 +377,57 @@ def validate_vat(vat: str) -> bool | None:
     if checker is not None:
         return checker(body)
 
-    if country in ("CHE", "CH"):
-        return _stdnum_ch_vat.is_valid(clean)
-    if country == "NO":
-        return _stdnum_no_mva.is_valid(clean)
-    if country.lower() in _stdnum_eu_vat.MEMBER_STATES or country in ("EL", "GR", "XI"):
-        return _stdnum_eu_vat.is_valid(clean)
-
     return None
 
 
 def validate_us_ein(ein: str) -> bool:
     """Validate US Employer Identification Number (EIN)."""
-    return _stdnum_us_ein.is_valid(ein)
+    match = re.fullmatch(r"(\d{2})-?(\d{7})", ein.strip())
+    if not match:
+        return False
+    valid_prefixes = {
+        *range(1, 7), *range(10, 17), *range(20, 28), *range(30, 40),
+        *range(40, 49), *range(50, 60), *range(60, 69), *range(71, 78),
+        *range(80, 89), *range(90, 100),
+    }
+    return int(match.group(1)) in valid_prefixes
 
 
 def validate_ca_bn(bn: str) -> bool:
     """Validate Canadian Business Number (BN / GST / HST)."""
-    return _stdnum_ca_bn.is_valid(bn)
+    clean = re.sub(r"\s", "", bn).upper()
+    match = re.fullmatch(r"(\d{9})(?:[A-Z]{2}\d{4})?", clean)
+    return bool(match and _luhn_valid(match.group(1)))
 
 
 def validate_br_cnpj(cnpj: str) -> bool:
     """Validate Brazilian CNPJ company tax number (Cadastro Nacional da Pessoa Jurídica)."""
-    return _stdnum_br_cnpj.is_valid(cnpj)
+    digits = re.sub(r"\D", "", cnpj)
+    if len(digits) != 14 or len(set(digits)) == 1:
+        return False
+
+    def check_digit(prefix: str, weights: tuple[int, ...]) -> str:
+        remainder = sum(int(d) * w for d, w in zip(prefix, weights)) % 11
+        return str(0 if remainder < 2 else 11 - remainder)
+
+    first = check_digit(digits[:12], (5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2))
+    second = check_digit(digits[:12] + first, (6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2))
+    return digits[-2:] == first + second
 
 
 def validate_br_cpf(cpf: str) -> bool:
     """Validate Brazilian CPF individual tax number (Cadastro de Pessoas Físicas)."""
-    return _stdnum_br_cpf.is_valid(cpf)
+    digits = re.sub(r"\D", "", cpf)
+    if len(digits) != 11 or len(set(digits)) == 1:
+        return False
+
+    def check_digit(prefix: str, start: int) -> str:
+        remainder = sum(int(d) * w for d, w in zip(prefix, range(start, 1, -1))) % 11
+        return str(0 if remainder < 2 else 11 - remainder)
+
+    first = check_digit(digits[:9], 10)
+    second = check_digit(digits[:9] + first, 11)
+    return digits[-2:] == first + second
 
 
 def validate_tax_id(

@@ -40,7 +40,6 @@ dependencies = [
     "python-dotenv>=1.0",
     "tomli>=2.0; python_version < \"3.11\"",
     "scikit-learn>=1.4",
-    "python-stdnum>=2.0",
     "SQLAlchemy>=2.0,<3",
 ]
 

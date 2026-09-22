@@ -46,6 +46,12 @@ jobs:
           /tmp/wheel-venv/bin/pip install "$(ls dist/*.whl)[api]"
           cd /tmp && /tmp/wheel-venv/bin/docket formats
           /tmp/wheel-venv/bin/python -c "import docket, docket.api; print(docket.__version__)"
+      - name: Reject copyleft runtime dependencies
+        run: |
+          python -m venv /tmp/license-venv
+          /tmp/license-venv/bin/pip install dist/*.whl pip-licenses
+          /tmp/license-venv/bin/pip-licenses --format=json --output-file=/tmp/runtime-licenses.json
+          python scripts/check_runtime_licenses.py /tmp/runtime-licenses.json
       - name: OpenAPI spec is up to date
         run: |
           pip install -e ".[api]"

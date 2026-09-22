@@ -24,7 +24,7 @@ from typing import Any, Callable
 
 from pydantic import BaseModel
 
-from . import catalog, review_queue
+from . import catalog, config, review_queue
 from .catalog import SchemaSpec
 from .classify import classify
 from .extract import extract_pages
@@ -346,9 +346,12 @@ def process_document(
     llm_usage.reset()
 
     try:
+        if path.stat().st_size > config.MAX_FILE_BYTES:
+            raise OSError(f"{path.name} exceeds the {config.MAX_FILE_BYTES} byte input limit")
         document_id = document_id_for(path)
     except OSError as exc:
-        return review(_failed(path, f"missing:{path.name}", "acquire", "unreadable_file", exc), resolved)
+        code = "file_too_large" if "byte input limit" in str(exc) else "unreadable_file"
+        return review(_failed(path, f"missing:{path.name}", "acquire", code, exc), resolved)
 
     try:
         with log_stage(log, "acquire", **doc):

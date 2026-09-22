@@ -1,6 +1,9 @@
 # docket — local document AI, invoice & receipt OCR parser with LLMs
 
-Turn scanned invoices, receipts, and contracts into structured, validated JSON using OCR and LLMs, then export them as EU e-invoices (XRechnung, Factur-X / ZUGFeRD, Peppol BIS, UBL, Facturae) and check them with the official EN 16931, Peppol, XRechnung and Factur-X rules. Use it as a Python library, an HTTP service, or a CLI. Apache-2.0, so commercial use is fine.
+Turn scanned invoices, receipts, and contracts into structured, validated JSON using OCR and LLMs, then export them as EU e-invoices (XRechnung, Factur-X / ZUGFeRD, Peppol BIS, UBL, Facturae) and check them with the official EN 16931, Peppol, XRechnung and Factur-X rules. Docket is a Python library first; the CLI is its supported command-line interface. The HTTP service, review web UI, desktop packaging and Docker image are reference applications built on the same library contract.
+
+The project is Apache-2.0. Before redistributing bundled e-invoice artefacts,
+review the separate [third-party licence inventory](docs/THIRD_PARTY_LICENSES.md).
 
 <img width="1653" height="961" alt="demo" src="https://github.com/user-attachments/assets/86355d41-34a7-4201-9699-0fd62080c488" />
 
@@ -376,6 +379,6 @@ are 0.84).
 
 ![Python](https://img.shields.io/badge/Python-3.10+-333?style=flat-square&logo=python&logoColor=fff) [![PyPI](https://img.shields.io/pypi/v/docket-idp?style=flat-square)](https://pypi.org/project/docket-idp/) [![License](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/LICENSE) [![Tests](https://github.com/KazKozDev/docket/actions/workflows/ci.yml/badge.svg)](https://github.com/KazKozDev/docket/actions)
 
-[Issues](https://github.com/KazKozDev/docket/issues) · [ARCHITECTURE](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md) · [CONTRIBUTING](https://github.com/KazKozDev/docket/blob/master/CONTRIBUTING.md) · [CHANGELOG](https://github.com/KazKozDev/docket/blob/master/CHANGELOG.md) · [LICENSE](https://github.com/KazKozDev/docket/blob/master/LICENSE) · [LinkedIn](https://www.linkedin.com/in/kazkozdev/)
+[API stability](https://github.com/KazKozDev/docket/blob/master/docs/API_STABILITY.md) · [Security](https://github.com/KazKozDev/docket/blob/master/docs/SECURITY.md) · [Third-party licences](https://github.com/KazKozDev/docket/blob/master/docs/THIRD_PARTY_LICENSES.md) · [Architecture](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md) · [Contributing](https://github.com/KazKozDev/docket/blob/master/CONTRIBUTING.md) · [Changelog](https://github.com/KazKozDev/docket/blob/master/CHANGELOG.md) · [License](https://github.com/KazKozDev/docket/blob/master/LICENSE)
 
 </div>

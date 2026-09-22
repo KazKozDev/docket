@@ -157,6 +157,8 @@ SETTINGS: tuple[Setting, ...] = (
     # ---- input, batches, HTTP --------------------------------------------------------
     Setting("MAX_FILE_BYTES", "input.max_file_bytes", "DOCKET_MAX_FILE_BYTES", "int", 20 * 1024 * 1024,
             "Largest accepted file.", minimum=1),
+    Setting("MAX_IMAGE_PIXELS", "input.max_image_pixels", "DOCKET_MAX_IMAGE_PIXELS", "int", 50_000_000,
+            "Largest decoded image or rendered PDF page in pixels.", minimum=1),
     Setting("MAX_PDF_PAGES", "input.max_pdf_pages", "DOCKET_MAX_PDF_PAGES", "int", 100,
             "Most pages read from one PDF.", minimum=1),
     Setting("BATCH_WORKERS", "batch.workers", "DOCKET_BATCH_WORKERS", "int", 4,
@@ -406,6 +408,7 @@ REVIEW_QUEUE_PATH: Path
 REVIEW_LOCK_SECONDS: int
 REVIEW_DOCUMENTS_DIR: Path
 MAX_FILE_BYTES: int
+MAX_IMAGE_PIXELS: int
 MAX_PDF_PAGES: int
 BATCH_WORKERS: int
 MAX_BATCH_FILES: int

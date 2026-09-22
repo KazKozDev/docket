@@ -155,13 +155,15 @@ class ReceiptItem(BaseModel):
 
 
 class Receipt(CitedDocument):
-    merchant_name: str
+    merchant_name: str = Field(json_schema_extra={"pii": "person_name"})
     merchant_tax_id: str | None = Field(
         default=None,
         description="Merchant's tax ID, VAT number, CIF/NIF, or EIN, if present.",
+        json_schema_extra={"pii": "tax_id"},
     )
     merchant_address: str | None = Field(
-        default=None, description="Merchant store address or location, if printed."
+        default=None, description="Merchant store address or location, if printed.",
+        json_schema_extra={"pii": "address"},
     )
     transaction_date: date
     currency: str = Field(
@@ -196,6 +198,7 @@ class Receipt(CitedDocument):
     card_last_four: str | None = Field(
         default=None,
         description="Last 4 digits of the payment card used (e.g. '1234'), if printed.",
+        json_schema_extra={"pii": "bank_account"},
     )
     expense_category: str | None = Field(
         default=None,
@@ -226,10 +229,12 @@ class Contract(CitedDocument):
     # 'Recipient')"). With a single string the model had no way to answer
     # except by concatenating them into a name that appears nowhere.
     parties_a: list[str] = Field(
-        description="Every entity on the first side, one per element. Never join names with 'and'."
+        description="Every entity on the first side, one per element. Never join names with 'and'.",
+        json_schema_extra={"pii": "person_name"},
     )
     parties_b: list[str] = Field(
-        description="Every entity on the second side, one per element. Never join names with 'and'."
+        description="Every entity on the second side, one per element. Never join names with 'and'.",
+        json_schema_extra={"pii": "person_name"},
     )
     effective_date: date
     expiration_date: date | None = None
@@ -278,6 +283,7 @@ class Contract(CitedDocument):
     signatories: list[str] = Field(
         default_factory=list,
         description="Names and titles of individuals signing or executing the contract, if stated.",
+        json_schema_extra={"pii": "person_name"},
     )
     risk_factors: list[str] = Field(
         default_factory=list,
@@ -293,24 +299,28 @@ class BoardingPass(CitedDocument):
     reference — so the validation leans on format rules instead of sums.
     """
 
-    passenger_name: str
+    passenger_name: str = Field(json_schema_extra={"pii": "person_name"})
     booking_reference: str = Field(
-        description="Six-character PNR / record locator, e.g. 'X4H2QP'."
+        description="Six-character PNR / record locator, e.g. 'X4H2QP'.",
+        json_schema_extra={"pii": "travel"},
     )
     flight_number: str = Field(
-        description="Carrier code plus number, e.g. 'IB3241' or 'BA475'."
+        description="Carrier code plus number, e.g. 'IB3241' or 'BA475'.",
+        json_schema_extra={"pii": "travel"},
     )
     departure_airport: str = Field(
-        description="Three-letter IATA code of the origin, e.g. 'BCN'."
+        description="Three-letter IATA code of the origin, e.g. 'BCN'.",
+        json_schema_extra={"pii": "travel"},
     )
     arrival_airport: str = Field(
-        description="Three-letter IATA code of the destination, e.g. 'LHR'."
+        description="Three-letter IATA code of the destination, e.g. 'LHR'.",
+        json_schema_extra={"pii": "travel"},
     )
-    departure_datetime: datetime
-    boarding_time: str | None = None
-    seat: str | None = None
-    gate: str | None = None
-    cabin_class: str | None = None
+    departure_datetime: datetime = Field(json_schema_extra={"pii": "travel"})
+    boarding_time: str | None = Field(default=None, json_schema_extra={"pii": "travel"})
+    seat: str | None = Field(default=None, json_schema_extra={"pii": "travel"})
+    gate: str | None = Field(default=None, json_schema_extra={"pii": "travel"})
+    cabin_class: str | None = Field(default=None, json_schema_extra={"pii": "travel"})
 
 
 class BankStatementTransaction(BaseModel):
@@ -320,16 +330,16 @@ class BankStatementTransaction(BaseModel):
     amount: float = Field(
         description="Positive for deposits/credits, negative for withdrawals/debits."
     )
-    counterparty_name: str | None = None
-    counterparty_iban: str | None = None
+    counterparty_name: str | None = Field(default=None, json_schema_extra={"pii": "person_name"})
+    counterparty_iban: str | None = Field(default=None, json_schema_extra={"pii": "bank_account"})
     balance_after: float | None = None
     reference: str | None = None
 
 
 class BankStatement(CitedDocument):
     bank_name: str
-    account_holder: str
-    account_iban: str
+    account_holder: str = Field(json_schema_extra={"pii": "person_name"})
+    account_iban: str = Field(json_schema_extra={"pii": "bank_account"})
     statement_period_start: date
     statement_period_end: date
     currency: str = Field(default="USD", min_length=3, max_length=3)
@@ -353,10 +363,10 @@ class AcceptanceAct(CitedDocument):
     act_date: date
     contract_reference: str | None = None
     invoice_reference: str | None = None
-    customer_name: str
-    customer_tax_id: str | None = None
-    contractor_name: str
-    contractor_tax_id: str | None = None
+    customer_name: str = Field(json_schema_extra={"pii": "person_name"})
+    customer_tax_id: str | None = Field(default=None, json_schema_extra={"pii": "tax_id"})
+    contractor_name: str = Field(json_schema_extra={"pii": "person_name"})
+    contractor_tax_id: str | None = Field(default=None, json_schema_extra={"pii": "tax_id"})
     items: list[AcceptanceActItem] = Field(default_factory=list)
     subtotal: float
     tax_amount: float = 0.0
@@ -366,7 +376,7 @@ class AcceptanceAct(CitedDocument):
         default=True,
         description="Whether the document confirms services were rendered satisfactorily with no mutual claims.",
     )
-    signatories: list[str] = Field(default_factory=list)
+    signatories: list[str] = Field(default_factory=list, json_schema_extra={"pii": "person_name"})
 
 
 class WaybillItem(BaseModel):
@@ -384,12 +394,12 @@ class WaybillItem(BaseModel):
 class Waybill(CitedDocument):
     waybill_number: str
     waybill_date: date
-    shipper_name: str
-    shipper_address: str | None = None
-    consignee_name: str
-    consignee_address: str | None = None
-    carrier_name: str | None = None
-    vehicle_number: str | None = None
+    shipper_name: str = Field(json_schema_extra={"pii": "person_name"})
+    shipper_address: str | None = Field(default=None, json_schema_extra={"pii": "address"})
+    consignee_name: str = Field(json_schema_extra={"pii": "person_name"})
+    consignee_address: str | None = Field(default=None, json_schema_extra={"pii": "address"})
+    carrier_name: str | None = Field(default=None, json_schema_extra={"pii": "person_name"})
+    vehicle_number: str | None = Field(default=None, json_schema_extra={"pii": "government_id"})
     items: list[WaybillItem] = Field(default_factory=list)
     total_quantity: float | None = None
     total_gross_weight_kg: float | None = None
@@ -466,7 +476,7 @@ class DeliveryNote(CitedDocument):
     items: list[DeliveryNoteItem] = Field(default_factory=list)
     total_packages: int | None = Field(default=None, ge=0)
     total_gross_weight_kg: float | None = Field(default=None, ge=0)
-    received_by: str | None = Field(default=None, description="Name of the person who signed for receipt.")
+    received_by: str | None = Field(default=None, description="Name of the person who signed for receipt.", json_schema_extra={"pii": "person_name"})
 
 
 class OriginGoodsItem(BaseModel):
@@ -507,21 +517,22 @@ class IdDocument(CitedDocument):
     """
 
     document_kind: Literal["passport", "national_id", "residence_permit", "driving_licence", "other"]
-    document_number: str
+    document_number: str = Field(json_schema_extra={"pii": "government_id"})
     issuing_country: str = Field(description="ISO 3166 alpha-2 or alpha-3 code as printed.")
-    surname: str
-    given_names: str
-    date_of_birth: date
+    surname: str = Field(json_schema_extra={"pii": "person_name"})
+    given_names: str = Field(json_schema_extra={"pii": "person_name"})
+    date_of_birth: date = Field(json_schema_extra={"pii": "date_of_birth"})
     sex: Literal["M", "F", "X"] | None = None
     nationality: str | None = Field(default=None, description="ISO alpha-3 code or name as printed.")
-    place_of_birth: str | None = None
+    place_of_birth: str | None = Field(default=None, json_schema_extra={"pii": "address"})
     date_of_issue: date | None = None
     date_of_expiry: date | None = None
     issuing_authority: str | None = None
-    personal_number: str | None = Field(default=None, description="Optional national personal number.")
+    personal_number: str | None = Field(default=None, description="Optional national personal number.", json_schema_extra={"pii": "government_id"})
     mrz: list[str] = Field(
         default_factory=list,
         description="Machine-readable zone lines exactly as printed ('<' fillers kept), if present.",
+        json_schema_extra={"pii": "government_id"},
     )
 
     @field_validator("mrz")
