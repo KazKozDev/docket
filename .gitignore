@@ -24,3 +24,11 @@ dist/
 
 # Local settings (see docket.example.toml)
 docket.toml
+
+# E-invoice artifacts without verified redistribution terms: built locally by
+# scripts/update_einvoice_resources.py or downloaded with `docket einvoice fetch`,
+# never committed or shipped (docs/THIRD_PARTY_LICENSES.md).
+src/docket/einvoice/resources/peppol/
+src/docket/einvoice/resources/factur-x/
+src/docket/einvoice/resources/cii-d16b/
+tests/fixtures/einvoice/official/peppol/
