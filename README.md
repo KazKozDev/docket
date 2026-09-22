@@ -233,8 +233,11 @@ Every setting and its environment variable is in [`docket.example.toml`](https:/
 | `DOCKET_OCR_LANGUAGES` | `en` | ISO 639-1 codes, e.g. `en,de,fr,es,it` |
 | `DOCKET_PADDLE_DEVICE` / `DOCKET_PADDLE_MODEL` / `DOCKET_PADDLE_TABLES` | `cpu` / `mobile` / `false` | PaddleOCR device, model size (`mobile`, `medium`), table-structure pipeline |
 | `DOCKET_MIN_CONFIDENCE` | `0.55` | Classification confidence below which a document goes to review |
-| `DOCKET_REVIEW_QUEUE_ENABLED` | `true` | Write flagged documents to the file-based review queue |
+| `DOCKET_REVIEW_QUEUE_ENABLED` | `true` | Write flagged documents to the transactional review queue |
+| `DOCKET_REVIEW_DATABASE_URL` | `sqlite:///data/review.db` | SQLite by default; use `postgresql+psycopg://...` with the `[postgres]` extra |
+| `DOCKET_REVIEW_LOCK_SECONDS` | `300` | Lease duration for an exclusively claimed review task |
 | `DOCKET_API_KEY` | unset | Bearer token the HTTP API requires when set |
+| `DOCKET_API_CORS_ORIGINS` | local web UI | Comma-separated browser origins allowed to call the API |
 | `DOCKET_BATCH_WORKERS` | `4` | Documents in flight per batch |
 | `DOCKET_LLM_CONCURRENCY` / `DOCKET_OCR_CONCURRENCY` | `4` / half the CPUs | Process-wide limits on simultaneous LLM requests and OCR engines |
 | `DOCKET_MAX_BATCH_FILES` / `DOCKET_MAX_BATCH_BYTES` | `100` / 200 MB | HTTP upload limits per job (`DOCKET_MAX_FILE_BYTES` per file) |

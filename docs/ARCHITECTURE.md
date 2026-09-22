@@ -49,7 +49,7 @@ Docket converts unstructured or semi-structured documents (invoices, receipts, c
                    v                                               v
 +------------------------------------+           +------------------------------------+
 |           Validated JSON           |           |         Human Review Queue         |
-|  (Clean downstream persistence)    |           |  (data/review_queue.jsonl + UI)    |
+|  (Clean downstream persistence)    |           |  (SQLite/PostgreSQL + review UI)   |
 +------------------------------------+           +------------------------------------+
 ```
 
@@ -378,10 +378,12 @@ Validation never calls a model. It executes deterministic arithmetic and mathema
 
 ## 7. Human Review Queue
 
-Documents that fail any error-level validation rule, fail extraction, or carry low classification confidence are routed to the Review Queue (`data/review_queue.jsonl`):
+Documents that fail any error-level validation rule, fail extraction, or carry low classification confidence are routed to the Review Queue (`sqlite:///data/review.db` by default, PostgreSQL in multi-worker deployments):
 
-- Preserves original document artifacts, raw text, and audit trails.
-- Accessible via CLI, FastAPI endpoints (`/review-queue`), and Streamlit web UI.
+- `review_tasks` stores current state; append-only `review_revisions` preserves every claim, correction, validation and decision.
+- Claim uses expiring leases and opaque lock tokens. Updates also carry the expected version, preventing concurrent reviewers from overwriting each other.
+- Corrections are merged over the original extraction and rerun through its Pydantic schema and deterministic business validators. Approval is refused while error-level issues remain.
+- The FastAPI workflow exposes claim, release, revalidate, history, originals and rendered pages. The `/verify` workbench draws normalized source bboxes directly over those pages.
 
 ---
 

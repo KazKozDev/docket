@@ -87,8 +87,12 @@
 [review]
 # Write flagged documents to the review queue. Env: DOCKET_REVIEW_QUEUE_ENABLED.
 # enabled = true
-# Review queue file (JSON Lines). Env: DOCKET_REVIEW_QUEUE.
-# queue = "data/review_queue.jsonl"
+# SQLAlchemy URL for SQLite or PostgreSQL review storage. Env: DOCKET_REVIEW_DATABASE_URL.
+# database_url = "sqlite:///data/review.db"
+# Deprecated test/embedding override for the SQLite review database. Env: DOCKET_REVIEW_QUEUE.
+# queue = "data/review.db"
+# Review task lease duration before another reviewer can claim it. Env: DOCKET_REVIEW_LOCK_SECONDS.
+# lock_seconds = 300
 # Where copies of flagged documents are kept. Env: DOCKET_REVIEW_DOCUMENTS.
 # documents = "data/review_documents"
 
@@ -112,6 +116,8 @@
 # max_concurrent_jobs = 2
 # Bearer token the HTTP API requires when set. Env: DOCKET_API_KEY.
 # key = ""  # unset
+# Browser origins allowed to call the HTTP API. Env: DOCKET_API_CORS_ORIGINS.
+# cors_origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
 # One directory per HTTP job: metadata, results, uploads until done. Env:
 # DOCKET_JOBS_DIR.
 # jobs_dir = "data/jobs"

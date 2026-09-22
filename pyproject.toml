@@ -41,6 +41,7 @@ dependencies = [
     "tomli>=2.0; python_version < \"3.11\"",
     "scikit-learn>=1.4",
     "python-stdnum>=2.0",
+    "SQLAlchemy>=2.0,<3",
 ]
 
 [project.optional-dependencies]
@@ -51,6 +52,9 @@ api = [
 ]
 tracing = [
     "langfuse>=2.0",
+]
+postgres = [
+    "psycopg[binary]>=3.2,<4",
 ]
 # PaddleOCR backend (`--ocr-backend paddle`), including its table-structure
 # pipeline. Heavy (PaddlePaddle + models downloaded on first use), so never
@@ -68,7 +72,7 @@ einvoice = [
     "saxonche>=12.5",
 ]
 all = [
-    "docket-idp[api,tracing,einvoice]",
+    "docket-idp[api,tracing,einvoice,postgres]",
 ]
 eval = [
     "datasets>=2.19",
@@ -103,7 +107,7 @@ version = { attr = "docket.__version__" }
 where = ["src"]
 
 [tool.setuptools.package-data]
-docket = ["py.typed", "einvoice/resources/**/*"]
+docket = ["py.typed", "einvoice/resources/**/*", "static/**/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
