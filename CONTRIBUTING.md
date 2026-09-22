@@ -50,7 +50,12 @@ say), publish a plugin package instead; see `examples/exporter_plugin/`.
 1. Bump `__version__` in `src/docket/__init__.py` and move `[Unreleased]` in
    `CHANGELOG.md` under the new version.
 2. Commit, then `git tag vX.Y.Z && git push --tags`.
-3. The `Release` workflow publishes to PyPI and GHCR and creates the GitHub release.
+3. The `Release` workflow publishes to PyPI and GHCR and creates the GitHub
+   release. It also attaches a CycloneDX SBOM whose components distinguish
+   runtime dependencies, optional extras and vendored e-invoice artefacts.
+
+CI installs the built wheel in a clean environment and rejects GPL, AGPL and
+LGPL runtime dependencies. Keep such tools in the development extra only.
 
 One-time setup: on PyPI, add a Trusted Publisher for this repository with
 workflow `release.yml` and environment `pypi`; in GitHub, create the `pypi`

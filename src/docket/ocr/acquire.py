@@ -35,7 +35,7 @@ from ..layout import DocumentLayout, PageLayout, text_only_page
 from .base import BackendUnavailable, OcrBackend, OcrError, OcrSettings
 from .pdftext import PDFTextBackend, text_layer_problem
 from .registry import get_ocr_backend
-from .source import DocumentSource, PageSource
+from .source import DocumentSource, PageSource, UnsupportedDocument
 from .witness import confident_amounts
 
 BackendSpec = Union[str, OcrBackend]
@@ -62,6 +62,7 @@ class AcquisitionOptions(BaseModel):
     escalate: bool = False
     settings: OcrSettings = Field(default_factory=OcrSettings)
     max_pages: int | None = None
+    max_pixels: int | None = None
 
 
 class Attempt(BaseModel):
@@ -280,11 +281,21 @@ def acquire(path: str | Path, options: AcquisitionOptions | None = None) -> Acqu
 
     pages: list[PageLayout] = []
     records: list[PageAcquisition] = []
-    with DocumentSource(path, dpi=options.settings.dpi, max_pages=options.max_pages) as source:
-        for page in source.pages():
-            layout, record = _read_page(page, chain, options, pdf_text)
-            pages.append(layout)
-            records.append(record)
+    try:
+        with DocumentSource(
+            path,
+            dpi=options.settings.dpi,
+            max_pages=options.max_pages,
+            max_pixels=options.max_pixels,
+        ) as source:
+            for page in source.pages():
+                layout, record = _read_page(page, chain, options, pdf_text)
+                pages.append(layout)
+                records.append(record)
+    except UnsupportedDocument:
+        raise
+    except Exception as exc:  # decoders expose backend-specific exception types
+        raise AcquisitionError(f"could not read {Path(path).name}: {type(exc).__name__}: {exc}") from exc
 
     if not any(p.text.strip() for p in pages):
         failures = "; ".join(
