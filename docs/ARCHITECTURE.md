@@ -49,7 +49,7 @@ Docket converts unstructured or semi-structured documents (invoices, receipts, c
                    v                                               v
 +------------------------------------+           +------------------------------------+
 |           Validated JSON           |           |         Human Review Queue         |
-|  (Clean downstream persistence)    |           |  (data/review_queue.jsonl + UI)    |
+|  (Clean downstream persistence)    |           |  (SQLite/PostgreSQL + review UI)   |
 +------------------------------------+           +------------------------------------+
 ```
 
@@ -72,7 +72,8 @@ A backend implements `OcrBackend` (`name`, `capabilities`, `availability()`,
 |---|---|---|---|---|---|
 | `pdf_text` | PDF text layer (pdfplumber) | – | yes | ruled (drawn borders) + aligned | glyph matrices |
 | `tesseract` | rendered page (`image_to_data`) | yes | yes | aligned | OSD |
-| `paddle` (optional extra) | rendered page, PaddleOCR 3.x | per line | yes | engine table pipeline (opt-in) + aligned | orientation classifier |
+| `paddle` (optional extra) | rendered page, PaddleOCR 3.x | per line | yes | engine table pipeline (opt-in) + aligned | orientation classifier + fine deskew |
+| `docling` (optional extra) | PDF or image, Docling + TableFormer | – | yes | backend cells, merged/wrapped + aligned | pipeline normalization |
 | `vlm` | rendered page, vision LLM | – | – | – | – |
 
 Backends are looked up by name in a registry; plugins register through the
@@ -99,6 +100,23 @@ Models download once to `~/.paddlex/official_models`; docket disables
 PaddleX's model-hoster connectivity probe so cached models load offline.
 Observed limit: the orientation classifier left a sparse page (three text
 lines) turned 90° uncorrected, where Tesseract OSD corrected it.
+
+### Docling and advanced layout
+
+`pip install "docket-idp[docling]"` enables the lazy `docling` backend. It
+uses Docling's standard PDF/image pipeline and TableFormer in `accurate` mode
+by default. `DOCKET_DOCLING_TABLE_MODE=fast` trades quality for throughput;
+`DOCKET_DOCLING_CELL_MATCHING=false` uses the structure model's own cells when
+matching them back to document text merges columns incorrectly. Docling cell
+offsets become `row_span` / `column_span`, embedded newlines remain wrapped
+cell text, and every table keeps normalized source boxes.
+
+The shared geometry pass also recognizes conservative borderless two-column
+numeric tables, while rejecting colon-ended label/value forms. Physical rows
+with fewer occupied bands are attached to the preceding logical cells. Raster
+OCR applies a projection-based fine deskew before recognition and records the
+clockwise correction as `PageLayout.deskew_angle`; 90-degree orientation stays
+in `PageLayout.rotation`.
 
 ### Per-page chain
 
@@ -169,6 +187,16 @@ case-folded character stream; exact first, then a fuzzy window that must
 score ≥0.8) and records `bbox`, `word_ids`, a confidence (match score ×
 mean word confidence) and `located_by`. The model is never asked for
 coordinates.
+
+Every occurrence is kept, not just the first: `SourceLocation.regions`
+holds each contiguous place the quote was found, and `status` says how it
+resolved — `verified` (one exact match), `fuzzy` (no exact match, one close
+window), `conflicting` (several exact matches; the document doesn't say
+which one is the source), `unlocated` (no geometry or the quote isn't on
+the page). `bbox` / `word_ids` remain the first region's coordinates for
+back-compatibility. `DocumentResult.highlights(page=None)` returns
+`(field, source, region)` triples for drawing provenance boxes over the
+original pages, optionally filtered to one page.
 
 Rotation detection with Tesseract OSD added 0.34 s in a single run on one sample page
 (`form_funsd_00.png`, Apple Silicon); disable it with
@@ -314,14 +342,38 @@ Every tier reads the schema catalog, so a registered schema takes part in all th
 
 - **JSON Schema Contracts**: The target schema is the Pydantic model of the selected catalog schema; its JSON Schema is the extraction contract.
 - **Nested citations**: `field_locations` keys are field paths (`seller.name`, `references[0].number`); validation and quote location follow them.
+- **Line-item citations**: every row of every repeated list must be cited per field (`line_items[0].quantity`, `items[0].price`, `transactions[0].amount`), the quote being that row's own text. Grounding, location and review treats an item value exactly like a top-level amount.
 - **Verbatim Evidence**: The model must provide verbatim quotes (`quote`, `page`) for extracted values.
 - **Multilingual Parsing**: Supports both European (`1.234,56 €`) and American (`$1,234.56`) numerical conventions.
 
 ---
 
+### Vendor-template extraction
+
+`docket.templates` is the deterministic fast path for known vendors. A
+`VendorTemplate` belongs to one schema, requires every issuer pattern to
+match, and maps explicit page labels and table columns into schema paths.
+Values are type-coerced with the same amount and date conventions as model
+extraction, and every field and line-item cell receives a citation.
+
+The pipeline runs a matching template after schema selection and before the
+extraction model. A candidate is accepted only when Pydantic validation and
+the normal deterministic business rules produce no errors. A missing rule,
+unparseable value, incomplete row or invalid total discards the candidate and
+runs model extraction; templates therefore reduce model calls but never
+bypass validation. `ProcessingMetrics.template_id` records the accepted
+template and the benchmark reports template hit rate, latency and the minimum
+number of structured-extraction calls avoided.
+
+The registry is available through Python, `docket templates`, and
+`/vendor-templates`. Built-ins are fictional golden-corpus examples rather
+than a claim to recognize arbitrary real vendors.
+
 ## 6. Deterministic Validation
 
 Validation never calls a model. It executes deterministic arithmetic and mathematical checksum algorithms:
+
+- **Citation grounding**: every numeric field — top-level and line-item (`_item_numeric_fields` keys every row value by schema path) — must be found on its cited line. A value the cited row actually implies also grounds: a derived unit price (4.98 / 2 = 2.49) or line total (2 × 58.50 = 117.00) counts only when both operands are printed on that row. A quantity of 1 is the implicit single item, not a fabricated amount. An item value contradicted by a garbled witness is a warning, not a blocker, when the rows close their own arithmetic (items sum to the stated subtotal under either coupon layout). A list cited element-wise (`parties_a[0]`) satisfies the requirement on the whole list.
 
 - **Totals & Line Items**: Verifies `subtotal + tax + shipping - discount == total_amount` and the other sums to the cent: `validate._isclose` allows an absolute difference of 0.01 (one rounding step of a printed two-decimal amount), whatever the size of the amount. A relative tolerance was used before; it let a 10.00 gap through on a 1,100 total. The EN 16931 rules downstream compare exact decimals, so a looser check here would only move the failure to export time.
 - **IBAN**: ISO 7064 MOD 97-10 check digits for all European nations and Brazil. Identifies non-IBAN systems (US, Canada) and requests routing numbers instead.
@@ -344,10 +396,12 @@ Validation never calls a model. It executes deterministic arithmetic and mathema
 
 ## 7. Human Review Queue
 
-Documents that fail any error-level validation rule, fail extraction, or carry low classification confidence are routed to the Review Queue (`data/review_queue.jsonl`):
+Documents that fail any error-level validation rule, fail extraction, or carry low classification confidence are routed to the Review Queue (`sqlite:///data/review.db` by default, PostgreSQL in multi-worker deployments):
 
-- Preserves original document artifacts, raw text, and audit trails.
-- Accessible via CLI, FastAPI endpoints (`/review-queue`), and Streamlit web UI.
+- `review_tasks` stores current state; append-only `review_revisions` preserves every claim, correction, validation and decision.
+- Claim uses expiring leases and opaque lock tokens. Updates also carry the expected version, preventing concurrent reviewers from overwriting each other.
+- Corrections are merged over the original extraction and rerun through its Pydantic schema and deterministic business validators. Approval is refused while error-level issues remain.
+- The FastAPI workflow exposes claim, release, revalidate, history, originals and rendered pages. The `/verify` workbench draws normalized source bboxes directly over those pages.
 
 ---
 
@@ -423,8 +477,10 @@ syntax, specification identifier (BT-24) and business process (BT-23):
 
 A credit note becomes a UBL `CreditNote` (type 381) or CII `TypeCode` 381.
 The BASIC profile omits what its schema doesn't allow (seller item id,
-contacts, BIC). The Factur-X formats produce the XML only; embedding it in a
-PDF/A-3 is left to the caller. Every format above passes its official rules
+contacts, BIC). The Factur-X exporters produce CII XML; `docket.einvoice`
+can embed it with XMP into a source PDF, extract it again, and verify the
+complete round trip. XML uses the official profile rules and the PDF/A-3
+container uses the external veraPDF CLI. Every format above passes its official rules
 on the complete test invoice (`tests/test_einvoice.py`).
 
 ## 9a. E-invoice validation
@@ -521,6 +577,3 @@ trained vision model. What it does, and deliberately does not do:
 
 Keyword detection depends on the Tesseract language packs for `DOCKET_OCR_LANGUAGES`
 (Russian markers need `rus`).
-
-
-

@@ -2,7 +2,7 @@
 normalized coordinates, plus the analysis that builds them and the
 serialization the LLM reads."""
 from .analysis import CellHint, RawWord, TableHint, build_page, cells_from_boxes, text_only_page
-from .locate import locate_quote
+from .locate import locate_all, locate_quote
 from .models import (
     BoundingBox,
     Column,
@@ -31,6 +31,7 @@ __all__ = [
     "WordToken",
     "build_page",
     "cells_from_boxes",
+    "locate_all",
     "locate_quote",
     "serialize_page",
     "text_only_page",

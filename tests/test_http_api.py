@@ -45,6 +45,7 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "JOBS_DIR", tmp_path / "jobs")
     monkeypatch.setattr(config, "REVIEW_QUEUE_ENABLED", False)
     monkeypatch.setattr(config, "REVIEW_QUEUE_PATH", tmp_path / "reviews.jsonl")
+    monkeypatch.setattr(config, "REVIEW_DATABASE_URL", f"sqlite:///{tmp_path / 'reviews.db'}")
     monkeypatch.setattr(config, "REVIEW_DOCUMENTS_DIR", tmp_path / "originals")
     monkeypatch.setattr(config, "OCR_FALLBACKS", [])
     monkeypatch.setattr(extract_module, "chat_json", lambda *a, **k: PAYLOAD)
@@ -246,21 +247,40 @@ def test_listing_endpoints(client):
     assert {s["schema_id"] for s in client.get("/schemas").json()} >= {"invoice", "utility_bill"}
     assert client.get("/schemas/invoice/json-schema").json()["type"] == "object"
     assert {b["name"] for b in client.get("/ocr-backends").json()} >= {"pdf_text", "tesseract", "vlm"}
+    templates = {t["template_id"] for t in client.get("/vendor-templates").json()}
+    assert "nordlicht-buerobedarf-invoice" in templates
+    template = client.get("/vendor-templates/nordlicht-buerobedarf-invoice").json()
+    assert template["schema_id"] == "invoice" and template["builtin"] is True
+    assert client.get("/vendor-templates/not-here").status_code == 404
     formats = {f["name"]: f for f in client.get("/export-formats").json()}
     assert formats["ubl"]["media_type"] == "application/xml"
 
 
 def test_review_api_exposes_original_and_accepts_decision(client, tmp_path):
-    from tests.factories import make_result
+    from tests.factories import flat_invoice, make_result
 
     source = tmp_path / "doc.txt"
     source.write_text("source document")
-    document_id = review_queue.enqueue(make_result(source=str(source)), ["manual check"])
+    document_id = review_queue.enqueue(make_result(
+        source=str(source), extracted=flat_invoice(
+            invoice_number="INV-1", issue_date="2026-01-01", vendor_name="Acme",
+            customer_name="Beta", subtotal=100, total_amount=100,
+        ).model_dump(mode="json")
+    ), ["manual check"])
     original = client.get(f"/review-queue/{document_id}/original")
+    claim = client.post(f"/review-queue/{document_id}/claim", json={"actor": "reviewer-1"})
     decision = client.patch(f"/review-queue/{document_id}",
-                            json={"status": "approved", "actor": "reviewer-1", "corrections": {}})
-    bad = client.patch(f"/review-queue/{document_id}", json={"status": "nonsense"})
+                            json={"status": "corrected", "actor": "reviewer-1", "corrections": {},
+                                  "lock_token": claim.json()["lock_token"], "expected_version": claim.json()["version"]})
+    bad = client.patch(f"/review-queue/{document_id}", json={"status": "nonsense", "lock_token": "bad"})
     assert original.content == b"source document"
-    assert decision.status_code == 200 and decision.json()["status"] == "approved"
+    assert claim.status_code == 200
+    assert decision.status_code == 200 and decision.json()["status"] == "corrected"
     assert bad.status_code == 422 and bad.json()["error"]["code"] == "invalid_review_update"
     assert client.get("/review-queue/doc_nope").status_code == 404
+
+
+def test_review_workbench_is_packaged(client):
+    response = client.get("/review")
+    assert response.status_code == 200
+    assert "Review queue" in response.text and "field_sources" in response.text

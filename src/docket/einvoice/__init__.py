@@ -15,6 +15,16 @@ from .validator import (
     available,
     validate_einvoice,
 )
+from .facturx_pdf import (
+    FacturXPdfUnavailable,
+    FacturXRoundTripResult,
+    PdfAValidationIssue,
+    PdfAValidationResult,
+    extract_facturx_xml,
+    generate_facturx_pdf,
+    validate_pdfa,
+    verify_facturx_round_trip,
+)
 
 __all__ = [
     "ArtifactError",
@@ -27,4 +37,12 @@ __all__ = [
     "Profile",
     "available",
     "validate_einvoice",
+    "FacturXPdfUnavailable",
+    "FacturXRoundTripResult",
+    "PdfAValidationIssue",
+    "PdfAValidationResult",
+    "extract_facturx_xml",
+    "generate_facturx_pdf",
+    "validate_pdfa",
+    "verify_facturx_round_trip",
 ]

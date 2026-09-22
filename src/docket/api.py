@@ -32,7 +32,8 @@ from uuid import uuid4
 
 from fastapi import Depends, FastAPI, File, Form, Header, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -101,6 +102,18 @@ app = FastAPI(
     version=__version__,
     lifespan=lifespan,
 )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=config.API_CORS_ORIGINS,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-API-Key"],
+)
+
+
+@app.get("/review", include_in_schema=False)
+def review_workbench() -> FileResponse:
+    return FileResponse(Path(__file__).with_name("static") / "review.html", media_type="text/html")
 
 _job_slots = asyncio.Semaphore(config.MAX_CONCURRENT_JOBS)
 _active: dict[str, asyncio.Task] = {}
@@ -490,6 +503,24 @@ def ocr_backends() -> list[dict]:
     return [info.model_dump(mode="json") for info in list_ocr_backends()]
 
 
+@app.get("/vendor-templates", dependencies=[Depends(require_api_key)])
+def vendor_templates() -> list[dict]:
+    """Deterministic vendor layouts registered in this deployment."""
+    from .templates import list_vendor_templates
+
+    return [template.model_dump(mode="json") for template in list_vendor_templates()]
+
+
+@app.get("/vendor-templates/{template_id}", responses=_ERRORS, dependencies=[Depends(require_api_key)])
+def vendor_template(template_id: str) -> dict:
+    from .templates import get_vendor_template
+
+    template = get_vendor_template(template_id)
+    if template is None:
+        raise ApiError(404, "template_not_found", f"unknown vendor template {template_id!r}")
+    return template.model_dump(mode="json")
+
+
 # ---- review queue ----------------------------------------------------------------
 
 
@@ -498,6 +529,18 @@ class ReviewUpdate(BaseModel):
     corrections: dict | None = None
     actor: str = "reviewer"
     note: str | None = None
+    lock_token: str
+    expected_version: int | None = None
+
+
+class ReviewClaim(BaseModel):
+    actor: str
+    lease_seconds: int | None = None
+
+
+class ReviewRelease(BaseModel):
+    actor: str
+    lock_token: str
 
 
 @app.get("/review-queue", dependencies=[Depends(require_api_key)])
@@ -524,12 +567,72 @@ def get_review_original(document_id: str) -> FileResponse:
     return FileResponse(path, filename=path.name)
 
 
+@app.get("/review-queue/{document_id}/pages/{page}", responses=_ERRORS, dependencies=[Depends(require_api_key)])
+def get_review_page(document_id: str, page: int) -> Response:
+    record = review_queue.get(document_id)
+    if record is None or not record.get("original_path"):
+        raise ApiError(404, "original_not_found", "preserved original not found")
+    path = Path(record["original_path"])
+    if path.suffix.lower() != ".pdf":
+        if page != 1:
+            raise ApiError(404, "page_not_found", "page not found")
+        return FileResponse(path)
+    import pypdfium2 as pdfium
+
+    document = pdfium.PdfDocument(path)
+    if page < 1 or page > len(document):
+        raise ApiError(404, "page_not_found", "page not found")
+    image = document[page - 1].render(scale=1.8).to_pil()
+    from io import BytesIO
+    output = BytesIO()
+    image.save(output, format="PNG")
+    return Response(output.getvalue(), media_type="image/png")
+
+
+@app.post("/review-queue/{document_id}/claim", responses=_ERRORS, dependencies=[Depends(require_api_key)])
+def claim_review(document_id: str, claim: ReviewClaim) -> dict:
+    try:
+        return review_queue.claim(document_id, **claim.model_dump())
+    except KeyError as exc:
+        raise ApiError(404, "review_not_found", "review record not found") from exc
+    except review_queue.ReviewConflict as exc:
+        raise ApiError(409, "review_locked", str(exc)) from exc
+    except ValueError as exc:
+        raise ApiError(422, "invalid_review_claim", str(exc)) from exc
+
+
+@app.post("/review-queue/{document_id}/release", responses=_ERRORS, dependencies=[Depends(require_api_key)])
+def release_review(document_id: str, release: ReviewRelease) -> dict:
+    try:
+        return review_queue.release(document_id, **release.model_dump())
+    except KeyError as exc:
+        raise ApiError(404, "review_not_found", "review record not found") from exc
+    except review_queue.ReviewConflict as exc:
+        raise ApiError(409, "review_lock_lost", str(exc)) from exc
+
+
+@app.post("/review-queue/{document_id}/revalidate", responses=_ERRORS, dependencies=[Depends(require_api_key)])
+def revalidate_review(document_id: str, release: ReviewRelease) -> dict:
+    try:
+        return review_queue.revalidate(document_id, **release.model_dump())
+    except KeyError as exc:
+        raise ApiError(404, "review_not_found", "review record not found") from exc
+    except review_queue.ReviewConflict as exc:
+        raise ApiError(409, "review_lock_lost", str(exc)) from exc
+    except review_queue.ReviewValidationError as exc:
+        raise ApiError(422, "review_validation_failed", str(exc)) from exc
+
+
 @app.patch("/review-queue/{document_id}", responses=_ERRORS, dependencies=[Depends(require_api_key)])
 def update_review(document_id: str, update: ReviewUpdate) -> dict:
     try:
         return review_queue.update(document_id, **update.model_dump())
     except KeyError as exc:
         raise ApiError(404, "review_not_found", "review record not found") from exc
+    except review_queue.ReviewConflict as exc:
+        raise ApiError(409, "review_conflict", str(exc)) from exc
+    except review_queue.ReviewValidationError as exc:
+        return JSONResponse(status_code=422, content={"error": {"code": "review_validation_failed", "message": str(exc)}, "issues": exc.issues})
     except ValueError as exc:
         raise ApiError(422, "invalid_review_update", str(exc)) from exc
 

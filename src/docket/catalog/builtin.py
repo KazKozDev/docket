@@ -152,13 +152,18 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         model=Invoice,
         description="Invoice / factura / Rechnung requesting payment for goods or services",
         keywords=(
-            pattern(r"\binvoice\b|\bfactura\b", 3.0),
+            # A TAX INVOICE header must not score for the plain invoice schema too
+            # (it did, on every Malaysian till receipt in the extended benchmark).
+            pattern(r"\b(?<!tax\s)invoice\b|\bfactura\b(?!\s*fiscal)", 3.0),
             pattern(r"\bbill to\b|\bfacturar a\b|\bcliente\b", 2.0),
             pattern(r"\bamount due\b|\bimporte total\b|\btotal a pagar\b", 2.0),
             pattern(r"\bdue date\b|\bfecha de vencimiento\b|\bvencimiento\b", 1.0),
             pattern(r"\bpo number\b|\bpurchase order\b|\bpedido\b", 1.0),
             pattern(r"\bbase imponible\b|\bn[úu]mero de factura\b", 2.0),
-        ) + _names(r"rechnung|rechnungsnummer|facture|fattura|factuur|fatura|faktura"),
+        ) + _names(
+            r"rechnung|rechnungsnummer|facture(?!\s*fiscale)|fattura(?!\s*fiscale)|"
+            r"factuur|fatura(?!\s*fiscal)|faktura(?!\s+vat\b)"
+        ),
         summary={"document_number": "invoice_number", "document_date": "issue_date", "issuer": "seller.name", "recipient": "buyer.name", "currency": "currency", "subtotal": "subtotal", "tax_amount": "tax_amount", "total_amount": "total_amount"},
         line_items=_BILL_ITEMS,
         cited_fields=_BILLING_CITED,
@@ -172,7 +177,8 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         model=TaxInvoice,
         description=(
             "Tax invoice that identifies the seller's VAT/GST registration and states the tax "
-            "charged (GST tax invoice, Steuerrechnung)"
+            "charged (GST tax invoice, Steuerrechnung) — a business-to-business document; "
+            "a point-of-sale till slip is a receipt even when printed with a TAX INVOICE header"
         ),
         # "Tax invoice" also contains "invoice", so the name alone ties with
         # the invoice rules and defers to the next tier — a till receipt headed
@@ -209,13 +215,25 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         version="1.1",
         display_name="Receipt",
         model=Receipt,
-        description="Receipt or till slip proving a payment was made",
+        description=(
+            "Receipt or till slip proving a payment was made — including point-of-sale "
+            "till receipts printed with a TAX INVOICE header (cashier, salesperson, "
+            "approval code, goods sold are not returnable)"
+        ),
         keywords=(
             pattern(r"\breceipt\b|\brecibo\b|\btique\b|\bticket de compra\b", 3.0),
             pattern(r"\bthank you for your purchase\b|\bgracias por su compra\b", 2.0),
             pattern(r"\bchange due\b|\bcambio\b|\bentregado\b", 2.0),
             pattern(r"\bcashier\b|\bcajero?a?\b", 1.0),
             pattern(r"\btender(ed)?\b|\befectivo\b", 1.0),
+            # Till/terminal signals: a cash-register slip that prints its own legal
+            # header (Malaysian "TAX INVOICE") is still a receipt, not a B2B invoice.
+            # The cashier+approval-code combination is the point-of-sale signature;
+            # no single phrase outranks a printed TAX INVOICE header on its own.
+            pattern(r"\bcashier\b[\s\S]{0,300}\bapproval code\b|\bapproval code\b[\s\S]{0,300}\bcashier\b", 3.0),
+            pattern(r"\bplease come again\b", 2.0),
+            pattern(r"\bapproval code\b", 1.0),
+            pattern(r"\bterima kasih\b", 2.0),
         ) + _names(
             r"kassenbon|kassenbeleg|quittung|ticket de caisse|re[çc]u|scontrino|"
             r"ricevuta|kassabon|kassabonnetje|tal[ãa]o|paragon"

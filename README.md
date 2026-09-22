@@ -15,6 +15,7 @@ pip install docket-idp
 docket process invoice.pdf                       # JSON result on stdout, exit code 2 if validation fails
 docket process invoice.pdf --export xrechnung-ubl --validate-export   # e-invoice XML, checked with the official rules
 docket validate-einvoice invoice.xml              # XSD + Schematron report for any UBL/CII XML or Factur-X PDF
+docket factur-x create invoice.pdf factur-x.xml -o hybrid.pdf          # PDF/A-3 + XML + XMP, then veraPDF round-trip
 docket schemas list                              # every document type, with its version
 ```
 
@@ -118,6 +119,38 @@ register_schema(SchemaSpec(
 
 Registered schemas are classified, extracted, citation-checked and exported like the built-in ones; give `examples=` sentences and the TF-IDF tier learns them too. A model can also be used without registering it: `ProcessOptions(schema_model=ParkingTicket)` or `docket process file.pdf --schema mypkg.models:ParkingTicket`. `add_validator("invoice", fn)` adds rules to any schema, and the `docket.schemas` entry point lets a separate package ship schemas. See [`examples/custom_document_type.py`](https://github.com/KazKozDev/docket/blob/master/examples/custom_document_type.py) and [`examples/schema_plugin/`](https://github.com/KazKozDev/docket/blob/master/examples/schema_plugin/).
 
+## Vendor templates
+
+Known vendor layouts can bypass LLM extraction entirely. A `VendorTemplate`
+matches a vendor, reads fields with explicit rules, reads line items from the
+detected table, and emits the same citations as model extraction. Docket only
+accepts the template result when normal schema and business validation pass;
+otherwise it falls back to the configured extraction model.
+
+```python
+from docket import FieldRule, VendorTemplate, register_vendor_template
+
+register_vendor_template(VendorTemplate(
+    template_id="acme-invoice",
+    schema_id="invoice",
+    issuer=("ACME Supplies",),
+    fields=(
+        FieldRule(field="invoice_number", label="Invoice No", value=r"Invoice No:?\s*(\S+)"),
+        FieldRule(field="total_amount", label="Total", value=r"Total:?\s*([\d.,]+)"),
+    ),
+))
+```
+
+`docket templates list` and `GET /vendor-templates` show the active registry;
+`docket templates show ID` and `GET /vendor-templates/{id}` expose the exact
+rules. `result.metrics.template_id` records a successful deterministic read.
+Two fictional golden-corpus vendors ship as executable examples; production
+vendor knowledge belongs in application code or a package that registers its
+templates at startup. On the 198-scan extended corpus those two examples match
+and pass validation on exactly their two documents (2/198, no false template
+matches); the intentionally small hit rate is not presented as generic vendor
+coverage.
+
 ## Export formats
 
 | Format | Name | Checked against |
@@ -153,7 +186,11 @@ for issue in report.issues:        # code (BR-CO-15, PEPPOL-EN16931-R001, BR-DE-
     print(issue.code, issue.layer, issue.location, issue.message)   # layer xsd/schematron, rule source
 ```
 
-The profile comes from the document's specification identifier (BT-24) unless you pass one; when you do and the document declares another, the report carries `DOCKET-PROFILE-MISMATCH`. Schematron only runs on XML that passed the XML Schema. Factur-X / ZUGFeRD PDFs are validated from their embedded `factur-x.xml` / `zugferd-invoice.xml`; the PDF/A-3 container itself is not checked. `export_document(..., ExportOptions(validate_einvoice=True))` validates right after export, and `docket process --export FORMAT --validate-export` does the same on the command line. `python scripts/update_einvoice_resources.py` rebuilds the artifacts from their pinned official downloads (`--check` verifies the vendored copy). See [`examples/validate_xrechnung.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_xrechnung.py) and [`examples/validate_peppol.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_peppol.py).
+The profile comes from the document's specification identifier (BT-24) unless you pass one; when you do and the document declares another, the report carries `DOCKET-PROFILE-MISMATCH`. Schematron only runs on XML that passed the XML Schema. Factur-X / ZUGFeRD PDFs are validated from their embedded `factur-x.xml` / `zugferd-invoice.xml`.
+
+`generate_facturx_pdf()` creates the hybrid PDF with the XML attachment, AF relationship and Factur-X XMP metadata. `extract_facturx_xml()` performs the reverse operation, while `validate_pdfa()` invokes the official veraPDF CLI and returns structured PDF/A-3 rule failures. `verify_facturx_round_trip()` requires the extracted XML to match, pass the official XML rules and pass veraPDF. The source PDF must already be PDF/A compatible; embedding cannot repair missing fonts, colour profiles or output intents. The same workflow is available as `docket factur-x create|extract|validate`. Install veraPDF separately and pass `--verapdf PATH` when it is not on `PATH`.
+
+`export_document(..., ExportOptions(validate_einvoice=True))` validates XML right after export, and `docket process --export FORMAT --validate-export` does the same on the command line. `python scripts/update_einvoice_resources.py` rebuilds the artifacts from their pinned official downloads (`--check` verifies the vendored copy). See [`examples/validate_xrechnung.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_xrechnung.py) and [`examples/validate_peppol.py`](https://github.com/KazKozDev/docket/blob/master/examples/validate_peppol.py).
 
 ## How it works
 
@@ -191,13 +228,18 @@ Every setting and its environment variable is in [`docket.example.toml`](https:/
 | `DOCKET_LLM_BASE_URL` / `DOCKET_LLM_API_KEY` | OpenAI / unset | Endpoint and key for `openai`, e.g. `https://api.mistral.ai/v1` (EU-hosted) |
 | `DOCKET_TEXT_MODEL` / `DOCKET_VISION_MODEL` | `deepseek-v4.1-flash:cloud` | Models for extraction and for reading scans |
 | `OLLAMA_HOST` | `http://localhost:11434` | Where Ollama is listening |
-| `DOCKET_OCR_BACKEND` | `auto` | Primary OCR backend: `tesseract`, `paddle`, `auto`, or a plugin name |
+| `DOCKET_OCR_BACKEND` | `auto` | Primary OCR backend: `tesseract`, `paddle`, `docling`, `auto`, or a plugin name |
 | `DOCKET_OCR_FALLBACKS` | `vlm` | Comma-separated backends tried when a page's reading is rejected |
 | `DOCKET_OCR_LANGUAGES` | `en` | ISO 639-1 codes, e.g. `en,de,fr,es,it` |
 | `DOCKET_PADDLE_DEVICE` / `DOCKET_PADDLE_MODEL` / `DOCKET_PADDLE_TABLES` | `cpu` / `mobile` / `false` | PaddleOCR device, model size (`mobile`, `medium`), table-structure pipeline |
+| `DOCKET_DOCLING_TABLE_MODE` / `DOCKET_DOCLING_CELL_MATCHING` | `accurate` / `true` | TableFormer quality mode and mapping predicted cells back to document text |
+| `DOCKET_OCR_DESKEW` | `true` | Correct fine scan skew before raster OCR |
 | `DOCKET_MIN_CONFIDENCE` | `0.55` | Classification confidence below which a document goes to review |
-| `DOCKET_REVIEW_QUEUE_ENABLED` | `true` | Write flagged documents to the file-based review queue |
+| `DOCKET_REVIEW_QUEUE_ENABLED` | `true` | Write flagged documents to the transactional review queue |
+| `DOCKET_REVIEW_DATABASE_URL` | `sqlite:///data/review.db` | SQLite by default; use `postgresql+psycopg://...` with the `[postgres]` extra |
+| `DOCKET_REVIEW_LOCK_SECONDS` | `300` | Lease duration for an exclusively claimed review task |
 | `DOCKET_API_KEY` | unset | Bearer token the HTTP API requires when set |
+| `DOCKET_API_CORS_ORIGINS` | local web UI | Comma-separated browser origins allowed to call the API |
 | `DOCKET_BATCH_WORKERS` | `4` | Documents in flight per batch |
 | `DOCKET_LLM_CONCURRENCY` / `DOCKET_OCR_CONCURRENCY` | `4` / half the CPUs | Process-wide limits on simultaneous LLM requests and OCR engines |
 | `DOCKET_MAX_BATCH_FILES` / `DOCKET_MAX_BATCH_BYTES` | `100` / 200 MB | HTTP upload limits per job (`DOCKET_MAX_FILE_BYTES` per file) |
@@ -209,7 +251,9 @@ Every setting and its environment variable is in [`docket.example.toml`](https:/
 - The TF-IDF tier is trained on a small embedded corpus (about 20 phrases per type), so it only answers when confident and leaves the rest to the LLM.
 - `--forensics` is a pixel heuristic, not a trained vision model. It finds colored stamps and seals and handwriting in colored or black ink, but never reports black stamps, which it can't tell apart from logos or table graphics. Its confidence scores come from geometry and aren't calibrated probabilities.
 - The vision model has been observed changing digits so that a page reconciles (a printed `450.00` read as `480.00` three times out of three). There is no fix for that in this repo.
-- Line items carry no source citations, so the citation check doesn't cover them.
+- A silent wrong answer is possible: on the 198-scan extended corpus, 35% of documents that come back "succeeded, no review" had at least one wrong graded field (19 of 55; the golden set understates it at 3/16). Measured drivers: merchant names and totals on degraded thermal receipts, seller name and invoice number on DocILE scans. Before the stage-3 fixes this was 46% — the US day/month date swaps are gone.
+- Classification is the weak tier on out-of-distribution documents: Malaysian SROIE "receipts" are tax-invoice till slips and 39/120 still classify as `tax_invoice` (was 82/120 before the till-signal fix) — every graded field of those documents then counts wrong. Where classification is right, field accuracy is 0.84–0.97.
+- Line items and nested fields carry citations that are grounded and located like top-level amounts (golden set: every item row cited, 0.98 located; top-level fields 0.97 / 0.92), and a wrong or ungrounded item value fails validation like any other amount.
 - The review queue is a single file: durable on one node, not across hosts.
 - Windows is untested. A document takes a median of 6.4–22.7 s depending on the OCR backend (measured over 33 scans), longer when a page needs the vision model.
 
@@ -221,6 +265,7 @@ pip install docket-idp            # library + CLI
 pip install "docket-idp[api]"     # + HTTP service (docket-api)
 pip install "docket-idp[all]"     # + Langfuse tracing and e-invoice validation
 pip install "docket-idp[paddle]"  # + PaddleOCR backend (--ocr-backend paddle)
+pip install "docket-idp[docling]" # + Docling/TableFormer backend (--ocr-backend docling)
 pip install "docket-idp[einvoice]" # + official EN 16931 / Peppol / XRechnung / Factur-X validation
 ```
 
@@ -259,6 +304,58 @@ temperature 0: 10 runs of the coupon receipt produce 15/15 identical fields.
 Dropping the `[TABLE]` / `[COLUMN]` serialization markers changes nothing
 measurable (identical outcomes for Paddle, ±2 marginal scans for Tesseract) —
 the gain of layout serialization is for hard tables, not this set.
+
+Citation coverage, measured on the 17 golden scans (tesseract,
+`eval/benchmark_ocr.py --dataset eval/golden_dataset`): every line-item row
+now carries a citation that validates (1.00 cited / 0.98 located on the page);
+top-level fields 0.97 cited / 0.92 located. Before stage 1 the items were at
+0.08 / 0.06 and fields at 0.92 / 0.87. One document stays in review by
+design (purchase order); two receipt scans still extract wrong values from
+garbled Tesseract text without triggering review — the false-success metric
+that stage 2 measures.
+
+**The extended corpus** (`eval/download_real_samples.py --n` per source,
+then the same benchmark): 198 scans — the golden set plus real documents
+from Hugging Face (DocILE, donut-style invoices, SROIE receipts, CORD,
+FUNSD, RVL-CDIP), with field-level ground truth where the source dataset
+carries it. Tesseract config, same code:
+
+| metric | golden only | extended corpus |
+|---|---|---|
+| documents | 17 | 198 |
+| field accuracy | 0.97 | 0.72 |
+| documents in review | 1 (6%) | 143 (72%) |
+| false successes (silent wrong answers) | 3/16 (19%) | 19/55 (35%) |
+
+Real scans are the honest test, and classification is the bottleneck:
+SROIE "receipts" are Malaysian tax-invoice till slips — 39/120 still classify
+as `tax_invoice`; where docket classifies right, field accuracy is
+0.84–0.97 by source. The remaining false-success drivers: merchant
+names and totals on degraded thermal receipts, and seller name /
+invoice number on DocILE scans. (Before stage 3 this table read 0.53 / 23
+of 50 false successes; the two measured fixes are in the CHANGELOG.)
+
+**Against the pip-installable competition** (`eval/benchmark_competitors.py`):
+same documents, graded with the same field metric on the intersection of
+each tool's schema with the ground truth. docket's column is recomputed on
+exactly those docs and fields; the LLM-backed tools ran against the same
+Ollama daemon and model; they are handed the correct schema, while docket
+must classify its way there; a tool's error counts as every graded field
+wrong.
+
+| tool | docs | field accuracy | docket, same docs+fields |
+|---|---|---|---|
+| docket, full comparable set | 179 | 0.72 | — |
+| docpick 0.1.3 | 55 \* | 0.61 | 0.71 |
+| ocrcontext 0.1.5 | 55 \* | 0.04 (16 parse errors) | 0.69 |
+| invoice2data 1.0.1 | 44 | 0.00 (0 built-in template matches) | 0.90 |
+
+\* evenly-spaced subsample — these tools read 60–80 s per document against
+docket's 12 s mean. Per source, docket vs the best competitor: golden
+1.00 vs 0.62 (docpick), donut 0.97 vs 0.48 (docpick), docile 0.50 vs 0.50
+(ocrcontext), SROIE 0.55 vs 0.75 (docpick — the classification margin
+above; on the 72 SROIE docs docket does classify as receipts, its fields
+are 0.84).
 
 </details>
 

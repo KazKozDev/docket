@@ -19,6 +19,7 @@ from PIL import Image
 
 from ..layout import PageLayout, RawWord, build_page
 from .base import BackendStatus, Capabilities, OcrBackend, OcrError
+from .deskew import deskew_image
 from .languages import TESSERACT, tesseract_codes
 from .source import PageSource
 
@@ -133,6 +134,7 @@ class TesseractBackend(OcrBackend):
         if rotation:
             # PIL rotates counter-clockwise; OSD reports a clockwise fix.
             image = image.rotate(-rotation, expand=True)
+        image, deskew_angle = deskew_image(image) if self.settings.deskew else (image, 0.0)
         try:
             data = pytesseract.image_to_data(
                 image,
@@ -148,6 +150,7 @@ class TesseractBackend(OcrBackend):
             height=float(image.height),
             unit="px",
             rotation=rotation,
+            deskew_angle=deskew_angle,
             backend=self.name,
             confidence=page_confidence(data, self.settings.word_confidence_floor),
             words=words_from_data(data),
