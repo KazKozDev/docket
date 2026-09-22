@@ -111,6 +111,15 @@ from .schemas import (
     StampDetection,
     ValidationIssue,
 )
+from .templates import (
+    FieldRule,
+    ItemsRule,
+    VendorTemplate,
+    get_vendor_template,
+    list_vendor_templates,
+    register_vendor_template,
+    unregister_vendor_template,
+)
 
 __all__ = [
     "__version__",
@@ -209,6 +218,13 @@ __all__ = [
     "TaxIdentifier",
     "TaxInvoice",
     "TextLine",
+    "FieldRule",
+    "ItemsRule",
+    "VendorTemplate",
+    "get_vendor_template",
+    "list_vendor_templates",
+    "register_vendor_template",
+    "unregister_vendor_template",
     "unregister_schema",
     "UtilityBill",
     "ValidationContext",

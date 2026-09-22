@@ -4,6 +4,7 @@
     docket batch INPUT   [--recursive] [--glob PATTERN] [--workers N] [--fail-fast]
                          [--format json|jsonl|csv] [--output PATH] [--checkpoint PATH]
     docket schemas list | show ID | json-schema ID
+    docket templates list | show ID
     docket formats
     docket ocr-backends
     docket forensics FILE
@@ -238,6 +239,27 @@ def _cmd_formats(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _cmd_templates(args: argparse.Namespace) -> int:
+    from .templates import get_vendor_template, list_vendor_templates
+
+    if args.action == "list":
+        templates = list_vendor_templates()
+        if args.json:
+            _print_json([template.model_dump(mode="json") for template in templates])
+            return EXIT_OK
+        for template in templates:
+            origin = "built-in" if template.builtin else "custom"
+            print(f"{template.template_id:40} {template.schema_id:18} {origin:8} {template.description}")
+        return EXIT_OK
+    if args.template_id is None:
+        raise ConfigurationError("`docket templates show` needs a template id")
+    template = get_vendor_template(args.template_id)
+    if template is None:
+        raise ConfigurationError(f"unknown vendor template {args.template_id!r}")
+    _print_json(template.model_dump(mode="json"))
+    return EXIT_OK
+
+
 def _cmd_ocr_backends(args: argparse.Namespace) -> int:
     for info in list_ocr_backends():
         state = "available" if info.status.available else f"unavailable: {info.status.reason}"
@@ -348,6 +370,12 @@ def build_parser() -> argparse.ArgumentParser:
     schemas.add_argument("--all-versions", action="store_true", help="list: every registered version")
     schemas.add_argument("--json", action="store_true", help="list: machine-readable output")
     schemas.set_defaults(func=_cmd_schemas)
+
+    templates = commands.add_parser("templates", help="List vendor templates or show their extraction rules")
+    templates.add_argument("action", choices=["list", "show"])
+    templates.add_argument("template_id", nargs="?", help="Template id for show")
+    templates.add_argument("--json", action="store_true", help="list: machine-readable output")
+    templates.set_defaults(func=_cmd_templates)
 
     formats = commands.add_parser("formats", help="List export formats")
     formats.set_defaults(func=_cmd_formats)

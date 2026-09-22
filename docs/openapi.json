@@ -1709,6 +1709,217 @@
         }
       }
     },
+    "/vendor-templates": {
+      "get": {
+        "summary": "Vendor Templates",
+        "description": "Deterministic vendor layouts registered in this deployment.",
+        "operationId": "vendor_templates_vendor_templates_get",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "title": "Response Vendor Templates Vendor Templates Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vendor-templates/{template_id}": {
+      "get": {
+        "summary": "Vendor Template",
+        "operationId": "vendor_template_vendor_templates__template_id__get",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Template Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Vendor Template Vendor Templates  Template Id  Get"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Not ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported file type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid options",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Feature not installed on this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/review-queue": {
       "get": {
         "summary": "Get Review Queue",
@@ -3605,6 +3816,18 @@
             "title": "Escalated To Vlm",
             "description": "OCR text passed its gate but failed validation, and a vision-model re-read won.",
             "default": false
+          },
+          "template_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Id",
+            "description": "Vendor template that read this document (no LLM extraction); None = model extraction."
           }
         },
         "type": "object",
@@ -3852,6 +4075,42 @@
             "type": "string",
             "title": "Quote"
           },
+          "status": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "fuzzy",
+              "conflicting",
+              "unlocated"
+            ],
+            "title": "Status",
+            "description": "verified: exactly one exact match on the page. fuzzy: no exact match, one close window. conflicting: several exact matches, ambiguous. unlocated: the page has no geometry or the quote is not on it.",
+            "default": "unlocated"
+          },
+          "match": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "exact",
+                  "fuzzy"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Match",
+            "description": "How the quote was found; None when unlocated."
+          },
+          "regions": {
+            "items": {
+              "$ref": "#/components/schemas/SourceRegion"
+            },
+            "type": "array",
+            "title": "Regions",
+            "description": "Every place the quote was found on the page (usually one), with the normalized coordinates needed to draw a highlight."
+          },
           "bbox": {
             "anyOf": [
               {
@@ -3902,7 +4161,33 @@
           "quote"
         ],
         "title": "SourceLocation",
-        "description": "Where an extracted value was read: the quote the model cited, and the\npage region it resolves to.\n\n`bbox` and `word_ids` come from matching the quote against the page's\nword boxes, never from the model. A page read by the vision model has no\nboxes; its quote is then looked up in the OCR reading kept as the page's\nwitness (`located_by` says which). They are None / empty when neither has\nthe quote."
+        "description": "Where an extracted value was read: the quote the model cited, and the\npage region(s) it resolves to.\n\n`regions` holds every place the quote was found — usually one; a value\nthat prints twice gives two, and `status` is then `conflicting` because\nnothing in the document says which occurrence is the source.\n\n`bbox` and `word_ids` come from matching the quote against the page's\nword boxes, never from the model. A page read by the vision model has no\nboxes; its quote is then looked up in the OCR reading kept as the page's\nwitness (`located_by` says which). `bbox` is None when no region\nresolved; the top-level copy is the first region's, `regions` carries\nthe rest."
+      },
+      "SourceRegion": {
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Page"
+          },
+          "bbox": {
+            "$ref": "#/components/schemas/BoundingBox"
+          },
+          "word_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Word Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "page",
+          "bbox"
+        ],
+        "title": "SourceRegion",
+        "description": "One contiguous place a quote was found on a page."
       },
       "StampDetection": {
         "properties": {

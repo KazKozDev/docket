@@ -156,6 +156,30 @@ def test_false_success_rate_counts_only_silent_clean_claims():
     assert s["false_success_rate"] == 0.5
 
 
+def test_ocr_benchmark_reports_template_usage_and_minimum_saved_calls():
+    import sys
+
+    sys.path.insert(0, str(ROOT / "eval"))
+    from benchmark_ocr import summarize
+
+    def row(template_id=None, seconds=1.0):
+        return {"seconds": seconds, "acquire_seconds": 0.5, "fields": {"correct": 1, "total": 1},
+                "line_items": {"correct": 0, "extracted": 0, "expected": 0},
+                "table_cells": {"matched": 0, "expected": 0}, "pages": 1, "vlm_pages": 0,
+                "escalated_to_vlm": False, "llm_calls": 0 if template_id else 1,
+                "template_id": template_id, "needs_review": False, "success": True,
+                "status": "succeeded"}
+
+    s = summarize([row("acme", 0.2), row(), row("acme", 0.4)])
+    assert s["templates"] == {
+        "documents": 2,
+        "hit_rate": round(2 / 3, 4),
+        "seconds_mean": 0.3,
+        "llm_extraction_calls_avoided_minimum": 2,
+        "by_id": {"acme": 2},
+    }
+
+
 def test_variance_summary_counts_missing_fields_as_disagreement():
     import sys
 
@@ -169,4 +193,3 @@ def test_variance_summary_counts_missing_fields_as_disagreement():
     s = summarize_variance(runs)
     assert s["agreement"] == 0.5  # total_amount agrees, discount_amount missing in run 2
     assert s["per_field"]["total_amount"]["values"] == [[32.7, 2]]
-

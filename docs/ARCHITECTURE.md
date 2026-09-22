@@ -330,6 +330,27 @@ Every tier reads the schema catalog, so a registered schema takes part in all th
 
 ---
 
+### Vendor-template extraction
+
+`docket.templates` is the deterministic fast path for known vendors. A
+`VendorTemplate` belongs to one schema, requires every issuer pattern to
+match, and maps explicit page labels and table columns into schema paths.
+Values are type-coerced with the same amount and date conventions as model
+extraction, and every field and line-item cell receives a citation.
+
+The pipeline runs a matching template after schema selection and before the
+extraction model. A candidate is accepted only when Pydantic validation and
+the normal deterministic business rules produce no errors. A missing rule,
+unparseable value, incomplete row or invalid total discards the candidate and
+runs model extraction; templates therefore reduce model calls but never
+bypass validation. `ProcessingMetrics.template_id` records the accepted
+template and the benchmark reports template hit rate, latency and the minimum
+number of structured-extraction calls avoided.
+
+The registry is available through Python, `docket templates`, and
+`/vendor-templates`. Built-ins are fictional golden-corpus examples rather
+than a claim to recognize arbitrary real vendors.
+
 ## 6. Deterministic Validation
 
 Validation never calls a model. It executes deterministic arithmetic and mathematical checksum algorithms:
@@ -534,6 +555,4 @@ trained vision model. What it does, and deliberately does not do:
 
 Keyword detection depends on the Tesseract language packs for `DOCKET_OCR_LANGUAGES`
 (Russian markers need `rus`).
-
-
 

@@ -105,6 +105,10 @@ class ProcessingMetrics(BaseModel):
         default=False,
         description="OCR text passed its gate but failed validation, and a vision-model re-read won.",
     )
+    template_id: str | None = Field(
+        default=None,
+        description="Vendor template that read this document (no LLM extraction); None = model extraction.",
+    )
 
 
 class DocumentResult(BaseModel):
