@@ -4313,6 +4313,14 @@
             "description": "Clockwise degrees the source was rotated to read upright.",
             "default": 0
           },
+          "deskew_angle": {
+            "type": "number",
+            "maximum": 15.0,
+            "minimum": -15.0,
+            "title": "Deskew Angle",
+            "description": "Fine clockwise correction in degrees, applied after orthogonal rotation.",
+            "default": 0.0
+          },
           "backend": {
             "type": "string",
             "title": "Backend",
