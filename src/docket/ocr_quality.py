@@ -90,7 +90,7 @@ def looks_garbled(text: str) -> bool:
         except LLMError as exc:
             log.warning(
                 "OCR quality check unavailable",
-                extra={"error": str(exc), "chunk": chunk_number},
+                extra={"error_type": type(exc).__name__, "chunk": chunk_number},
             )
             continue
 
@@ -101,7 +101,6 @@ def looks_garbled(text: str) -> bool:
                 "OCR judged unusable",
                 extra={
                     "confidence": confidence,
-                    "evidence": str(result.get("evidence"))[:120],
                     "chunk": chunk_number,
                 },
             )

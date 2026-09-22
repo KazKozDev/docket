@@ -33,6 +33,7 @@ def test_defaults_without_file_or_environment():
     assert loaded.values["OCR_BACKEND"] == "auto"
     assert loaded.values["OCR_FALLBACKS"] == ["vlm"]
     assert loaded.values["BATCH_WORKERS"] == 4
+    assert loaded.values["REVIEW_QUEUE_ENABLED"] is False
     assert set(loaded.sources.values()) == {"default"}
 
 
