@@ -43,11 +43,14 @@ class OcrOptions(BaseModel):
     )
     min_confidence: float | None = Field(default=None, ge=0.0, le=1.0)
     detect_rotation: bool | None = None
+    deskew: bool | None = None
     use_pdf_text: bool = Field(default=True, description="Take a usable PDF text layer without OCR.")
     dpi: int | None = Field(default=None, ge=50, le=600)
     device: str | None = Field(default=None, description="PaddleOCR device. Env: DOCKET_PADDLE_DEVICE.")
     paddle_model: Literal["mobile", "medium"] | None = None
     paddle_tables: bool | None = None
+    docling_table_mode: Literal["fast", "accurate"] | None = None
+    docling_cell_matching: bool | None = None
 
 
 class ReviewOptions(BaseModel):
@@ -136,9 +139,12 @@ def resolve(options: ProcessOptions | None = None) -> ResolvedOptions:
         device=_pick(ocr.device, config.PADDLE_DEVICE),
         dpi=_pick(ocr.dpi, config.OCR_DPI),
         detect_rotation=_pick(ocr.detect_rotation, config.OCR_DETECT_ROTATION),
+        deskew=_pick(ocr.deskew, config.OCR_DESKEW),
         tesseract_psm=config.TESSERACT_PSM,
         paddle_model=_pick(ocr.paddle_model, config.PADDLE_MODEL),
         paddle_tables=_pick(ocr.paddle_tables, config.PADDLE_TABLES),
+        docling_table_mode=_pick(ocr.docling_table_mode, config.DOCLING_TABLE_MODE),
+        docling_cell_matching=_pick(ocr.docling_cell_matching, config.DOCLING_CELL_MATCHING),
     )
     acquisition = AcquisitionOptions(
         backend=_pick(ocr.backend, config.OCR_BACKEND),

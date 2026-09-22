@@ -82,6 +82,10 @@ class OcrSettings(BaseModel):
     device: str = Field(default="cpu", description="Compute device for engines that have one ('cpu', 'gpu', 'gpu:0').")
     dpi: int = Field(default=200, ge=50, le=600, description="Resolution scanned PDF pages are rendered at.")
     detect_rotation: bool = True
+    deskew: bool = Field(
+        default=True,
+        description="Correct small scan angles before OCR; orthogonal rotation is controlled separately.",
+    )
     word_confidence_floor: float = Field(
         default=0.60, ge=0.0, le=1.0,
         description="Words below this confidence neither count toward page confidence nor act as witnesses.",
@@ -95,6 +99,8 @@ class OcrSettings(BaseModel):
         default=False,
         description="Run PaddleOCR's table recognition pipeline for cell structure (extra models, slower).",
     )
+    docling_table_mode: Literal["fast", "accurate"] = "accurate"
+    docling_cell_matching: bool = True
 
 
 class OcrBackend(ABC):

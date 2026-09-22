@@ -178,6 +178,32 @@ def test_label_value_pairs_are_neither_table_nor_columns():
     assert page.lines[0].text == "Invoice no: | 001"
 
 
+def test_borderless_two_column_numeric_rows_become_a_table():
+    words = []
+    for row, (item, amount) in enumerate(
+        [("Consulting", "1200.00"), ("Travel", "85.40"), ("Hosting", "19.00")]
+    ):
+        _put(words, item, 40, 100 + row * 20)
+        _put(words, amount, 520, 100 + row * 20)
+    table = _page(words).tables[0]
+    assert (table.rows, table.columns, table.detection) == (3, 2, "aligned")
+    assert table.grid()[1] == ["Travel", "85.40"]
+
+
+def test_wrapped_aligned_cell_is_joined_to_the_logical_row():
+    words = []
+    for text, x in zip(("Description", "Qty", "Total"), (20, 440, 620)):
+        _put(words, text, x, 100)
+    for text, x in zip(("Long consulting engagement", "2", "800.00"), (20, 440, 620)):
+        _put(words, text, x, 120)
+    _put(words, "including implementation support", 20, 140)
+    for text, x in zip(("Hosting", "1", "20.00"), (20, 440, 620)):
+        _put(words, text, x, 160)
+    table = _page(words).tables[0]
+    assert table.rows == 3
+    assert table.grid()[1] == ["Long consulting engagement\nincluding implementation support", "2", "800.00"]
+
+
 def test_ruled_table_hint_owns_its_words_with_spans():
     words = _put([], "Item", 30, 110)
     _put(words, "Amount", 330, 110)
@@ -202,6 +228,25 @@ def test_ruled_table_hint_owns_its_words_with_spans():
     assert spanning.column_span == 2
     # Every word appears exactly once in the serialized text.
     assert page.text.count("Consulting") == 1
+
+
+def test_backend_hint_preserves_wrapped_text_and_merged_spans():
+    words = _put([], "Quarterly report", 30, 110)
+    _put(words, "Net amount", 30, 155)
+    _put(words, "1200.00", 330, 155)
+    hint = TableHint(
+        x0=20, y0=100, x1=500, y1=190, detection="backend",
+        cells=[
+            CellHint(row=0, column=0, column_span=2, x0=20, y0=100, x1=500, y1=140,
+                     text="Quarterly\nreport"),
+            CellHint(row=1, column=0, x0=20, y0=140, x1=300, y1=190),
+            CellHint(row=1, column=1, x0=300, y0=140, x1=500, y1=190),
+        ],
+    )
+    table = _page(words, table_hints=[hint]).tables[0]
+    assert table.detection == "backend"
+    assert table.cells[0].text == "Quarterly\nreport"
+    assert table.cells[0].column_span == 2
 
 
 # ---- columns and reading order -------------------------------------------------

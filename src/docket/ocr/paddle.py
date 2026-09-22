@@ -31,6 +31,7 @@ from statistics import median
 
 from ..layout import PageLayout, RawWord, TableHint, build_page, cells_from_boxes
 from .base import BackendStatus, Capabilities, OcrBackend, OcrError
+from .deskew import deskew_image
 from .languages import UnknownLanguage, paddle_language
 from .source import PageSource
 
@@ -230,7 +231,8 @@ class PaddleOCRBackend(OcrBackend):
         status = self.availability()
         if not status.available:
             raise OcrError(f"PaddleOCR unavailable: {status.reason}")
-        bgr = np.ascontiguousarray(np.array(page.image())[:, :, ::-1])
+        image, deskew_angle = deskew_image(page.image()) if self.settings.deskew else (page.image(), 0.0)
+        bgr = np.ascontiguousarray(np.array(image)[:, :, ::-1])
         engine, lock = self._ocr()
         try:
             with lock:
@@ -257,6 +259,7 @@ class PaddleOCRBackend(OcrBackend):
             height=float(height),
             unit="px",
             rotation=rotation,
+            deskew_angle=deskew_angle,
             backend=self.name,
             confidence=page_confidence(result, self.settings.word_confidence_floor),
             words=words,

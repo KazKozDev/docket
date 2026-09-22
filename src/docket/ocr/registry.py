@@ -32,6 +32,7 @@ _BUILTIN: dict[str, str] = {
     "pdf_text": "docket.ocr.pdftext:PDFTextBackend",
     "tesseract": "docket.ocr.tesseract:TesseractBackend",
     "paddle": "docket.ocr.paddle:PaddleOCRBackend",
+    "docling": "docket.ocr.docling:DoclingBackend",
     "vlm": "docket.ocr.vlm:VlmBackend",
 }
 _REGISTRY: dict[str, Union[str, BackendFactory]] = dict(_BUILTIN)

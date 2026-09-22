@@ -72,7 +72,8 @@ A backend implements `OcrBackend` (`name`, `capabilities`, `availability()`,
 |---|---|---|---|---|---|
 | `pdf_text` | PDF text layer (pdfplumber) | – | yes | ruled (drawn borders) + aligned | glyph matrices |
 | `tesseract` | rendered page (`image_to_data`) | yes | yes | aligned | OSD |
-| `paddle` (optional extra) | rendered page, PaddleOCR 3.x | per line | yes | engine table pipeline (opt-in) + aligned | orientation classifier |
+| `paddle` (optional extra) | rendered page, PaddleOCR 3.x | per line | yes | engine table pipeline (opt-in) + aligned | orientation classifier + fine deskew |
+| `docling` (optional extra) | PDF or image, Docling + TableFormer | – | yes | backend cells, merged/wrapped + aligned | pipeline normalization |
 | `vlm` | rendered page, vision LLM | – | – | – | – |
 
 Backends are looked up by name in a registry; plugins register through the
@@ -99,6 +100,23 @@ Models download once to `~/.paddlex/official_models`; docket disables
 PaddleX's model-hoster connectivity probe so cached models load offline.
 Observed limit: the orientation classifier left a sparse page (three text
 lines) turned 90° uncorrected, where Tesseract OSD corrected it.
+
+### Docling and advanced layout
+
+`pip install "docket-idp[docling]"` enables the lazy `docling` backend. It
+uses Docling's standard PDF/image pipeline and TableFormer in `accurate` mode
+by default. `DOCKET_DOCLING_TABLE_MODE=fast` trades quality for throughput;
+`DOCKET_DOCLING_CELL_MATCHING=false` uses the structure model's own cells when
+matching them back to document text merges columns incorrectly. Docling cell
+offsets become `row_span` / `column_span`, embedded newlines remain wrapped
+cell text, and every table keeps normalized source boxes.
+
+The shared geometry pass also recognizes conservative borderless two-column
+numeric tables, while rejecting colon-ended label/value forms. Physical rows
+with fewer occupied bands are attached to the preceding logical cells. Raster
+OCR applies a projection-based fine deskew before recognition and records the
+clockwise correction as `PageLayout.deskew_angle`; 90-degree orientation stays
+in `PageLayout.rotation`.
 
 ### Per-page chain
 

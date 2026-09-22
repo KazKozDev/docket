@@ -169,6 +169,12 @@ class PageLayout(BaseModel):
     rotation: int = Field(
         default=0, description="Clockwise degrees the source was rotated to read upright."
     )
+    deskew_angle: float = Field(
+        default=0.0,
+        ge=-15.0,
+        le=15.0,
+        description="Fine clockwise correction in degrees, applied after orthogonal rotation.",
+    )
     backend: str = Field(description="OCR backend that produced this page.")
     confidence: float | None = Field(
         default=None,

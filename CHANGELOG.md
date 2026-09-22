@@ -23,6 +23,11 @@ top-level amount. Measured on the 17 golden scans (tesseract,
 
 ### Added
 
+- Optional Docling/TableFormer layout backend with `fast` / `accurate` modes,
+  cell matching control, wrapped cell text and merged row/column spans.
+- Fine-angle raster deskew with correction metadata, plus conservative
+  borderless two-column table detection and wrapped-row reconstruction.
+
 - Production review workflow backed by SQLite or PostgreSQL: transactional
   task leases, optimistic versions, append-only correction history and
   mandatory schema/business revalidation before approval.

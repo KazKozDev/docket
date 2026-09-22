@@ -60,7 +60,7 @@ def _print_json(data: object) -> None:
 def _add_processing_options(parser: argparse.ArgumentParser) -> None:
     ocr = parser.add_argument_group("OCR")
     ocr.add_argument("--ocr-backend", metavar="NAME",
-                     help="Primary OCR backend (tesseract, paddle, auto, or a plugin); default DOCKET_OCR_BACKEND")
+                     help="Primary OCR backend (tesseract, paddle, docling, auto, or a plugin); default DOCKET_OCR_BACKEND")
     ocr.add_argument("--ocr-fallback", action="append", metavar="NAME",
                      help="Fallback OCR backend, tried in order; repeat for more. Default DOCKET_OCR_FALLBACKS")
     ocr.add_argument("--no-ocr-fallback", action="store_true", help="Use no fallback backend at all")

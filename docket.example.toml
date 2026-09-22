@@ -46,6 +46,8 @@
 # Detect and undo page rotation on scans (Tesseract OSD). Env:
 # DOCKET_OCR_DETECT_ROTATION.
 # detect_rotation = true
+# Correct fine scan skew before raster OCR. Env: DOCKET_OCR_DESKEW.
+# deskew = true
 # Resolution PDF pages are rendered at for OCR. Env: DOCKET_OCR_DPI.
 # dpi = 200
 # Tesseract page-segmentation mode (3 automatic; 6 can suit dense tables). Env:
@@ -67,6 +69,12 @@
 # model = "mobile"
 # Run PaddleOCR's table-structure pipeline. Env: DOCKET_PADDLE_TABLES.
 # tables = false
+
+[docling]
+# TableFormer speed/quality mode. Env: DOCKET_DOCLING_TABLE_MODE.
+# table_mode = "accurate"
+# Match TableFormer cells back to recognized text. Env: DOCKET_DOCLING_CELL_MATCHING.
+# cell_matching = true
 
 [layout]
 # Keep page layouts (words, lines, tables with coordinates) in results. Env:
