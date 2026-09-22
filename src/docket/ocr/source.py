@@ -27,7 +27,14 @@ class UnsupportedDocument(ValueError):
 
 
 class DocumentSource:
-    def __init__(self, path: str | Path, *, dpi: int = 200, max_pages: int | None = None):
+    def __init__(
+        self,
+        path: str | Path,
+        *,
+        dpi: int = 200,
+        max_pages: int | None = None,
+        max_pixels: int | None = None,
+    ):
         self.path = Path(path)
         suffix = self.path.suffix.lower()
         if suffix in PDF_SUFFIXES:
@@ -39,6 +46,7 @@ class DocumentSource:
         else:
             raise UnsupportedDocument(f"Unsupported file type: {suffix or '(none)'}")
         self.dpi = dpi
+        self.max_pixels = max_pixels
         self._plumber: pdfplumber.PDF | None = None
         self._text_pages: list[str] | None = None
         self.page_count = self._count_pages()
@@ -49,9 +57,24 @@ class DocumentSource:
 
     def _count_pages(self) -> int:
         if self.kind == "pdf":
-            return len(self.plumber.pages)
+            pages = self.plumber.pages
+            if self.max_pixels is not None:
+                scale = self.dpi / 72
+                for page in pages:
+                    pixels = int(page.width * scale) * int(page.height * scale)
+                    if pixels > self.max_pixels:
+                        raise UnsupportedDocument(
+                            f"{self.path.name} page {page.page_number} renders to {pixels} pixels; "
+                            f"limit is {self.max_pixels}"
+                        )
+            return len(pages)
         if self.kind == "image":
             with Image.open(self.path) as image:
+                pixels = image.width * image.height
+                if self.max_pixels is not None and pixels > self.max_pixels:
+                    raise UnsupportedDocument(
+                        f"{self.path.name} contains {pixels} pixels; limit is {self.max_pixels}"
+                    )
                 return getattr(image, "n_frames", 1)
         return len(self.text_pages)
 

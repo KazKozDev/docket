@@ -153,6 +153,7 @@ def resolve(options: ProcessOptions | None = None) -> ResolvedOptions:
         min_confidence=_pick(ocr.min_confidence, config.OCR_MIN_CONFIDENCE),
         settings=settings,
         max_pages=config.MAX_PDF_PAGES,
+        max_pixels=config.MAX_IMAGE_PIXELS,
     )
     primary, fallbacks = resolve_chain(acquisition)
     acquisition = acquisition.model_copy(
