@@ -23,6 +23,17 @@ top-level amount. Measured on the 17 golden scans (tesseract,
 
 ### Added
 
+- CycloneDX release SBOMs covering runtime dependencies, optional extras and
+  bundled e-invoice artefacts, plus a CI gate against copyleft runtime packages.
+- Machine-readable PII categories on built-in schema fields and a public
+  `pii_fields()` helper that also traverses custom Pydantic schemas.
+- Security regression coverage for hostile prompt content, malformed and
+  oversized documents, and entity-expanding XML; library inputs now enforce
+  byte and decoded-pixel limits and return controlled acquisition errors.
+- README positioning now treats the Python package as the product, the CLI as
+  its supported interface, and service, web, desktop and Docker surfaces as
+  reference applications.
+
 - Optional Docling/TableFormer layout backend with `fast` / `accurate` modes,
   cell matching control, wrapped cell text and merged row/column spans.
 - Fine-angle raster deskew with correction metadata, plus conservative

@@ -99,6 +99,7 @@ from .einvoice import Profile as EInvoiceProfile
 from .errors import ConfigurationError
 from .options import OcrOptions, ProcessOptions, ReviewOptions
 from .pipeline import process_document
+from .pii import PiiCategory, PiiField, pii_fields
 from .result import (
     DocumentError,
     DocumentResult,
@@ -215,6 +216,9 @@ __all__ = [
     "PageLayout",
     "Party",
     "process_document",
+    "pii_fields",
+    "PiiCategory",
+    "PiiField",
     "ProcessingMetrics",
     "ProcessOptions",
     "PurchaseOrder",

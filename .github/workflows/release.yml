@@ -3,7 +3,7 @@ name: Release
 # Push a tag like v0.1.0 to publish:
 #   - wheel + sdist to PyPI (Trusted Publishing, no API token stored)
 #   - Docker image to ghcr.io/<owner>/docket:<version> and :latest
-#   - a GitHub Release with the built distributions attached
+#   - a GitHub Release with the distributions and CycloneDX SBOM attached
 on:
   push:
     tags: ["v*"]
@@ -23,6 +23,10 @@ jobs:
       - run: pip install build twine
       - run: python -m build
       - run: twine check dist/*
+      - name: Generate CycloneDX SBOM
+        run: |
+          pip install dist/*.whl
+          python scripts/generate_sbom.py --output dist/docket-${GITHUB_REF_NAME}.cdx.json
       - uses: actions/upload-artifact@v4
         with:
           name: dist

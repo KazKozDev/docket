@@ -44,19 +44,21 @@ class CitedDocument(BaseModel):
 
 
 class Address(BaseModel):
-    street: str | None = Field(default=None, description="Street and number, as printed.")
-    additional_line: str | None = Field(default=None, description="Building, floor, c/o, PO box.")
-    postal_code: str | None = None
-    city: str | None = None
-    region: str | None = Field(default=None, description="State, province or county.")
+    street: str | None = Field(default=None, description="Street and number, as printed.", json_schema_extra={"pii": "address"})
+    additional_line: str | None = Field(default=None, description="Building, floor, c/o, PO box.", json_schema_extra={"pii": "address"})
+    postal_code: str | None = Field(default=None, json_schema_extra={"pii": "address"})
+    city: str | None = Field(default=None, json_schema_extra={"pii": "address"})
+    region: str | None = Field(default=None, description="State, province or county.", json_schema_extra={"pii": "address"})
     country_code: str | None = Field(
         default=None,
         min_length=2,
         max_length=2,
         description="ISO 3166-1 alpha-2 code (DE, FR, US), if the country is stated or unambiguous.",
+        json_schema_extra={"pii": "address"},
     )
     text: str | None = Field(
-        default=None, description="The full address exactly as printed, when it can't be split reliably."
+        default=None, description="The full address exactly as printed, when it can't be split reliably.",
+        json_schema_extra={"pii": "address"},
     )
 
     @field_validator("country_code")
@@ -69,7 +71,7 @@ TaxScheme = Literal["vat", "tax_id", "gst", "company_registration", "other"]
 
 
 class TaxIdentifier(BaseModel):
-    value: str = Field(description="The identifier exactly as printed, e.g. 'DE123456789'.")
+    value: str = Field(description="The identifier exactly as printed, e.g. 'DE123456789'.", json_schema_extra={"pii": "tax_id"})
     scheme: TaxScheme = Field(
         default="tax_id",
         description=(
@@ -84,12 +86,12 @@ class TaxIdentifier(BaseModel):
 class Party(BaseModel):
     """A company or person the document names: seller, buyer, shipper, ..."""
 
-    name: str
+    name: str = Field(json_schema_extra={"pii": "person_name"})
     address: Address | None = None
     tax_ids: list[TaxIdentifier] = Field(default_factory=list)
-    contact_name: str | None = Field(default=None, description="Contact person or department, if printed.")
-    email: str | None = None
-    phone: str | None = None
+    contact_name: str | None = Field(default=None, description="Contact person or department, if printed.", json_schema_extra={"pii": "person_name"})
+    email: str | None = Field(default=None, json_schema_extra={"pii": "contact"})
+    phone: str | None = Field(default=None, json_schema_extra={"pii": "contact"})
     electronic_address: str | None = Field(
         default=None, description="E-invoicing endpoint (e.g. Peppol participant ID), if printed."
     )
@@ -134,10 +136,11 @@ class DocumentReference(BaseModel):
 
 
 class BankAccount(BaseModel):
-    iban: str | None = Field(default=None, description="IBAN, if stated.")
-    bic: str | None = Field(default=None, description="SWIFT/BIC code, if stated.")
+    iban: str | None = Field(default=None, description="IBAN, if stated.", json_schema_extra={"pii": "bank_account"})
+    bic: str | None = Field(default=None, description="SWIFT/BIC code, if stated.", json_schema_extra={"pii": "bank_account"})
     account_number: str | None = Field(
-        default=None, description="Non-IBAN account number (e.g. US/CA), if stated."
+        default=None, description="Non-IBAN account number (e.g. US/CA), if stated.",
+        json_schema_extra={"pii": "bank_account"},
     )
     bank_name: str | None = None
 
