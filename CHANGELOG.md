@@ -8,6 +8,13 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+### Changed
+
+- Review-queue persistence is now opt-in for the Python API. Set
+  `ReviewOptions(enqueue=True)` or `DOCKET_REVIEW_QUEUE_ENABLED=true` when the
+  transactional review workflow is wanted. Logs no longer include the OCR
+  quality model's evidence text.
+
 Line-item provenance: every row of every repeated list now carries source
 citations that are grounded, located on the page and validated like any
 top-level amount. Measured on the 17 golden scans (tesseract,

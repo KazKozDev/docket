@@ -9,6 +9,7 @@ tried and rejected first.
 from unittest.mock import patch
 
 from docket import config, ocr_quality
+from docket.logging_setup import JsonFormatter
 
 
 def _judge(response: dict):
@@ -75,3 +76,19 @@ def test_quality_check_does_not_ignore_the_end_of_a_long_document(monkeypatch):
     monkeypatch.setattr(ocr_quality, "chat_json", judge)
     assert ocr_quality.looks_garbled("x" * 3100 + "TAIL_GARBLED") is True
     assert len(prompts) == 2
+
+
+def test_quality_logs_do_not_include_document_evidence(monkeypatch, caplog):
+    secret = "customer account 123456"
+    monkeypatch.setattr(config, "OCR_QUALITY_MIN_CONFIDENCE", 0.7)
+    monkeypatch.setattr(
+        ocr_quality,
+        "chat_json",
+        lambda _prompt: {"unusable": True, "confidence": 0.9, "evidence": secret},
+    )
+
+    with caplog.at_level("INFO", logger="docket"):
+        assert ocr_quality.looks_garbled(secret)
+
+    rendered = "\n".join(JsonFormatter().format(record) for record in caplog.records)
+    assert secret not in rendered
