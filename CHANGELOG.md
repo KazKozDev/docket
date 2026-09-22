@@ -23,6 +23,11 @@ top-level amount. Measured on the 17 golden scans (tesseract,
 
 ### Added
 
+- Factur-X PDF/A-3 generation through the official `factur-x` engine, including
+  embedded `factur-x.xml`, AF relationship and Factur-X XMP metadata.
+- Structured veraPDF PDF/A-3 validation and strict generate -> extract ->
+  validate round trips in Python and `docket factur-x create|extract|validate`.
+
 - **Stage 4 vendor templates**: deterministic extraction for known vendor
   layouts through `VendorTemplate`, `FieldRule` and `ItemsRule`. Successful
   templates produce normal nested Pydantic documents and per-field/line-item
