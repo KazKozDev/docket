@@ -64,6 +64,11 @@ paddle = [
     "paddleocr>=3.0,<4",
     "paddlex[ocr]>=3.0,<4",
 ]
+# Docling layout pipeline and TableFormer. Models are downloaded by Docling
+# on first use; importing docket never imports this optional dependency.
+docling = [
+    "docling>=2.81,<3",
+]
 # Official e-invoice validation (XSD via lxml, Schematron via SaxonC-HE).
 # The validation artifacts themselves ship with the base package.
 einvoice = [

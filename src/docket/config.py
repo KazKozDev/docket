@@ -100,7 +100,7 @@ SETTINGS: tuple[Setting, ...] = (
             "Process-wide limit on simultaneous LLM requests.", minimum=1, maximum=256),
     # ---- OCR -----------------------------------------------------------------------
     Setting("OCR_BACKEND", "ocr.backend", "DOCKET_OCR_BACKEND", "str", "auto",
-            "Primary OCR backend: tesseract, paddle, auto (first installed) or a plugin name.", lower=True),
+            "Primary OCR backend: tesseract, paddle, docling, auto (first installed) or a plugin name.", lower=True),
     Setting("OCR_FALLBACKS", "ocr.fallbacks", "DOCKET_OCR_FALLBACKS", "list", ["vlm"],
             "Backends tried in order when a page's reading is rejected (env: comma-separated).", lower=True),
     Setting("OCR_LANGUAGES", "ocr.languages", "DOCKET_OCR_LANGUAGES", "list", ["en"],
@@ -109,6 +109,8 @@ SETTINGS: tuple[Setting, ...] = (
             "A page reading is accepted at this confidence (0..1).", minimum=0, maximum=1),
     Setting("OCR_DETECT_ROTATION", "ocr.detect_rotation", "DOCKET_OCR_DETECT_ROTATION", "bool", True,
             "Detect and undo page rotation on scans (Tesseract OSD)."),
+    Setting("OCR_DESKEW", "ocr.deskew", "DOCKET_OCR_DESKEW", "bool", True,
+            "Correct fine scan skew before raster OCR."),
     Setting("OCR_DPI", "ocr.dpi", "DOCKET_OCR_DPI", "int", 200,
             "Resolution PDF pages are rendered at for OCR.", minimum=72, maximum=600),
     Setting("TESSERACT_PSM", "ocr.tesseract_psm", "DOCKET_TESSERACT_PSM", "int", 3,
@@ -128,6 +130,10 @@ SETTINGS: tuple[Setting, ...] = (
             "PaddleOCR model size.", choices=("mobile", "medium"), lower=True),
     Setting("PADDLE_TABLES", "paddle.tables", "DOCKET_PADDLE_TABLES", "bool", False,
             "Run PaddleOCR's table-structure pipeline."),
+    Setting("DOCLING_TABLE_MODE", "docling.table_mode", "DOCKET_DOCLING_TABLE_MODE", "choice", "accurate",
+            "TableFormer speed/quality mode.", choices=("fast", "accurate"), lower=True),
+    Setting("DOCLING_CELL_MATCHING", "docling.cell_matching", "DOCKET_DOCLING_CELL_MATCHING", "bool", True,
+            "Match TableFormer cells back to recognized document text."),
     # ---- layout --------------------------------------------------------------------
     Setting("INCLUDE_LAYOUT", "layout.include", "DOCKET_INCLUDE_LAYOUT", "bool", True,
             "Keep page layouts (words, lines, tables with coordinates) in results."),
@@ -379,6 +385,7 @@ OCR_FALLBACKS: list[str]
 OCR_LANGUAGES: list[str]
 OCR_MIN_CONFIDENCE: float
 OCR_DETECT_ROTATION: bool
+OCR_DESKEW: bool
 OCR_DPI: int
 TESSERACT_PSM: int
 OCR_CONCURRENCY: int
@@ -387,6 +394,8 @@ OCR_QUALITY_MIN_CONFIDENCE: float
 PADDLE_DEVICE: str
 PADDLE_MODEL: str
 PADDLE_TABLES: bool
+DOCLING_TABLE_MODE: str
+DOCLING_CELL_MATCHING: bool
 INCLUDE_LAYOUT: bool
 LAYOUT_MARKERS: bool
 TFIDF_CONFIDENCE_FLOOR: float

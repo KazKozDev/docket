@@ -10,9 +10,9 @@ vendor templates — and deliberately conservative:
 - **Segments**: a horizontal gap wider than `GAP_FACTOR` × the page's median
   word height splits a row. Serialized, that gap becomes ` | `, which keeps
   quantities from sliding into neighbouring columns.
-- **Aligned tables**: two or more consecutive rows with ≥3 segments whose
-  segments line up in ≥3 shared column bands. Wrapped cell text on a row with
-  fewer segments is not merged back into the cell above.
+- **Aligned tables**: aligned runs with at least three columns, plus conservative
+  two-column numeric tables. A partial physical row is joined to the logical
+  cell above, preserving wrapped text with a newline.
 - **Ruled tables**: supplied by the backend (e.g. pdfplumber's cell borders);
   they win over aligned detection for the rows they cover.
 - **Text columns**: a vertical gutter free of ink across ≥4 consecutive rows,
@@ -25,6 +25,7 @@ Known limits are recorded in docs/ARCHITECTURE.md ("Layout analysis").
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from statistics import median
 
@@ -47,6 +48,7 @@ GAP_FACTOR = 1.5
 ROW_OVERLAP = 0.4
 MIN_TABLE_COLUMNS = 3
 MIN_TABLE_ROWS = 2
+MIN_TWO_COLUMN_ROWS = 3
 MIN_COLUMN_ROWS = 4
 MIN_COLUMN_TEXT_CHARS = 12
 MIN_COLUMN_WIDTH_SHARE = 0.20
@@ -267,7 +269,7 @@ def _find_aligned_tables(
     tables = []
     k = 0
     while k < len(rows):
-        if k in claimed or len(rows[k].segments) < MIN_TABLE_COLUMNS:
+        if k in claimed or len(rows[k].segments) < 2:
             k += 1
             continue
         run = [k]
@@ -276,21 +278,75 @@ def _find_aligned_tables(
         while j < len(rows) and j not in claimed:
             if rows[j].y0 - rows[run[-1]].y1 > TABLE_ROW_GAP * line_height:
                 break
-            if len(rows[j].segments) < 2:
-                break
+            if len(rows[j].segments) < len(bands or ()):
+                centers = [sum(_extent(seg, words)) / 2 for seg in rows[j].segments]
+                if not all(any(lo <= center <= hi for lo, hi in (bands or ())) for center in centers):
+                    break
             candidate = _aligned_columns([rows[r] for r in run] + [rows[j]], words)
-            if candidate is None or len(candidate) < MIN_TABLE_COLUMNS:
+            if candidate is None or len(candidate) != len(bands or ()):
                 break
             run.append(j)
             bands = candidate
             j += 1
-        full_rows = sum(1 for r in run if len(rows[r].segments) >= MIN_TABLE_COLUMNS)
-        if bands is not None and len(run) >= MIN_TABLE_ROWS and full_rows >= MIN_TABLE_ROWS:
+        full_rows = sum(1 for r in run if len(rows[r].segments) >= len(bands or ()))
+        regular = bands is not None and len(bands) >= MIN_TABLE_COLUMNS and full_rows >= MIN_TABLE_ROWS
+        two_column = bands is not None and len(bands) == 2 and _is_two_column_table(run, rows, words)
+        if len(run) >= MIN_TABLE_ROWS and (regular or two_column):
             tables.append((run, bands))
             k = j
         else:
             k += 1
     return tables
+
+
+_NUMBER = re.compile(r"^[\s$€£¥+-]*(?:\d[\d.,' ]*|\d+(?:[.,]\d+)?\s*%)[\sA-Z]{0,4}$")
+
+
+def _is_two_column_table(run: list[int], rows: list[_Row], words: list[RawWord]) -> bool:
+    """Admit common item/amount tables without swallowing form field/value lists."""
+    full = [rows[r] for r in run if len(rows[r].segments) == 2]
+    if len(full) < MIN_TWO_COLUMN_ROWS:
+        return False
+    left = [_segment_text(row.segments[0], words).strip() for row in full]
+    right = [_segment_text(row.segments[1], words).strip() for row in full]
+    if sum(text.endswith((':', '?')) for text in left) >= len(left) * 0.6:
+        return False
+    return max(
+        sum(bool(_NUMBER.fullmatch(text)) for text in left),
+        sum(bool(_NUMBER.fullmatch(text)) for text in right),
+    ) >= 2
+
+
+def _logical_aligned_cells(t: dict, rows: list[_Row], words: list[RawWord]) -> list[dict]:
+    cached = t.get("logical_cells")
+    if cached is not None:
+        return cached
+    bands = t["bands"]
+    logical: list[dict] = []
+    logical_row = -1
+    for r in t["run"]:
+        placed = []
+        for seg in rows[r].segments:
+            lo, hi = _extent(seg, words)
+            column = min(
+                range(len(bands)),
+                key=lambda k: abs(((lo + hi) / 2) - ((bands[k][0] + bands[k][1]) / 2)),
+            )
+            placed.append((column, seg))
+        is_continuation = logical_row >= 0 and len(placed) < len(bands)
+        if not is_continuation:
+            logical_row += 1
+        for column, seg in placed:
+            target = next(
+                (cell for cell in reversed(logical) if is_continuation and cell["row"] == logical_row and cell["column"] == column),
+                None,
+            )
+            if target is None:
+                logical.append({"row": logical_row, "column": column, "parts": [seg]})
+            else:
+                target["parts"].append(seg)
+    t["logical_cells"] = logical
+    return logical
 
 
 @dataclass
@@ -394,6 +450,7 @@ def build_page(
     backend: str,
     words: list[RawWord],
     rotation: int = 0,
+    deskew_angle: float = 0.0,
     confidence: float | None = None,
     table_hints: list[TableHint] | None = None,
 ) -> PageLayout:
@@ -406,6 +463,7 @@ def build_page(
             height=height,
             unit=unit,
             rotation=rotation,
+            deskew_angle=deskew_angle,
             backend=backend,
             confidence=confidence,
         )
@@ -582,6 +640,7 @@ def build_page(
         height=height,
         unit=unit,
         rotation=rotation,
+        deskew_angle=deskew_angle,
         backend=backend,
         confidence=confidence,
         words=word_models,
@@ -595,14 +654,19 @@ def build_page(
 
 def _table_lines(t: dict, rows: list[_Row], words: list[RawWord], t_index: int) -> list[_Line]:
     if "run" in t:
-        return [
-            _Line(
-                words=rows[r].words,
-                text=_join_segments(rows[r].segments, words),
-                table=t_index,
+        by_row: dict[int, list[dict]] = {}
+        for cell in _logical_aligned_cells(t, rows, words):
+            by_row.setdefault(cell["row"], []).append(cell)
+        out = []
+        for row_index in sorted(by_row):
+            cells = sorted(by_row[row_index], key=lambda cell: cell["column"])
+            members = [i for cell in cells for part in cell["parts"] for i in part]
+            text = " | ".join(
+                "\n".join(_segment_text(part, words) for part in cell["parts"])
+                for cell in cells
             )
-            for r in t["run"]
-        ]
+            out.append(_Line(words=members, text=text, table=t_index))
+        return out
     by_row: dict[int, list[tuple]] = {}
     for cell, members, text in t["cells"]:
         by_row.setdefault(cell.row, []).append((cell.column, members, text))
@@ -632,26 +696,25 @@ def _table_model(
     cells: list[TableCell] = []
     if "run" in t:
         bands = t["bands"]
-        for row_pos, r in enumerate(t["run"]):
-            for seg in rows[r].segments:
-                lo, hi = _extent(seg, words)
-                column = next(k for k, (blo, bhi) in enumerate(bands) if blo <= lo and hi <= bhi)
-                cells.append(
-                    TableCell(
-                        text=_segment_text(seg, words),
-                        bbox=BoundingBox.from_absolute(
-                            lo,
-                            min(words[i].y0 for i in seg),
-                            hi,
-                            max(words[i].y1 for i in seg),
-                            width,
-                            height,
-                        ),
-                        row=row_pos,
-                        column=column,
-                        word_ids=[word_id[i] for i in seg],
-                    )
+        logical = _logical_aligned_cells(t, rows, words)
+        for cell in logical:
+            members = [i for part in cell["parts"] for i in part]
+            cells.append(
+                TableCell(
+                    text="\n".join(_segment_text(part, words) for part in cell["parts"]),
+                    bbox=BoundingBox.from_absolute(
+                        min(words[i].x0 for i in members),
+                        min(words[i].y0 for i in members),
+                        max(words[i].x1 for i in members),
+                        max(words[i].y1 for i in members),
+                        width,
+                        height,
+                    ),
+                    row=cell["row"],
+                    column=cell["column"],
+                    word_ids=[word_id[i] for i in members],
                 )
+            )
         all_words = [i for r in t["run"] for i in rows[r].words]
         bbox = BoundingBox.from_absolute(
             min(words[i].x0 for i in all_words),
@@ -664,7 +727,7 @@ def _table_model(
         return Table(
             id=table_id,
             bbox=bbox,
-            rows=len(t["run"]),
+            rows=max((cell.row for cell in cells), default=0) + 1,
             columns=len(bands),
             cells=cells,
             detection="aligned",

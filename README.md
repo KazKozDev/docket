@@ -228,10 +228,12 @@ Every setting and its environment variable is in [`docket.example.toml`](https:/
 | `DOCKET_LLM_BASE_URL` / `DOCKET_LLM_API_KEY` | OpenAI / unset | Endpoint and key for `openai`, e.g. `https://api.mistral.ai/v1` (EU-hosted) |
 | `DOCKET_TEXT_MODEL` / `DOCKET_VISION_MODEL` | `deepseek-v4.1-flash:cloud` | Models for extraction and for reading scans |
 | `OLLAMA_HOST` | `http://localhost:11434` | Where Ollama is listening |
-| `DOCKET_OCR_BACKEND` | `auto` | Primary OCR backend: `tesseract`, `paddle`, `auto`, or a plugin name |
+| `DOCKET_OCR_BACKEND` | `auto` | Primary OCR backend: `tesseract`, `paddle`, `docling`, `auto`, or a plugin name |
 | `DOCKET_OCR_FALLBACKS` | `vlm` | Comma-separated backends tried when a page's reading is rejected |
 | `DOCKET_OCR_LANGUAGES` | `en` | ISO 639-1 codes, e.g. `en,de,fr,es,it` |
 | `DOCKET_PADDLE_DEVICE` / `DOCKET_PADDLE_MODEL` / `DOCKET_PADDLE_TABLES` | `cpu` / `mobile` / `false` | PaddleOCR device, model size (`mobile`, `medium`), table-structure pipeline |
+| `DOCKET_DOCLING_TABLE_MODE` / `DOCKET_DOCLING_CELL_MATCHING` | `accurate` / `true` | TableFormer quality mode and mapping predicted cells back to document text |
+| `DOCKET_OCR_DESKEW` | `true` | Correct fine scan skew before raster OCR |
 | `DOCKET_MIN_CONFIDENCE` | `0.55` | Classification confidence below which a document goes to review |
 | `DOCKET_REVIEW_QUEUE_ENABLED` | `true` | Write flagged documents to the transactional review queue |
 | `DOCKET_REVIEW_DATABASE_URL` | `sqlite:///data/review.db` | SQLite by default; use `postgresql+psycopg://...` with the `[postgres]` extra |
@@ -263,6 +265,7 @@ pip install docket-idp            # library + CLI
 pip install "docket-idp[api]"     # + HTTP service (docket-api)
 pip install "docket-idp[all]"     # + Langfuse tracing and e-invoice validation
 pip install "docket-idp[paddle]"  # + PaddleOCR backend (--ocr-backend paddle)
+pip install "docket-idp[docling]" # + Docling/TableFormer backend (--ocr-backend docling)
 pip install "docket-idp[einvoice]" # + official EN 16931 / Peppol / XRechnung / Factur-X validation
 ```
 
