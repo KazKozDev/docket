@@ -486,27 +486,33 @@ on the complete test invoice (`tests/test_einvoice.py`).
 ## 9a. E-invoice validation
 
 `docket.einvoice` (extra `[einvoice]`: lxml, saxonche) validates an
-e-invoice with the official artifacts, vendored in
-`src/docket/einvoice/resources/`:
+e-invoice with the official artifacts. Those with verified redistribution
+terms ship in `src/docket/einvoice/resources/`; the others are downloaded on
+request (`docket einvoice fetch`, `fetch_einvoice_resources()`) into the
+download root (`DOCKET_EINVOICE_DOWNLOADS`, default `~/.cache/docket/einvoice`):
 
-| Artifact | Version | License | Used for |
-|---|---|---|---|
-| KoSIT validator configuration | XRechnung 3.0.2, 2026-08-31 | Apache-2.0 (+ OASIS / UN/CEFACT schema terms) | UBL 2.1 and CII D16B XML Schemas |
-| CEN EN 16931 validation artefacts | 1.3.16 | EUPL-1.2 | EN 16931 Schematron, UBL and CII |
-| KoSIT XRechnung Schematron | 2.6.0 | Apache-2.0 | CIUS XRechnung (BR-DE-*) |
-| OpenPeppol BIS Billing 3.0 | 3.0.20 | no license file (see below) | Peppol rules, compiled from .sch with SchXslt 1.10.1 (MIT) |
-| Factur-X / ZUGFeRD | 1.09 (from the factur-x 6.8 package, BSD-2) | FNFE-MPE / FeRD, free download behind a form | profile XSD and Schematron, MINIMUM to EXTENDED |
+| Artifact | Version | License | Used for | Delivery |
+|---|---|---|---|---|
+| KoSIT validator configuration | XRechnung 3.0.2, 2026-08-31 | Apache-2.0 + OASIS notice | UBL 2.1 XML Schemas | shipped |
+| UN/CEFACT CII D16B schemas (from the KoSIT configuration) | D16B | not verified | CII XML Schemas | downloaded |
+| CEN EN 16931 validation artefacts | 1.3.16 | EUPL-1.2 | EN 16931 Schematron, UBL and CII | shipped |
+| KoSIT XRechnung Schematron | 2.6.0 | Apache-2.0 | CIUS XRechnung (BR-DE-*) | shipped |
+| OpenPeppol BIS Billing 3.0 | 3.0.20 | not verified | Peppol rules, compiled from .sch with SchXslt 1.10.1 (MIT) | downloaded |
+| Factur-X / ZUGFeRD | 1.09 (from the factur-x 6.8 package) | not verified | profile XSD and Schematron, MINIMUM to EXTENDED | downloaded |
 
-`resources/manifest.json` records every file's SHA-256, the archive URL and
-hash it came from, version and license; `artifacts.verify()` checks the
-installed copy. `scripts/update_einvoice_resources.py` downloads the pinned
+`resources/manifest.json` records every file's SHA-256 (null for the
+Peppol XSLT, which is compiled locally and vouched for by its hashed .sch),
+the archive URL and hash it came from, version, license and whether it is
+redistributable; `artifacts.verify()` checks the installed copy. The pinned
+sources live in `docket/einvoice/sources.py`, shared by the update script
+and `fetch.py`, which installs a download only after every file matches. `scripts/update_einvoice_resources.py` downloads the pinned
 archives (refusing a hash mismatch), extracts only what validation needs,
 compiles the Peppol Schematron and rewrites the manifest; test fixtures
 (official examples, the XRechnung test suite, Peppol's unit tests) go to
-`tests/fixtures/einvoice/official/`. To update: change the pinned URL and
-hash, rerun, run the tests, commit the diff. The Peppol and Factur-X
-artifacts ship without an explicit redistribution license; check that before
-distributing a build that contains them.
+`tests/fixtures/einvoice/official/` (`--fixtures-only` writes just those).
+The artifacts that are not redistributed, and Peppol's fixtures, are
+git-ignored and excluded from the wheel and sdist. To update: change the
+pinned URL and hash in `sources.py`, rerun, run the tests, commit the diff.
 
 `validate_einvoice(source, options)`:
 
@@ -534,7 +540,9 @@ Compiled stylesheets and schemas are cached per process behind a lock
 `docket validate-einvoice`, `POST /validate/einvoice` and
 `ExportOptions(validate_einvoice=True)`. Without the extra it raises
 `EInvoiceUnavailable`, a `ConfigurationError` (CLI exit 3, HTTP 503
-`einvoice_unavailable`).
+`einvoice_unavailable`); when the profile's artifacts are neither shipped nor
+downloaded it raises its subclass `EInvoiceResourcesMissing`, naming
+`docket einvoice fetch`, before reading anything further.
 
 The tests run all official examples of each artifact, all 227 cases of
 Peppol's own UBL unit suite (expected rule ids fire, expected successes

@@ -10,6 +10,16 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Changed
 
+- **Breaking for Peppol, CII and Factur-X validation:** the OpenPeppol BIS
+  Billing rules, the Factur-X schemas and Schematron and the UN/CEFACT CII
+  D16B schemas are no longer in the repository, wheel or sdist, because
+  their redistribution terms could not be verified. Run
+  `docket einvoice fetch` (or `fetch_einvoice_resources()`) once to download
+  them from their pinned upstream releases; every file is checked against
+  the manifest. Until then those profiles raise `EInvoiceResourcesMissing`,
+  an `EInvoiceUnavailable`. UBL EN 16931 and XRechnung validation work as
+  installed. New setting `DOCKET_EINVOICE_DOWNLOADS`.
+
 - Review-queue persistence is now opt-in for the Python API. Set
   `ReviewOptions(enqueue=True)` or `DOCKET_REVIEW_QUEUE_ENABLED=true` when the
   transactional review workflow is wanted. Logs no longer include the OCR

@@ -9,10 +9,13 @@ are all welcome.
 git clone https://github.com/KazKozDev/docket.git
 cd docket && python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
+docket einvoice fetch                                        # Peppol, CII, Factur-X artifacts
+python scripts/update_einvoice_resources.py --fixtures-only  # Peppol's test fixtures
 pytest
 ```
 
-Tesseract must be on PATH. No test needs a running LLM: mock `llm_client`
+The two fetch steps need network access once; the e-invoice artifacts and
+fixtures they download are git-ignored and must not be committed. Tesseract must be on PATH. No test needs a running LLM: mock `llm_client`
 calls with `monkeypatch`, as the existing tests do.
 
 ## Pull requests
@@ -52,7 +55,8 @@ say), publish a plugin package instead; see `examples/exporter_plugin/`.
 2. Commit, then `git tag vX.Y.Z && git push --tags`.
 3. The `Release` workflow publishes to PyPI and GHCR and creates the GitHub
    release. It also attaches a CycloneDX SBOM whose components distinguish
-   runtime dependencies, optional extras and vendored e-invoice artefacts.
+   runtime dependencies, optional extras, shipped e-invoice artefacts and
+   the ones downloaded on request.
 
 CI installs the built wheel in a clean environment and rejects GPL, AGPL and
 LGPL runtime dependencies. Keep such tools in the development extra only.
