@@ -1,6 +1,7 @@
 """Check UBL invoices against Peppol BIS Billing 3.0 (or plain EN 16931).
 
     pip install "docket-idp[einvoice]"
+    docket einvoice fetch        # once: the Peppol rules are not shipped
     python examples/validate_peppol.py invoices/*.xml
     python examples/validate_peppol.py --en16931 invoice.xml    # core rules only
 
