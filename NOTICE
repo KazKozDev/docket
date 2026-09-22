@@ -11,10 +11,10 @@ This product includes third-party electronic-invoice validation artefacts:
   licensed under EUPL 1.2.
 - OASIS Universal Business Language 2.1 schemas, copyright OASIS Open 2013.
   The OASIS notice and permissions are preserved with the distribution.
-- UN/CEFACT CII D16B schemas published by UNECE.
-- Peppol BIS Billing 3.0 validation rules published by OpenPeppol.
-- Factur-X validation artefacts published by FNFE-MPE and FeRD, obtained from
-  the BSD-3-Clause `factur-x` Python distribution by Alexis de Lattre.
+
+It does not include the UN/CEFACT CII D16B schemas, the Peppol BIS Billing
+3.0 rules or the Factur-X (FNFE-MPE / FeRD) artefacts: `docket einvoice
+fetch` downloads them from their publishers on the user's request.
 
 Full available notices are under
 `docket/einvoice/resources/licenses/`. See `docs/THIRD_PARTY_LICENSES.md` for

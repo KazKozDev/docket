@@ -113,6 +113,16 @@ where = ["src"]
 [tool.setuptools.package-data]
 docket = ["py.typed", "einvoice/resources/**/*", "static/**/*"]
 
+# Present in a development checkout after scripts/update_einvoice_resources.py,
+# but never shipped: users download them with `docket einvoice fetch`.
+[tool.setuptools.exclude-package-data]
+docket = [
+    "einvoice/resources/peppol/*",
+    "einvoice/resources/peppol/**/*",
+    "einvoice/resources/factur-x/**/*",
+    "einvoice/resources/cii-d16b/**/*",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = [

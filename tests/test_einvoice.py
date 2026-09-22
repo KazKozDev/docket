@@ -9,6 +9,7 @@ from __future__ import annotations
 import copy
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pypdfium2 as pdfium
 import pytest
@@ -17,12 +18,14 @@ from lxml import etree
 from docket import cli
 from docket.catalog import CreditNote, Invoice
 from docket.einvoice import (
+    EInvoiceResourcesMissing,
     EInvoiceUnavailable,
     EInvoiceValidationOptions,
     PdfAValidationResult,
     Profile,
     artifacts,
     extract_facturx_xml,
+    fetch,
     generate_facturx_pdf,
     validate_pdfa,
     validate_einvoice,
@@ -62,6 +65,10 @@ def peppol_invoice() -> Invoice:
 
 def invoice_for(fmt: str) -> Invoice:
     return peppol_invoice() if fmt == "peppol" else complete_invoice()
+
+
+def xml_for(fmt: str) -> bytes:
+    return export_document(invoice_for(fmt), fmt).content.encode()
 
 
 def credit_note() -> CreditNote:
@@ -171,7 +178,7 @@ PEPPOL_UNIT = list(_peppol_unit_cases())
 
 
 def test_peppol_unit_suite_is_complete():
-    assert len(PEPPOL_UNIT) == 227
+    assert len(PEPPOL_UNIT) == 227, "run scripts/update_einvoice_resources.py --fixtures-only"
 
 
 @pytest.mark.parametrize("xml, success, failing, warning", PEPPOL_UNIT)
@@ -392,7 +399,7 @@ def test_vendored_artifacts_match_their_manifest():
     assert artifacts.verify() == []
     manifest = artifacts.manifest()
     ids = {entry["id"] for entry in manifest["artifacts"]}
-    assert {"kosit-configuration", "en16931-ubl", "en16931-cii", "xrechnung-schematron",
+    assert {"kosit-configuration", "uncefact-cii-d16b", "en16931-ubl", "en16931-cii", "xrechnung-schematron",
             "peppol-bis-billing", "factur-x"} <= ids
     for entry in manifest["artifacts"]:
         assert entry["version"] and entry["license"] and entry["url"].startswith("https://")
@@ -420,6 +427,85 @@ def test_tampered_artifact_is_detected(tmp_path, monkeypatch):
     target.write_text(target.read_text() + "<!-- edited -->")
     monkeypatch.setattr(artifacts.config, "EINVOICE_RESOURCES", str(copy_root))
     assert artifacts.verify() == ["checksum mismatch: en16931/EN16931-UBL-validation.xslt (en16931-ubl)"]
+
+
+# ---- artifacts Docket does not ship ------------------------------------------------------------
+
+RESTRICTED = ("uncefact-cii-d16b", "peppol-bis-billing", "factur-x")
+
+
+def test_only_artifacts_with_verified_terms_are_shipped():
+    shipped = {e["id"] for e in artifacts.manifest()["artifacts"] if artifacts.redistributable(e)}
+    assert not shipped & set(RESTRICTED)
+    assert set(fetch.downloadable()) == set(RESTRICTED)
+
+
+@pytest.fixture
+def shipped_only(tmp_path, monkeypatch):
+    """A resource root with only what the wheel ships, and an empty download root."""
+    import shutil
+
+    restricted_dirs = {relative.split("/")[0] for a in RESTRICTED for relative in artifacts.artifact(a)["files"]}
+    # Where this checkout has them (resources or downloads), for _install_from_checkout.
+    originals = {r: artifacts.path(r) for a in RESTRICTED for r in artifacts.artifact(a)["files"]}
+    root = tmp_path / "resources"
+    shutil.copytree(artifacts.root(), root, ignore=lambda d, names: [n for n in names if n in restricted_dirs])
+    downloads = tmp_path / "downloads"
+    monkeypatch.setattr(artifacts.config, "EINVOICE_RESOURCES", str(root))
+    monkeypatch.setattr(artifacts.config, "EINVOICE_DOWNLOADS", str(downloads))
+    return SimpleNamespace(downloads=downloads, originals=originals)
+
+
+def test_profiles_without_downloads_name_the_fetch_command(shipped_only):
+    assert validate_einvoice(xml_for("ubl")).valid  # shipped: works as installed
+    assert artifacts.verify() == []
+    for fmt in ("peppol", "xrechnung-cii", "factur-x-en16931"):
+        with pytest.raises(EInvoiceResourcesMissing, match="docket einvoice fetch"):
+            validate_einvoice(xml_for(fmt))
+    assert issubclass(EInvoiceResourcesMissing, EInvoiceUnavailable)
+
+
+def _install_from_checkout(monkeypatch, originals: dict, corrupt: str | None = None):
+    """Stand in for the network: install an artifact's files from this checkout."""
+
+    def install(source, dest_root, cache=None, fixtures_root=None):
+        written = []
+        for relative in artifacts.artifact(source["id"])["files"]:
+            target = dest_root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            data = originals[relative].read_bytes()
+            target.write_bytes(data + b"<!-- edited -->" if relative == corrupt else data)
+            written.append(target)
+        return written
+
+    monkeypatch.setattr(fetch.sources, "install", install)
+
+
+def test_fetch_installs_verified_artifacts(shipped_only, monkeypatch):
+    _install_from_checkout(monkeypatch, shipped_only.originals)
+    assert fetch.fetch_einvoice_resources() == list(RESTRICTED)
+    assert artifacts.missing(RESTRICTED) == []
+    assert artifacts.verify() == []
+    assert validate_einvoice(xml_for("factur-x-en16931")).valid
+    assert fetch.fetch_einvoice_resources() == []  # present and intact
+
+
+def test_fetch_refuses_files_that_do_not_match_the_manifest(shipped_only, monkeypatch):
+    _install_from_checkout(monkeypatch, shipped_only.originals, corrupt="factur-x/basic/Factur-X_BASIC.xsd")
+    with pytest.raises(artifacts.ArtifactError, match="does not match the manifest"):
+        fetch.fetch_einvoice_resources(["factur-x"])
+    assert not (shipped_only.downloads / "factur-x").exists()
+
+
+def test_cli_einvoice_status_and_fetch(shipped_only, monkeypatch, capsys):
+    _install_from_checkout(monkeypatch, shipped_only.originals)
+    cli.main(["einvoice", "status"])
+    assert "peppol-bis-billing" in capsys.readouterr().out
+    cli.main(["einvoice", "fetch", "peppol-bis-billing"])
+    out = capsys.readouterr().out
+    assert "upstream terms apply" in out and "downloaded: peppol-bis-billing" in out
+    cli.main(["einvoice", "status"])
+    assert "downloaded" in capsys.readouterr().out
 
 
 def test_missing_extra_is_a_configuration_error(monkeypatch):

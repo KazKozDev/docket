@@ -9,6 +9,7 @@
     docket ocr-backends
     docket forensics FILE
     docket validate-einvoice FILE [--profile PROFILE] [--format text|json]
+    docket einvoice status | fetch [ARTIFACT ...] [--force]
     docket factur-x create PDF XML --output PDF [--level LEVEL] [--verapdf PATH]
     docket factur-x extract PDF --output XML
     docket factur-x validate PDF [--xml XML] [--verapdf PATH] [--format text|json]
@@ -30,6 +31,7 @@ Exit codes:
   2  every document failed (for `process`: the document failed)
   3  configuration error — nothing was processed
 For `validate-einvoice`: 0 valid, 2 invalid, 3 configuration error.
+For `einvoice fetch`: 0 downloaded or already present, 2 download failed.
 For `forensics`: 0 nothing found, 2 empty template or alteration detected.
 For `config check`: 0 valid, 3 invalid.
 """
@@ -297,6 +299,31 @@ def _cmd_validate_einvoice(args: argparse.Namespace) -> int:
     return EXIT_OK if report.valid else EXIT_FAILED
 
 
+def _cmd_einvoice(args: argparse.Namespace) -> int:
+    from .einvoice import artifacts
+    from .einvoice.fetch import downloadable, fetch_einvoice_resources
+
+    if args.action == "fetch":
+        wanted = args.artifact or downloadable()
+        print(f"Downloading {', '.join(wanted)} from their official upstream releases into "
+              f"{artifacts.download_root()}; their upstream terms apply (docs/THIRD_PARTY_LICENSES.md).")
+        try:
+            fetched = fetch_einvoice_resources(wanted, force=args.force)
+        except artifacts.ArtifactError as exc:
+            print(f"Download failed: {exc}", file=sys.stderr)
+            return EXIT_FAILED
+        print(f"downloaded: {', '.join(fetched) or 'nothing, all present'}")
+        return EXIT_OK
+    for entry in artifacts.manifest()["artifacts"]:
+        if not entry["files"]:
+            continue
+        shipped = artifacts.redistributable(entry)
+        state = "shipped" if shipped else ("missing" if artifacts.missing([entry["id"]]) else "downloaded")
+        print(f"{entry['id']:22} {state:10} {entry['version']}")
+    print(f"download root: {artifacts.download_root()}")
+    return EXIT_OK
+
+
 def _cmd_factur_x(args: argparse.Namespace) -> int:
     from .einvoice import (
         extract_facturx_xml,
@@ -440,6 +467,15 @@ def build_parser() -> argparse.ArgumentParser:
                           help="Validate as this profile; default: the one the document declares")
     einvoice.add_argument("--format", choices=["text", "json"], default="text")
     einvoice.set_defaults(func=_cmd_validate_einvoice)
+
+    einvoice_resources = commands.add_parser(
+        "einvoice", help="Show or download the e-invoice validation artifacts Docket does not ship")
+    einvoice_actions = einvoice_resources.add_subparsers(dest="action", required=True)
+    einvoice_actions.add_parser("status", help="Which artifacts are shipped, downloaded or missing")
+    ei_fetch = einvoice_actions.add_parser("fetch", help="Download Peppol, CII D16B and Factur-X artifacts")
+    ei_fetch.add_argument("artifact", nargs="*", help="Artifact ids (default: every one not shipped)")
+    ei_fetch.add_argument("--force", action="store_true", help="Download again even when present and intact")
+    einvoice_resources.set_defaults(func=_cmd_einvoice)
 
     factur_x = commands.add_parser("factur-x", help="Create, extract or validate a Factur-X PDF/A-3 document")
     factur_x_actions = factur_x.add_subparsers(dest="action", required=True)

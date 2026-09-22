@@ -2,11 +2,15 @@
 and Factur-X / ZUGFeRD, with the published XML Schemas and Schematron.
 
 Needs `pip install "docket-idp[einvoice]"`; see validator.py and artifacts.py.
+Peppol, CII and Factur-X validation also need `fetch_einvoice_resources()`
+once (fetch.py).
 """
 from .artifacts import ArtifactError
+from .fetch import fetch_einvoice_resources
 from .validator import (
     PROFILE_IDS,
     EInvoiceIssue,
+    EInvoiceResourcesMissing,
     EInvoiceUnavailable,
     EInvoiceValidationOptions,
     EInvoiceValidationResult,
@@ -29,6 +33,7 @@ from .facturx_pdf import (
 __all__ = [
     "ArtifactError",
     "EInvoiceIssue",
+    "EInvoiceResourcesMissing",
     "EInvoiceUnavailable",
     "EInvoiceValidationOptions",
     "EInvoiceValidationResult",
@@ -36,6 +41,7 @@ __all__ = [
     "PROFILE_IDS",
     "Profile",
     "available",
+    "fetch_einvoice_resources",
     "validate_einvoice",
     "FacturXPdfUnavailable",
     "FacturXRoundTripResult",

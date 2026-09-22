@@ -11,20 +11,17 @@
   "artifacts": [
     {
       "id": "kosit-configuration",
-      "name": "KoSIT validator configuration for XRechnung (UBL 2.1 and UN/CEFACT CII D16B XML Schemas)",
+      "name": "KoSIT validator configuration for XRechnung (OASIS UBL 2.1 XML Schemas)",
       "version": "XRechnung 3.0.2, release 2026-08-31",
       "url": "https://github.com/itplr-kosit/validator-configuration-xrechnung/releases/download/v2026-08-31/xrechnung-3.0.2-validator-configuration-2026-08-31.zip",
       "sha256": "2530cd107c414511c5d0462ec10f886910395abfca820db82e83d70bf01221a8",
-      "license": "Apache-2.0 (configuration); OASIS UBL 2.1 notice; UN/CEFACT D16B redistribution terms not located",
+      "license": "Apache-2.0 (configuration); OASIS UBL 2.1 notice",
       "license_files": [
         "licenses/Apache-2.0.txt",
         "licenses/OASIS-UBL-2.1.txt"
       ],
+      "redistributable": true,
       "files": {
-        "cii-d16b/xsd/CrossIndustryInvoice_100pD16B.xsd": "3baf143b90f289d62c5dfb086aa51fa183490a2d0b38a40c6b31dcae0760f2ba",
-        "cii-d16b/xsd/CrossIndustryInvoice_QualifiedDataType_100pD16B.xsd": "6649215914728652e883662bec1d3eab008c215e86a59f3bb417db9723ee8c5c",
-        "cii-d16b/xsd/CrossIndustryInvoice_ReusableAggregateBusinessInformationEntity_100pD16B.xsd": "1c42244298a863bcc0b5196983ff0a5d084fcabe58aea77ef82b242e7cd0ddfd",
-        "cii-d16b/xsd/CrossIndustryInvoice_UnqualifiedDataType_100pD16B.xsd": "04fce6f6f28521886731294be18a4e6bb5cb3003456457d99ad5c4d3e652f497",
         "ubl-2.1/xsd/common/CCTS_CCT_SchemaModule-2.1.xsd": "dd546e4809df86b6445589f69f0d6c9df162840ae386574ddfc1da7638103e15",
         "ubl-2.1/xsd/common/UBL-CommonAggregateComponents-2.1.xsd": "580b5af6f68f7f556bd15945ba0e819cbf561442c81694f9b9468036ebedec4d",
         "ubl-2.1/xsd/common/UBL-CommonBasicComponents-2.1.xsd": "a3b349bf92e5cff26e303d2f05b7e00c884dcafcfd9e12755fb80289abf5e22e",
@@ -44,6 +41,22 @@
       }
     },
     {
+      "id": "uncefact-cii-d16b",
+      "name": "UN/CEFACT Cross Industry Invoice D16B XML Schemas, as distributed in the KoSIT XRechnung configuration",
+      "version": "D16B (KoSIT release 2026-08-31)",
+      "url": "https://github.com/itplr-kosit/validator-configuration-xrechnung/releases/download/v2026-08-31/xrechnung-3.0.2-validator-configuration-2026-08-31.zip",
+      "sha256": "2530cd107c414511c5d0462ec10f886910395abfca820db82e83d70bf01221a8",
+      "license": "UNKNOWN: no UN/CEFACT D16B redistribution grant located",
+      "license_files": [],
+      "redistributable": false,
+      "files": {
+        "cii-d16b/xsd/CrossIndustryInvoice_100pD16B.xsd": "3baf143b90f289d62c5dfb086aa51fa183490a2d0b38a40c6b31dcae0760f2ba",
+        "cii-d16b/xsd/CrossIndustryInvoice_QualifiedDataType_100pD16B.xsd": "6649215914728652e883662bec1d3eab008c215e86a59f3bb417db9723ee8c5c",
+        "cii-d16b/xsd/CrossIndustryInvoice_ReusableAggregateBusinessInformationEntity_100pD16B.xsd": "1c42244298a863bcc0b5196983ff0a5d084fcabe58aea77ef82b242e7cd0ddfd",
+        "cii-d16b/xsd/CrossIndustryInvoice_UnqualifiedDataType_100pD16B.xsd": "04fce6f6f28521886731294be18a4e6bb5cb3003456457d99ad5c4d3e652f497"
+      }
+    },
+    {
       "id": "en16931-ubl",
       "name": "CEN EN 16931 validation artefacts, UBL syntax",
       "version": "1.3.16",
@@ -53,6 +66,7 @@
       "license_files": [
         "licenses/EUPL-1.2.txt"
       ],
+      "redistributable": true,
       "files": {
         "en16931/EN16931-UBL-validation.xslt": "39f9d282867f1a49e7708d9e29a53da89643e1ee56f10cec1ebcf1277595fcbd"
       }
@@ -67,6 +81,7 @@
       "license_files": [
         "licenses/EUPL-1.2.txt"
       ],
+      "redistributable": true,
       "files": {
         "en16931/EN16931-CII-validation.xslt": "0b234dea2bbfee739b7761e607a992c17fab88773014ef56355b6158cfb1cc53"
       }
@@ -81,6 +96,7 @@
       "license_files": [
         "licenses/Apache-2.0.txt"
       ],
+      "redistributable": true,
       "files": {
         "xrechnung/LICENSE": "57e93bb611b8aeb93ff0f23b271a23291217b0016f6e66297dfd5e9467538a5f",
         "xrechnung/XRechnung-CII-validation.xsl": "30e64d8bddf0bebded89e2bedab0b4856f0c4f1e852bd303e1957a7d627c0e6c",
@@ -94,6 +110,7 @@
       "url": "https://github.com/itplr-kosit/xrechnung-testsuite/releases/download/v2026-08-31/xrechnung-3.0.2-testsuite-2026-08-31.zip",
       "sha256": "1e81ef7563e0fa04c0e0b0631318a7e0843a3c0beb57d83ef95ac0c4a095e3d7",
       "license": "Apache-2.0",
+      "redistributable": true,
       "files": {}
     },
     {
@@ -104,11 +121,12 @@
       "sha256": "4c43040f0654abd789bb0c9a2ffbb9e795acd94f20282af8ca1db3dda832f656",
       "license": "UNKNOWN: no license or redistribution grant located in the v3.0.20 repository",
       "license_files": [],
+      "redistributable": false,
       "files": {
         "peppol/PEPPOL-EN16931-CII.sch": "a15bea71add713a425f0fab0043fdd5b03d54a62d27c4252ed6d8a4863da218d",
-        "peppol/PEPPOL-EN16931-CII.xsl": "d80c86adf8a15ed7fefb4124d1cf7d88f7933af5f2a5ec48a3a058554a4470cb",
+        "peppol/PEPPOL-EN16931-CII.xsl": null,
         "peppol/PEPPOL-EN16931-UBL.sch": "5ddf3a2f6633147b20b7805df9902d825af1a984f10014fcee186d4170364b1d",
-        "peppol/PEPPOL-EN16931-UBL.xsl": "f60890e1d90e07a254a448e4a87abf90a930181d9734645ab68a9ff5d6bd7b5b"
+        "peppol/PEPPOL-EN16931-UBL.xsl": null
       }
     },
     {
@@ -118,9 +136,8 @@
       "url": "https://files.pythonhosted.org/packages/37/be/9a9020187e4805d61668b5d8c4c263731b3697f9eba2aa6a689d3e7eea4b/factur_x-6.8-py3-none-any.whl",
       "sha256": "02b57dd57f59d0cdd87f034a538bf30a4b9241a72a19cd75fe1538233163ee15",
       "license": "UNKNOWN: FNFE-MPE / FeRD artefact redistribution terms not located; source package is BSD-3-Clause",
-      "license_files": [
-        "licenses/BSD-3-Clause-factur-x.txt"
-      ],
+      "license_files": [],
+      "redistributable": false,
       "files": {
         "factur-x/basic/FACTUR-X_BASIC_codedb.xml": "2c3b0f04ab30c5c6632bb3966d53481ebc7222d6e0394cf0ce78aa9090cf0da2",
         "factur-x/basic/Factur-X_1.09_BASIC.xsl": "75855eb72fe605130dcc9b4c6e4b182fc7d157becbb24ede364e0356ab298b5d",
