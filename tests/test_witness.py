@@ -319,9 +319,14 @@ def test_decimal_comma_amounts_make_ambiguous_dates_day_first():
 
     french = "[PAGE 1]\nAvoir n° AV-2026-031\nDate : 03/09/2026\nTotal TTC : 484,80 €"
     assert _document_date_convention(french) == "dmy"
-    assert _document_date_convention("Invoice date 03/09/2026\nTotal: $1,800.00") is None
+    assert _document_date_convention("Invoice date 03/09/2026\nTotal: $1,800.00") == "mdy"  # dollar sign: US
     assert _document_date_convention("Date 03/09/2026\nTotal 1.278,00 and 12.50") is None  # mixed: undecided
     assert _document_date_convention("Invoice date 12/31/2026\nTotal 404,00") == "mdy"  # dates win
+    # The dollar sign outranks the decimal comma: US-style invoices that print
+    # comma amounts (the donut corpus: "$ 889,20") write month-first dates, and
+    # their ambiguous dates came back day-first — five silent wrong answers.
+    assert _document_date_convention("Date 06/02/2015\nTotal $ 889,20") == "mdy"
+    assert _document_date_convention("Date 06/02/2015\nTotal AU$ 889.20") is None  # AU$ is day-first: abstain
 
     misread = _invoice(issue_date=date(2026, 3, 9), due_date=None)
     flagged = {i.field for i in validate(misread, french) if "convention" in i.message}

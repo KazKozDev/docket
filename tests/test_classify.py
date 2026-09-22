@@ -45,6 +45,31 @@ def test_classifies_receipt_by_rules():
     assert result.method == "rules"
 
 
+def test_tax_invoice_header_does_not_score_for_the_plain_invoice():
+    """"TAX INVOICE" contains "invoice", so the invoice schema scored its
+    own 3.0 off the tax invoice's header — and with "Bill To" won outright
+    on Malaysian till receipts (found by the extended benchmark: 19/120
+    SROIE docs went to invoice this way)."""
+    result = classify_rules("TAX INVOICE\nBill To: SOMEONE\nTotal GST 10.64")
+    assert result is None or result.doc_type != "invoice"
+
+
+def test_till_receipt_printed_as_tax_invoice_stays_a_receipt():
+    """The SROIE corpus: cash-register slips with a legal TAX INVOICE header.
+    Till signals (cashier, approval code, please come again) must outweigh
+    the header for the rules tier."""
+    till = (
+        "OJC MARKETING SDN BHD\n"
+        "TAX INVOICE\n"
+        "Cashier: NG CHUAN MIN\n"
+        "Approval Code: 00318\n"
+        "Goods sold are not returnable.\n"
+        "Thank you. Please come again.\n"
+    )
+    result = classify_rules(till)
+    assert result is not None and result.doc_type == "receipt"
+
+
 def test_classifies_contract_by_rules():
     result = classify(CONTRACT_TEXT)
     assert result.doc_type == "contract"
