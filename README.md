@@ -118,6 +118,38 @@ register_schema(SchemaSpec(
 
 Registered schemas are classified, extracted, citation-checked and exported like the built-in ones; give `examples=` sentences and the TF-IDF tier learns them too. A model can also be used without registering it: `ProcessOptions(schema_model=ParkingTicket)` or `docket process file.pdf --schema mypkg.models:ParkingTicket`. `add_validator("invoice", fn)` adds rules to any schema, and the `docket.schemas` entry point lets a separate package ship schemas. See [`examples/custom_document_type.py`](https://github.com/KazKozDev/docket/blob/master/examples/custom_document_type.py) and [`examples/schema_plugin/`](https://github.com/KazKozDev/docket/blob/master/examples/schema_plugin/).
 
+## Vendor templates
+
+Known vendor layouts can bypass LLM extraction entirely. A `VendorTemplate`
+matches a vendor, reads fields with explicit rules, reads line items from the
+detected table, and emits the same citations as model extraction. Docket only
+accepts the template result when normal schema and business validation pass;
+otherwise it falls back to the configured extraction model.
+
+```python
+from docket import FieldRule, VendorTemplate, register_vendor_template
+
+register_vendor_template(VendorTemplate(
+    template_id="acme-invoice",
+    schema_id="invoice",
+    issuer=("ACME Supplies",),
+    fields=(
+        FieldRule(field="invoice_number", label="Invoice No", value=r"Invoice No:?\s*(\S+)"),
+        FieldRule(field="total_amount", label="Total", value=r"Total:?\s*([\d.,]+)"),
+    ),
+))
+```
+
+`docket templates list` and `GET /vendor-templates` show the active registry;
+`docket templates show ID` and `GET /vendor-templates/{id}` expose the exact
+rules. `result.metrics.template_id` records a successful deterministic read.
+Two fictional golden-corpus vendors ship as executable examples; production
+vendor knowledge belongs in application code or a package that registers its
+templates at startup. On the 198-scan extended corpus those two examples match
+and pass validation on exactly their two documents (2/198, no false template
+matches); the intentionally small hit rate is not presented as generic vendor
+coverage.
+
 ## Export formats
 
 | Format | Name | Checked against |

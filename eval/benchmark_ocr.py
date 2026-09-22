@@ -228,6 +228,7 @@ def run_pipeline(name: str, docs: list[tuple[Path, dict]]) -> dict:
             "vlm_pages": vlm_pages,
             "escalated_to_vlm": result.metrics.escalated_to_vlm,
             "llm_calls": result.metrics.llm_calls,
+            "template_id": result.metrics.template_id,
         })
         print(f"  {name:14} {path.name:36} {'ok' if rows[-1]['success'] else 'FAIL':4} "
               f"fields {correct}/{total} items {items['correct']}/{items['expected']} "
@@ -253,6 +254,7 @@ def summarize(rows: list[dict]) -> dict:
     # so the rate is taken over the silent successes only.
     silent = [r for r in rows if r["status"] == "succeeded" and not r["needs_review"]]
     false_successes = [r for r in silent if not r["success"]]
+    templated = [r for r in rows if r.get("template_id")]
     return {
         "documents": n,
         "document_success_rate": round(sum(r["success"] for r in rows) / n, 4) if n else None,
@@ -270,6 +272,14 @@ def summarize(rows: list[dict]) -> dict:
         "vlm_document_share": round(sum(1 for r in rows if r["vlm_pages"] or r["escalated_to_vlm"]) / n, 4) if n else None,
         "llm_calls": sum(r["llm_calls"] for r in rows),
         "llm_calls_mean": round(sum(r["llm_calls"] for r in rows) / n, 2) if n else None,
+        "templates": {
+            "documents": len(templated),
+            "hit_rate": round(len(templated) / n, 4) if n else None,
+            "seconds_mean": round(statistics.mean(r["seconds"] for r in templated), 2) if templated else None,
+            # A successful template bypasses at least the first structured-extraction call.
+            "llm_extraction_calls_avoided_minimum": len(templated),
+            "by_id": dict(sorted(__import__("collections").Counter(r["template_id"] for r in templated).items())),
+        },
         "citations": citation,
         "silent_successes": len(silent),
         "false_successes": len(false_successes),
@@ -334,13 +344,13 @@ def print_summary(report: dict) -> None:
     if report.get("pipeline"):
         print("\nFull pipeline (OCR backend -> vlm fallback, classification, extraction, validation)")
         print(f"{'config':15} {'docs':>4} {'success':>8} {'fields':>7} {'items F1':>9} {'tables':>7} "
-              f"{'mean s':>7} {'median s':>9} {'vlm pages':>10} {'vlm docs':>9} {'LLM':>5} {'review':>7} {'false-ok':>9}")
+              f"{'mean s':>7} {'median s':>9} {'vlm pages':>10} {'vlm docs':>9} {'LLM':>5} {'tmpl':>5} {'review':>7} {'false-ok':>9}")
         for name, run in report["pipeline"].items():
             s = run["summary"]
             print(f"{name:15} {s['documents']:>4} {s['document_success_rate']!s:>8} {s['field_accuracy']!s:>7} "
                   f"{s['line_items']['f1']!s:>9} {s['table_cell_accuracy']!s:>7} {s['seconds_mean']!s:>7} "
                   f"{s['seconds_median']!s:>9} {s['vlm_page_share']!s:>10} {s['vlm_document_share']!s:>9} "
-                  f"{s['llm_calls']:>5} {s['needs_review']:>7} "
+                  f"{s['llm_calls']:>5} {s['templates']['documents']:>5} {s['needs_review']:>7} "
                   f"{s['false_successes']}/{s['silent_successes']:>4}")
 
 

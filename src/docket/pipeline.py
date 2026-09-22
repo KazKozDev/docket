@@ -250,8 +250,24 @@ def _read(
             ],
         )
 
-    with stages.timed("extract"), log_stage(log, "extract", **doc, schema=doc_type.schema_id):
-        instance, attempts = extract(acquisition, doc_type)
+    # A vendor template reads what it knows deterministically; the model only
+    # runs when no template matches, or when the template's reading doesn't
+    # validate clean. A rule that misses costs an LLM call, never a wrong answer.
+    from . import templates as vendor_templates
+
+    template = vendor_templates.match_vendor_template(acquisition.text, doc_type.schema_id)
+    template_id: str | None = None
+    instance, attempts = None, 0
+    if template is not None:
+        with stages.timed("template"), log_stage(log, "template", **doc, template=template.template_id):
+            candidate = vendor_templates.extract_with_template(acquisition.layout, doc_type, template)
+        if candidate is not None:
+            candidate_issues = validate_extraction(candidate, acquisition, doc_type)
+            if not any(i.severity == "error" for i in candidate_issues):
+                instance, template_id = candidate, template.template_id
+    if instance is None:
+        with stages.timed("extract"), log_stage(log, "extract", **doc, schema=doc_type.schema_id):
+            instance, attempts = extract(acquisition, doc_type)
     _notify(on_stage, "extract", instance)
 
     with stages.timed("validate"), log_stage(log, "validate", **doc):
@@ -268,7 +284,7 @@ def _read(
         extracted=extracted,
         field_sources=_resolve_sources(extracted, acquisition) if extracted else {},
         validation_issues=issues,
-        metrics=ProcessingMetrics(extract_attempts=attempts),
+        metrics=ProcessingMetrics(extract_attempts=attempts, template_id=template_id),
     )
 
 

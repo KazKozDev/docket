@@ -490,6 +490,24 @@ def ocr_backends() -> list[dict]:
     return [info.model_dump(mode="json") for info in list_ocr_backends()]
 
 
+@app.get("/vendor-templates", dependencies=[Depends(require_api_key)])
+def vendor_templates() -> list[dict]:
+    """Deterministic vendor layouts registered in this deployment."""
+    from .templates import list_vendor_templates
+
+    return [template.model_dump(mode="json") for template in list_vendor_templates()]
+
+
+@app.get("/vendor-templates/{template_id}", responses=_ERRORS, dependencies=[Depends(require_api_key)])
+def vendor_template(template_id: str) -> dict:
+    from .templates import get_vendor_template
+
+    template = get_vendor_template(template_id)
+    if template is None:
+        raise ApiError(404, "template_not_found", f"unknown vendor template {template_id!r}")
+    return template.model_dump(mode="json")
+
+
 # ---- review queue ----------------------------------------------------------------
 
 

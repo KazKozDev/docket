@@ -23,6 +23,29 @@ top-level amount. Measured on the 17 golden scans (tesseract,
 
 ### Added
 
+- **Stage 4 vendor templates**: deterministic extraction for known vendor
+  layouts through `VendorTemplate`, `FieldRule` and `ItemsRule`. Successful
+  templates produce normal nested Pydantic documents and per-field/line-item
+  citations, skip structured LLM extraction, and are accepted only after the
+  existing business validation passes; an incomplete or invalid reading falls
+  back to the model.
+- Public template registry in Python, `docket templates list|show`, and
+  `GET /vendor-templates[/{id}]`. Two fictional golden-corpus invoice vendors
+  exercise German and noisy Spanish OCR layouts end to end.
+- Template metrics in the OCR benchmark: selected `template_id`, hit rate,
+  per-template counts, template-document latency and the minimum number of
+  structured-extraction LLM calls avoided.
+
+### Measured (stage 4 deterministic pass — 198 scans, Tesseract, no LLM)
+
+- Both built-in examples matched, extracted and passed normal validation:
+  Nordlicht and Distribuciones Albufera, 2/198 documents (1.01%).
+- No unrelated document matched either template. Seventeen scans produced no
+  Tesseract text and were counted as OCR errors rather than template misses.
+- Mean acquisition plus template time for the two accepted documents was
+  1.75 s. The full pipeline benchmark now records template usage, but was not
+  re-labelled with these OCR-only numbers.
+
 - Line-item and nested citations: the extraction prompt requires a citation
   for every row of every repeated list, per field (`line_items[0].quantity`,
   `items[0].price`, ...), the quote being that row's own text.

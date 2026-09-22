@@ -246,6 +246,11 @@ def test_listing_endpoints(client):
     assert {s["schema_id"] for s in client.get("/schemas").json()} >= {"invoice", "utility_bill"}
     assert client.get("/schemas/invoice/json-schema").json()["type"] == "object"
     assert {b["name"] for b in client.get("/ocr-backends").json()} >= {"pdf_text", "tesseract", "vlm"}
+    templates = {t["template_id"] for t in client.get("/vendor-templates").json()}
+    assert "nordlicht-buerobedarf-invoice" in templates
+    template = client.get("/vendor-templates/nordlicht-buerobedarf-invoice").json()
+    assert template["schema_id"] == "invoice" and template["builtin"] is True
+    assert client.get("/vendor-templates/not-here").status_code == 404
     formats = {f["name"]: f for f in client.get("/export-formats").json()}
     assert formats["ubl"]["media_type"] == "application/xml"
 
