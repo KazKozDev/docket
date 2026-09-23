@@ -282,8 +282,11 @@ key, environment variable, type, bounds, default, help) and loads them as
 defaults < config file < environment into module attributes that the rest
 of the package reads at call time; explicit arguments are applied on top by
 `options.resolve()`, the CLI and the HTTP form handling. The file is TOML
-(`--config`, else `DOCKET_CONFIG`, else `./docket.toml`), with paths
-relative to the file. Loading never raises: an invalid value keeps its
+(`--config`, else `DOCKET_CONFIG`), with paths relative to the file. Import
+reads only those and the environment, so an embedding application's working
+directory never changes docket's settings; the applications (`docket`,
+`docket-api`, the demo) call `configure_app()`, which also loads `.env` and
+falls back to `./docket.toml`. Loading never raises: an invalid value keeps its
 default and is recorded; `config.check()` raises one `ConfigurationError`
 naming every problem, with its source (`DOCKET_OCR_DPI='x'`,
 `docket.toml: [ocr] dpi = 'x'`, unknown keys, unknown OCR language, malformed
