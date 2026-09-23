@@ -8,7 +8,23 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+### Removed
+
+- The experimental `tax_invoice`, `utility_bill`, `certificate_of_origin`
+  and `id_document` schemas, with their models (`TaxInvoice`, `UtilityBill`,
+  `CertificateOfOrigin`, `IdDocument` and their item types), validators and
+  classifier examples. None was measured on real documents. `tax_invoice`
+  did harm: a GST/VAT tax invoice is an invoice, and the separate type drew
+  Malaysian till receipts (their TAX INVOICE header) from the rules tier and
+  VAT invoices from the LLM tier.
+
 ### Changed
+
+- Classification of till receipts: a TAX INVOICE header now counts as weak
+  receipt evidence and decides nothing on its own. On the 178 labelled
+  corpus scans (Tesseract text, full rules → TF-IDF → LLM cascade) correct
+  types went from 91 to 120, receipts from 43 to 73 of 122, other documents
+  unchanged within one.
 
 - Importing docket no longer reads `.env` or `./docket.toml` from the working
   directory: the library takes its settings from the environment,

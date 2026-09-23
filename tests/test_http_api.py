@@ -243,7 +243,7 @@ def test_restarted_job_resumes_without_redoing_finished_documents(client, tmp_pa
 
 
 def test_listing_endpoints(client):
-    assert {s["schema_id"] for s in client.get("/schemas").json()} >= {"invoice", "utility_bill"}
+    assert {s["schema_id"] for s in client.get("/schemas").json()} >= {"invoice", "delivery_note"}
     assert client.get("/schemas/invoice/json-schema").json()["type"] == "object"
     assert {b["name"] for b in client.get("/ocr-backends").json()} >= {"pdf_text", "tesseract", "vlm"}
     templates = {t["template_id"] for t in client.get("/vendor-templates").json()}

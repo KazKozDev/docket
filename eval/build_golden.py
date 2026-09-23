@@ -11,9 +11,7 @@ table grids as printed (`_tables`) and every printed line (`_text`), so the
 OCR benchmark can score fields, line items, tables and raw text.
 
 The documents are fictitious: invented companies and people, check digits
-made valid so that validation passes on a correct reading. The identity
-card is the ICAO Doc 9303 specimen (UTOPIA, MRZ from the standard's TD1
-example) with no photo.
+made valid so that validation passes on a correct reading.
 
 The font is downloaded once (pinned SHA-256) into .cache/fonts; the rendered
 files are committed, so running the benchmark never needs this script.
@@ -196,7 +194,7 @@ DOCS: list[Doc] = [
     ),
     Doc(
         name="tax_invoice_scan",
-        schema="tax_invoice",
+        schema="invoice",  # a GST "TAX INVOICE" is an invoice
         pages=[[
             ("title", "TAX INVOICE"),
             ("gap", 20),
@@ -219,7 +217,7 @@ DOCS: list[Doc] = [
             ("line", "All prices in Australian dollars (AUD)."),
         ]],
         expected={
-            "doc_type": "tax_invoice", "invoice_number": "TI-88213", "issue_date": "2026-05-19",
+            "doc_type": "invoice", "invoice_number": "TI-88213", "issue_date": "2026-05-19",
             "seller.name": "Blue Gum Hardware Pty Ltd", "buyer.name": "Harbourside Cafe Pty Ltd",
             "subtotal": 1175.0, "tax_amount": 117.5, "total_amount": 1292.5, "currency": "AUD",
         },
@@ -543,111 +541,6 @@ DOCS: list[Doc] = [
             {"description": "Glass beaker 250 ml", "quantity": 48},
             {"description": "Nitrile gloves L, box", "quantity": 10},
         ],
-    ),
-    Doc(
-        name="utility_bill_scan",
-        schema="utility_bill",
-        pages=[[
-            ("title", "Northshore Energy"),
-            ("line", "Electricity bill"),
-            ("gap", 20),
-            ("cols",
-             ["Priya Raman", "17 Harbour View Road", "Duluth, MN 55802"],
-             ["Account number: 7730-2291-04", "Bill number: NE-2026-0912", "Bill date: September 5, 2026",
-              "Payment due: September 26, 2026"]),
-            ("gap", 30),
-            ("line", "Billing period: August 1, 2026 - August 31, 2026"),
-            ("gap", 20),
-            ("table", Table(
-                ["Meter", "Previous", "Current", "Usage"],
-                [["E-55120", "40,211", "40,618", "407 kWh"]],
-                [0.28, 0.24, 0.24, 0.24], "lrrr")),
-            ("gap", 30),
-            ("table", Table(
-                ["Charge", "Amount"],
-                [["Energy 407 kWh at $0.2140", "87.10"],
-                 ["Standing charge, 31 days at $0.45", "13.95"],
-                 ["Network fee", "18.40"],
-                 ["Sales tax 5%", "5.97"]],
-                [0.70, 0.30], "lr")),
-            ("gap", 20),
-            ("right", ["Current charges: $125.42", "Previous balance: $102.30", "Payment received: -$102.30",
-                       "Amount due: $125.42"]),
-        ]],
-        expected={
-            "doc_type": "utility_bill", "provider.name": "Northshore Energy", "customer.name": "Priya Raman",
-            "account_number": "7730-2291-04", "bill_number": "NE-2026-0912", "issue_date": "2026-09-05",
-            "due_date": "2026-09-26", "billing_period_start": "2026-08-01", "billing_period_end": "2026-08-31",
-            "service_type": "electricity", "current_charges": 125.42, "tax_amount": 5.97, "amount_due": 125.42,
-            "currency": "USD",
-        },
-        line_items=[
-            {"description": "Energy 407 kWh at $0.2140", "total": 87.10},
-            {"description": "Standing charge, 31 days at $0.45", "total": 13.95},
-            {"description": "Network fee", "total": 18.40},
-        ],
-    ),
-    Doc(
-        name="certificate_of_origin_scan",
-        schema="certificate_of_origin",
-        pages=[[
-            ("title", "CERTIFICATE OF ORIGIN"),
-            ("line", "Non-preferential origin"),
-            ("gap", 20),
-            ("lines", ["Certificate No. CO-2026-004417", "Date of issue: 08.07.2026"]),
-            ("gap", 30),
-            ("cols",
-             ["1. Exporter:", "Anatolia Textile A.S.", "Organize Sanayi Bolgesi 4. Cad. No 11", "Denizli, Turkey"],
-             ["2. Consignee:", "Nordic Home Oy", "Teollisuuskatu 9", "00510 Helsinki, Finland"]),
-            ("gap", 30),
-            ("lines", ["3. Country of origin: Turkey", "4. Transport details: by road, Denizli - Helsinki",
-                       "5. Invoice: EXP-2026-338, value EUR 18,640.00"]),
-            ("gap", 30),
-            ("table", Table(
-                ["Description of goods", "HS code", "Quantity"],
-                [["Cotton bath towels", "630260", "1,200 pcs"],
-                 ["Linen bed sheets", "630231", "400 pcs"]],
-                [0.52, 0.22, 0.26], "llr")),
-            ("gap", 40),
-            ("para", "The undersigned authority certifies that the goods described above originate in the "
-                     "country shown in box 3."),
-            ("line", "Istanbul Chamber of Commerce"),
-        ]],
-        expected={
-            "doc_type": "certificate_of_origin", "certificate_number": "CO-2026-004417", "issue_date": "2026-07-08",
-            "certificate_type": "non_preferential", "exporter.name": "Anatolia Textile A.S.",
-            "consignee.name": "Nordic Home Oy", "issuing_authority": "Istanbul Chamber of Commerce",
-            "goods_value.amount": 18640.0, "goods_value.currency": "EUR",
-        },
-        line_items=[
-            {"description": "Cotton bath towels", "quantity": 1200},
-            {"description": "Linen bed sheets", "quantity": 400},
-        ],
-    ),
-    Doc(
-        name="id_document_scan",
-        schema="id_document",
-        size=(1400, 900),
-        margin=60,
-        font_size=30,
-        skew=0.8,
-        note="ICAO Doc 9303 TD1 specimen (UTOPIA), no photo",
-        pages=[[
-            ("title", "UTOPIA"),
-            ("line", "IDENTITY CARD / SPECIMEN"),
-            ("gap", 20),
-            ("cols", ["Surname", "ERIKSSON", "Given names", "ANNA MARIA", "Sex", "F"],
-                     ["Nationality", "UTO", "Date of birth", "12 08 1974", "Document no.", "D23145890",
-                      "Date of expiry", "15 04 2012"]),
-            ("gap", 30),
-            ("mono", ["I<UTOD231458907<<<<<<<<<<<<<<<", "7408122F1204159UTO<<<<<<<<<<<6",
-                      "ERIKSSON<<ANNA<MARIA<<<<<<<<<<"]),
-        ]],
-        expected={
-            "doc_type": "id_document", "document_kind": "national_id", "document_number": "D23145890",
-            "issuing_country": "UTO", "surname": "ERIKSSON", "given_names": "ANNA MARIA",
-            "date_of_birth": "1974-08-12", "sex": "F", "date_of_expiry": "2012-04-15",
-        },
     ),
     Doc(
         name="boarding_pass_scan",

@@ -34,16 +34,8 @@ HELD_OUT = [
     ("boarding_pass", "Porte 34, siège 7F, embarquement 14:05, départ 14:35."),
     ("credit_note", "We refund the price difference for the faulty items against your earlier bill; nothing is payable."),
     ("credit_note", "Gutgeschriebener Betrag für die beschädigte Lieferung, Bezug: ursprüngliche Rechnung vom 3. März."),
-    ("utility_bill", "Zählerstand alt 18.240, neu 18.912, Verbrauch 672 kWh, Grundpreis und Arbeitspreis."),
-    ("utility_bill", "Electricity used between the two readings, standing charge and unit rate for the quarter."),
     ("delivery_note", "Goods received complete and undamaged, signed by the storekeeper at the loading dock."),
     ("delivery_note", "Marchandises livrées ce jour, quantités contrôlées à la réception, signature du destinataire."),
-    ("certificate_of_origin", "The chamber certifies that the machinery described is of German origin; exporter and consignee listed."),
-    ("certificate_of_origin", "Si attesta che le merci sotto descritte sono originarie dell'Italia, timbro della camera."),
-    ("id_document", "Surname, given names, nationality, date of birth and expiry date; holder signature below."),
-    ("id_document", "Nom, prénoms, sexe, nationalité, date de naissance et date d'expiration du document."),
-    ("tax_invoice", "Supplier GST number, taxable value and GST payable shown for each line; input tax may be claimed."),
-    ("tax_invoice", "USt-IdNr. des Leistenden, Leistungsdatum, Nettoentgelt und ausgewiesene Umsatzsteuer."),
 ]
 
 
