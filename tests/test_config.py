@@ -3,12 +3,16 @@ configuration errors caught before any document is read."""
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import pytest
 
 from docket import config
 from docket.errors import ConfigurationError
+
+# Subprocesses must import this checkout's docket, not whichever is installed.
+SRC = str(Path(config.__file__).resolve().parents[1])
 
 
 @pytest.fixture(autouse=True)
@@ -66,7 +70,7 @@ def test_arguments_override_everything(tmp_path):
     from docket.options import resolve
 
     write(tmp_path / "docket.toml", '[ocr]\nlanguages = ["fr"]\nfallbacks = []\n[layout]\ninclude = false\n')
-    config.configure(environ={"DOCKET_OCR_LANGUAGES": "de"})
+    config.configure(environ={"DOCKET_OCR_LANGUAGES": "de"}, discover=True)
     assert config.OCR_LANGUAGES == ["de"]  # env beats the file
     assert resolve(ProcessOptions()).acquisition.settings.languages == ["de"]
     assert resolve(ProcessOptions()).include_layout is False  # from the file
@@ -76,7 +80,8 @@ def test_arguments_override_everything(tmp_path):
 
 def test_config_file_discovery(tmp_path):
     write(tmp_path / "docket.toml", "[batch]\nworkers = 3\n")
-    assert config.load(environ={}).values["BATCH_WORKERS"] == 3
+    assert config.load(environ={}).values["BATCH_WORKERS"] == 4  # a library ignores ./docket.toml
+    assert config.load(environ={}, discover=True).values["BATCH_WORKERS"] == 3
     other = write(tmp_path / "other.toml", "[batch]\nworkers = 5\n")
     assert config.load(environ={"DOCKET_CONFIG": str(other)}).values["BATCH_WORKERS"] == 5
     assert config.load(tmp_path / "docket.toml", environ={"DOCKET_CONFIG": str(other)}).values["BATCH_WORKERS"] == 3
@@ -134,7 +139,7 @@ def test_missing_named_config_file(tmp_path):
 
 def test_invalid_values_keep_defaults_and_check_lists_every_problem(tmp_path):
     write(tmp_path / "docket.toml", "[ocr]\ndpi = 'high'\nlanguages = ['en', 'xx']\n[paddle]\ndevice = 'tpu'\n")
-    config.configure(environ={"DOCKET_BATCH_WORKERS": "-1"})  # never raises
+    config.configure(environ={"DOCKET_BATCH_WORKERS": "-1"}, discover=True)  # never raises
     assert config.OCR_DPI == 200 and config.BATCH_WORKERS == 4
     with pytest.raises(ConfigurationError) as exc:
         config.check()
@@ -145,7 +150,7 @@ def test_invalid_values_keep_defaults_and_check_lists_every_problem(tmp_path):
 
 def test_describe_masks_secrets_and_names_sources(tmp_path):
     write(tmp_path / "docket.toml", '[api]\nkey = "s3cret"\n')
-    config.configure(environ={"DOCKET_OCR_BACKEND": "tesseract"})
+    config.configure(environ={"DOCKET_OCR_BACKEND": "tesseract"}, discover=True)
     rows = {row["key"]: row for row in config.describe()}
     assert rows["api.key"]["value"] == "****" and rows["api.key"]["source"].startswith("file ")
     assert rows["ocr.backend"] == {**rows["ocr.backend"], "value": "tesseract", "source": "env DOCKET_OCR_BACKEND"}
@@ -236,3 +241,53 @@ def test_docket_api_command_exits_with_code_3(tmp_path, monkeypatch, capsys):
         api.run()
     assert exc.value.code == 3
     assert "max_concurrent_jobs = 0" in capsys.readouterr().err
+
+
+def test_importing_docket_reads_no_files_from_the_working_directory(tmp_path):
+    """A library must not pick up whatever .env or docket.toml sits where its
+    host runs; only the applications do (configure_app)."""
+    import subprocess
+    import sys
+
+    write(tmp_path / ".env", "DOCKET_TEXT_MODEL=from-dotenv\n")
+    write(tmp_path / "docket.toml", '[batch]\nworkers = 7\n')
+    env = {k: v for k, v in os.environ.items() if not k.startswith("DOCKET_")} | {"PYTHONPATH": SRC}
+    code = (
+        "import os, docket\n"
+        "from docket import config\n"
+        "print(config.TEXT_MODEL, config.BATCH_WORKERS, os.environ.get('DOCKET_TEXT_MODEL'))\n"
+        "config.configure_app()\n"
+        "print(config.TEXT_MODEL, config.BATCH_WORKERS)\n"
+    )
+    out = subprocess.run([sys.executable, "-c", code], cwd=tmp_path, env=env,
+                         capture_output=True, text=True, check=True).stdout.splitlines()
+    default_model = next(s.default for s in config.SETTINGS if s.name == "TEXT_MODEL")
+    assert out[0] == f"{default_model} 4 None"
+    assert out[1] == "from-dotenv 7"
+
+
+def test_library_warnings_do_not_reach_stderr_unless_the_host_logs(tmp_path):
+    import subprocess
+    import sys
+
+    code = "import logging, docket; logging.getLogger('docket.x').warning('noisy')"
+    result = subprocess.run([sys.executable, "-c", code], cwd=tmp_path, capture_output=True, text=True, check=True,
+                            env=os.environ | {"PYTHONPATH": SRC})
+    assert "noisy" not in result.stderr
+    code = "import logging, docket; logging.basicConfig(); logging.getLogger('docket.x').warning('shown')"
+    result = subprocess.run([sys.executable, "-c", code], cwd=tmp_path, capture_output=True, text=True, check=True,
+                            env=os.environ | {"PYTHONPATH": SRC})
+    assert "shown" in result.stderr
+
+
+def test_review_storage_without_the_extra_is_a_configuration_error(monkeypatch):
+    import importlib.util
+
+    from docket import ProcessOptions, ReviewOptions
+    from docket.options import resolve
+
+    real = importlib.util.find_spec
+    monkeypatch.setattr(importlib.util, "find_spec", lambda name, *a: None if name == "sqlalchemy" else real(name, *a))
+    assert resolve(ProcessOptions(review=ReviewOptions(enqueue=False))).review.enqueue is False
+    with pytest.raises(ConfigurationError, match=r"docket-idp\[review\]"):
+        resolve(ProcessOptions(review=ReviewOptions(enqueue=True)))

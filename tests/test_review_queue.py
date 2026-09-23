@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from docket import review_queue
+from docket import review_queue, review_reasons
 from docket.catalog import Invoice
 from docket.schemas import ClassificationResult, ValidationIssue
 from docket.result import DocumentResult
@@ -27,7 +27,7 @@ def _result(**overrides) -> DocumentResult:
 
 
 def test_clean_result_has_no_review_reasons():
-    assert review_queue.reasons_for(_result()) == []
+    assert review_reasons.reasons_for(_result()) == []
 
 
 def test_low_confidence_triggers_review():
@@ -36,7 +36,7 @@ def test_low_confidence_triggers_review():
             doc_type="invoice", confidence=0.2, method="llm"
         )
     )
-    reasons = review_queue.reasons_for(result)
+    reasons = review_reasons.reasons_for(result)
     assert any("confidence" in r for r in reasons)
 
 
@@ -46,13 +46,13 @@ def test_unknown_doc_type_triggers_review():
             doc_type="unknown", confidence=0.9, method="llm"
         )
     )
-    reasons = review_queue.reasons_for(result)
+    reasons = review_reasons.reasons_for(result)
     assert any("unrecognized" in r for r in reasons)
 
 
 def test_failed_extraction_triggers_review():
     result = _result(extracted=None)
-    reasons = review_queue.reasons_for(result)
+    reasons = review_reasons.reasons_for(result)
     assert any("extraction failed" in r for r in reasons)
 
 
@@ -60,7 +60,7 @@ def test_error_severity_validation_issue_triggers_review():
     result = _result(
         validation_issues=[ValidationIssue(field="total_amount", message="bad total")]
     )
-    reasons = review_queue.reasons_for(result)
+    reasons = review_reasons.reasons_for(result)
     assert any("validation error" in r for r in reasons)
 
 
@@ -72,7 +72,7 @@ def test_warning_severity_alone_does_not_trigger_review():
             )
         ]
     )
-    assert review_queue.reasons_for(result) == []
+    assert review_reasons.reasons_for(result) == []
 
 
 def test_enqueue_and_list_pending_roundtrip(tmp_path, monkeypatch):
@@ -81,7 +81,7 @@ def test_enqueue_and_list_pending_roundtrip(tmp_path, monkeypatch):
         review_queue.config, "REVIEW_DOCUMENTS_DIR", tmp_path / "documents"
     )
     result = _result(extracted=None)
-    review_queue.enqueue(result, review_queue.reasons_for(result))
+    review_queue.enqueue(result, review_reasons.reasons_for(result))
 
     pending = review_queue.list_pending()
     assert len(pending) == 1
@@ -102,7 +102,7 @@ def test_review_preserves_original_and_records_correction_history(
     source.write_text("INVOICE")
     result = _result(source=str(source))
 
-    document_id = review_queue.enqueue(result, review_queue.reasons_for(result))
+    document_id = review_queue.enqueue(result, review_reasons.reasons_for(result))
     source.unlink()
     claimed = review_queue.claim(document_id, actor="alice")
     record = review_queue.update(
@@ -151,14 +151,14 @@ def test_degraded_page_triggers_review():
     page = words_page(["TOTAL 12.00"], confidence=0.3)
     acq = acquisition([page], degraded={1})
     result = _result(layout=acq.layout, ocr=acq.report)
-    reasons = review_queue.reasons_for(result)
+    reasons = review_reasons.reasons_for(result)
     assert any("page(s) 1" in r and "confidence gate" in r for r in reasons)
 
 
 def test_page_without_text_triggers_review():
     blank = words_page([], page_number=2)
     acq = acquisition([words_page(["TOTAL 12.00"]), blank])
-    reasons = review_queue.reasons_for(_result(layout=acq.layout, ocr=acq.report))
+    reasons = review_reasons.reasons_for(_result(layout=acq.layout, ocr=acq.report))
     assert any("incomplete" in r and "2" in r for r in reasons)
 
 
@@ -170,4 +170,4 @@ def test_failed_document_reports_its_error():
         extracted=None,
         error=DocumentError(code="no_text", stage="acquire", message="nothing readable"),
     )
-    assert review_queue.reasons_for(result) == ["acquire failed: nothing readable"]
+    assert review_reasons.reasons_for(result) == ["acquire failed: nothing readable"]

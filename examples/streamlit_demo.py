@@ -18,6 +18,13 @@ import streamlit as st
 from docket import config, llm_client, pdf
 from docket import DocumentResult, process_document
 
+# An application, so it reads .env and ./docket.toml like the CLI does
+# (importing docket reads only the environment). Once per session: the
+# model pickers below change config for the following runs.
+if "docket_configured" not in st.session_state:
+    config.configure_app()
+    st.session_state["docket_configured"] = True
+
 GOLDEN_DIR = Path(__file__).resolve().parent.parent / "eval" / "golden_dataset"
 PREVIEW_DPI = 110
 PREVIEW_MAX_PAGES = 10

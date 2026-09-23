@@ -111,7 +111,7 @@ document → text layer / OCR / VLM → classify → extract + cite → validate
 
 ## Configuration
 
-Priority, lowest to highest: defaults, a TOML file (`--config`, `DOCKET_CONFIG` or `./docket.toml`), environment or `.env`, explicit arguments. Every setting is in [`docket.example.toml`](https://github.com/KazKozDev/docket/blob/master/docket.example.toml); `docket config show` prints effective values and their source.
+Priority, lowest to highest: defaults, a TOML file (`--config` or `DOCKET_CONFIG`), the environment, explicit arguments. Importing docket reads nothing else; the `docket` CLI and `docket-api` also read `.env` and `./docket.toml` from the working directory. Every setting is in [`docket.example.toml`](https://github.com/KazKozDev/docket/blob/master/docket.example.toml); `docket config show` prints effective values and their source.
 
 | Variable | Default | What it does |
 |---|---|---|
@@ -123,7 +123,7 @@ Priority, lowest to highest: defaults, a TOML file (`--config`, `DOCKET_CONFIG` 
 | `DOCKET_OCR_FALLBACKS` | `vlm` | Backends tried when a page's reading is rejected |
 | `DOCKET_OCR_LANGUAGES` | `en` | ISO 639-1 codes, e.g. `en,de,fr` |
 | `DOCKET_MIN_CONFIDENCE` | `0.55` | Classification confidence below which a document goes to review |
-| `DOCKET_REVIEW_QUEUE_ENABLED` | `false` | Persist flagged documents in the review queue |
+| `DOCKET_REVIEW_QUEUE_ENABLED` | `false` | Persist flagged documents in the review queue (`[review]` extra) |
 | `DOCKET_REVIEW_DATABASE_URL` | `sqlite:///data/review.db` | Review store; PostgreSQL with the `[postgres]` extra |
 | `DOCKET_BATCH_WORKERS` | `4` | Documents in flight per batch |
 | `DOCKET_EINVOICE_DOWNLOADS` | `~/.cache/docket/einvoice` | Where `docket einvoice fetch` stores artifacts |
@@ -151,6 +151,7 @@ Priority, lowest to highest: defaults, a TOML file (`--config`, `DOCKET_CONFIG` 
 ```bash
 pip install "docket-idp[api]"       # HTTP service (docket-api)
 pip install "docket-idp[einvoice]"  # official e-invoice validation
+pip install "docket-idp[review]"    # persistent review queue (SQLAlchemy; [postgres] for PostgreSQL)
 pip install "docket-idp[paddle]"    # PaddleOCR backend
 pip install "docket-idp[docling]"   # Docling/TableFormer backend
 pip install "docket-idp[all]"       # + Langfuse tracing and e-invoice validation

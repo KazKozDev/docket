@@ -8,6 +8,20 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+### Changed
+
+- Importing docket no longer reads `.env` or `./docket.toml` from the working
+  directory: the library takes its settings from the environment,
+  `DOCKET_CONFIG` and explicit arguments only. The `docket` CLI, `docket-api`
+  and the demo still read both, via `config.configure_app()`.
+- SQLAlchemy moved from the base install to the new `[review]` extra (pulled
+  in by `[api]` and `[postgres]`). `ReviewOptions(enqueue=True)` without it
+  is a `ConfigurationError` naming the extra.
+- The `docket` logger has a `NullHandler`, so library warnings no longer
+  reach the host's stderr unless the host configures logging.
+- CI tests Python 3.10, 3.11 and 3.12, the versions the classifiers promise;
+  the OS classifiers now say macOS and Linux instead of OS Independent.
+
 ## [0.4.0] - 2026-09-23
 
 ### Changed

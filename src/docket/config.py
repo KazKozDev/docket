@@ -13,10 +13,15 @@ fields) override all three. The config file is TOML:
     workers = 8
 
 It is the file named by `docket --config PATH` / `docket-api --config PATH`,
-else by `DOCKET_CONFIG`, else `./docket.toml` when that exists. Relative
-paths in it are relative to the file. Every setting has an environment
-variable (`DOCKET_OCR_BACKEND`, ...; `docket config show` lists them all);
-`.env` in the working directory is read into the environment first.
+else by `DOCKET_CONFIG`. Relative paths in it are relative to the file.
+Every setting has an environment variable (`DOCKET_OCR_BACKEND`, ...;
+`docket config show` lists them all).
+
+Importing docket reads only the environment and `DOCKET_CONFIG`: a library
+must not pick up files from whatever directory its host happens to run in.
+The applications (the CLI, the HTTP service, the demo) call
+`configure_app()`, which also reads `.env` from the working directory into
+the environment and falls back to `./docket.toml`.
 
 Values are read once, at import (and again by `configure()`), into the
 module attributes below, which the rest of the package reads at call time.
@@ -41,8 +46,6 @@ if sys.version_info >= (3, 11):
     import tomllib
 else:  # pragma: no cover
     import tomli as tomllib
-
-load_dotenv()
 
 _TRUE = {"1", "true", "yes", "on"}
 _FALSE = {"0", "false", "no", "off"}
@@ -261,23 +264,26 @@ class Loaded:
     file: Path | None
 
 
-def _find_file(path: str | Path | None, environ: Mapping[str, str]) -> tuple[Path | None, str | None]:
+def _find_file(path: str | Path | None, environ: Mapping[str, str],
+               discover: bool) -> tuple[Path | None, str | None]:
     if path is not None:
         return Path(path), "--config"
     if environ.get("DOCKET_CONFIG"):
         return Path(environ["DOCKET_CONFIG"]), "DOCKET_CONFIG"
     default = Path("docket.toml")
-    return (default, None) if default.is_file() else (None, None)
+    return (default, None) if discover and default.is_file() else (None, None)
 
 
-def load(path: str | Path | None = None, environ: Mapping[str, str] | None = None) -> Loaded:
-    """Read defaults, the config file and the environment, without applying them."""
+def load(path: str | Path | None = None, environ: Mapping[str, str] | None = None, *,
+         discover: bool = False) -> Loaded:
+    """Read defaults, the config file and the environment, without applying
+    them. `discover` also falls back to ./docket.toml (applications only)."""
     environ = os.environ if environ is None else environ
     values = {s.name: s.default for s in SETTINGS}
     sources = {s.name: "default" for s in SETTINGS}
     errors: list[str] = []
 
-    file, named_by = _find_file(path, environ)
+    file, named_by = _find_file(path, environ, discover)
     if file is not None:
         try:
             data = tomllib.loads(file.read_text(encoding="utf-8"))
@@ -339,9 +345,18 @@ def _apply(loaded: Loaded) -> None:
     globals().update(SOURCES=dict(loaded.sources), ERRORS=list(loaded.errors), CONFIG_FILE=loaded.file)
 
 
-def configure(path: str | Path | None = None, environ: Mapping[str, str] | None = None) -> None:
+def configure(path: str | Path | None = None, environ: Mapping[str, str] | None = None, *,
+              discover: bool = False) -> None:
     """(Re)load the settings, e.g. from `--config PATH`. Problems are kept for check()."""
-    _apply(load(path, environ))
+    _apply(load(path, environ, discover=discover))
+
+
+def configure_app(path: str | Path | None = None) -> None:
+    """Settings for an application entry point: `.env` from the working
+    directory into the environment (never overriding it), then `path`, else
+    DOCKET_CONFIG, else ./docket.toml."""
+    load_dotenv(Path(".env"))
+    configure(path, discover=True)
 
 
 def check() -> None:
