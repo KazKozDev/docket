@@ -1726,7 +1726,7 @@ def validate_waybill(wb: Waybill, ctx: ValidationContext) -> list[ValidationIssu
 
 
 # Document types that are only binding once signed and stamped.
-_EXECUTED_TYPES = {"contract", "acceptance_act", "waybill", "delivery_note", "certificate_of_origin"}
+_EXECUTED_TYPES = {"contract", "acceptance_act", "waybill", "delivery_note"}
 
 
 def validate_forensic_report(
@@ -1767,7 +1767,7 @@ def validate_forensic_report(
             )
         )
 
-    if "MISSING_STAMP" in report.risk_flags and doc_type in {"acceptance_act", "waybill", "certificate_of_origin"}:
+    if "MISSING_STAMP" in report.risk_flags and doc_type in {"acceptance_act", "waybill"}:
         issues.append(
             ValidationIssue(
                 field="forensics.stamps",

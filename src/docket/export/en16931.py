@@ -3,7 +3,7 @@
     en16931 UBL · Peppol BIS Billing 3.0 UBL · XRechnung 3.0 UBL/CII ·
     Factur-X / ZUGFeRD BASIC and EN16931 CII
 
-An Invoice, TaxInvoice or CreditNote is first mapped onto the EN 16931
+An Invoice or CreditNote is first mapped onto the EN 16931
 semantic model (business terms BT-/BG-), then written in the syntax the
 profile uses, with elements in the order the XML Schemas require.
 
