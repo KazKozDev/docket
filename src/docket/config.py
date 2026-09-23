@@ -94,6 +94,12 @@ SETTINGS: tuple[Setting, ...] = (
     # document into a failed one.
     Setting("VISION_TIMEOUT_S", "llm.vision_timeout_s", "DOCKET_VISION_TIMEOUT_S", "float", 300.0,
             "Timeout for one vision-model page, seconds.", minimum=1),
+    Setting("LLM_HOSTED_TIMEOUT_S", "llm.hosted_timeout_s", "DOCKET_LLM_HOSTED_TIMEOUT_S", "float", 60.0,
+            "Timeout for one request to a hosted model (Ollama cloud, a remote OpenAI-compatible API); "
+            "local models keep their longer timeouts.", minimum=1),
+    Setting("LLM_RETRIES", "llm.retries", "DOCKET_LLM_RETRIES", "int", 2,
+            "Retries after 429/5xx or a connection error, and after a timeout for hosted models.",
+            minimum=0, maximum=10),
     # Reasoning models spend output tokens deliberating before a transcription
     # that needs none: one invoice with deepseek-v4.1-flash:cloud took 11.9 s /
     # 661 tokens with thinking, 5.1 s / 171 tokens without, same answer.
@@ -396,6 +402,8 @@ VISION_MODEL: str
 MAX_EXTRACT_RETRIES: int
 EXTRACT_CHUNK_CHARS: int
 VISION_TIMEOUT_S: float
+LLM_HOSTED_TIMEOUT_S: float
+LLM_RETRIES: int
 ENABLE_THINKING: bool
 LLM_CONCURRENCY: int
 OCR_BACKEND: str
