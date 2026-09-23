@@ -88,6 +88,19 @@ register_schema(SchemaSpec(
 
 Registered schemas are classified, extracted, citation-checked and exported like built-in ones. `register_vendor_template(VendorTemplate(...))` reads a known vendor layout with explicit rules and no LLM, accepted only when validation passes. `register_exporter()` adds output formats. Schemas, exporters and OCR backends can also ship as separate packages via entry points; see [`examples/`](https://github.com/KazKozDev/docket/blob/master/examples/).
 
+## Measure extraction accuracy on public datasets
+
+198 scans: the project's labelled golden set plus real documents from public Hugging Face datasets (DocILE, SROIE, CORD, FUNSD, RVL-CDIP, donut-style invoices), graded field by field against the datasets' own ground truth. Every tool gets the same documents and the same field metric; the slower tools ran on an evenly spaced subsample:
+
+| | docs | field accuracy | docket on the same docs |
+|---|---|---|---|
+| docket | 179 | 0.72 | — |
+| docpick 0.1.3 | 55 | 0.61 | 0.71 |
+| ocrcontext 0.1.5 | 55 | 0.04 | 0.69 |
+| invoice2data 1.0.1 | 44 | 0.00 | 0.90 |
+
+Where the document type is classified right, docket's field accuracy is 0.84–0.97 by source. Method, per-source results and how to rerun: [docs/BENCHMARKS.md](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
+
 ## How it works
 
 Text comes from the cheapest source that works, page by page: PDF text layer, then OCR (Tesseract, PaddleOCR, Docling or a plugin), then a vision model only when OCR is unusable. Classification tries keyword rules, TF-IDF, then an LLM. Extraction fills a Pydantic schema and cites the verbatim line for every value; schema errors go back to the model. Validation never calls a model: arithmetic to the cent, dates, IBAN, VAT and tax-ID check digits, and that every cited line contains the value. Anything uncertain goes to review instead of being silently fixed.
