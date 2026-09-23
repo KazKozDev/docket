@@ -1,4 +1,4 @@
-# docket — local document AI, invoice & receipt OCR parser with LLMs
+# docket — Python library for invoice and receipt OCR extraction with LLMs
 
 Turn scanned invoices, receipts and contracts into validated JSON with source citations, then export EU e-invoices checked against the official rules.
 

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "docket-idp"
 dynamic = ["version"]
-description = "Invoice and receipt data extraction with OCR and LLMs — validated JSON, source citations, human review, EU e-invoicing export"
+description = "Python library for invoice and receipt OCR extraction with LLMs"
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
