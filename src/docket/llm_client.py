@@ -254,6 +254,51 @@ def vision_transcribe(
     return text
 
 
+# A hosted model answers in seconds (p99 ~40 s on the eval corpus), so one
+# that has said nothing for a minute has stalled: waiting out a local-model
+# timeout of several minutes, as Ollama cloud's 5-minute 502s showed, just
+# stalls the document. Local models keep their long timeouts and are never
+# retried after one: a laptop can honestly need minutes for a dense page.
+_RETRY_STATUS = {429, 500, 502, 503, 504}
+_BACKOFF_S = 2.0
+
+
+def _hosted(model: str) -> bool:
+    """Ollama cloud models (`name:cloud`, `name:tag-cloud`) and any
+    OpenAI-compatible endpoint that is not on this machine."""
+    if config.LLM_PROVIDER == "openai":
+        host = httpx.URL(config.LLM_BASE_URL).host
+        return host not in ("localhost", "127.0.0.1", "::1")
+    return model.endswith(":cloud") or model.endswith("-cloud")
+
+
+def _post(url: str, *, model: str, json: dict, timeout: float, headers: dict | None = None) -> httpx.Response:
+    """POST with the stall handling above: hosted models get a short timeout
+    and retries on timeouts too; every model is retried on 429/5xx and
+    connection errors."""
+    hosted = _hosted(model)
+    if hosted:
+        timeout = min(timeout, config.LLM_HOSTED_TIMEOUT_S)
+    attempts = config.LLM_RETRIES + 1
+    for attempt in range(attempts):
+        last = attempt == attempts - 1
+        try:
+            resp = httpx.post(url, json=json, headers=headers, timeout=timeout)
+            if resp.status_code in _RETRY_STATUS and not last:
+                time.sleep(_BACKOFF_S * (attempt + 1))
+                continue
+            resp.raise_for_status()
+            return resp
+        except httpx.TimeoutException:
+            if not hosted or last:
+                raise
+        except httpx.TransportError:
+            if last:
+                raise
+        time.sleep(_BACKOFF_S * (attempt + 1))
+    raise AssertionError("unreachable")
+
+
 def _ollama_chat(payload: dict, *, timeout: float) -> str:
     with limits.slot("llm"):
         return _ollama_request(payload, timeout=timeout)
@@ -261,10 +306,7 @@ def _ollama_chat(payload: dict, *, timeout: float) -> str:
 
 def _ollama_request(payload: dict, *, timeout: float) -> str:
     try:
-        resp = httpx.post(
-            f"{config.OLLAMA_HOST}/api/chat", json=payload, timeout=timeout
-        )
-        resp.raise_for_status()
+        resp = _post(f"{config.OLLAMA_HOST}/api/chat", model=payload["model"], json=payload, timeout=timeout)
     except httpx.HTTPError as exc:
         raise LLMError(f"Ollama request failed: {exc}") from exc
     return resp.json()["message"]["content"]
@@ -290,13 +332,13 @@ def _openai_request(
         # meet strict-mode rules, and extraction validates the result anyway.
         payload["response_format"] = {"type": "json_object"}
     try:
-        resp = httpx.post(
+        resp = _post(
             f"{config.LLM_BASE_URL}/chat/completions",
+            model=model,
             json=payload,
             headers=_openai_headers(),
             timeout=timeout,
         )
-        resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"] or ""
     except httpx.HTTPError as exc:
         raise LLMError(f"LLM request failed: {exc}") from exc

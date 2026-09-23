@@ -26,6 +26,13 @@
 # extract_chunk_chars = 12000
 # Timeout for one vision-model page, seconds. Env: DOCKET_VISION_TIMEOUT_S.
 # vision_timeout_s = 300.0
+# Timeout for one request to a hosted model (Ollama cloud, a remote
+# OpenAI-compatible API); local models keep their longer timeouts. Env:
+# DOCKET_LLM_HOSTED_TIMEOUT_S.
+# hosted_timeout_s = 60.0
+# Retries after 429/5xx or a connection error, and after a timeout for hosted
+# models. Env: DOCKET_LLM_RETRIES.
+# retries = 2
 # Let reasoning models think before answering. Env: DOCKET_ENABLE_THINKING.
 # enable_thinking = false
 # Process-wide limit on simultaneous LLM requests. Env: DOCKET_LLM_CONCURRENCY.
