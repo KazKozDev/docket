@@ -12,6 +12,16 @@ python eval/benchmark_variance.py     # extraction stability: same document 10 t
 python eval/benchmark_competitors.py  # docket against pip-installable alternatives
 ```
 
+A full pipeline run takes one to two hours. `--checkpoint run.jsonl` writes
+each finished document as it goes; the same command resumes an interrupted
+run where it stopped. After a new docket run, `--rejoin` recomputes docket's
+side of the saved competitor reports without running the competitors again:
+
+```bash
+python eval/benchmark_ocr.py --configs tesseract --pipeline-only --checkpoint eval/results/extended.jsonl --out eval/results/extended_stage2.json
+python eval/benchmark_competitors.py --rejoin eval/results/competitors_*.json
+```
+
 The scripts use docket as a library, so they read settings from the
 environment only, not from `.env`: export `DOCKET_TEXT_MODEL` and
 `DOCKET_VISION_MODEL` (the published numbers use `deepseek-v4.1-flash:cloud`

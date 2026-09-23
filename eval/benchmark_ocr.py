@@ -3,6 +3,7 @@
     python eval/benchmark_ocr.py                        # OCR-only and full pipeline, all configs
     python eval/benchmark_ocr.py --ocr-only             # no LLM calls: raw text and tables only
     python eval/benchmark_ocr.py --configs tesseract paddle-mobile --out results.json
+    python eval/benchmark_ocr.py --configs tesseract --pipeline-only --checkpoint run.jsonl   # resumable
 
 Configs: `tesseract`, `paddle-mobile`, `paddle-medium` (PaddleOCR PP-OCRv5
 mobile / server recognition models). Each is run twice:
@@ -189,14 +190,34 @@ def canonical_items(extracted: dict | None, schema_id: str | None) -> list[dict]
     return [{name: item.get(source) for name, source in mapping.columns.items()} for item in items]
 
 
-def run_pipeline(name: str, docs: list[tuple[Path, dict]]) -> dict:
+def _load_checkpoint(checkpoint: Path | None, name: str) -> dict[str, dict]:
+    """Rows already finished for config `name`, by document, from a
+    --checkpoint file (JSON Lines, one row per finished document)."""
+    if checkpoint is None or not checkpoint.exists():
+        return {}
+    done = {}
+    for line in checkpoint.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            row = json.loads(line)
+            if row.pop("_config", None) == name:
+                done[row["document"]] = row
+    return done
+
+
+def run_pipeline(name: str, docs: list[tuple[Path, dict]], checkpoint: Path | None = None) -> dict:
     options = ProcessOptions(
         ocr=ocr_options(name).model_copy(update={"fallbacks": ["vlm"]}),
         include_layout=True,
         review=ReviewOptions(enqueue=False),
     )
+    done = _load_checkpoint(checkpoint, name)
+    if done:
+        print(f"  resuming: {len(done)} documents already in {checkpoint}", flush=True)
     rows = []
     for path, expected in docs:
+        if path.name in done:
+            rows.append(done[path.name])
+            continue
         started = time.perf_counter()
         result = process_document(path, options)
         seconds = time.perf_counter() - started
@@ -230,6 +251,9 @@ def run_pipeline(name: str, docs: list[tuple[Path, dict]]) -> dict:
             "llm_calls": result.metrics.llm_calls,
             "template_id": result.metrics.template_id,
         })
+        if checkpoint is not None:
+            with checkpoint.open("a", encoding="utf-8") as fh:
+                fh.write(json.dumps({"_config": name, **rows[-1]}, ensure_ascii=False) + "\n")
         print(f"  {name:14} {path.name:36} {'ok' if rows[-1]['success'] else 'FAIL':4} "
               f"fields {correct}/{total} items {items['correct']}/{items['expected']} "
               f"{seconds:6.1f}s vlm_pages={vlm_pages} llm={result.metrics.llm_calls}", flush=True)
@@ -364,6 +388,9 @@ def main() -> None:
     parser.add_argument("--no-layout-markers", action="store_true",
                         help="give the LLM page text without [TABLE n] / [COLUMN n] markers (DOCKET_LAYOUT_MARKERS=false)")
     parser.add_argument("--out", type=Path, default=ROOT / "eval" / "results" / "ocr_benchmark.json")
+    parser.add_argument("--checkpoint", type=Path, metavar="JSONL",
+                        help="append each finished pipeline document here and skip those already in it, "
+                             "so an interrupted run resumes with the same command")
     args = parser.parse_args()
 
     if args.no_layout_markers:
@@ -380,7 +407,7 @@ def main() -> None:
             report["ocr_only"][name] = run_ocr_only(name, docs)
         if not args.ocr_only:
             print(f"pipeline: {name}", flush=True)
-            report["pipeline"][name] = run_pipeline(name, docs)
+            report["pipeline"][name] = run_pipeline(name, docs, args.checkpoint)
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print_summary(report)
