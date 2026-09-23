@@ -1,4 +1,0 @@
-# Development convenience: `pip install -r requirements.txt`.
-# Dependencies are declared in pyproject.toml; this installs the package
-# in editable mode with every extra needed to run the UIs and the tests.
--e .[dev]

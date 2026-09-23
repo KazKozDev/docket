@@ -6,7 +6,7 @@
 # previous run that was closed by clicking the X on the Terminal window
 # (which leaves the servers orphaned) won't block this one.
 
-cd "$(dirname "$0")" || exit 1
+cd "$(dirname "$0")/.." || exit 1  # repository root
 
 API_PORT=8000
 UI_PORT=8501
