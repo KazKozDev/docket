@@ -1,5 +1,5 @@
-# docket settings. Copy to docket.toml (read from the working directory), or
-# pass --config PATH / set DOCKET_CONFIG. Environment variables override this
+# docket settings. Pass --config PATH or set DOCKET_CONFIG; the docket CLI and
+# docket-api also read ./docket.toml (importing the library does not). Environment variables override this
 # file; command-line options and ProcessOptions override both.
 # Every line below shows the built-in default; uncomment what you change.
 # `docket config show` prints the effective values and where each came from.

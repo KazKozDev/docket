@@ -21,6 +21,10 @@ from contextlib import contextmanager
 
 LOGGER_NAME = "docket"
 
+# A library logs but never decides where logs go: without this, Python's
+# last-resort handler prints docket's warnings to the host's stderr.
+logging.getLogger(LOGGER_NAME).addHandler(logging.NullHandler())
+
 
 class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
@@ -50,7 +54,7 @@ def configure(level: str | None = None) -> logging.Logger:
     """Attach a JSON handler to the docket logger. Idempotent."""
     logger = logging.getLogger(LOGGER_NAME)
     logger.setLevel(level or os.getenv("DOCKET_LOG_LEVEL", "INFO").upper())
-    if not logger.handlers:
+    if not any(not isinstance(h, logging.NullHandler) for h in logger.handlers):
         handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(JsonFormatter())
         logger.addHandler(handler)

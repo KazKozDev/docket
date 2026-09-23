@@ -650,8 +650,7 @@ def run() -> None:
     parser.add_argument("--config", metavar="PATH",
                         help="TOML settings file (default: DOCKET_CONFIG, else ./docket.toml if present)")
     args = parser.parse_args()
-    if args.config:
-        config.configure(args.config)
+    config.configure_app(args.config)
     try:
         config.check()
     except ConfigurationError as exc:

@@ -511,11 +511,17 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: list[str] | None = None) -> None:
+def run() -> None:
+    """Console entry point (`docket`): an application, so it also reads .env
+    and ./docket.toml from the working directory."""
+    main(app_files=True)
+
+
+def main(argv: list[str] | None = None, *, app_files: bool = False) -> None:
     args = build_parser().parse_args(argv)
     try:
-        if args.config:
-            config.configure(args.config)
+        if app_files or args.config:
+            config.configure_app(args.config)
         if args.command != "config":
             config.check()
         if getattr(args, "include_layout", False) is None:
@@ -529,4 +535,4 @@ def main(argv: list[str] | None = None) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    run()

@@ -12,6 +12,12 @@ python eval/benchmark_variance.py     # extraction stability: same document 10 t
 python eval/benchmark_competitors.py  # docket against pip-installable alternatives
 ```
 
+The scripts use docket as a library, so they read settings from the
+environment only, not from `.env`: export `DOCKET_TEXT_MODEL` and
+`DOCKET_VISION_MODEL` (the published numbers use `deepseek-v4.1-flash:cloud`
+for both) and `DOCKET_OCR_LANGUAGES=en,de,es,fr`. Each result file records
+the models it ran with.
+
 ## OCR backends and field accuracy
 
 Measured on the 33 labeled scans (golden + real samples; JSON with every
