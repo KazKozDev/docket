@@ -3438,72 +3438,6 @@
         "title": "DocumentError",
         "description": "Why processing a document stopped."
       },
-      "DocumentForensicReport": {
-        "properties": {
-          "has_signatures": {
-            "type": "boolean",
-            "title": "Has Signatures",
-            "description": "Whether at least one handwritten signature is present.",
-            "default": false
-          },
-          "has_stamps": {
-            "type": "boolean",
-            "title": "Has Stamps",
-            "description": "Whether at least one seal or official stamp is present.",
-            "default": false
-          },
-          "is_executed": {
-            "type": "boolean",
-            "title": "Is Executed",
-            "description": "Whether the document appears legally executed (signed/stamped).",
-            "default": false
-          },
-          "is_empty_template": {
-            "type": "boolean",
-            "title": "Is Empty Template",
-            "description": "Whether the document appears to be an unexecuted blank template.",
-            "default": false
-          },
-          "stamps": {
-            "items": {
-              "$ref": "#/components/schemas/StampDetection"
-            },
-            "type": "array",
-            "title": "Stamps"
-          },
-          "signatures": {
-            "items": {
-              "$ref": "#/components/schemas/SignatureDetection"
-            },
-            "type": "array",
-            "title": "Signatures"
-          },
-          "annotations": {
-            "items": {
-              "$ref": "#/components/schemas/HandwrittenAnnotation"
-            },
-            "type": "array",
-            "title": "Annotations"
-          },
-          "alterations_detected": {
-            "type": "boolean",
-            "title": "Alterations Detected",
-            "description": "Whether handwritten overrides or crossed-out amounts were detected.",
-            "default": false
-          },
-          "risk_flags": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Risk Flags",
-            "description": "Forensic risk flags (e.g. UNEXECUTED_TEMPLATE, MISSING_STAMP, HANDWRITTEN_ALTERATION)."
-          }
-        },
-        "type": "object",
-        "title": "DocumentForensicReport",
-        "description": "Forensic report covering physical execution, stamps, signatures, and alterations."
-      },
       "DocumentLayout": {
         "properties": {
           "pages": {
@@ -3646,16 +3580,6 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/DocumentError"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "forensic_report": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/DocumentForensicReport"
               },
               {
                 "type": "null"
@@ -3878,62 +3802,6 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
-      },
-      "HandwrittenAnnotation": {
-        "properties": {
-          "page": {
-            "type": "integer",
-            "minimum": 1.0,
-            "title": "Page",
-            "description": "1-indexed page number."
-          },
-          "text": {
-            "type": "string",
-            "title": "Text",
-            "description": "Transcribed or recognized text."
-          },
-          "annotation_type": {
-            "type": "string",
-            "title": "Annotation Type",
-            "description": "Classification (e.g. payment_stamp, price_correction, approval, marginalia)."
-          },
-          "box": {
-            "anyOf": [
-              {
-                "prefixItems": [
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "number"
-                  }
-                ],
-                "type": "array",
-                "maxItems": 4,
-                "minItems": 4
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Box",
-            "description": "Normalized bounding box if isolated."
-          }
-        },
-        "type": "object",
-        "required": [
-          "page",
-          "text",
-          "annotation_type"
-        ],
-        "title": "HandwrittenAnnotation",
-        "description": "Detection of handwritten marginalia, numeric corrections, or status stamps."
       },
       "Job": {
         "properties": {
@@ -4679,64 +4547,6 @@
         "title": "SchemaInfo",
         "description": "Serializable metadata of a registered schema (what the CLI and HTTP API list)."
       },
-      "SignatureDetection": {
-        "properties": {
-          "page": {
-            "type": "integer",
-            "minimum": 1.0,
-            "title": "Page",
-            "description": "1-indexed page number where signature was found."
-          },
-          "box": {
-            "prefixItems": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "number"
-              },
-              {
-                "type": "number"
-              },
-              {
-                "type": "number"
-              }
-            ],
-            "type": "array",
-            "maxItems": 4,
-            "minItems": 4,
-            "title": "Box",
-            "description": "Normalized bounding box (ymin, xmin, ymax, xmax) from 0.0 to 1.0."
-          },
-          "confidence": {
-            "type": "number",
-            "maximum": 1.0,
-            "minimum": 0.0,
-            "title": "Confidence",
-            "description": "Signature detection confidence score.",
-            "default": 1.0
-          },
-          "signatory_label": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Signatory Label",
-            "description": "Contextual role (e.g. Customer, Contractor, Director) if labeled."
-          }
-        },
-        "type": "object",
-        "required": [
-          "page",
-          "box"
-        ],
-        "title": "SignatureDetection",
-        "description": "Detection of a handwritten signature, mark, or cursive endorsement."
-      },
       "SourceLocation": {
         "properties": {
           "page": {
@@ -4861,76 +4671,6 @@
         ],
         "title": "SourceRegion",
         "description": "One contiguous place a quote was found on a page."
-      },
-      "StampDetection": {
-        "properties": {
-          "page": {
-            "type": "integer",
-            "minimum": 1.0,
-            "title": "Page",
-            "description": "1-indexed page number where stamp was found."
-          },
-          "box": {
-            "prefixItems": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "number"
-              },
-              {
-                "type": "number"
-              },
-              {
-                "type": "number"
-              }
-            ],
-            "type": "array",
-            "maxItems": 4,
-            "minItems": 4,
-            "title": "Box",
-            "description": "Normalized bounding box (ymin, xmin, ymax, xmax) from 0.0 to 1.0."
-          },
-          "color": {
-            "type": "string",
-            "title": "Color",
-            "description": "Dominant ink color (e.g. blue, violet, red, black).",
-            "default": "blue"
-          },
-          "shape": {
-            "type": "string",
-            "title": "Shape",
-            "description": "Geometry of the stamp (circular, oval, rectangular, irregular).",
-            "default": "circular"
-          },
-          "confidence": {
-            "type": "number",
-            "maximum": 1.0,
-            "minimum": 0.0,
-            "title": "Confidence",
-            "description": "Detection confidence score.",
-            "default": 1.0
-          },
-          "text": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Text",
-            "description": "Decoded text or organization name from stamp, if legible."
-          }
-        },
-        "type": "object",
-        "required": [
-          "page",
-          "box"
-        ],
-        "title": "StampDetection",
-        "description": "Detection of a physical seal, official rubber stamp, or organization stamp."
       },
       "Table": {
         "properties": {

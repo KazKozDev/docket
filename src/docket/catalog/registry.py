@@ -32,7 +32,7 @@ from ..errors import ConfigurationError
 from .common import Citation
 
 if TYPE_CHECKING:
-    from ..schemas import DocumentForensicReport, ValidationIssue
+    from ..schemas import ValidationIssue
 
 ENTRY_POINT_GROUP = "docket.schemas"
 UNKNOWN = "unknown"
@@ -53,7 +53,6 @@ class ValidationContext:
     pages: list[str] | None = None
     witness_pages: list[str | None] | None = None
     vlm_unconfirmed: bool = False
-    forensic_report: "DocumentForensicReport | None" = None
 
 
 Validator = Callable[[BaseModel, ValidationContext], "Iterable[ValidationIssue] | None"]

@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 from .layout import BoundingBox, DocumentLayout
 from .ocr.acquire import AcquisitionReport
-from .schemas import ClassificationResult, DocumentForensicReport, ValidationIssue
+from .schemas import ClassificationResult, ValidationIssue
 
 
 class SourceRegion(BaseModel):
@@ -136,7 +136,6 @@ class DocumentResult(BaseModel):
     review_reasons: list[str] = Field(default_factory=list)
     metrics: ProcessingMetrics = Field(default_factory=ProcessingMetrics)
     error: DocumentError | None = None
-    forensic_report: DocumentForensicReport | None = None
 
     @property
     def is_valid(self) -> bool:
