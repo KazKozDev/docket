@@ -21,6 +21,12 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   reach the host's stderr unless the host configures logging.
 - CI tests Python 3.10, 3.11 and 3.12, the versions the classifiers promise;
   the OS classifiers now say macOS and Linux instead of OS Independent.
+- Requests to hosted models (Ollama cloud, a remote OpenAI-compatible API)
+  time out after `DOCKET_LLM_HOSTED_TIMEOUT_S` (60 s) and are retried up to
+  `DOCKET_LLM_RETRIES` (2) times. Every model is retried on 429/5xx and
+  connection errors. Local models keep their long timeouts and are not
+  retried after one. A stalled Ollama cloud request used to hold a document
+  for five minutes and then fail it.
 
 ## [0.4.0] - 2026-09-23
 

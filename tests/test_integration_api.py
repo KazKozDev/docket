@@ -78,6 +78,8 @@ def test_cli_requires_document():
 
 
 class _Response:
+    status_code = 200
+
     def __init__(self, body: dict):
         self._body = body
 
