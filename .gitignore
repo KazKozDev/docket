@@ -12,9 +12,7 @@ data/
 .DS_Store
 .ruff_cache/
 
-# Desktop Shell & Built Application Artifacts
-run_desktop.sh
-web/
+# Build artefacts and local tools
 *.tar.gz
 *.zip
 .serena/
