@@ -54,6 +54,15 @@ def test_tax_invoice_header_does_not_score_for_the_plain_invoice():
     assert result is None or result.doc_type != "invoice"
 
 
+def test_a_bare_tax_invoice_header_is_left_to_the_next_tier():
+    """Tesseract often reads nothing on a Malaysian till slip but its TAX
+    INVOICE header. With a separate tax_invoice schema that header alone
+    won the rules tier outright (30 of 120 SROIE receipts misfiled); the
+    rules must not decide on it, so TF-IDF / the LLM, whose receipt
+    description names this case, get the document."""
+    assert classify_rules("KEDAI MAKAN SDN BHD\nTAX INVOICE\nTOTAL 12.50") is None
+
+
 def test_till_receipt_printed_as_tax_invoice_stays_a_receipt():
     """The SROIE corpus: cash-register slips with a legal TAX INVOICE header.
     Till signals (cashier, approval code, please come again) must outweigh

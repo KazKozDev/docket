@@ -308,11 +308,11 @@ keyed by `(schema_id, version)`:
   `TaxIdentifier`, `Money`, `DocumentReference`, `BankAccount`, `LineItem`,
   `Citation`, `CitedDocument`.
 - **Built-ins**: invoice 2.0 and purchase order 2.0 (parties as `Party`,
-  PO numbers as references), tax invoice and credit note (same billing
-  structure and rules as the invoice, plus their own), receipt / contract /
-  bank statement / acceptance act / waybill / boarding pass 1.1 (flat, as
-  before, minus `doc_type`), utility bill, delivery note, certificate of
-  origin and ID document 1.0. Fixtures and expected extractions for each are
+  PO numbers as references), credit note (same billing structure and rules
+  as the invoice, plus its own), receipt / contract / bank statement /
+  acceptance act / waybill / boarding pass 1.1 (flat, as before, minus
+  `doc_type`) and delivery note 1.0. A GST/VAT "tax invoice" is an
+  invoice: its registration numbers and tax are invoice fields. Fixtures and expected extractions for each are
   in `tests/fixtures/catalog/`.
 - **Versions and migrations**: several versions of a schema can be
   registered; the latest is the default and `--schema-version` /
@@ -452,8 +452,8 @@ Extracted and validated records can be deterministically converted to corporate 
 
 ### EN 16931 exporters
 
-One semantic model, two syntaxes. `en16931.semantic(doc)` maps an `Invoice`,
-`TaxInvoice` or `CreditNote` onto EN 16931 business terms (BT/BG): parties
+One semantic model, two syntaxes. `en16931.semantic(doc)` maps an `Invoice`
+or `CreditNote` onto EN 16931 business terms (BT/BG): parties
 with VAT (BT-31/48), tax registration and legal ids, contacts, electronic
 addresses, the payment account as credit transfer (BG-17), references
 (order BT-13, preceding invoice BG-3), lines with unit codes

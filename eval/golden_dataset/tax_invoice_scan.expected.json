@@ -1,5 +1,5 @@
 {
-  "doc_type": "tax_invoice",
+  "doc_type": "invoice",
   "invoice_number": "TI-88213",
   "issue_date": "2026-05-19",
   "seller.name": "Blue Gum Hardware Pty Ltd",
@@ -8,7 +8,7 @@
   "tax_amount": 117.5,
   "total_amount": 1292.5,
   "currency": "AUD",
-  "_schema": "tax_invoice",
+  "_schema": "invoice",
   "_line_items": [
     {
       "description": "Timber decking 90x19 (m)",

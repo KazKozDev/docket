@@ -13,33 +13,24 @@ measured on real documents). Every migration from 1.0 is automatic.
 """
 from __future__ import annotations
 
-import re
 
 from .corpus import CORPUS
 from .models import (
     AcceptanceAct,
     BankStatement,
     BoardingPass,
-    CertificateOfOrigin,
     Contract,
     CreditNote,
     DeliveryNote,
-    IdDocument,
     Invoice,
     PurchaseOrder,
     Receipt,
-    TaxInvoice,
-    UtilityBill,
     Waybill,
 )
-from .registry import Keyword, LineItems, Migration, SchemaSpec, _register, keywords, pattern
+from .registry import LineItems, Migration, SchemaSpec, _register, keywords, pattern
 from .rules import (
-    validate_certificate_of_origin,
     validate_credit_note,
     validate_delivery_note,
-    validate_id_document,
-    validate_tax_invoice,
-    validate_utility_bill,
 )
 
 
@@ -152,8 +143,11 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         model=Invoice,
         description="Invoice / factura / Rechnung requesting payment for goods or services",
         keywords=(
-            # A TAX INVOICE header must not score for the plain invoice schema too
-            # (it did, on every Malaysian till receipt in the extended benchmark).
+            # A bare TAX INVOICE / factura fiscal header is not invoice evidence: in
+            # GST countries every till receipt prints one. It scores nothing, so
+            # such a document goes to the next tier, whose receipt description
+            # names that case (82/120 Malaysian SROIE receipts were misfiled
+            # before, first as invoices, then under a separate tax_invoice type).
             pattern(r"\b(?<!tax\s)invoice\b|\bfactura\b(?!\s*fiscal)", 3.0),
             pattern(r"\bbill to\b|\bfacturar a\b|\bcliente\b", 2.0),
             pattern(r"\bamount due\b|\bimporte total\b|\btotal a pagar\b", 2.0),
@@ -168,29 +162,6 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         line_items=_BILL_ITEMS,
         cited_fields=_BILLING_CITED,
         migrations=_INVOICE_MIGRATION,
-    ),
-    SchemaSpec(
-        schema_id="tax_invoice",
-        version="1.0",
-        display_name="Tax invoice",
-        status="experimental",
-        model=TaxInvoice,
-        description=(
-            "Tax invoice that identifies the seller's VAT/GST registration and states the tax "
-            "charged (GST tax invoice, Steuerrechnung) — a business-to-business document; "
-            "a point-of-sale till slip is a receipt even when printed with a TAX INVOICE header"
-        ),
-        # "Tax invoice" also contains "invoice", so the name alone ties with
-        # the invoice rules and defers to the next tier — a till receipt headed
-        # "TAX INVOICE" (common in GST countries) must not be filed here by
-        # keyword alone.
-        keywords=keywords("tax invoice", "factura fiscal", "steuerrechnung", "facture fiscale", "fattura fiscale",
-                          "belastingfactuur", "fatura fiscal", "faktura vat")
-        + keywords("gstin", "gst reg", "gst no", "abn", weight=1.0),
-        summary=_BILLING_SUMMARY,
-        line_items=_BILL_ITEMS,
-        cited_fields=_BILLING_CITED,
-        validators=(),  # filled below: the billing rules plus the tax-invoice ones
     ),
     SchemaSpec(
         schema_id="credit_note",
@@ -234,6 +205,10 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             pattern(r"\bplease come again\b", 2.0),
             pattern(r"\bapproval code\b", 1.0),
             pattern(r"\bterima kasih\b", 2.0),
+            # Every till slip in a GST country prints TAX INVOICE, so the header
+            # is weak receipt evidence. One point keeps it from deciding alone
+            # and stops a lone "Bill To" beside it from making an invoice.
+            pattern(r"\btax invoice\b", 1.0),
         ) + _names(
             r"kassenbon|kassenbeleg|quittung|ticket de caisse|re[çc]u|scontrino|"
             r"ricevuta|kassabon|kassabonnetje|tal[ãa]o|paragon"
@@ -381,27 +356,6 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         migrations=_FLAT_MIGRATION,
     ),
     SchemaSpec(
-        schema_id="utility_bill",
-        version="1.0",
-        display_name="Utility bill",
-        status="experimental",
-        model=UtilityBill,
-        description="Utility bill for electricity, gas, water, heating, phone or internet over a billing period",
-        keywords=keywords(
-            "utility bill", "electricity bill", "gas bill", "water bill", "energy bill", "phone bill",
-            "stromrechnung", "gasrechnung", "nebenkostenabrechnung", "jahresabrechnung",
-            "facture d'électricité", "facture de gaz", "factura de luz", "factura de la luz", "factura de gas",
-            "bolletta", "energierekening", "jaarafrekening", "fatura de eletricidade", "fatura da luz",
-            "rachunek za prąd", "счет за электроэнергию",
-        ) + keywords(
-            "meter reading", "zählerstand", "relevé de compteur", "lectura del contador", "lettura del contatore",
-            "meterstand", "leitura do contador", "kwh", "billing period", "abrechnungszeitraum", weight=2.0,
-        ),
-        summary={"document_number": "bill_number", "document_date": "issue_date", "issuer": "provider.name", "recipient": "customer.name", "currency": "currency", "tax_amount": "tax_amount", "total_amount": "amount_due"},
-        line_items=LineItems("charges", {"description": "description", "total": "amount"}),
-        cited_fields=("account_number", "issue_date", "provider.name", "amount_due"),
-    ),
-    SchemaSpec(
         schema_id="delivery_note",
         version="1.0",
         display_name="Delivery note",
@@ -416,47 +370,6 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         summary={"document_number": "delivery_note_number", "document_date": "delivery_date", "issuer": "supplier.name", "recipient": "recipient.name"},
         line_items=LineItems("items", {"description": "description", "sku": "sku", "quantity": "quantity_delivered", "unit_of_measure": "unit_of_measure"}),
         cited_fields=("delivery_note_number", "delivery_date", "supplier.name", "recipient.name"),
-    ),
-    SchemaSpec(
-        schema_id="certificate_of_origin",
-        version="1.0",
-        display_name="Certificate of origin",
-        status="experimental",
-        model=CertificateOfOrigin,
-        description="Certificate of origin attesting where exported goods were produced (incl. EUR.1)",
-        keywords=keywords(
-            "certificate of origin", "movement certificate", "ursprungszeugnis", "certificat d'origine",
-            "certificado de origen", "certificato di origine", "certificaat van oorsprong", "certificado de origem",
-            "świadectwo pochodzenia", "сертификат происхождения", "eur.1",
-        ) + keywords("country of origin", "ursprungsland", "pays d'origine", "país de origen", weight=2.0)
-        + keywords("chamber of commerce", "handelskammer", "chambre de commerce", "cámara de comercio", weight=1.0),
-        summary={"document_number": "certificate_number", "document_date": "issue_date", "issuer": "exporter.name", "recipient": "consignee.name", "currency": "goods_value.currency", "total_amount": "goods_value.amount"},
-        line_items=LineItems("goods", {"description": "description", "quantity": "quantity", "unit_of_measure": "unit_of_measure"}),
-        cited_fields=("certificate_number", "issue_date", "exporter.name", "country_of_origin"),
-    ),
-    SchemaSpec(
-        schema_id="id_document",
-        version="1.0",
-        display_name="ID document",
-        status="experimental",
-        model=IdDocument,
-        description=(
-            "Identity document — passport, national ID card, residence permit or driving licence "
-            "(printed text fields only)"
-        ),
-        keywords=keywords(
-            "passport", "reisepass", "passeport", "pasaporte", "passaporto", "paspoort", "passaporte", "paszport",
-            "паспорт", "identity card", "personalausweis", "carte nationale d'identité", "carte d'identité",
-            "documento nacional de identidad", "carta d'identità", "identiteitskaart", "cartão de cidadão",
-            "dowód osobisty", "residence permit", "aufenthaltstitel", "titre de séjour", "driving licence",
-            "driver's license", "führerschein", "permis de conduire",
-        # A machine-readable zone line: upper case only, with '<<' fillers —
-        # case-insensitive it matched ordinary words like "Abnahmeprotokoll".
-        ) + (Keyword(re.compile(r"\b[PIAC][A-Z<][A-Z]{3}[A-Z]*<<[A-Z<]*"), 3.0),)
-        + keywords("date of birth", "geburtsdatum", "date de naissance", "fecha de nacimiento", weight=2.0)
-        + keywords("nationality", "staatsangehörigkeit", "nationalité", "nacionalidad", weight=1.0),
-        summary={"document_number": "document_number", "document_date": "date_of_issue", "issuer": "issuing_country", "recipient": "surname"},
-        cited_fields=("document_number", "surname", "given_names", "date_of_birth"),
     ),
 )
 
@@ -477,7 +390,6 @@ def register_builtins() -> None:
 
     rules = {
         "invoice": (validate_billing,),
-        "tax_invoice": (validate_billing, validate_tax_invoice),
         "credit_note": (validate_billing, validate_credit_note),
         "receipt": (validate_receipt,),
         "contract": (validate_contract,),
@@ -486,10 +398,7 @@ def register_builtins() -> None:
         "acceptance_act": (validate_acceptance_act,),
         "waybill": (validate_waybill,),
         "boarding_pass": (validate_boarding_pass,),
-        "utility_bill": (validate_utility_bill,),
         "delivery_note": (validate_delivery_note,),
-        "certificate_of_origin": (validate_certificate_of_origin,),
-        "id_document": (validate_id_document,),
     }
     for spec in BUILTIN_SCHEMAS:
         _register(

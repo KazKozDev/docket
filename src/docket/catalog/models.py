@@ -23,7 +23,6 @@ from .common import (
     CitedDocument,
     DocumentReference,
     LineItem,
-    Money,
     Party,
 )
 
@@ -92,16 +91,6 @@ class Invoice(_Billing):
     """A request for payment for goods or services."""
 
     invoice_number: str
-
-
-class TaxInvoice(Invoice):
-    """An invoice that must identify the seller's VAT/GST registration and
-    state the tax charged (GST tax invoice, 'Tax Invoice' / 'Steuerrechnung'
-    in jurisdictions that require one)."""
-
-    tax_point_date: date | None = Field(
-        default=None, description="Date of supply / tax point, if printed separately from the issue date."
-    )
 
 
 class CreditNote(_Billing):
@@ -412,44 +401,7 @@ class Waybill(CitedDocument):
 # ---- schemas added in 2.x ----------------------------------------------------------
 
 
-class MeterReading(BaseModel):
-    meter_id: str | None = None
-    previous_reading: float | None = None
-    current_reading: float | None = None
-    consumption: float = Field(description="Units consumed in the period, as printed.")
-    unit: str = Field(description="e.g. 'kWh', 'm3', 'GB'.")
-    estimated: bool = Field(default=False, description="True if the bill marks the reading as estimated.")
-
-
-class UtilityCharge(BaseModel):
-    description: str
-    amount: float
-
-
 ServiceType = Literal["electricity", "gas", "water", "heating", "telecom", "internet", "waste", "other"]
-
-
-class UtilityBill(CitedDocument):
-    """A periodic bill for electricity, gas, water, telecom or similar."""
-
-    provider: Party
-    customer: Party
-    account_number: str = Field(description="Customer account or contract number with the provider.")
-    bill_number: str | None = None
-    issue_date: date
-    due_date: date | None = None
-    billing_period_start: date
-    billing_period_end: date
-    service_type: ServiceType
-    service_address: Address | None = Field(default=None, description="Where the service is supplied.")
-    meter_readings: list[MeterReading] = Field(default_factory=list)
-    charges: list[UtilityCharge] = Field(default_factory=list, description="Itemized current charges.")
-    currency: str = Field(default="EUR", min_length=3, max_length=3)
-    current_charges: float = Field(description="Total of this period's charges, tax included.")
-    tax_amount: float = 0
-    previous_balance: float | None = Field(default=None, description="Balance carried from the last bill.")
-    payments_received: float | None = Field(default=None, description="Payments credited since the last bill.")
-    amount_due: float
 
 
 class DeliveryNoteItem(BaseModel):
@@ -479,89 +431,20 @@ class DeliveryNote(CitedDocument):
     received_by: str | None = Field(default=None, description="Name of the person who signed for receipt.", json_schema_extra={"pii": "person_name"})
 
 
-class OriginGoodsItem(BaseModel):
-    description: str
-    hs_code: str | None = Field(default=None, description="Harmonized System tariff code, digits only.")
-    quantity: float | None = None
-    unit_of_measure: str | None = None
-    gross_weight_kg: float | None = Field(default=None, ge=0)
-    marks_and_numbers: str | None = None
-
-
-class CertificateOfOrigin(CitedDocument):
-    """A certificate attesting the country where exported goods were produced."""
-
-    certificate_number: str
-    issue_date: date
-    certificate_type: Literal["non_preferential", "eur1", "eur_med", "form_a", "other"] = Field(
-        default="non_preferential",
-        description="Non-preferential (chamber of commerce), EUR.1, EUR-MED, GSP Form A, or other.",
-    )
-    exporter: Party
-    consignee: Party
-    producer: Party | None = None
-    country_of_origin: str = Field(description="Country of origin as printed (ISO code or name).")
-    destination_country: str | None = None
-    transport_details: str | None = Field(default=None, description="Means of transport and route, as printed.")
-    issuing_authority: str = Field(description="Chamber of commerce or customs office that certified it.")
-    goods: list[OriginGoodsItem] = Field(default_factory=list)
-    invoice_references: list[DocumentReference] = Field(default_factory=list)
-    goods_value: Money | None = Field(default=None, description="Declared value of the goods, if stated.")
-
-
-class IdDocument(CitedDocument):
-    """The printed textual fields of an identity document.
-
-    Only what is printed and machine-readable as text: no face matching, no
-    biometrics, no authenticity or identity verification.
-    """
-
-    document_kind: Literal["passport", "national_id", "residence_permit", "driving_licence", "other"]
-    document_number: str = Field(json_schema_extra={"pii": "government_id"})
-    issuing_country: str = Field(description="ISO 3166 alpha-2 or alpha-3 code as printed.")
-    surname: str = Field(json_schema_extra={"pii": "person_name"})
-    given_names: str = Field(json_schema_extra={"pii": "person_name"})
-    date_of_birth: date = Field(json_schema_extra={"pii": "date_of_birth"})
-    sex: Literal["M", "F", "X"] | None = None
-    nationality: str | None = Field(default=None, description="ISO alpha-3 code or name as printed.")
-    place_of_birth: str | None = Field(default=None, json_schema_extra={"pii": "address"})
-    date_of_issue: date | None = None
-    date_of_expiry: date | None = None
-    issuing_authority: str | None = None
-    personal_number: str | None = Field(default=None, description="Optional national personal number.", json_schema_extra={"pii": "government_id"})
-    mrz: list[str] = Field(
-        default_factory=list,
-        description="Machine-readable zone lines exactly as printed ('<' fillers kept), if present.",
-        json_schema_extra={"pii": "government_id"},
-    )
-
-    @field_validator("mrz")
-    @classmethod
-    def _strip_mrz(cls, lines: list[str]) -> list[str]:
-        return [line.replace(" ", "").upper() for line in lines if line.strip()]
-
-
 __all__ = [
     "AcceptanceAct",
     "AcceptanceActItem",
     "BankStatement",
     "BankStatementTransaction",
     "BoardingPass",
-    "CertificateOfOrigin",
     "Contract",
     "CreditNote",
     "DeliveryNote",
     "DeliveryNoteItem",
-    "IdDocument",
     "Invoice",
-    "MeterReading",
-    "OriginGoodsItem",
     "PurchaseOrder",
     "Receipt",
     "ReceiptItem",
-    "TaxInvoice",
-    "UtilityBill",
-    "UtilityCharge",
     "Waybill",
     "WaybillItem",
 ]

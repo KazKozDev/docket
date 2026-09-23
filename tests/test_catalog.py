@@ -19,7 +19,7 @@ FIXTURES = Path(__file__).parent / "fixtures" / "catalog"
 IDS = [s.schema_id for s in BUILTIN_SCHEMAS]
 ORIGINAL = {"invoice", "receipt", "contract", "purchase_order", "bank_statement", "acceptance_act", "waybill",
             "boarding_pass"}
-ADDED = {"credit_note", "delivery_note", "utility_bill", "tax_invoice", "certificate_of_origin", "id_document"}
+ADDED = {"credit_note", "delivery_note"}
 
 
 def _fixture(schema_id: str) -> tuple[str, dict]:
@@ -56,7 +56,6 @@ def test_keywords_cover_several_languages(schema_id):
     # schema's keywords match its name in at least three languages.
     names = {
         "invoice": ["invoice", "Rechnung", "facture", "factura"],
-        "tax_invoice": ["tax invoice", "Steuerrechnung", "facture fiscale"],
         "credit_note": ["credit note", "Gutschrift", "avoir", "nota di credito"],
         "receipt": ["receipt", "Kassenbon", "scontrino", "recibo"],
         "contract": ["agreement", "Vertrag", "contrat", "contrato"],
@@ -65,10 +64,7 @@ def test_keywords_cover_several_languages(schema_id):
         "acceptance_act": ["acceptance act", "Abnahmeprotokoll", "verbale di collaudo"],
         "waybill": ["waybill", "Frachtbrief", "lettre de voiture"],
         "boarding_pass": ["boarding pass", "Bordkarte", "carte d'embarquement"],
-        "utility_bill": ["electricity bill", "Stromrechnung", "bolletta", "factura de luz"],
         "delivery_note": ["delivery note", "Lieferschein", "bon de livraison", "pakbon"],
-        "certificate_of_origin": ["certificate of origin", "Ursprungszeugnis", "certificat d'origine"],
-        "id_document": ["passport", "Personalausweis", "carte d'identité", "pasaporte"],
     }[schema_id]
     spec = get_schema(schema_id)
     for name in names:
@@ -124,7 +120,6 @@ def test_exporters_are_listed(schema_id):
     spec = get_schema(schema_id)
     expected = {
         "invoice": {"ubl", "peppol", "xrechnung-ubl", "xrechnung-cii", "factur-x-en16931", "factur-x-basic", "facturae"},
-        "tax_invoice": {"ubl", "peppol", "xrechnung-ubl", "xrechnung-cii", "factur-x-en16931", "factur-x-basic"},
         "credit_note": {"ubl", "peppol", "xrechnung-ubl", "xrechnung-cii", "factur-x-en16931", "factur-x-basic"},
         "receipt": {"xero-csv", "quickbooks-json"},
         "bank_statement": {"1c-bank", "sap-csv"},
