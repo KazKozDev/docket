@@ -16,6 +16,7 @@ without reading a document, so a typo fails before the first page is read.
 """
 from __future__ import annotations
 
+import importlib.util
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, Union
@@ -171,6 +172,11 @@ def resolve(options: ProcessOptions | None = None) -> ResolvedOptions:
         )
 
     review = options.review
+    enqueue = _pick(review.enqueue, config.REVIEW_QUEUE_ENABLED)
+    if enqueue and importlib.util.find_spec("sqlalchemy") is None:
+        raise ConfigurationError(
+            'storing documents for review needs pip install "docket-idp[review]" (SQLAlchemy)'
+        )
     return ResolvedOptions(
         acquisition=acquisition,
         document_type=doc_type,
@@ -178,7 +184,7 @@ def resolve(options: ProcessOptions | None = None) -> ResolvedOptions:
         include_layout=_pick(options.include_layout, config.INCLUDE_LAYOUT),
         escalate=options.escalate,
         review=ResolvedReview(
-            enqueue=_pick(review.enqueue, config.REVIEW_QUEUE_ENABLED),
+            enqueue=enqueue,
             min_classification_confidence=_pick(
                 review.min_classification_confidence, config.MIN_CLASSIFICATION_CONFIDENCE
             ),

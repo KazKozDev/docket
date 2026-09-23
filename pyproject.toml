@@ -19,7 +19,8 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Financial and Insurance Industry",
-    "Operating System :: OS Independent",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
@@ -40,19 +41,24 @@ dependencies = [
     "python-dotenv>=1.0",
     "tomli>=2.0; python_version < \"3.11\"",
     "scikit-learn>=1.4",
-    "SQLAlchemy>=2.0,<3",
 ]
 
 [project.optional-dependencies]
 api = [
+    "docket-idp[review]",
     "fastapi>=0.110",
     "uvicorn>=0.29",
     "python-multipart>=0.0.9",
+]
+# Persistent review queue (ReviewOptions(enqueue=True)); SQLite by default.
+review = [
+    "SQLAlchemy>=2.0,<3",
 ]
 tracing = [
     "langfuse>=2.0",
 ]
 postgres = [
+    "docket-idp[review]",
     "psycopg[binary]>=3.2,<4",
 ]
 # PaddleOCR backend (`--ocr-backend paddle`), including its table-structure
@@ -69,7 +75,8 @@ docling = [
     "docling>=2.81,<3",
 ]
 # Official e-invoice validation (XSD via lxml, Schematron via SaxonC-HE).
-# The validation artifacts themselves ship with the base package.
+# Artifacts with verified redistribution terms ship with the package; the
+# rest (Peppol, CII D16B, Factur-X) come from `docket einvoice fetch`.
 einvoice = [
     "factur-x>=6.8,<7",
     "lxml>=5.0",
@@ -94,7 +101,7 @@ dev = [
 ]
 
 [project.scripts]
-docket = "docket.cli:main"
+docket = "docket.cli:run"
 docket-api = "docket.api:run"
 
 [project.urls]

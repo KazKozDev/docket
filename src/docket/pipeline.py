@@ -24,7 +24,7 @@ from typing import Any, Callable
 
 from pydantic import BaseModel
 
-from . import catalog, config, review_queue
+from . import catalog, config
 from .catalog import SchemaSpec
 from .classify import classify
 from .extract import extract_pages
@@ -41,6 +41,7 @@ from .ocr import (
 )
 from .ocr_quality import looks_garbled
 from .options import ProcessOptions, ResolvedOptions, resolve
+from .review_reasons import reasons_for
 from .result import (
     DocumentError,
     DocumentResult,
@@ -192,7 +193,7 @@ def validate_extraction(
 
 def review(result: DocumentResult, options: ResolvedOptions) -> DocumentResult:
     """Decide whether a human must look, and queue the document if so."""
-    reasons = review_queue.reasons_for(
+    reasons = reasons_for(
         result, min_classification_confidence=options.review.min_classification_confidence
     )
     if result.error is not None:
@@ -203,6 +204,8 @@ def review(result: DocumentResult, options: ResolvedOptions) -> DocumentResult:
         update={"needs_review": bool(reasons), "review_reasons": reasons, "status": status}
     )
     if reasons and result.error is None and options.review.enqueue:
+        from . import review_queue  # needs the [review] extra; only when storing
+
         review_queue.enqueue(
             result,
             reasons,
