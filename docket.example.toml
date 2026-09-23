@@ -99,8 +99,6 @@
 # enabled = false
 # SQLAlchemy URL for SQLite or PostgreSQL review storage. Env: DOCKET_REVIEW_DATABASE_URL.
 # database_url = "sqlite:///data/review.db"
-# Deprecated test/embedding override for the SQLite review database. Env: DOCKET_REVIEW_QUEUE.
-# queue = "data/review.db"
 # Review task lease duration before another reviewer can claim it. Env: DOCKET_REVIEW_LOCK_SECONDS.
 # lock_seconds = 300
 # Where copies of flagged documents are kept. Env: DOCKET_REVIEW_DOCUMENTS.

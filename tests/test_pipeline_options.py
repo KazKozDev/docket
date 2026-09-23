@@ -237,7 +237,7 @@ def test_layout_can_be_left_out_but_locations_stay(tmp_path, quiet, monkeypatch)
     assert result.metrics.pages == 1
 
 
-def test_review_threshold_and_queue_path_are_per_call(txt, tmp_path, monkeypatch):
+def test_review_threshold_and_database_are_per_call(txt, tmp_path, monkeypatch):
     from docket import review_queue
     from docket.schemas import ClassificationResult
 
@@ -246,17 +246,17 @@ def test_review_threshold_and_queue_path_are_per_call(txt, tmp_path, monkeypatch
         lambda text: ClassificationResult(doc_type="invoice", confidence=0.5, method="tfidf"),
     )
     monkeypatch.setattr(extract_module, "chat_json", lambda *a, **k: _invoice_payload())
-    queue = tmp_path / "q" / "review.jsonl"
+    queue = f"sqlite:///{tmp_path / 'q' / 'review.db'}"
     strict = ProcessOptions(
         ocr=OcrOptions(fallbacks=[]),
         review=ReviewOptions(
-            enqueue=True, min_classification_confidence=0.9, queue_path=queue, documents_dir=tmp_path / "docs"
+            enqueue=True, min_classification_confidence=0.9, database_url=queue, documents_dir=tmp_path / "docs"
         ),
     )
     result = pipeline.process_document(txt(), strict)
     assert result.status == DocumentStatus.NEEDS_REVIEW
     assert any("low classification confidence (0.50 < 0.90)" in r for r in result.review_reasons)
-    assert [r["document_id"] for r in review_queue.list_pending(queue_path=queue)] == [result.document_id]
+    assert [r["document_id"] for r in review_queue.list_pending(database_url=queue)] == [result.document_id]
 
     lenient = strict.model_copy(
         update={"review": strict.review.model_copy(update={"min_classification_confidence": 0.3})}
@@ -265,11 +265,11 @@ def test_review_threshold_and_queue_path_are_per_call(txt, tmp_path, monkeypatch
 
 
 def test_failed_documents_are_not_queued(tmp_path, monkeypatch):
-    queue = tmp_path / "review.jsonl"
+    queue = tmp_path / "review.db"
     path = tmp_path / "doc.docx"
     path.write_bytes(b"PK")
     result = pipeline.process_document(
-        path, ProcessOptions(ocr=OcrOptions(fallbacks=[]), review=ReviewOptions(enqueue=True, queue_path=queue))
+        path, ProcessOptions(ocr=OcrOptions(fallbacks=[]), review=ReviewOptions(enqueue=True, database_url=f"sqlite:///{queue}"))
     )
     assert result.status == DocumentStatus.FAILED and result.needs_review
     assert not queue.exists()

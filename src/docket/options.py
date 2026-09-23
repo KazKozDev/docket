@@ -63,7 +63,9 @@ class ReviewOptions(BaseModel):
     min_classification_confidence: float | None = Field(
         default=None, ge=0.0, le=1.0, description="Env: DOCKET_MIN_CONFIDENCE."
     )
-    queue_path: Path | None = Field(default=None, description="Env: DOCKET_REVIEW_QUEUE.")
+    database_url: str | None = Field(
+        default=None, description="SQLAlchemy URL of the review store. Env: DOCKET_REVIEW_DATABASE_URL."
+    )
     documents_dir: Path | None = Field(default=None, description="Env: DOCKET_REVIEW_DOCUMENTS.")
 
 
@@ -101,7 +103,7 @@ class ProcessOptions(BaseModel):
 class ResolvedReview:
     enqueue: bool
     min_classification_confidence: float
-    queue_path: Path
+    database_url: str
     documents_dir: Path
 
 
@@ -180,7 +182,7 @@ def resolve(options: ProcessOptions | None = None) -> ResolvedOptions:
             min_classification_confidence=_pick(
                 review.min_classification_confidence, config.MIN_CLASSIFICATION_CONFIDENCE
             ),
-            queue_path=_pick(review.queue_path, config.REVIEW_QUEUE_PATH),
+            database_url=_pick(review.database_url, config.REVIEW_DATABASE_URL),
             documents_dir=_pick(review.documents_dir, config.REVIEW_DOCUMENTS_DIR),
         ),
     )

@@ -148,8 +148,6 @@ SETTINGS: tuple[Setting, ...] = (
             "Write flagged documents to the review queue (opt-in)."),
     Setting("REVIEW_DATABASE_URL", "review.database_url", "DOCKET_REVIEW_DATABASE_URL", "str",
             "sqlite:///data/review.db", "SQLAlchemy URL for SQLite or PostgreSQL review storage."),
-    Setting("REVIEW_QUEUE_PATH", "review.queue", "DOCKET_REVIEW_QUEUE", "path", Path("data/review.db"),
-            "Deprecated test/embedding override for the SQLite review database."),
     Setting("REVIEW_LOCK_SECONDS", "review.lock_seconds", "DOCKET_REVIEW_LOCK_SECONDS", "int", 300,
             "Review task lease duration before another reviewer can claim it.", minimum=10, maximum=3600),
     Setting("REVIEW_DOCUMENTS_DIR", "review.documents", "DOCKET_REVIEW_DOCUMENTS", "path",
@@ -407,7 +405,6 @@ TFIDF_CONFIDENCE_FLOOR: float
 MIN_CLASSIFICATION_CONFIDENCE: float
 REVIEW_QUEUE_ENABLED: bool
 REVIEW_DATABASE_URL: str
-REVIEW_QUEUE_PATH: Path
 REVIEW_LOCK_SECONDS: int
 REVIEW_DOCUMENTS_DIR: Path
 MAX_FILE_BYTES: int
