@@ -287,6 +287,46 @@ def docket_on_their_fields(rows: list[dict], field_map: dict[str, str]) -> dict:
     return {"field_accuracy": round(correct / total, 4) if total else None, "fields_graded": total}
 
 
+def join_docket(report: dict, comparable: list[tuple[Path, dict]]) -> None:
+    """docket on the same intersections, for the joined table: each tool's join
+    is restricted to the documents that tool actually graded, so a subsampled
+    run (--max-docs) compares like with like."""
+    docket_json = ROOT / "eval" / "results" / "extended_stage2.json"
+    if not docket_json.exists():
+        print("\n(no eval/results/extended_stage2.json — run benchmark_ocr.py for docket's side)")
+        return
+    d = json.loads(docket_json.read_text())["pipeline"]["tesseract"]["documents"]
+    d_by_name = {r["document"]: r for r in d}
+    expected_by_name = {p.name: e for p, e in comparable}
+    report["docket_on_their_fields"] = {}
+    for tool, field_map in (
+        ("invoice2data", INVOICE2DATA),
+        ("docpick", DOCPICK_INVOICE | DOCPICK_RECEIPT),
+        ("ocrcontext", OCRCONTEXT_INVOICE | OCRCONTEXT_RECEIPT),
+    ):
+        rows = []
+        for r in report.get(tool, {}).get("documents", []):
+            if "fields" not in r or r["document"] not in d_by_name:
+                continue
+            expected = expected_by_name[r["document"]]
+            rows.append({**d_by_name[r["document"]], "expected_fields": sorted(expected_keys(expected))})
+        report["docket_on_their_fields"][tool] = docket_on_their_fields(rows, field_map)
+
+
+def rejoin(paths: list[Path]) -> None:
+    """Recompute docket's side of saved competitor reports from the current
+    extended_stage2.json, without running the tools again (their versions and
+    model are pinned, so a new docket release only needs its own run)."""
+    comparable = [(p, e) for p, e in documents() if expected_keys(e)]
+    for path in paths:
+        report = json.loads(path.read_text())
+        join_docket(report, comparable)
+        path.write_text(json.dumps(report, indent=2))
+        for tool, joined in report.get("docket_on_their_fields", {}).items():
+            if report.get(tool):
+                print(f"  {path.name}: docket on {tool}'s fields -> {joined}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--tools", nargs="+", choices=list(TOOLS), default=list(TOOLS))
@@ -296,7 +336,12 @@ def main() -> None:
                              "for tools too slow to read the whole corpus, keeps every source represented")
     parser.add_argument("--model", default=LLM_MODEL, help="Ollama model for the LLM-backed tools")
     parser.add_argument("--out", type=Path, default=ROOT / "eval" / "results" / "competitors.json")
+    parser.add_argument("--rejoin", type=Path, nargs="+", metavar="REPORT",
+                        help="only recompute docket's side of saved reports from extended_stage2.json")
     args = parser.parse_args()
+    if args.rejoin:
+        rejoin(args.rejoin)
+        return
 
     comparable = [(p, e) for p, e in documents() if expected_keys(e)]
     if args.limit:
@@ -322,30 +367,7 @@ def main() -> None:
                 print(f"  {row['document']:34s} ERROR {row['error'][:70]}", flush=True)
         report[name] = {"summary": summarize(rows), "documents": rows}
 
-    # docket on the same intersections, for the joined table: each tool's join is
-    # restricted to the documents that tool actually graded, so a subsampled
-    # run (--max-docs) compares like with like.
-    docket_json = ROOT / "eval" / "results" / "extended_stage2.json"
-    if docket_json.exists():
-        d = json.loads(docket_json.read_text())["pipeline"]["tesseract"]["documents"]
-        d_by_name = {r["document"]: r for r in d}
-        report["docket_on_their_fields"] = {}
-        for tool, field_map in (
-            ("invoice2data", INVOICE2DATA),
-            ("docpick", DOCPICK_INVOICE | DOCPICK_RECEIPT),
-            ("ocrcontext", OCRCONTEXT_INVOICE | OCRCONTEXT_RECEIPT),
-        ):
-            tool_rows = report.get(tool, {}).get("documents", [])
-            graded_names = {r["document"] for r in tool_rows if "fields" in r}
-            rows = []
-            for r in tool_rows:
-                if r["document"] not in graded_names or r["document"] not in d_by_name:
-                    continue
-                expected = next(e for p, e in comparable if p.name == r["document"])
-                rows.append({**d_by_name[r["document"]], "expected_fields": sorted(expected_keys(expected))})
-            report["docket_on_their_fields"][tool] = docket_on_their_fields(rows, field_map)
-    else:
-        print("\n(no eval/results/extended_stage2.json — run benchmark_ocr.py for docket's side)")
+    join_docket(report, comparable)
 
     args.out.parent.mkdir(exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2))

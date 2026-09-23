@@ -194,3 +194,29 @@ def test_variance_summary_counts_missing_fields_as_disagreement():
     s = summarize_variance(runs)
     assert s["agreement"] == 0.5  # total_amount agrees, discount_amount missing in run 2
     assert s["per_field"]["total_amount"]["values"] == [[32.7, 2]]
+
+
+def test_pipeline_benchmark_resumes_from_its_checkpoint(tmp_path, monkeypatch):
+    """A long run killed half-way must continue where it stopped, not restart."""
+    sys.path.insert(0, str(ROOT / "eval"))
+    import benchmark_ocr
+    from tests.factories import make_result
+
+    calls = []
+
+    def fake_process(path, options):
+        calls.append(path.name)
+        return make_result(source=str(path))
+
+    monkeypatch.setattr(benchmark_ocr, "process_document", fake_process)
+    docs = [(tmp_path / f"doc{i}.png", {"doc_type": "invoice", "invoice_number": "INV-1"}) for i in range(3)]
+    checkpoint = tmp_path / "run.jsonl"
+
+    first = benchmark_ocr.run_pipeline("tesseract", docs[:2], checkpoint)
+    assert calls == ["doc0.png", "doc1.png"] and len(checkpoint.read_text().splitlines()) == 2
+    second = benchmark_ocr.run_pipeline("tesseract", docs, checkpoint)
+    assert calls == ["doc0.png", "doc1.png", "doc2.png"]  # only the new one ran
+    assert [r["document"] for r in second["documents"]] == ["doc0.png", "doc1.png", "doc2.png"]
+    assert second["documents"][:2] == first["documents"]
+    assert benchmark_ocr.run_pipeline("paddle-mobile", docs[:1], checkpoint)["documents"]  # per config
+    assert calls[-1] == "doc0.png"
