@@ -65,7 +65,7 @@ def test_retry_prompt_keeps_source_document(monkeypatch):
         return {} if len(prompts) == 1 else _invoice_payload()
 
     monkeypatch.setattr(extract_module, "chat_json", fake_chat)
-    result, attempts = extract_module.extract("SOURCE_SENTINEL", Invoice, max_retries=1)
+    result, attempts = extract_module.extract_pages(["SOURCE_SENTINEL"], Invoice, max_retries=1)
     assert result is not None
     assert attempts == 2
     assert "SOURCE_SENTINEL" in prompts[1]
@@ -80,7 +80,7 @@ def test_date_convention_instruction_in_extraction_prompt(monkeypatch):
 
     monkeypatch.setattr(extract_module, "chat_json", fake_chat)
     text = "[PAGE 1]\nInvoice date 11/02/2019\nDue 26/02/2019"
-    extract_module.extract(text, Invoice, max_retries=0)
+    extract_module.extract_pages([text], Invoice, max_retries=0)
     assert any("uses DMY" in p for p in prompts)
 
 
@@ -92,5 +92,5 @@ def test_decimal_comma_document_gets_the_day_first_instruction(monkeypatch):
         return _invoice_payload()
 
     monkeypatch.setattr(extract_module, "chat_json", fake_chat)
-    extract_module.extract("[PAGE 1]\nDate : 03/09/2026\nTotal TTC : 484,80 €", Invoice, max_retries=0)
+    extract_module.extract_pages(["[PAGE 1]\nDate : 03/09/2026\nTotal TTC : 484,80 €"], Invoice, max_retries=0)
     assert any("uses DMY" in p for p in prompts)

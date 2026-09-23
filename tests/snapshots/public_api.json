@@ -76,10 +76,10 @@
       "template_id": {"annotation": "str | None", "required": false}
     },
     "ReviewOptions": {
+      "database_url": {"annotation": "str | None", "required": false},
       "documents_dir": {"annotation": "pathlib.Path | None", "required": false},
       "enqueue": {"annotation": "bool | None", "required": false},
-      "min_classification_confidence": {"annotation": "float | None", "required": false},
-      "queue_path": {"annotation": "pathlib.Path | None", "required": false}
+      "min_classification_confidence": {"annotation": "float | None", "required": false}
     }
   },
   "names": [

@@ -44,7 +44,6 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "API_KEY", None)
     monkeypatch.setattr(config, "JOBS_DIR", tmp_path / "jobs")
     monkeypatch.setattr(config, "REVIEW_QUEUE_ENABLED", False)
-    monkeypatch.setattr(config, "REVIEW_QUEUE_PATH", tmp_path / "reviews.jsonl")
     monkeypatch.setattr(config, "REVIEW_DATABASE_URL", f"sqlite:///{tmp_path / 'reviews.db'}")
     monkeypatch.setattr(config, "REVIEW_DOCUMENTS_DIR", tmp_path / "originals")
     monkeypatch.setattr(config, "OCR_FALLBACKS", [])
