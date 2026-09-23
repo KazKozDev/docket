@@ -32,8 +32,3 @@ def address_line(address: Address | None) -> str | None:
 def iban(document) -> str | None:
     account = getattr(document, "payment_account", None)
     return account.iban if account is not None else None
-
-
-def bic(document) -> str | None:
-    account = getattr(document, "payment_account", None)
-    return account.bic if account is not None else None

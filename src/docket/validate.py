@@ -26,7 +26,7 @@ from .catalog.models import (
     Waybill,
 )
 from .catalog.registry import SchemaSpec, ValidationContext
-from .schemas import DocumentForensicReport, ValidationIssue
+from .schemas import ValidationIssue
 
 _TAX_ID_RE = re.compile(r"^[A-Z0-9][A-Z0-9\-\.]{4,20}$", re.I)
 _BIC_RE = re.compile(r"^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$")
@@ -1725,69 +1725,6 @@ def validate_waybill(wb: Waybill, ctx: ValidationContext) -> list[ValidationIssu
     return issues
 
 
-# Document types that are only binding once signed and stamped.
-_EXECUTED_TYPES = {"contract", "acceptance_act", "waybill", "delivery_note"}
-
-
-def validate_forensic_report(
-    report: DocumentForensicReport,
-    doc_type: str | None = None,
-) -> list[ValidationIssue]:
-    """Validate a document's physical execution, signatures, stamps, and alterations.
-
-    Args:
-        report: Extracted forensic report.
-        doc_type: Target document classification.
-
-    Returns:
-        List of forensic validation issues.
-    """
-    issues: list[ValidationIssue] = []
-
-    if report.is_empty_template:
-        severity = (
-            "error"
-            if doc_type in _EXECUTED_TYPES
-            else "warning"
-        )
-        issues.append(
-            ValidationIssue(
-                field="forensics.is_empty_template",
-                message="Document appears to be an unexecuted blank template without signatures or stamps",
-                severity=severity,
-            )
-        )
-
-    if "MISSING_SIGNATURE" in report.risk_flags and doc_type in {"contract", "acceptance_act"}:
-        issues.append(
-            ValidationIssue(
-                field="forensics.signatures",
-                message="No handwritten or physical signatures detected on formal legal document",
-                severity="warning",
-            )
-        )
-
-    if "MISSING_STAMP" in report.risk_flags and doc_type in {"acceptance_act", "waybill"}:
-        issues.append(
-            ValidationIssue(
-                field="forensics.stamps",
-                message="No organizational seal or rubber stamp detected",
-                severity="warning",
-            )
-        )
-
-    if report.alterations_detected:
-        issues.append(
-            ValidationIssue(
-                field="forensics.alterations",
-                message="Handwritten corrections or alterations detected on document body",
-                severity="warning",
-            )
-        )
-
-    return issues
-
-
 def validate(
     document,
     raw_text: str | None = None,
@@ -1795,14 +1732,13 @@ def validate(
     pages: list[str] | None = None,
     witness_pages: list[str | None] | None = None,
     vlm_unconfirmed: bool = False,
-    forensic_report: DocumentForensicReport | None = None,
     spec: SchemaSpec | None = None,
 ) -> list[ValidationIssue]:
     """Every deterministic check for one extracted document.
 
     `spec` is the schema the document was extracted with; when omitted it is
     looked up by the document's model. Citation checks run for the spec's
-    cited fields, then each of its validators, then forensic rules.
+    cited fields, then each of its validators.
     """
     from .catalog import for_model
 
@@ -1819,13 +1755,10 @@ def validate(
         pages=pages,
         witness_pages=witness_pages,
         vlm_unconfirmed=vlm_unconfirmed,
-        forensic_report=forensic_report,
     )
     issues: list[ValidationIssue] = []
     if raw_text and spec.required_citations:
         issues.extend(_check_material_locations(document, raw_text, spec.required_citations))
     for validator in spec.validators:
         issues.extend(validator(document, ctx) or [])
-    if forensic_report is not None:
-        issues.extend(validate_forensic_report(forensic_report, spec.schema_id))
     return issues

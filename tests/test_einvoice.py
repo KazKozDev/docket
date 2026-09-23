@@ -582,7 +582,7 @@ def test_exporter_refuses_what_it_cannot_represent(change, message):
 
 def test_validating_a_non_einvoice_format_is_an_error():
     with pytest.raises(ExportError, match="not an e-invoice format"):
-        export_document(complete_invoice(), "xero-json", ExportOptions(validate_einvoice=True))
+        export_document(complete_invoice(), "facturae", ExportOptions(validate_einvoice=True))
 
 
 # ---- CLI and HTTP ---------------------------------------------------------------------------------

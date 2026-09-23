@@ -7,7 +7,6 @@
     docket templates list | show ID
     docket formats
     docket ocr-backends
-    docket forensics FILE
     docket validate-einvoice FILE [--profile PROFILE] [--format text|json]
     docket einvoice status | fetch [ARTIFACT ...] [--force]
     docket factur-x create PDF XML --output PDF [--level LEVEL] [--verapdf PATH]
@@ -32,7 +31,6 @@ Exit codes:
   3  configuration error — nothing was processed
 For `validate-einvoice`: 0 valid, 2 invalid, 3 configuration error.
 For `einvoice fetch`: 0 downloaded or already present, 2 download failed.
-For `forensics`: 0 nothing found, 2 empty template or alteration detected.
 For `config check`: 0 valid, 3 invalid.
 """
 from __future__ import annotations
@@ -384,14 +382,6 @@ def _print_export_validation(result) -> int:
     return EXIT_PARTIAL
 
 
-def _cmd_forensics(args: argparse.Namespace) -> int:
-    from .forensics import analyze_document_forensics
-
-    report = analyze_document_forensics(args.document)
-    _print_json(report.model_dump(mode="json"))
-    return EXIT_FAILED if report.is_empty_template or report.alterations_detected else EXIT_OK
-
-
 def _cmd_config(args: argparse.Namespace) -> int:
     problems = config.ERRORS + config._semantic_errors()
     if args.action == "show":
@@ -500,9 +490,6 @@ def build_parser() -> argparse.ArgumentParser:
     fx_validate.add_argument("--format", choices=["text", "json"], default="text")
     fx_validate.set_defaults(func=_cmd_factur_x)
 
-    forensics = commands.add_parser("forensics", help="Stamp, signature and alteration heuristics for one file")
-    forensics.add_argument("document")
-    forensics.set_defaults(func=_cmd_forensics)
 
     settings = commands.add_parser("config", help="Show or check the effective settings and where they come from")
     settings.add_argument("action", choices=["show", "check"])

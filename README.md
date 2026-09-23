@@ -52,7 +52,9 @@ except ExportError:
 | UBL 2.1 / Peppol BIS 3.0 | `ubl`, `peppol` | EN 16931 (+ Peppol BIS 3.0.20) |
 | XRechnung 3.0, UBL / CII | `xrechnung-ubl`, `xrechnung-cii` | EN 16931 + XRechnung 3.0.2 |
 | Factur-X / ZUGFeRD CII | `factur-x-en16931`, `factur-x-basic` | Factur-X 1.09 profile rules |
-| Facturae 3.2.2, SAP, Xero, QuickBooks | `facturae`, `sap-idoc`, `sap-csv`, `xero-csv`, `xero-json`, `quickbooks-iif`, `quickbooks-json` | — |
+| Facturae 3.2.2 (Spain) | `facturae` | — |
+
+Formats for a particular ERP or accounting system (SAP, Xero, QuickBooks, 1C) are not built in: register your own with `register_exporter()`.
 
 ```bash
 pip install "docket-idp[einvoice]"
@@ -140,7 +142,6 @@ Priority, lowest to highest: defaults, a TOML file (`--config` or `DOCKET_CONFIG
 - A silent wrong answer is possible: on a 198-scan real-world corpus, 35% of "succeeded, no review" documents had at least one wrong field, mostly degraded thermal receipts. See [benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
 - Classification is the weak tier on unusual documents; field accuracy is 0.84–0.97 where the type is right.
 - The vision model has been seen changing digits so that a page reconciles.
-- `docket forensics` is a pixel heuristic: it finds coloured stamps and handwriting but not black stamps, and its scores are not calibrated.
 - Windows is untested. A document takes a median of 6.4–22.7 s depending on the OCR backend, longer with the vision model.
 
 <details>

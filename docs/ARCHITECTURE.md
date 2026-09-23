@@ -431,22 +431,15 @@ Deterministic multi-document audits connect extracted records across the procure
 
 ---
 
-## 9. Accounting & e-Invoicing Export Tier
+## 9. e-Invoicing Export Tier
 
-Extracted and validated records can be deterministically converted to corporate ERP and standard electronic invoicing formats without external cloud dependencies:
+Extracted and validated records are converted to electronic invoicing formats
+without external cloud dependencies. Formats for one ERP or accounting system
+(SAP, Xero, QuickBooks, 1C) are not built in: their account codes, tax codes
+and posting rules belong to the application that runs that system, which
+registers them with `register_exporter()` or a `docket.exporters` entry point
+(see `examples/custom_exporter.py` and `examples/exporter_plugin/`).
 
-- **1C:Enterprise (1С:Предприятие)**:
-  - `export_to_1c_client_bank`: Produces 1CClientBankExchange 1.03 format for bank statements, including opening/closing balances and payment orders with payer/payee IBANs.
-  - `export_to_1c_enterprise_xml`: Produces EnterpriseData XML for incoming vendor bills (ПоступлениеТоваровУслуг) and acceptance acts with VAT breakdown.
-- **SAP S/4HANA & ERP**:
-  - `export_to_sap_idoc`: Standard INVOIC02 IDoc XML with EDI_DC40, E1EDK01 header, E1EDKA1 vendor/customer partners, E1EDP01 line items, and E1EDS01 monetary sums.
-  - `export_to_sap_journal_csv`: General ledger and vendor posting CSV with posting keys (40 Debit, 31 Credit, 50 Bank Credit), accounts, tax codes, and currency.
-- **QuickBooks**:
-  - `export_to_quickbooks_iif`: Intuit Interchange Format (.iif) with !TRNS and !SPL blocks for vendor bills, check expenses, and sales tax.
-  - `export_to_quickbooks_json`: QuickBooks Online REST API Bill / Purchase payload with AccountBased and ItemBased line details.
-- **Xero**:
-  - `export_to_xero_csv`: Official Xero Bills CSV import format with account codes and tax types.
-  - `export_to_xero_json`: Xero Accounting API Invoices payload with ACCPAY type and contact details.
 - **Facturae 3.2.2** (`docket.export.facturae`): Spanish electronic invoice (FACe) with Party Tax Identification and TaxesOutputs breakdown.
 - **EN 16931 e-invoices** (`docket.export.en16931`), see below.
 
@@ -553,38 +546,3 @@ don't), and negative cases: missing mandatory field (BR-07, BR-DE-15),
 wrong totals on XSD-valid XML (BR-CO-15/16), wrong or unknown tax category
 (BR-Z-05, BR-CL-18), bad endpoint scheme (PEPPOL-EN16931-CL008), unknown
 and mismatched profile identifiers.
-
----
-
-## 10. Document Forensics (stamps, signatures, alterations)
-
-`docket.forensics` is a pixel heuristic over Pillow and Tesseract, not a
-trained vision model. What it does, and deliberately does not do:
-
-- **Colored stamps and seals**: blue, violet and red ink is separated from
-  black print by hue, grouped into clusters on a 16 px grid, and classified by
-  geometry: round-ish clusters are seals, red ink is a stamp of any shape.
-- **Handwriting and signatures**: colored clusters that are not stamp-shaped,
-  plus *black* ink that Tesseract did not recognise as printed words, after
-  long straight runs (table rules, signature lines) are removed. Black ink is
-  only considered in the signing zone (lower part of the page or next to a
-  "Signature / Unterschrift / Firma / Подпись" label), must be at least twice
-  as tall as a line of print, wider than tall, away from the page edges and
-  not made of straight segments.
-- **No black stamps**: to this method a black seal looks like a logo, a table
-  cell or a chart, so none are reported.
-- **Status stamps**: PAID / BEZAHLT / PAYÉ / PAGADO / ОПЛАЧЕНО, APPROVED /
-  GENEHMIGT, VOID / STORNIERT and equivalents are reported only when the word
-  is read *inside* a detected stamp (`PAYMENT_STAMP_PRESENT`,
-  `VOID_STAMP_PRESENT`).
-- **Corrections**: marker words ("corrected", "korrigiert", "corrigé",
-  "исправлено", ...) anywhere in the OCR text. Strike-throughs are not detected.
-- **Blank template gate**: no signature and no stamp gives
-  `UNEXECUTED_TEMPLATE`, which validation turns into an error for contracts,
-  acceptance acts and waybills.
-- **Confidence** is a score from geometry and position (roundness, size,
-  elongation, signing zone, label nearby; lower for black ink), useful for
-  ranking and thresholds, not a calibrated probability.
-
-Keyword detection depends on the Tesseract language packs for `DOCKET_OCR_LANGUAGES`
-(Russian markers need `rus`).

@@ -1,8 +1,9 @@
 """Accounting and e-Invoicing export module for Docket.
 
 Provides converters for electronic invoicing standards (UBL 2.1 / Peppol BIS,
-Facturae 3.2.2, ZUGFeRD 2.2 / Factur-X / XRechnung) and ERP systems (SAP,
-QuickBooks, Xero, 1C).
+Facturae 3.2.2, ZUGFeRD 2.2 / Factur-X / XRechnung). Formats for a particular
+ERP or accounting system belong in the application that knows that system's
+accounts and tax codes; register them as below.
 
 Every format is also reachable by name through a small registry, which is what
 the CLI uses. Applications can add their own formats either at runtime::
@@ -23,19 +24,9 @@ from typing import TYPE_CHECKING, Any, Callable
 
 from pydantic import BaseModel, Field
 
-from ..catalog.models import AcceptanceAct, BankStatement, CreditNote, Invoice, Receipt
+from ..catalog.models import CreditNote, Invoice
 from . import en16931
 from .facturae import export_to_facturae_xml
-from .erp import (
-    export_to_1c_client_bank,
-    export_to_1c_enterprise_xml,
-    export_to_quickbooks_iif,
-    export_to_quickbooks_json,
-    export_to_sap_idoc,
-    export_to_sap_journal_csv,
-    export_to_xero_csv,
-    export_to_xero_json,
-)
 
 from ..einvoice.validator import EInvoiceValidationResult
 
@@ -200,22 +191,6 @@ for _name, _profile, _rules, _description in _EINVOICE:
     )
 register_exporter("facturae", export_to_facturae_xml, accepts=(Invoice,),
                   description="Facturae 3.2.2 (Spain)", media_type="application/xml")
-register_exporter("sap-idoc", export_to_sap_idoc, accepts=(Invoice,),
-                  description="SAP INVOIC IDoc XML", media_type="application/xml")
-register_exporter("sap-csv", export_to_sap_journal_csv, accepts=(Invoice, BankStatement),
-                  description="SAP journal entry CSV", media_type="text/csv")
-register_exporter("xero-csv", export_to_xero_csv, accepts=(Invoice, Receipt),
-                  description="Xero bills import CSV", media_type="text/csv")
-register_exporter("xero-json", export_to_xero_json, accepts=(Invoice, Receipt),
-                  description="Xero API invoice JSON", media_type="application/json")
-register_exporter("quickbooks-iif", export_to_quickbooks_iif, accepts=(Invoice, Receipt),
-                  description="QuickBooks Desktop IIF", media_type="text/plain")
-register_exporter("quickbooks-json", export_to_quickbooks_json, accepts=(Invoice, Receipt),
-                  description="QuickBooks Online API bill JSON", media_type="application/json")
-register_exporter("1c-bank", export_to_1c_client_bank, accepts=(BankStatement,),
-                  description="1C Client-Bank exchange file", media_type="text/plain")
-register_exporter("1c-enterprise", export_to_1c_enterprise_xml,
-                  accepts=(Invoice, AcceptanceAct), description="1C:Enterprise XML", media_type="application/xml")
 
 __all__ = [
     "ENTRY_POINT_GROUP",
@@ -224,15 +199,7 @@ __all__ = [
     "ExportResult",
     "Exporter",
     "export_document",
-    "export_to_1c_client_bank",
-    "export_to_1c_enterprise_xml",
     "export_to_facturae_xml",
-    "export_to_quickbooks_iif",
-    "export_to_quickbooks_json",
-    "export_to_sap_idoc",
-    "export_to_sap_journal_csv",
-    "export_to_xero_csv",
-    "export_to_xero_json",
     "get_exporter",
     "list_exporters",
     "register_exporter",

@@ -10,6 +10,17 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Removed
 
+- ERP and accounting exports: `sap-idoc`, `sap-csv`, `xero-csv`,
+  `xero-json`, `quickbooks-iif`, `quickbooks-json`, `1c-bank` and
+  `1c-enterprise`, with their `export_to_*` functions. None was checked
+  against the system it targets, and each depends on account and tax codes
+  only the importing application knows; register such formats with
+  `register_exporter()`. The e-invoice formats and Facturae remain.
+- Document forensics: `docket forensics`, `analyze_document_forensics()`,
+  `DocumentForensicReport` and its stamp, signature and annotation models,
+  `DocumentResult.forensic_report` and the forensic validation rules. It was
+  an uncalibrated pixel heuristic that the pipeline never ran.
+
 - The experimental `tax_invoice`, `utility_bill`, `certificate_of_origin`
   and `id_document` schemas, with their models (`TaxInvoice`, `UtilityBill`,
   `CertificateOfOrigin`, `IdDocument` and their item types), validators and
