@@ -5,7 +5,7 @@ project's compatibility policy. Other modules, names, and implementation
 details are internal unless the documentation explicitly says otherwise.
 """
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 from .export import (
     ExportError,
