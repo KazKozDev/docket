@@ -15,13 +15,10 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   the `DOCKET_REVIEW_QUEUE` / `review.queue` setting with
   `ReviewOptions.queue_path`. The review store is configured only by
   `DOCKET_REVIEW_DATABASE_URL` / `ReviewOptions(database_url=...)`.
-
-### Fixed
-
-- Documents flagged during processing went to the SQLite file named by
-  `DOCKET_REVIEW_QUEUE` even when `DOCKET_REVIEW_DATABASE_URL` pointed
-  elsewhere (e.g. PostgreSQL), so the HTTP review API did not see them. The
-  pipeline now uses the configured database URL.
+- Repository root trimmed to the library: removed the `api.py` shim (use
+  `docket-api` or `uvicorn docket.api:app`) and `requirements.txt` (use
+  `pip install -e ".[dev]"`); the macOS launcher moved to
+  `examples/start_demo.command`.
 
 - **Breaking for Peppol, CII and Factur-X validation:** the OpenPeppol BIS
   Billing rules, the Factur-X schemas and Schematron and the UN/CEFACT CII
@@ -50,6 +47,13 @@ top-level amount. Measured on the 17 golden scans (tesseract,
 | top-level fields cited | 0.92 | 0.97 |
 | top-level fields located | 0.87 | 0.92 |
 | documents in review | 1 | 1 |
+
+### Fixed
+
+- Documents flagged during processing went to the SQLite file named by
+  `DOCKET_REVIEW_QUEUE` even when `DOCKET_REVIEW_DATABASE_URL` pointed
+  elsewhere (e.g. PostgreSQL), so the HTTP review API did not see them. The
+  pipeline now uses the configured database URL.
 
 ### Added
 
