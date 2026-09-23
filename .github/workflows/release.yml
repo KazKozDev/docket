@@ -23,14 +23,20 @@ jobs:
       - run: pip install build twine
       - run: python -m build
       - run: twine check dist/*
+      # Outside dist/: PyPI rejects anything that is not a wheel or sdist.
       - name: Generate CycloneDX SBOM
         run: |
           pip install dist/*.whl
-          python scripts/generate_sbom.py --output dist/docket-${GITHUB_REF_NAME}.cdx.json
+          mkdir sbom
+          python scripts/generate_sbom.py --output sbom/docket-${GITHUB_REF_NAME}.cdx.json
       - uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom/
 
   pypi:
     needs: build
@@ -86,7 +92,13 @@ jobs:
         with:
           name: dist
           path: dist/
+      - uses: actions/download-artifact@v4
+        with:
+          name: sbom
+          path: sbom/
       - uses: softprops/action-gh-release@v2
         with:
-          files: dist/*
+          files: |
+            dist/*
+            sbom/*
           generate_release_notes: true
