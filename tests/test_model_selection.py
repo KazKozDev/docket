@@ -7,6 +7,8 @@ from docket import config, llm_client
 
 
 class _FakeResponse:
+    status_code = 200
+
     def raise_for_status(self) -> None:
         pass
 
@@ -17,7 +19,7 @@ class _FakeResponse:
 def _capture_payload(monkeypatch) -> dict:
     captured: dict = {}
 
-    def fake_post(url, json=None, timeout=None):  # noqa: ANN001
+    def fake_post(url, json=None, headers=None, timeout=None):  # noqa: ANN001
         captured.update(json)
         return _FakeResponse()
 
