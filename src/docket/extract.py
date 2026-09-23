@@ -204,13 +204,3 @@ def extract_pages(
         prompt, candidate_text, model_cls, max_retries=max_retries
     )
     return instance, attempts + merge_attempts
-
-
-def extract(
-    text: str,
-    model_cls: type[BaseModel],
-    *,
-    max_retries: int | None = None,
-) -> tuple[BaseModel | None, int]:
-    """Backward-compatible single-text entry point with no silent truncation."""
-    return extract_pages([text], model_cls, max_retries=max_retries)

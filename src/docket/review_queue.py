@@ -82,12 +82,8 @@ def _document_id(path: Path) -> str:
     return f"doc_{hashlib.sha256(path.read_bytes()).hexdigest()[:20]}" if path.is_file() else f"doc_{uuid4().hex[:20]}"
 
 
-def _database_url(queue_path: Path | None = None) -> str:
-    return f"sqlite:///{Path(queue_path).resolve()}" if queue_path is not None else config.REVIEW_DATABASE_URL
-
-
-def _engine(queue_path: Path | None = None) -> Engine:
-    url = _database_url(queue_path)
+def _engine(database_url: str | None = None) -> Engine:
+    url = database_url or config.REVIEW_DATABASE_URL
     with _LOCK:
         engine = _ENGINES.get(url)
         if engine is None:
@@ -122,7 +118,7 @@ def _revision(conn, document_id: str, action: str, version: int, *, actor: str |
                                            validation_issues=validation_issues, version=version))
 
 
-def enqueue(result: DocumentResult, reasons: list[str], *, queue_path: Path | None = None,
+def enqueue(result: DocumentResult, reasons: list[str], *, database_url: str | None = None,
             documents_dir: Path | None = None) -> str:
     documents_dir = config.REVIEW_DOCUMENTS_DIR if documents_dir is None else Path(documents_dir)
     source, document_id = Path(result.source), result.document_id or _document_id(Path(result.source))
@@ -133,7 +129,7 @@ def enqueue(result: DocumentResult, reasons: list[str], *, queue_path: Path | No
         if source.resolve() != destination.resolve() and not destination.exists():
             shutil.copy2(source, destination)
         original_path = str(destination)
-    with _engine(queue_path).begin() as conn:
+    with _engine(database_url).begin() as conn:
         existing = conn.execute(select(_TASKS.c.version, _TASKS.c.original_path).where(_TASKS.c.document_id == document_id)).mappings().first()
         now = _now()
         values = dict(status="pending", updated_at=now, source=result.source, original_path=original_path,
@@ -150,24 +146,24 @@ def enqueue(result: DocumentResult, reasons: list[str], *, queue_path: Path | No
     return document_id
 
 
-def list_pending(*, queue_path: Path | None = None) -> list[dict]:
-    with _engine(queue_path).connect() as conn:
+def list_pending(*, database_url: str | None = None) -> list[dict]:
+    with _engine(database_url).connect() as conn:
         ids = list(conn.execute(select(_TASKS.c.document_id).where(
             _TASKS.c.status.in_(("pending", "in_review", "corrected"))).order_by(_TASKS.c.queued_at)).scalars())
         return [_record(conn, document_id) for document_id in ids]
 
 
-def get(document_id: str, *, queue_path: Path | None = None) -> dict | None:
-    with _engine(queue_path).connect() as conn:
+def get(document_id: str, *, database_url: str | None = None) -> dict | None:
+    with _engine(database_url).connect() as conn:
         return _record(conn, document_id)
 
 
 def claim(document_id: str, *, actor: str, lease_seconds: int | None = None,
-          queue_path: Path | None = None) -> dict:
+          database_url: str | None = None) -> dict:
     lease = lease_seconds or config.REVIEW_LOCK_SECONDS
     if lease < 10 or lease > 3600:
         raise ValueError("lease_seconds must be between 10 and 3600")
-    engine = _engine(queue_path)
+    engine = _engine(database_url)
     with engine.begin() as conn:
         row = conn.execute(select(_TASKS).where(_TASKS.c.document_id == document_id).with_for_update()).mappings().first()
         if row is None:
@@ -192,8 +188,8 @@ def _require_lock(row: Any, token: str | None) -> None:
         raise ReviewConflict("a current lock_token is required")
 
 
-def release(document_id: str, *, lock_token: str, actor: str, queue_path: Path | None = None) -> dict:
-    with _engine(queue_path).begin() as conn:
+def release(document_id: str, *, lock_token: str, actor: str, database_url: str | None = None) -> dict:
+    with _engine(database_url).begin() as conn:
         row = conn.execute(select(_TASKS).where(_TASKS.c.document_id == document_id).with_for_update()).mappings().first()
         if row is None:
             raise KeyError(document_id)
@@ -232,10 +228,10 @@ def _revalidate(row: Any, corrections: dict | None) -> list[dict]:
 
 def update(document_id: str, *, status: str, corrections: dict | None = None, actor: str = "reviewer",
            note: str | None = None, lock_token: str | None = None, expected_version: int | None = None,
-           queue_path: Path | None = None) -> dict:
+           database_url: str | None = None) -> dict:
     if status not in _STATUSES:
         raise ValueError(f"invalid review status: {status}")
-    with _engine(queue_path).begin() as conn:
+    with _engine(database_url).begin() as conn:
         row = conn.execute(select(_TASKS).where(_TASKS.c.document_id == document_id).with_for_update()).mappings().first()
         if row is None:
             raise KeyError(document_id)
@@ -257,16 +253,16 @@ def update(document_id: str, *, status: str, corrections: dict | None = None, ac
 
 
 def revalidate(document_id: str, *, lock_token: str, actor: str = "reviewer",
-               queue_path: Path | None = None) -> dict:
-    record = get(document_id, queue_path=queue_path)
+               database_url: str | None = None) -> dict:
+    record = get(document_id, database_url=database_url)
     if record is None:
         raise KeyError(document_id)
     return update(document_id, status="corrected", corrections={}, actor=actor, lock_token=lock_token,
-                  expected_version=record["version"], queue_path=queue_path)
+                  expected_version=record["version"], database_url=database_url)
 
 
-def clear(*, queue_path: Path | None = None) -> None:
-    with _engine(queue_path).begin() as conn:
+def clear(*, database_url: str | None = None) -> None:
+    with _engine(database_url).begin() as conn:
         conn.execute(delete(_REVISIONS))
         conn.execute(delete(_TASKS))
 

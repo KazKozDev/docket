@@ -40,7 +40,6 @@ def _result(issues, backend) -> DocumentResult:
 
 @pytest.fixture
 def source(tmp_path, monkeypatch):
-    monkeypatch.setattr(review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "q.jsonl")
     monkeypatch.setattr(review_queue.config, "REVIEW_DATABASE_URL", f"sqlite:///{tmp_path / 'q.db'}")
     monkeypatch.setattr(pipeline, "looks_garbled", lambda _text: False)
     path = tmp_path / "doc.png"

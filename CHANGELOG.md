@@ -10,6 +10,19 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Changed
 
+- Removed leftover compatibility shims: `docket.extract.extract()` (use
+  `extract_pages()`), the unused `forensics._detect_colored_clusters()`, and
+  the `DOCKET_REVIEW_QUEUE` / `review.queue` setting with
+  `ReviewOptions.queue_path`. The review store is configured only by
+  `DOCKET_REVIEW_DATABASE_URL` / `ReviewOptions(database_url=...)`.
+
+### Fixed
+
+- Documents flagged during processing went to the SQLite file named by
+  `DOCKET_REVIEW_QUEUE` even when `DOCKET_REVIEW_DATABASE_URL` pointed
+  elsewhere (e.g. PostgreSQL), so the HTTP review API did not see them. The
+  pipeline now uses the configured database URL.
+
 - **Breaking for Peppol, CII and Factur-X validation:** the OpenPeppol BIS
   Billing rules, the Factur-X schemas and Schematron and the UN/CEFACT CII
   D16B schemas are no longer in the repository, wheel or sdist, because

@@ -206,7 +206,7 @@ def review(result: DocumentResult, options: ResolvedOptions) -> DocumentResult:
         review_queue.enqueue(
             result,
             reasons,
-            queue_path=options.review.queue_path,
+            database_url=options.review.database_url,
             documents_dir=options.review.documents_dir,
         )
     return result
