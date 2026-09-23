@@ -8,6 +8,8 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-23
+
 ### Changed
 
 - Removed leftover compatibility shims: `docket.extract.extract()` (use
@@ -573,7 +575,8 @@ First packaged release.
   of the pipeline (a name collision introduced with `process_document`).
 - `docket <file> --export <format>` crashed because `PipelineResult` had no `document` attribute.
 
-[Unreleased]: https://github.com/KazKozDev/docket/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/KazKozDev/docket/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/KazKozDev/docket/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/KazKozDev/docket/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/KazKozDev/docket/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/KazKozDev/docket/releases/tag/v0.1.0
