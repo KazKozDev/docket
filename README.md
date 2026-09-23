@@ -300,7 +300,7 @@ pip install -e ".[dev]" && cp .env.example .env
 streamlit run examples/streamlit_demo.py   # demo UI: document preview + per-stage results
 ```
 
-On macOS, double-clicking `start.command` sets everything up and opens the UI.
+On macOS, double-clicking `examples/start_demo.command` starts Ollama, the HTTP API and the demo UI.
 
 ```bash
 pytest                                # no test needs a running LLM

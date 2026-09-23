@@ -18,4 +18,5 @@
 | [`api_client.sh`](api_client.sh) | Call the HTTP API with curl: one document, then a multi-file job with CSV/JSONL downloads |
 | [`api_client.ts`](api_client.ts) | A batch job from TypeScript / Node 18+, with structured error handling |
 | [`streamlit_demo.py`](streamlit_demo.py) | Development UI: document preview and per-stage results (`streamlit run examples/streamlit_demo.py`) |
+| [`start_demo.command`](start_demo.command) | macOS double-click launcher: Ollama, the HTTP API and the demo UI together |
 | [`docker-compose.yml`](docker-compose.yml) | Run the API in Docker against an EU-hosted LLM (Mistral) |
