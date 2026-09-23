@@ -69,9 +69,10 @@ def test_benchmark_survives_the_ocr_call_it_makes():
 def test_readme_only_advertises_scripts_that_exist():
     """A command in the README that doesn't resolve is the same failure in a
     different place."""
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    for name in set(re.findall(r"python eval/([\w./-]+\.py)", readme)):
-        assert (ROOT / "eval" / name).exists(), f"README runs a missing script: {name}"
+    for doc in ("README.md", "docs/BENCHMARKS.md"):
+        text = (ROOT / doc).read_text(encoding="utf-8")
+        for name in set(re.findall(r"python eval/([\w./-]+\.py)", text)):
+            assert (ROOT / "eval" / name).exists(), f"{doc} runs a missing script: {name}"
 
 
 def test_golden_dataset_covers_every_builtin_schema():
