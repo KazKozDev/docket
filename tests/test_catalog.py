@@ -121,9 +121,6 @@ def test_exporters_are_listed(schema_id):
     expected = {
         "invoice": {"ubl", "peppol", "xrechnung-ubl", "xrechnung-cii", "factur-x-en16931", "factur-x-basic", "facturae"},
         "credit_note": {"ubl", "peppol", "xrechnung-ubl", "xrechnung-cii", "factur-x-en16931", "factur-x-basic"},
-        "receipt": {"xero-csv", "quickbooks-json"},
-        "bank_statement": {"1c-bank", "sap-csv"},
-        "acceptance_act": {"1c-enterprise"},
     }.get(schema_id, set())
     assert expected <= set(spec.exporters)
     if schema_id == "credit_note":

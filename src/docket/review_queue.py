@@ -197,8 +197,7 @@ def _revalidate(row: Any, corrections: dict | None) -> list[dict]:
         issues = [{"field": ".".join(map(str, e["loc"])), "message": e["msg"], "severity": "error"} for e in exc.errors()]
         raise ReviewValidationError("corrections do not match the document schema", issues) from exc
     pages = [page.text for page in saved.layout.pages] if saved.layout else None
-    return [i.model_dump(mode="json") for i in validate(document, pages=pages,
-            forensic_report=saved.forensic_report, spec=spec)]
+    return [i.model_dump(mode="json") for i in validate(document, pages=pages, spec=spec)]
 
 
 def update(document_id: str, *, status: str, corrections: dict | None = None, actor: str = "reviewer",

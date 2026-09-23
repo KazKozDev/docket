@@ -289,38 +289,38 @@ def _processed(txt, quiet, monkeypatch, payload):
     return pipeline.process_document(txt(), quiet(document_type="invoice"))
 
 
-def test_export_a_valid_result(txt, quiet, monkeypatch):
+def test_export_a_valid_result(txt, quiet, monkeypatch, json_format):
     result = _processed(txt, quiet, monkeypatch, _invoice_payload())
-    exported = export_document(result, "xero-json")
-    assert exported.format == "xero-json" and exported.media_type == "application/json"
+    exported = export_document(result, json_format)
+    assert exported.format == json_format and exported.media_type == "application/json"
     assert "INV-7" in exported.content
 
 
-def test_export_refuses_an_invalid_result(txt, quiet, monkeypatch):
+def test_export_refuses_an_invalid_result(txt, quiet, monkeypatch, json_format):
     result = _processed(txt, quiet, monkeypatch, _invoice_payload(total_amount=999.0))
     assert not result.is_valid
     with pytest.raises(ExportError, match="not exporting"):
-        export_document(result, "xero-json")
-    forced = export_document(result, "xero-json", ExportOptions(require_valid=False))
+        export_document(result, json_format)
+    forced = export_document(result, json_format, ExportOptions(require_valid=False))
     assert "999" in forced.content
 
 
-def test_export_a_model_built_by_hand():
+def test_export_a_model_built_by_hand(json_format):
     invoice = Invoice(
         invoice_number="X-1", issue_date=date(2026, 1, 1), seller={"name": "A"}, buyer={"name": "B"},
         subtotal=1, total_amount=1,
     )
-    exported = export_document(invoice, "xero-json")
+    exported = export_document(invoice, json_format)
     assert exported.media_type == "application/json"
     assert json.loads(exported.content)
 
 
-def test_export_of_a_failed_result_explains_why(tmp_path, quiet):
+def test_export_of_a_failed_result_explains_why(tmp_path, quiet, json_format):
     path = tmp_path / "doc.docx"
     path.write_bytes(b"PK")
     failed = pipeline.process_document(path, quiet())
     with pytest.raises(ExportError, match="acquire failed"):
-        export_document(failed, "xero-json")
+        export_document(failed, json_format)
 
 
 def test_process_document_does_not_persist_by_default(tmp_path, monkeypatch):

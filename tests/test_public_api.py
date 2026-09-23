@@ -19,7 +19,6 @@ from docket._deprecation import warn_deprecated
 
 SNAPSHOT = Path(__file__).parent / "snapshots" / "public_api.json"
 KEY_FUNCTIONS = (
-    "analyze_document_forensics",
     "export_document",
     "get_ocr_backend",
     "get_schema",
