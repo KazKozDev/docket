@@ -59,7 +59,6 @@ class Note(BaseModel):
 def isolated_registries(monkeypatch, tmp_path):
     monkeypatch.setattr(registry, "_REGISTRY", {k: dict(v) for k, v in registry._REGISTRY.items()})
     monkeypatch.setattr(export_module, "_REGISTRY", dict(export_module._REGISTRY))
-    monkeypatch.setattr(api.config, "REVIEW_QUEUE_PATH", tmp_path / "q.jsonl")
     monkeypatch.setattr(api.config, "REVIEW_DATABASE_URL", f"sqlite:///{tmp_path / 'q.db'}")
     monkeypatch.setattr(api.config, "JOBS_DIR", tmp_path / "jobs")
 

@@ -85,9 +85,9 @@ def test_config_file_discovery(tmp_path):
 def test_relative_paths_are_relative_to_the_file(tmp_path):
     folder = tmp_path / "conf"
     folder.mkdir()
-    file = write(folder / "docket.toml", '[review]\nqueue = "queue.jsonl"\n[api]\njobs_dir = "/srv/jobs"\n')
+    file = write(folder / "docket.toml", '[einvoice]\ndownloads = "downloads"\n[api]\njobs_dir = "/srv/jobs"\n')
     values = config.load(file, environ={"DOCKET_REVIEW_DOCUMENTS": "docs"}).values
-    assert values["REVIEW_QUEUE_PATH"] == folder / "queue.jsonl"
+    assert values["EINVOICE_DOWNLOADS"] == folder / "downloads"
     assert values["JOBS_DIR"] == Path("/srv/jobs")
     assert values["REVIEW_DOCUMENTS_DIR"] == Path("docs")  # env: relative to the working directory
 

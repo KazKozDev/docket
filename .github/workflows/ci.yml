@@ -43,7 +43,7 @@ jobs:
           PYTHONPATH: .
           # Every test in this repo is LLM-free by design (see README) —
           # there's no Ollama server in CI, and there shouldn't need to be.
-          DOCKET_REVIEW_QUEUE: /tmp/docket-ci-review-queue.jsonl
+          DOCKET_REVIEW_DATABASE_URL: sqlite:////tmp/docket-ci-review.db
 
   package:
     runs-on: ubuntu-latest

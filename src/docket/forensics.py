@@ -354,14 +354,6 @@ def _connected_clusters(grid: list[list[int]], sw: int, sh: int, min_density: in
     return clusters
 
 
-def _detect_colored_clusters(
-    image: Image.Image,
-) -> tuple[list[dict], list[dict], list[dict]]:
-    """Blue, red and violet ink clusters (kept for callers of the old API)."""
-    clusters = _ink_clusters(image, None)
-    return clusters.get("blue", []), clusters.get("red", []), clusters.get("violet", [])
-
-
 def _clip(value: float) -> float:
     return max(0.0, min(1.0, value))
 

@@ -76,9 +76,6 @@ def test_warning_severity_alone_does_not_trigger_review():
 
 
 def test_enqueue_and_list_pending_roundtrip(tmp_path, monkeypatch):
-    monkeypatch.setattr(
-        review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "queue.jsonl"
-    )
     monkeypatch.setattr(review_queue.config, "REVIEW_DATABASE_URL", f"sqlite:///{tmp_path / 'queue.db'}")
     monkeypatch.setattr(
         review_queue.config, "REVIEW_DOCUMENTS_DIR", tmp_path / "documents"
@@ -97,9 +94,6 @@ def test_enqueue_and_list_pending_roundtrip(tmp_path, monkeypatch):
 def test_review_preserves_original_and_records_correction_history(
     tmp_path, monkeypatch
 ):
-    monkeypatch.setattr(
-        review_queue.config, "REVIEW_QUEUE_PATH", tmp_path / "queue.jsonl"
-    )
     monkeypatch.setattr(review_queue.config, "REVIEW_DATABASE_URL", f"sqlite:///{tmp_path / 'queue.db'}")
     monkeypatch.setattr(
         review_queue.config, "REVIEW_DOCUMENTS_DIR", tmp_path / "documents"
@@ -128,26 +122,26 @@ def test_review_preserves_original_and_records_correction_history(
 
 
 def test_review_lock_excludes_another_reviewer(tmp_path):
-    queue = tmp_path / "reviews.db"
-    document_id = review_queue.enqueue(_result(), ["manual"], queue_path=queue)
-    alice = review_queue.claim(document_id, actor="alice", queue_path=queue)
+    queue = f"sqlite:///{tmp_path / 'reviews.db'}"
+    document_id = review_queue.enqueue(_result(), ["manual"], database_url=queue)
+    alice = review_queue.claim(document_id, actor="alice", database_url=queue)
 
     with pytest.raises(review_queue.ReviewConflict):
-        review_queue.claim(document_id, actor="bob", queue_path=queue)
+        review_queue.claim(document_id, actor="bob", database_url=queue)
     with pytest.raises(review_queue.ReviewConflict):
-        review_queue.update(document_id, status="approved", actor="bob", lock_token="wrong", queue_path=queue)
+        review_queue.update(document_id, status="approved", actor="bob", lock_token="wrong", database_url=queue)
 
-    released = review_queue.release(document_id, actor="alice", lock_token=alice["lock_token"], queue_path=queue)
+    released = review_queue.release(document_id, actor="alice", lock_token=alice["lock_token"], database_url=queue)
     assert released["status"] == "pending" and not released["locked"]
 
 
 def test_correction_creates_revision_and_revalidates(tmp_path):
-    queue = tmp_path / "reviews.db"
-    document_id = review_queue.enqueue(_result(), ["manual"], queue_path=queue)
-    claimed = review_queue.claim(document_id, actor="alice", queue_path=queue)
+    queue = f"sqlite:///{tmp_path / 'reviews.db'}"
+    document_id = review_queue.enqueue(_result(), ["manual"], database_url=queue)
+    claimed = review_queue.claim(document_id, actor="alice", database_url=queue)
     corrected = review_queue.update(
         document_id, status="corrected", corrections={"invoice_number": "INV-2"},
-        actor="alice", lock_token=claimed["lock_token"], expected_version=claimed["version"], queue_path=queue,
+        actor="alice", lock_token=claimed["lock_token"], expected_version=claimed["version"], database_url=queue,
     )
     assert corrected["corrections"]["invoice_number"] == "INV-2"
     assert corrected["history"][-1]["action"] == "corrected"
