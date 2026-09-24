@@ -3561,6 +3561,14 @@
             "type": "array",
             "title": "Validation Issues"
           },
+          "corroborated": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Corroborated",
+            "description": "Fields another document confirmed, and what confirmed them — e.g. {'total_amount': 'purchase order PO-9988 total'}. Set by docket.corroborate()."
+          },
           "needs_review": {
             "type": "boolean",
             "title": "Needs Review",
