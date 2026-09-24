@@ -64,11 +64,15 @@ docket validate-einvoice invoice.xml               # XSD + Schematron; exit 0 va
 docket factur-x create invoice.pdf factur-x.xml -o hybrid.pdf
 ```
 
+Converting a supplier's scanned or PDF invoice gives you its data in the EN 16931 model for your own books and checks; it does not turn it into a legally issued e-invoice, which only the supplier can send.
+
+Extracted the data with something else? `verify(data, page_texts, document_type="invoice")` runs the same checks against the source text (every cited quote on its page, every number and date on its cited line, arithmetic, check digits) and returns the same `DocumentResult`, so `export_document` accepts or refuses it on the same terms. A schema instance passed straight to `export_document` is checked for arithmetic, dates and check digits before it is exported.
+
 Exporters refuse what they can't represent faithfully (no line items, tax that doesn't match the lines) instead of guessing. Validation runs offline with the official artifacts, pinned by SHA-256 in the [manifest](https://github.com/KazKozDev/docket/blob/master/src/docket/einvoice/resources/manifest.json). Artifacts without verified redistribution terms are downloaded on request, not shipped; see the [third-party licence inventory](https://github.com/KazKozDev/docket/blob/master/docs/THIRD_PARTY_LICENSES.md). In Python: `validate_einvoice("invoice.xml")`, and `generate_facturx_pdf()` / `verify_facturx_round_trip()` for PDF/A-3 with veraPDF.
 
 ## Add custom document types and vendor templates
 
-The catalog has 9 versioned schemas (`docket schemas list`). Eight are stable: invoice, purchase order, receipt, contract, bank statement, acceptance act, waybill and boarding pass. The credit note is experimental. Add your own as a Pydantic model:
+The catalog has 7 versioned schemas (`docket schemas list`), all for the documents of accounts payable. Six are stable: invoice, purchase order, receipt, contract, bank statement and waybill (the goods receipt in `match_three_way`). The credit note is experimental. Add your own as a Pydantic model:
 
 ```python
 from datetime import date
@@ -92,7 +96,9 @@ Registered schemas are classified, extracted, citation-checked and exported like
 
 ## Measure extraction accuracy on public datasets
 
-195 scans: the project's labelled golden set plus real documents from public Hugging Face datasets (DocILE, SROIE, CORD, FUNSD, RVL-CDIP, donut-style invoices), graded field by field against the datasets' own ground truth. On the latest full run, docket gets **0.85 field accuracy**: 0.96 on the golden set, 0.98 on donut invoices, 0.78 on SROIE receipts. 68% of documents come back with every field right.
+The number that matters most is how often docket says "succeeded" and is wrong, because that result goes straight into the books unseen. On the latest full run it was **27 of 59 silent successes (46%)**, mostly misread dates and totals on degraded thermal receipts; the checks added since (date order, payment arithmetic, document numbers against their cited line, OCR confidence on key fields) target exactly those and have not been measured yet.
+
+195 scans: the project's labelled golden set plus real documents from public Hugging Face datasets (DocILE, SROIE, CORD, FUNSD, RVL-CDIP, donut-style invoices), graded field by field against the datasets' own ground truth. On the same run, docket gets **0.85 field accuracy**: 0.96 on the golden set, 0.98 on donut invoices, 0.78 on SROIE receipts. 68% of documents come back with every field right.
 
 Against the pip-installable alternatives, each tool is graded only on the documents and fields it supports, and docket is graded on exactly the same ones:
 
@@ -126,6 +132,7 @@ Priority, lowest to highest: defaults, a TOML file (`--config` or `DOCKET_CONFIG
 | `DOCKET_OCR_FALLBACKS` | `vlm` | Backends tried when a page's reading is rejected |
 | `DOCKET_OCR_LANGUAGES` | `en` | ISO 639-1 codes, e.g. `en,de,fr` |
 | `DOCKET_MIN_CONFIDENCE` | `0.55` | Classification confidence below which a document goes to review |
+| `DOCKET_MIN_SOURCE_CONFIDENCE` | `0.75` | OCR confidence a key field's cited words need, or the document goes to review |
 | `DOCKET_REVIEW_QUEUE_ENABLED` | `false` | Persist flagged documents in the review queue (`[review]` extra) |
 | `DOCKET_REVIEW_DATABASE_URL` | `sqlite:///data/review.db` | Review store; PostgreSQL with the `[postgres]` extra |
 | `DOCKET_BATCH_WORKERS` | `4` | Documents in flight per batch |
@@ -140,7 +147,7 @@ Priority, lowest to highest: defaults, a TOML file (`--config` or `DOCKET_CONFIG
 
 ## Limitations
 
-- A silent wrong answer is possible: on the 195-scan corpus, 46% of "succeeded, no review" documents (27 of 59) had at least one wrong field, mostly misread dates and totals on degraded thermal receipts. Date and payment checks added since catch part of them. See [benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
+- A silent wrong answer is possible: on the 195-scan corpus, 46% of "succeeded, no review" documents (27 of 59) had at least one wrong field, mostly misread dates and totals on degraded thermal receipts. Checks added since target them but are unmeasured. See [benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
 - Two thirds of documents still go to review, which is the intended path when anything is uncertain. Scanned DocILE invoices are the weakest source (0.43).
 - The vision model has been seen changing digits so that a page reconciles.
 - Windows is untested. A document takes a median of 6.4–22.7 s depending on the OCR backend (8.7 s on the full corpus with Tesseract), longer with the vision model.

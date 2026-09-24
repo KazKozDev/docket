@@ -24,11 +24,9 @@ from .matching import (
     match_three_way,
 )
 from .catalog import (
-    AcceptanceAct,
     Address,
     BankAccount,
     BankStatement,
-    BoardingPass,
     Citation,
     CitedDocument,
     Contract,
@@ -94,6 +92,7 @@ from .einvoice import Profile as EInvoiceProfile
 from .errors import ConfigurationError
 from .options import OcrOptions, ProcessOptions, ReviewOptions
 from .pipeline import process_document
+from .verification import verify
 from .pii import PiiCategory, PiiField, pii_fields
 from .result import (
     DocumentError,
@@ -143,14 +142,12 @@ __all__ = [
     "BatchOptions",
     "BatchResult",
     "process_batch",
-    "AcceptanceAct",
     "add_validator",
     "Address",
     "BackendUnavailable",
     "BankAccount",
     "BankStatement",
     "BankTransaction",
-    "BoardingPass",
     "BoundingBox",
     "Capabilities",
     "Citation",
@@ -195,6 +192,7 @@ __all__ = [
     "PageLayout",
     "Party",
     "process_document",
+    "verify",
     "pii_fields",
     "PiiCategory",
     "PiiField",

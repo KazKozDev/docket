@@ -1,8 +1,8 @@
-from datetime import date, datetime
+from datetime import date
 
 from pydantic import BaseModel, Field
 
-from docket import BoardingPass, Invoice, Receipt, pii_fields
+from docket import Invoice, Receipt, pii_fields
 
 
 def _paths(document):
@@ -34,16 +34,7 @@ def test_receipt_and_travel_pii_categories():
         total_amount=1,
         card_last_four="1234",
     )
-    boarding = BoardingPass(
-        passenger_name="Jane Doe",
-        booking_reference="ABC123",
-        flight_number="BA475",
-        departure_airport="BCN",
-        arrival_airport="LHR",
-        departure_datetime=datetime(2026, 1, 1, 10),
-    )
     assert ("card_last_four", "bank_account") in _paths(receipt)
-    assert ("booking_reference", "travel") in _paths(boarding)
 
 
 def test_custom_schema_pii_and_indexed_lists():

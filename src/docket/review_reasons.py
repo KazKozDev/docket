@@ -31,6 +31,34 @@ def reasons_for(result: DocumentResult, *, min_classification_confidence: float 
     if result.extracted is None:
         reasons.append("extraction failed to produce valid structured output")
     reasons.extend(f"validation error: {i.field} — {i.message}" for i in result.validation_issues if i.severity == "error")
+    reasons.extend(_weakly_read_fields(result))
+    return reasons
+
+
+def _weakly_read_fields(result: DocumentResult) -> list[str]:
+    """Key fields whose cited words OCR itself was unsure of.
+
+    Every other check compares the extraction with the OCR text. When that
+    text is wrong — a 3 read as 8 on a faded thermal slip — the quote, the
+    value and the arithmetic can all agree with each other and still be
+    wrong. The recognizer's own confidence in those words is the one signal
+    that looks past the text, so a low one on a field that must be right
+    goes to a human instead of out as a success.
+    """
+    from . import catalog
+
+    spec = catalog.get_schema(result.schema_id) if result.schema_id else None
+    if spec is None:
+        return []
+    floor = config.MIN_SOURCE_CONFIDENCE
+    reasons = []
+    for field in spec.required_citations:
+        sources = [s for key, s in result.field_sources.items() if key == field or key.startswith(f"{field}[")]
+        weakest = min((s.confidence for s in sources if s.confidence is not None), default=None)
+        if weakest is not None and weakest < floor:
+            reasons.append(
+                f"{field} was read from words OCR recognised with low confidence ({weakest:.2f} < {floor:.2f})"
+            )
     return reasons
 
 
