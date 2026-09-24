@@ -21,6 +21,12 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Added
 
+- `corroborate(result, purchase_order=..., transactions=...)`: a purchase
+  order total, or a bank payment of the total in the same currency, confirms
+  that field; a payment whose text carries the invoice number confirms the
+  number too. Only low-OCR-confidence doubt about confirmed fields is
+  cleared, never a failed check. `DocumentResult.corroborated` records what
+  confirmed each field.
 - `verify(document, text, document_type=...)`: docket's deterministic checks
   on an extraction made elsewhere (another LLM, a cloud OCR service), returning
   a `DocumentResult` that `export_document` accepts or refuses like its own.
@@ -33,6 +39,12 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Changed
 
+- The low-OCR-confidence review rule looks only at the words holding the
+  value's own digits, not the label beside it or another value on the same
+  line; names are no longer gated; subtotal and total that reconcile across
+  separately cited lines (with tax, shipping, discount, or the line items)
+  are exempt. The 0.80 threshold was chosen for the old line-wide measure and
+  should be rechecked on the next benchmark run.
 - `export_document` on a schema instance (not a `DocumentResult`) now runs
   the schema's checks first and refuses on errors when `require_valid` is set.
 - The false-success rate is the headline benchmark metric in the README and

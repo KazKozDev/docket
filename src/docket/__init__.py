@@ -93,6 +93,7 @@ from .errors import ConfigurationError
 from .options import OcrOptions, ProcessOptions, ReviewOptions
 from .pipeline import process_document
 from .verification import verify
+from .corroboration import corroborate
 from .pii import PiiCategory, PiiField, pii_fields
 from .result import (
     DocumentError,
@@ -192,6 +193,7 @@ __all__ = [
     "PageLayout",
     "Party",
     "process_document",
+    "corroborate",
     "verify",
     "pii_fields",
     "PiiCategory",
