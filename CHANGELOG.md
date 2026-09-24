@@ -10,6 +10,16 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Fixed
 
+- A line-item row none of whose values cites a source line sends the
+  document to review. Rows go into the XRechnung / Peppol export, and an
+  uncited row had nothing on the page behind it; it used to pass as a mere
+  coverage gap.
+- `docket-api` refuses to start on a non-loopback address without
+  `DOCKET_API_KEY`, unless `--no-auth` says something in front authenticates.
+- Langfuse traces no longer carry prompts and answers (the document text)
+  unless `DOCKET_LANGFUSE_CONTENT=true`.
+- The release workflow runs the full CI (now including `ruff check`) on the
+  tagged commit and publishes only if it passes.
 - Amounts with thousands grouped by a space ("12 261,98", as printed in
   France, Poland, the Nordics and Czechia) and in accounting parentheses
   ("(5,020.24)") are read whole when checked against their cited line. They

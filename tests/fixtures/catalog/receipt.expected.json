@@ -32,6 +32,14 @@
     "total_amount": {
       "page": 1,
       "quote": "Total 7.75"
+    },
+    "items[0].price": {
+      "page": 1,
+      "quote": "Latte  4.50"
+    },
+    "items[1].price": {
+      "page": 1,
+      "quote": "Croissant  3.25"
     }
   }
 }
