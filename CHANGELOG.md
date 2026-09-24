@@ -25,6 +25,13 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Fixed
 
+- Receipts get the day/month order check invoices already had. A
+  day-first currency on the page (EUR, GBP, INR, MYR/RM, SGD, and the €, £,
+  ₹ signs) now counts as a weak cue, so a date the page shows written the
+  other way round is flagged.
+- The eval metric treats punctuation and spacing in text fields as print
+  noise ("SDN.BHD" = "SDN BHD", "BEN'S" = "BENS"), for every tool alike;
+  word breaks and letters still count.
 - Tax-inclusive receipts no longer go to review for arithmetic that is
   right. Item prices that already include GST/VAT may sum to the taxed total,
   a pre-tax unit price may sit beside a tax-inclusive line total, and a
