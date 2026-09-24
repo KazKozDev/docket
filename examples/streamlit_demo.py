@@ -15,8 +15,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from docket import config, llm_client, pdf
-from docket import DocumentResult, process_document
+from docket import DocumentResult, config, llm_client, pdf, process_document
 
 # An application, so it reads .env and ./docket.toml like the CLI does
 # (importing docket reads only the environment). Once per session: the
@@ -71,9 +70,8 @@ with st.sidebar:
         uploaded = st.file_uploader("Document", type=["pdf", "png", "jpg", "jpeg", "txt"])
         if uploaded is not None:
             suffix = Path(uploaded.name).suffix
-            tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
-            tmp.write(uploaded.read())
-            tmp.close()
+            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+                tmp.write(uploaded.read())
             uploaded_path = Path(tmp.name)
 
     st.divider()

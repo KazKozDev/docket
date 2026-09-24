@@ -10,7 +10,6 @@ from ..schemas import ValidationIssue
 from .models import CreditNote
 from .registry import ValidationContext
 
-
 # ---- credit note ------------------------------------------------------------------
 
 

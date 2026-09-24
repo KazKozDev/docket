@@ -32,9 +32,9 @@ import statistics
 import threading
 import time
 from collections import deque
+from collections.abc import Callable, Iterable, Iterator
 from concurrent.futures import Future, ThreadPoolExecutor
 from pathlib import Path
-from typing import Callable, Iterable, Iterator, Union
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -47,7 +47,7 @@ from .result import DocumentError, DocumentResult, DocumentStatus
 
 log = get_logger()
 
-SourceSpec = Union[str, Path, Iterable[Union[str, Path]]]
+SourceSpec = str | Path | Iterable[str | Path]
 ResultCallback = Callable[[int, DocumentResult], None]
 
 
@@ -77,6 +77,9 @@ class BatchMetrics(BaseModel):
     documents_resumed: int = 0
     pages: int = 0
     llm_calls: int = 0
+    llm_input_tokens: int = 0
+    llm_output_tokens: int = 0
+    llm_unreported_calls: int = 0
     llm_estimated_tokens: int = 0
     escalated_to_vlm: int = 0
     vlm_pages: int = 0
@@ -114,9 +117,12 @@ def _scan(directory: Path, pattern: str, recursive: bool) -> Iterator[Path]:
     for entry in entries:
         if entry.is_dir(follow_symlinks=False):
             subdirs.append(Path(entry.path))
-        elif entry.is_file() and Path(entry.name).suffix.lower() in SUPPORTED_SUFFIXES:
-            if Path(entry.name).match(pattern):
-                yield Path(entry.path)
+        elif (
+            entry.is_file()
+            and Path(entry.name).suffix.lower() in SUPPORTED_SUFFIXES
+            and Path(entry.name).match(pattern)
+        ):
+            yield Path(entry.path)
     if recursive:
         for sub in subdirs:
             yield from _scan(sub, pattern, recursive)
@@ -182,7 +188,7 @@ class Checkpoint:
 def _run_one(path: Path, options: ResolvedOptions) -> DocumentResult:
     try:
         return process_document(path, options)
-    except Exception as exc:  # noqa: BLE001 — one document must not take the batch down
+    except Exception as exc:
         log.exception("document crashed", extra={"document": path.name})
         return DocumentResult(
             source=str(path),
@@ -238,7 +244,7 @@ def iter_batch(
         while window:
             i, path, pending = window.popleft()
             resumed = isinstance(pending, DocumentResult)
-            result = pending if resumed else pending.result()
+            result: DocumentResult = pending if isinstance(pending, DocumentResult) else pending.result()
             if not resumed and checkpoint is not None:
                 checkpoint.record(result)
             if batch.fail_fast and result.status == DocumentStatus.FAILED:
@@ -279,6 +285,9 @@ def process_batch(
             metrics.documents_processed += 1
             seconds.append(result.metrics.elapsed_seconds)
             metrics.llm_calls += result.metrics.llm_calls
+            metrics.llm_input_tokens += result.metrics.llm_input_tokens
+            metrics.llm_output_tokens += result.metrics.llm_output_tokens
+            metrics.llm_unreported_calls += result.metrics.llm_unreported_calls
             metrics.llm_estimated_tokens += result.metrics.llm_estimated_tokens
             for stage, value in result.metrics.stage_seconds.items():
                 stages[stage] = stages.get(stage, 0.0) + value

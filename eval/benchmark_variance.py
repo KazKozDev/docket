@@ -25,7 +25,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from docket import __version__, process_document  # noqa: E402
+from docket import __version__, process_document
 
 DEFAULT_DOCUMENT = ROOT / "eval" / "golden_dataset" / "receipt_taxed.txt"
 DEFAULT_OUT = ROOT / "eval" / "results" / "llm_variance.json"

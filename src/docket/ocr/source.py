@@ -6,8 +6,9 @@ PDF never sits in memory as a stack of bitmaps. Nothing is written to disk.
 from __future__ import annotations
 
 import io
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator, Literal
+from typing import Literal
 
 import pdfplumber
 from PIL import Image
@@ -93,12 +94,12 @@ class DocumentSource:
             self._text_pages = self.path.read_text(encoding="utf-8").split("\f")
         return self._text_pages
 
-    def page(self, number: int) -> "PageSource":
+    def page(self, number: int) -> PageSource:
         if not 1 <= number <= self.page_count:
             raise IndexError(f"page {number} out of range 1..{self.page_count}")
         return PageSource(self, number)
 
-    def pages(self) -> Iterator["PageSource"]:
+    def pages(self) -> Iterator[PageSource]:
         for number in range(1, self.page_count + 1):
             yield self.page(number)
 
@@ -107,7 +108,7 @@ class DocumentSource:
             self._plumber.close()
             self._plumber = None
 
-    def __enter__(self) -> "DocumentSource":
+    def __enter__(self) -> DocumentSource:  # noqa: PYI034 — typing.Self needs Python 3.11
         return self
 
     def __exit__(self, *exc) -> None:
@@ -156,9 +157,9 @@ class PageSource:
 
 
 __all__ = [
-    "DocumentSource",
     "IMAGE_SUFFIXES",
-    "PageSource",
     "SUPPORTED_SUFFIXES",
+    "DocumentSource",
+    "PageSource",
     "UnsupportedDocument",
 ]

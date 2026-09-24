@@ -9,7 +9,6 @@ all three the moment it is registered.
 """
 from __future__ import annotations
 
-
 from . import catalog, config
 from .classify_tfidf import classify_tfidf
 from .llm_client import LLMError, chat_json
@@ -86,7 +85,7 @@ def classify_llm(text: str) -> ClassificationResult:
             votes[candidate] = votes.get(candidate, 0.0) + float(
                 result.get("confidence", 0.0)
             )
-        doc_type = max(votes, key=votes.get)
+        doc_type = max(votes, key=votes.__getitem__)
         total = sum(votes.values())
         confidence = votes[doc_type] / total if total else 0.0
     return ClassificationResult(

@@ -33,6 +33,8 @@ from .source import SUPPORTED_SUFFIXES, DocumentSource, PageSource, UnsupportedD
 
 __all__ = [
     "AUTO_ORDER",
+    "ENTRY_POINT_GROUP",
+    "SUPPORTED_SUFFIXES",
     "Acquisition",
     "AcquisitionError",
     "AcquisitionOptions",
@@ -43,14 +45,12 @@ __all__ = [
     "BackendUnavailable",
     "Capabilities",
     "DocumentSource",
-    "ENTRY_POINT_GROUP",
     "OcrBackend",
     "OcrBackendError",
     "OcrError",
     "OcrSettings",
     "PageAcquisition",
     "PageSource",
-    "SUPPORTED_SUFFIXES",
     "UnknownLanguage",
     "UnsupportedDocument",
     "acquire",

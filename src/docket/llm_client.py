@@ -7,8 +7,9 @@ upstream depends on which one is in use.
 Two pieces of production plumbing live here rather than upstream, because
 every LLM call in the pipeline goes through this module:
 
-- `usage`: a per-run counter of call count and estimated tokens, read by
-  the eval harness to report latency/cost per document (see eval/run_eval.py).
+- `usage`: a per-document counter of calls, the models used, the tokens
+  the provider reported (Ollama's prompt_eval_count/eval_count, OpenAI's
+  usage block) and a chars/4 estimate for providers that report nothing.
 - Langfuse tracing: if LANGFUSE_PUBLIC_KEY/SECRET_KEY are set, every call is
   wrapped in a Langfuse generation span. If they aren't, or the langfuse
   package isn't installed, tracing is a no-op — this stays local-first by
@@ -18,10 +19,12 @@ from __future__ import annotations
 
 import base64
 import json
+import random
 import re
 import time
 from contextvars import ContextVar
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from email.utils import parsedate_to_datetime
 
 import httpx
 
@@ -33,22 +36,42 @@ class LLMError(RuntimeError):
 
 
 @dataclass
+class _Reply:
+    """A model's answer and the token counts its provider reported, if any."""
+
+    content: str
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+
+
+@dataclass
 class _Usage:
     calls: int = 0
     estimated_tokens: int = 0
+    input_tokens: int = 0
+    output_tokens: int = 0
+    unreported_calls: int = 0
+    models: list[str] = field(default_factory=list)
 
-    def record(self, *texts: str) -> None:
+    def record(self, *texts: str, model: str | None = None, reply: _Reply | None = None) -> None:
         self.calls += 1
-        # Rough token estimate (chars/4) — good enough for a relative
-        # cost/latency comparison, not meant to match a real tokenizer.
+        # Rough token estimate (chars/4), kept for providers that report
+        # nothing; not meant to match a real tokenizer.
         self.estimated_tokens += sum(len(t) for t in texts) // 4
-
-    def reset(self) -> None:
-        self.calls = 0
-        self.estimated_tokens = 0
+        if reply is not None and reply.input_tokens is not None and reply.output_tokens is not None:
+            self.input_tokens += reply.input_tokens
+            self.output_tokens += reply.output_tokens
+        else:
+            self.unreported_calls += 1
+        if model and model not in self.models:
+            self.models.append(model)
 
     def snapshot(self) -> dict:
-        return {"calls": self.calls, "estimated_tokens": self.estimated_tokens}
+        return {
+            "calls": self.calls, "estimated_tokens": self.estimated_tokens,
+            "input_tokens": self.input_tokens, "output_tokens": self.output_tokens,
+            "unreported_calls": self.unreported_calls, "models": list(self.models),
+        }
 
 
 _usage_var: ContextVar[_Usage | None] = ContextVar("docket_llm_usage", default=None)
@@ -72,8 +95,24 @@ class _ContextUsage:
     def estimated_tokens(self) -> int:
         return self._current().estimated_tokens
 
-    def record(self, *texts: str) -> None:
-        self._current().record(*texts)
+    @property
+    def input_tokens(self) -> int:
+        return self._current().input_tokens
+
+    @property
+    def output_tokens(self) -> int:
+        return self._current().output_tokens
+
+    @property
+    def unreported_calls(self) -> int:
+        return self._current().unreported_calls
+
+    @property
+    def models(self) -> list[str]:
+        return list(self._current().models)
+
+    def record(self, *texts: str, model: str | None = None, reply: _Reply | None = None) -> None:
+        self._current().record(*texts, model=model, reply=reply)
 
     def reset(self) -> None:
         _usage_var.set(_Usage())
@@ -100,7 +139,7 @@ def _get_langfuse():
             secret_key=config.LANGFUSE_SECRET_KEY,
             host=config.LANGFUSE_HOST,
         )
-    except Exception:
+    except Exception:  # noqa: BLE001 — a broken tracing setup must not break extraction
         return None
 
 
@@ -124,8 +163,8 @@ def _trace(name: str, model: str, input_: object, output: object, start: float) 
             },
         ).end()
         client.flush()
-    except Exception:
-        pass  # tracing must never break the pipeline
+    except Exception:  # noqa: BLE001, S110 — tracing must never break the pipeline
+        pass
 
 
 def list_models(*, vision_only: bool = False, timeout: float = 10.0) -> list[str]:
@@ -177,7 +216,7 @@ def chat_json(
     model = model or config.TEXT_MODEL
     start = time.monotonic()
     if config.LLM_PROVIDER == "openai":
-        content = _openai_chat(
+        reply = _openai_chat(
             model,
             [{"role": "user", "content": prompt}],
             timeout=timeout,
@@ -194,9 +233,10 @@ def chat_json(
             "think": config.ENABLE_THINKING,
             "options": {"temperature": 0},
         }
-        content = _ollama_chat(payload, timeout=timeout)
+        reply = _ollama_chat(payload, timeout=timeout)
 
-    usage.record(prompt, content)
+    content = reply.content
+    usage.record(prompt, content, model=model, reply=reply)
     _trace("chat_json", model, prompt, content, start)
     try:
         # Some cloud responses wrap otherwise valid JSON in a Markdown fence.
@@ -244,7 +284,7 @@ def vision_transcribe(
                 {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}},
             ],
         }
-        text = _openai_chat(model, [message], timeout=timeout).strip()
+        reply = _openai_chat(model, [message], timeout=timeout)
     else:
         payload = {
             "model": model,
@@ -253,9 +293,10 @@ def vision_transcribe(
             "think": config.ENABLE_THINKING,
             "options": {"temperature": 0},
         }
-        text = _ollama_chat(payload, timeout=timeout).strip()
+        reply = _ollama_chat(payload, timeout=timeout)
 
-    usage.record(prompt_text, text)
+    text = reply.content.strip()
+    usage.record(prompt_text, text, model=model, reply=reply)
     _trace("vision_transcribe", model, "<image>", text, start)
     return text
 
@@ -267,6 +308,30 @@ def vision_transcribe(
 # retried after one: a laptop can honestly need minutes for a dense page.
 _RETRY_STATUS = {429, 500, 502, 503, 504}
 _BACKOFF_S = 2.0
+# A Retry-After longer than this is not waited out: the document fails with
+# the provider's error instead of holding a worker for minutes.
+_MAX_RETRY_AFTER_S = 60.0
+
+
+def _retry_delay(attempt: int, resp: httpx.Response | None = None) -> float:
+    """How long to wait before retry `attempt` + 1.
+
+    The provider's Retry-After (seconds or an HTTP date) wins when it sends
+    one, capped at _MAX_RETRY_AFTER_S. Otherwise exponential backoff with
+    jitter, so parallel workers throttled together don't retry together.
+    """
+    header = resp.headers.get("retry-after") if resp is not None else None
+    if header:
+        try:
+            seconds = float(header)
+        except ValueError:
+            try:
+                seconds = parsedate_to_datetime(header).timestamp() - time.time()
+            except (TypeError, ValueError):
+                seconds = None
+        if seconds is not None:
+            return min(max(seconds, 0.0), _MAX_RETRY_AFTER_S)
+    return _BACKOFF_S * (2 ** attempt) * random.uniform(0.5, 1.5)
 
 
 def _hosted(model: str) -> bool:
@@ -275,7 +340,7 @@ def _hosted(model: str) -> bool:
     if config.LLM_PROVIDER == "openai":
         host = httpx.URL(config.LLM_BASE_URL).host
         return host not in ("localhost", "127.0.0.1", "::1")
-    return model.endswith(":cloud") or model.endswith("-cloud")
+    return model.endswith((":cloud", "-cloud"))
 
 
 def _post(url: str, *, model: str, json: dict, timeout: float, headers: dict | None = None) -> httpx.Response:
@@ -291,7 +356,7 @@ def _post(url: str, *, model: str, json: dict, timeout: float, headers: dict | N
         try:
             resp = httpx.post(url, json=json, headers=headers, timeout=timeout)
             if resp.status_code in _RETRY_STATUS and not last:
-                time.sleep(_BACKOFF_S * (attempt + 1))
+                time.sleep(_retry_delay(attempt, resp))
                 continue
             resp.raise_for_status()
             return resp
@@ -301,21 +366,22 @@ def _post(url: str, *, model: str, json: dict, timeout: float, headers: dict | N
         except httpx.TransportError:
             if last:
                 raise
-        time.sleep(_BACKOFF_S * (attempt + 1))
+        time.sleep(_retry_delay(attempt))
     raise AssertionError("unreachable")
 
 
-def _ollama_chat(payload: dict, *, timeout: float) -> str:
+def _ollama_chat(payload: dict, *, timeout: float) -> _Reply:
     with limits.slot("llm"):
         return _ollama_request(payload, timeout=timeout)
 
 
-def _ollama_request(payload: dict, *, timeout: float) -> str:
+def _ollama_request(payload: dict, *, timeout: float) -> _Reply:
     try:
         resp = _post(f"{config.OLLAMA_HOST}/api/chat", model=payload["model"], json=payload, timeout=timeout)
     except httpx.HTTPError as exc:
         raise LLMError(f"Ollama request failed: {exc}") from exc
-    return resp.json()["message"]["content"]
+    body = resp.json()
+    return _Reply(body["message"]["content"], body.get("prompt_eval_count"), body.get("eval_count"))
 
 
 def _openai_headers() -> dict:
@@ -324,14 +390,14 @@ def _openai_headers() -> dict:
 
 def _openai_chat(
     model: str, messages: list[dict], *, timeout: float, json_mode: bool = False
-) -> str:
+) -> _Reply:
     with limits.slot("llm"):
         return _openai_request(model, messages, timeout=timeout, json_mode=json_mode)
 
 
 def _openai_request(
     model: str, messages: list[dict], *, timeout: float, json_mode: bool = False
-) -> str:
+) -> _Reply:
     payload: dict = {"model": model, "messages": messages, "temperature": 0}
     if json_mode:
         # JSON mode rather than strict json_schema: Pydantic schemas rarely
@@ -345,7 +411,13 @@ def _openai_request(
             headers=_openai_headers(),
             timeout=timeout,
         )
-        return resp.json()["choices"][0]["message"]["content"] or ""
+        body = resp.json()
+        reported = body.get("usage") or {}
+        return _Reply(
+            body["choices"][0]["message"]["content"] or "",
+            reported.get("prompt_tokens"),
+            reported.get("completion_tokens"),
+        )
     except httpx.HTTPError as exc:
         raise LLMError(f"LLM request failed: {exc}") from exc
     except (KeyError, IndexError, ValueError) as exc:

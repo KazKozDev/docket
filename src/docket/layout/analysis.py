@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from itertools import pairwise
 from statistics import median
 
 from .. import config
@@ -291,7 +292,7 @@ def _find_aligned_tables(
         full_rows = sum(1 for r in run if len(rows[r].segments) >= len(bands or ()))
         regular = bands is not None and len(bands) >= MIN_TABLE_COLUMNS and full_rows >= MIN_TABLE_ROWS
         two_column = bands is not None and len(bands) == 2 and _is_two_column_table(run, rows, words)
-        if len(run) >= MIN_TABLE_ROWS and (regular or two_column):
+        if len(run) >= MIN_TABLE_ROWS and bands is not None and (regular or two_column):
             tables.append((run, bands))
             k = j
         else:
@@ -555,7 +556,7 @@ def build_page(
         start = min(g.start for g in group)
         end = max(g.end for g in group)
         edges = [(-float("inf"), group[0].lo)]
-        edges += [(a.hi, b.lo) for a, b in zip(group, group[1:])]
+        edges += [(a.hi, b.lo) for a, b in pairwise(group)]
         edges += [(group[-1].hi, float("inf"))]
         base = len(column_boxes)
         column_boxes.extend([] for _ in edges)
@@ -667,17 +668,17 @@ def _table_lines(t: dict, rows: list[_Row], words: list[RawWord], t_index: int) 
             )
             out.append(_Line(words=members, text=text, table=t_index))
         return out
-    by_row: dict[int, list[tuple]] = {}
+    grid_rows: dict[int, list[tuple]] = {}
     for cell, members, text in t["cells"]:
-        by_row.setdefault(cell.row, []).append((cell.column, members, text))
+        grid_rows.setdefault(cell.row, []).append((cell.column, members, text))
     out = []
-    for row_index in sorted(by_row):
-        cells = sorted(by_row[row_index], key=lambda c: c[0])
-        members = [i for _, m, _ in cells for i in m]
+    for row_index in sorted(grid_rows):
+        row_cells = sorted(grid_rows[row_index], key=lambda c: c[0])
+        members = [i for _, m, _ in row_cells for i in m]
         if not members:
             continue
         out.append(
-            _Line(words=members, text=" | ".join(text for _, _, text in cells), table=t_index)
+            _Line(words=members, text=" | ".join(text for _, _, text in row_cells), table=t_index)
         )
     return out
 

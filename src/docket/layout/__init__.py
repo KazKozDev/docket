@@ -1,7 +1,14 @@
 """Layout-first document model: words, lines, blocks, columns and tables with
 normalized coordinates, plus the analysis that builds them and the
 serialization the LLM reads."""
-from .analysis import CellHint, RawWord, TableHint, build_page, cells_from_boxes, text_only_page
+from .analysis import (
+    CellHint,
+    RawWord,
+    TableHint,
+    build_page,
+    cells_from_boxes,
+    text_only_page,
+)
 from .locate import locate_all, locate_quote
 from .models import (
     BoundingBox,

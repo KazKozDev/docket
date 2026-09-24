@@ -71,7 +71,7 @@ def paddle_language(languages: list[str]) -> tuple[str, str]:
     codes = set(languages)
     if codes == {"en"}:
         return "en", "en_PP-OCRv5_mobile_rec"
-    for family, (members, model) in _PADDLE_FAMILIES.items():
+    for members, model in _PADDLE_FAMILIES.values():
         if codes <= members:
             primary = next((c for c in languages if c != "en"), languages[0])
             return _PADDLE_LANG_CODE.get(primary, primary), model

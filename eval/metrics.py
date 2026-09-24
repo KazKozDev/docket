@@ -281,7 +281,7 @@ def citation_coverage(result, expected: dict) -> dict:
         from docket.catalog import get_schema
         spec = get_schema(result.schema_id) if result.schema_id else None
         spec_items = spec.line_items if spec is not None else None
-    except Exception:
+    except Exception:  # noqa: BLE001 — an unknown schema just has no rows to grade
         spec_items = None
     if spec_items is not None:
         item_fields = [

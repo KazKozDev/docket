@@ -1,14 +1,17 @@
 """Small, dependency-free fine-angle deskew for OCR page images."""
 from __future__ import annotations
 
+from typing import cast
+
 from PIL import Image, ImageOps
 
 
 def _projection_score(image: Image.Image, angle: float) -> float:
     rotated = image.rotate(angle, resample=Image.Resampling.BILINEAR, expand=False, fillcolor=255)
     pixels = rotated.load()
+    assert pixels is not None  # a loaded grayscale image
     width, height = rotated.size
-    rows = [sum(255 - pixels[x, y] for x in range(width)) for y in range(height)]
+    rows = [sum(255 - cast(int, pixels[x, y]) for x in range(width)) for y in range(height)]
     return sum((rows[i] - rows[i - 1]) ** 2 for i in range(1, height))
 
 

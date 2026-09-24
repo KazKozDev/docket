@@ -42,7 +42,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from metrics import (  # noqa: E402
+from metrics import (
     citation_coverage,
     citation_coverage_summary,
     expected_cells,
@@ -55,11 +55,11 @@ from metrics import (  # noqa: E402
     word_scores,
 )
 
-from docket import __version__, catalog, config  # noqa: E402
-from docket.ocr import AcquisitionOptions, OcrSettings, acquire  # noqa: E402
-from docket.options import OcrOptions, ProcessOptions, ReviewOptions  # noqa: E402
-from docket.pipeline import process_document  # noqa: E402
-from docket.review_reasons import key_field_confidence  # noqa: E402
+from docket import __version__, catalog, config
+from docket.ocr import AcquisitionOptions, OcrSettings, acquire
+from docket.options import OcrOptions, ProcessOptions, ReviewOptions
+from docket.pipeline import process_document
+from docket.review_reasons import key_field_confidence
 
 DATASETS = [ROOT / "eval" / "golden_dataset", ROOT / "eval" / "real_samples"]
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
@@ -332,11 +332,11 @@ def environment(configs: list[str]) -> dict:
             return None
 
     try:
-        tesseract = subprocess.run(["tesseract", "--version"], capture_output=True, text=True).stdout.split("\n")[0]
+        tesseract = subprocess.run(["tesseract", "--version"], capture_output=True, text=True, check=False).stdout.split("\n")[0]
     except OSError:
         tesseract = None
     try:
-        commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True,
+        commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=False,
                                 cwd=ROOT).stdout.strip()
     except OSError:
         commit = None

@@ -19,7 +19,7 @@ class _FakeResponse:
 def _capture_payload(monkeypatch) -> dict:
     captured: dict = {}
 
-    def fake_post(url, json=None, headers=None, timeout=None):  # noqa: ANN001
+    def fake_post(url, json=None, headers=None, timeout=None):
         captured.update(json)
         return _FakeResponse()
 
@@ -84,7 +84,7 @@ def _fake_tags(models: list[dict]):
         def json(self) -> dict:
             return {"models": models}
 
-    return lambda url, timeout=None: Resp()  # noqa: ANN001
+    return lambda url, timeout=None: Resp()
 
 
 MODELS = [
@@ -106,7 +106,7 @@ def test_vision_list_requires_both_capabilities(monkeypatch):
 
 
 def test_unreachable_ollama_returns_no_choices_rather_than_raising(monkeypatch):
-    def boom(url, timeout=None):  # noqa: ANN001
+    def boom(url, timeout=None):
         raise llm_client.httpx.ConnectError("connection refused")
 
     monkeypatch.setattr(llm_client.httpx, "get", boom)

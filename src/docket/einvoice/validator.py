@@ -36,7 +36,7 @@ import time
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -238,7 +238,7 @@ class _Engine:
         self._processor = PySaxonProcessor(license=False)
         self._xslt = self._processor.new_xslt30_processor()
         self._lock = threading.Lock()
-        self._stylesheets: dict[str, object] = {}
+        self._stylesheets: dict[str, Any] = {}
         self._schemas: dict[str, object] = {}
 
     @property
@@ -316,7 +316,8 @@ def _parse_svrl(svrl: bytes, source: str) -> tuple[list[EInvoiceIssue], int]:
     for tag, default in (("failed-assert", "error"), ("successful-report", "warning")):
         for node in root.iter(f"{{{_NS['svrl']}}}{tag}"):
             flag = (node.get("flag") or node.get("role") or default).lower()
-            severity = {"fatal": "fatal", "error": "error", "warning": "warning", "information": "info", "info": "info"}.get(
+            severity: Literal["fatal", "error", "warning", "info"] = {  # type: ignore[assignment]
+                "fatal": "fatal", "error": "error", "warning": "warning", "information": "info", "info": "info"}.get(
                 flag, "error"
             )
             text = " ".join("".join(node.itertext()).split())
@@ -476,13 +477,13 @@ def validate_einvoice(
 
 
 __all__ = [
+    "PROFILE_IDS",
     "EInvoiceIssue",
     "EInvoiceResourcesMissing",
     "EInvoiceUnavailable",
     "EInvoiceValidationOptions",
     "EInvoiceValidationResult",
     "LayerReport",
-    "PROFILE_IDS",
     "Profile",
     "available",
     "validate_einvoice",

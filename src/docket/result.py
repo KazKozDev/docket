@@ -99,7 +99,13 @@ class ProcessingMetrics(BaseModel):
     stage_seconds: dict[str, float] = Field(default_factory=dict)
     pages: int = 0
     llm_calls: int = 0
-    llm_estimated_tokens: int = 0
+    llm_models: list[str] = Field(default_factory=list, description="Models called, in first-use order.")
+    llm_input_tokens: int = Field(default=0, description="Prompt tokens the provider reported.")
+    llm_output_tokens: int = Field(default=0, description="Completion tokens the provider reported.")
+    llm_unreported_calls: int = Field(
+        default=0, description="Calls whose provider reported no token counts; not in the two sums above."
+    )
+    llm_estimated_tokens: int = Field(default=0, description="Characters / 4 over every call, reported or not.")
     extract_attempts: int = 0
     escalated_to_vlm: bool = Field(
         default=False,
@@ -150,7 +156,7 @@ class DocumentResult(BaseModel):
             i.severity == "error" for i in self.validation_issues
         )
 
-    def highlights(self, page: int | None = None) -> list[tuple[str, "SourceLocation", "SourceRegion"]]:
+    def highlights(self, page: int | None = None) -> list[tuple[str, SourceLocation, SourceRegion]]:
         """(field, source, region) triples for drawing provenance boxes over
         the original pages — everything a viewer needs, straight from the
         result, optionally filtered to one page. Fields without geometry

@@ -21,8 +21,10 @@ class _Server:
         outcome = self.outcomes.pop(0)
         if isinstance(outcome, Exception):
             raise outcome
+        status, headers_out = outcome if isinstance(outcome, tuple) else (outcome, {})
         request = httpx.Request("POST", url)
-        return httpx.Response(outcome, json={"message": {"content": '{"ok": true}'}}, request=request)
+        body = {"message": {"content": '{"ok": true}'}, "prompt_eval_count": 50, "eval_count": 5}
+        return httpx.Response(status, json=body, headers=headers_out, request=request)
 
 
 @pytest.fixture
@@ -82,3 +84,37 @@ def test_openai_compatible_endpoints_are_hosted_unless_local(monkeypatch, base_u
     monkeypatch.setattr(config, "LLM_PROVIDER", "openai")
     monkeypatch.setattr(config, "LLM_BASE_URL", base_url)
     assert llm_client._hosted("any-model") is hosted
+
+
+def test_retry_after_is_honoured_and_capped(monkeypatch, server):
+    slept = []
+    monkeypatch.setattr(llm_client.time, "sleep", slept.append)
+    server((429, {"Retry-After": "7"}), (503, {"Retry-After": "3600"}), 200)
+    assert llm_client.chat_json("x", model="qwen3:8b") == {"ok": True}
+    assert slept == [7.0, llm_client._MAX_RETRY_AFTER_S]
+
+
+def test_retry_after_as_an_http_date():
+    from datetime import datetime, timedelta, timezone
+    from email.utils import format_datetime
+
+    when = format_datetime(datetime.now(timezone.utc) + timedelta(seconds=30), usegmt=True)
+    resp = httpx.Response(429, headers={"Retry-After": when})
+    assert 25 <= llm_client._retry_delay(0, resp) <= 30
+
+
+def test_backoff_without_retry_after_grows_with_jitter(monkeypatch):
+    monkeypatch.setattr(llm_client, "_BACKOFF_S", 2.0)
+    first = [llm_client._retry_delay(0) for _ in range(50)]
+    third = [llm_client._retry_delay(2) for _ in range(50)]
+    assert all(1.0 <= d <= 3.0 for d in first) and len(set(first)) > 1
+    assert all(4.0 <= d <= 12.0 for d in third)
+
+
+def test_provider_token_counts_are_recorded(server):
+    server(200)
+    llm_client.usage.reset()
+    llm_client.chat_json("x", model="qwen3:8b")
+    assert (llm_client.usage.input_tokens, llm_client.usage.output_tokens) == (50, 5)
+    assert llm_client.usage.models == ["qwen3:8b"]
+

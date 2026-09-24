@@ -15,8 +15,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install ruff==0.12.2  # bump deliberately: new releases add default rules
+          cache: "pip"
+      # Versions pinned in the dev extra; mypy needs the runtime deps' types.
+      - run: pip install -e ".[dev,review]"
       - run: ruff check src tests eval scripts examples
+      - run: mypy
 
   test:
     runs-on: ubuntu-latest

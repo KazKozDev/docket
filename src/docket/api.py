@@ -25,15 +25,16 @@ from __future__ import annotations
 
 import asyncio
 import io
+from collections.abc import Iterator
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Iterator
+from typing import Any
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, File, Form, Header, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -41,11 +42,15 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from . import __version__, catalog, config, job_store, review_queue
 from .batch import BatchOptions, process_batch
 from .catalog import SchemaError, SchemaInfo
-from .einvoice import EInvoiceUnavailable, EInvoiceValidationOptions, EInvoiceValidationResult, Profile
+from .einvoice import (
+    EInvoiceUnavailable,
+    EInvoiceValidationOptions,
+    EInvoiceValidationResult,
+    Profile,
+)
 from .einvoice import validate_einvoice as run_einvoice_validation
 from .errors import ConfigurationError
-from .export import list_exporters
-from .export import tabular
+from .export import list_exporters, tabular
 from .job_store import Job, JobOptions
 from .logging_setup import configure, get_logger
 from .ocr import SUPPORTED_SUFFIXES, list_ocr_backends
@@ -73,7 +78,7 @@ class ErrorResponse(BaseModel):
     error: ErrorBody
 
 
-_ERRORS = {
+_ERRORS: dict[int | str, dict[str, Any]] = {
     400: {"model": ErrorResponse, "description": "Bad request"},
     401: {"model": ErrorResponse, "description": "Missing or invalid API key"},
     404: {"model": ErrorResponse, "description": "Not found"},
@@ -187,7 +192,7 @@ async def _stage(file: UploadFile, budget: list[int]) -> Path:
         if suffix == ".pdf":
             try:
                 pages = page_count(path)
-            except Exception as exc:  # noqa: BLE001 — pdfium raises its own error type
+            except Exception as exc:
                 raise ApiError(400, "unreadable_pdf", f"{file.filename!r} is not a readable PDF") from exc
             if pages > config.MAX_PDF_PAGES:
                 raise ApiError(413, "too_many_pages", f"{file.filename!r} has {pages} pages; limit is {config.MAX_PDF_PAGES}")
@@ -235,7 +240,8 @@ def _job_options(
 
 def _process_options(options: JobOptions) -> ProcessOptions:
     return ProcessOptions(
-        ocr=OcrOptions(backend=options.ocr_backend, fallbacks=options.ocr_fallbacks, languages=options.ocr_languages),
+        ocr=OcrOptions(backend=options.ocr_backend, fallbacks=list(options.ocr_fallbacks) if options.ocr_fallbacks is not None else None,
+                       languages=options.ocr_languages),
         document_type=options.document_type,
         schema_version=options.schema_version,
         include_layout=options.include_layout,
@@ -290,7 +296,7 @@ async def _run_job(job_id: str) -> Job:
         job = job_store.update(job_id, status="running", error=None)
         try:
             await run_in_threadpool(_run_batch, job)
-        except Exception as exc:  # noqa: BLE001 — a job must end in a state, never hang
+        except Exception as exc:
             log.exception("job failed", extra={"job_id": job_id})
             job = job_store.update(job_id, status="failed", error=f"{type(exc).__name__}: {exc}")
         else:
@@ -632,7 +638,8 @@ def update_review(document_id: str, update: ReviewUpdate) -> dict:
     except review_queue.ReviewConflict as exc:
         raise ApiError(409, "review_conflict", str(exc)) from exc
     except review_queue.ReviewValidationError as exc:
-        return JSONResponse(status_code=422, content={"error": {"code": "review_validation_failed", "message": str(exc)}, "issues": exc.issues})
+        # FastAPI derives the response model from `-> dict`; this error body carries the issues too.
+        return JSONResponse(status_code=422, content={"error": {"code": "review_validation_failed", "message": str(exc)}, "issues": exc.issues})  # type: ignore[return-value]
     except ValueError as exc:
         raise ApiError(422, "invalid_review_update", str(exc)) from exc
 

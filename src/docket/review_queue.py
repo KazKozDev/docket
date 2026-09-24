@@ -10,7 +10,21 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from sqlalchemy import JSON, Column, Float, Integer, MetaData, String, Table, Text, create_engine, delete, insert, select, update as sql_update
+from sqlalchemy import (
+    JSON,
+    Column,
+    Float,
+    Integer,
+    MetaData,
+    String,
+    Table,
+    Text,
+    create_engine,
+    delete,
+    insert,
+    select,
+)
+from sqlalchemy import update as sql_update
 from sqlalchemy.engine import Engine
 
 from . import config
@@ -75,6 +89,14 @@ def _history(conn, document_id: str) -> list[dict]:
     return [dict(row) for row in rows]
 
 
+def _existing(conn, document_id: str) -> dict:
+    """The record of a task this transaction has just written."""
+    record = _record(conn, document_id)
+    if record is None:
+        raise KeyError(document_id)
+    return record
+
+
 def _record(conn, document_id: str) -> dict | None:
     row = conn.execute(select(_TASKS).where(_TASKS.c.document_id == document_id)).mappings().first()
     if row is None:
@@ -125,7 +147,7 @@ def list_pending(*, database_url: str | None = None) -> list[dict]:
     with _engine(database_url).connect() as conn:
         ids = list(conn.execute(select(_TASKS.c.document_id).where(
             _TASKS.c.status.in_(("pending", "in_review", "corrected"))).order_by(_TASKS.c.queued_at)).scalars())
-        return [_record(conn, document_id) for document_id in ids]
+        return [record for document_id in ids if (record := _record(conn, document_id)) is not None]
 
 
 def get(document_id: str, *, database_url: str | None = None) -> dict | None:
@@ -155,7 +177,7 @@ def claim(document_id: str, *, actor: str, lease_seconds: int | None = None,
         if result.rowcount != 1:
             raise ReviewConflict("task was claimed concurrently")
         _revision(conn, document_id, "claimed", version, actor=actor)
-        return _record(conn, document_id)
+        return _existing(conn, document_id)
 
 
 def _require_lock(row: Any, token: str | None) -> None:
@@ -173,7 +195,7 @@ def release(document_id: str, *, lock_token: str, actor: str, database_url: str 
         conn.execute(sql_update(_TASKS).where(_TASKS.c.document_id == document_id).values(
             status=status, lock_owner=None, lock_token=None, lock_expires_at=None, updated_at=_now(), version=version))
         _revision(conn, document_id, "released", version, actor=actor)
-        return _record(conn, document_id)
+        return _existing(conn, document_id)
 
 
 def _merge(base: dict, changes: dict) -> dict:
@@ -185,6 +207,7 @@ def _merge(base: dict, changes: dict) -> dict:
 
 def _revalidate(row: Any, corrections: dict | None) -> list[dict]:
     from pydantic import ValidationError
+
     from . import catalog
     from .validate import validate
     saved = DocumentResult.model_validate(row["result"])
@@ -223,7 +246,7 @@ def update(document_id: str, *, status: str, corrections: dict | None = None, ac
             lock_expires_at=None if terminal else row["lock_expires_at"]))
         _revision(conn, document_id, status, version, actor=actor, note=note,
                   corrections=corrections, validation_issues=issues)
-        return _record(conn, document_id)
+        return _existing(conn, document_id)
 
 
 def revalidate(document_id: str, *, lock_token: str, actor: str = "reviewer",
