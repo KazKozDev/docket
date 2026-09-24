@@ -8,6 +8,15 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+### Fixed
+
+- A date must be read from the line it cites. The model sometimes invented
+  a date it could not read (2020-01-01, 2024-01-01 on thermal receipts) and
+  cited the merchant name or a TAX INVOICE header; the quote existed, so
+  validation passed and the document came back as a silent success. A cited
+  line with no digit, or whose numeric dates all mean another day, is now an
+  error, which also triggers the vision-model re-read.
+
 ### Removed
 
 - ERP and accounting exports: `sap-idoc`, `sap-csv`, `xero-csv`,
