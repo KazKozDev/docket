@@ -1305,3 +1305,29 @@ def test_a_datetime_is_checked_by_its_day():
     )
     issues = validate(boarding, pages=["BOARDING PASS\nDeparture: 2026-10-02 07:45"])
     assert not [i for i in issues if i.field == "departure_datetime"]
+
+
+# ---- tender minus change is what was charged ---------------------------------------------
+
+
+def _paid_receipt(total: float, tendered: float | None, change: float | None) -> Receipt:
+    return Receipt(merchant_name="PASARAYA BORONG PINTAR", transaction_date=date(2018, 1, 30),
+                   total_amount=total, amount_tendered=tendered, change_given=change)
+
+
+def _total_issues(receipt):
+    return [i for i in validate(receipt) if i.field == "total_amount"]
+
+
+def test_a_total_that_lost_its_decimal_point_contradicts_the_payment():
+    """SROIE: Tesseract read the 1.70 total as "170"; the slip also says
+    Cash 100.00 / Change 98.30."""
+    issues = _total_issues(_paid_receipt(170.0, 100.0, 98.30))
+    assert issues and issues[0].severity == "error" and "= 1.70" in issues[0].message
+    assert _total_issues(_paid_receipt(1.70, 100.0, 98.30)) == []
+
+
+def test_cash_rounding_and_card_payments_are_consistent():
+    assert _total_issues(_paid_receipt(38.13, 50.0, 11.85)) == []   # rounded to 0.05 at the till
+    assert _total_issues(_paid_receipt(56.0, 56.0, 0.0)) == []       # exact / card
+    assert _total_issues(_paid_receipt(56.0, 100.0, None)) == []     # no change printed: nothing to check

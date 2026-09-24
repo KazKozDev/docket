@@ -109,6 +109,9 @@ def _upgrade_purchase_order(data: dict) -> dict:
 _FLAT_MIGRATION = (
     Migration("1.0", "1.1", "drops the doc_type field; the result's document_type carries it", _drop_doc_type),
 )
+_RECEIPT_MIGRATION = _FLAT_MIGRATION + (
+    Migration("1.1", "1.2", "adds the optional amount_tendered and change_given fields", lambda data: dict(data)),
+)
 _INVOICE_MIGRATION = (
     Migration(
         "1.0",
@@ -183,7 +186,7 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
     ),
     SchemaSpec(
         schema_id="receipt",
-        version="1.1",
+        version="1.2",
         display_name="Receipt",
         model=Receipt,
         description=(
@@ -216,7 +219,7 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         summary={"document_number": "receipt_number", "document_date": "transaction_date", "issuer": "merchant_name", "currency": "currency", "subtotal": "subtotal", "tax_amount": "tax_amount", "total_amount": "total_amount"},
         line_items=LineItems("items", {"description": "description", "quantity": "quantity", "unit_price": "unit_price", "total": "price"}),
         cited_fields=("merchant_name", "transaction_date", "total_amount"),
-        migrations=_FLAT_MIGRATION,
+        migrations=_RECEIPT_MIGRATION,
     ),
     SchemaSpec(
         schema_id="contract",
