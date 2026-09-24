@@ -288,9 +288,13 @@ def acquire(path: str | Path, options: AcquisitionOptions | None = None) -> Acqu
             dpi=options.settings.dpi,
             max_pages=options.max_pages,
             max_pixels=options.max_pixels,
+            crop_photos=options.settings.crop_photos,
+            preprocess=options.settings.preprocess,
         ) as source:
             for page in source.pages():
                 layout, record = _read_page(page, chain, options, pdf_text)
+                if page.crop_quad is not None:
+                    layout = layout.model_copy(update={"crop_quad": page.crop_quad})
                 pages.append(layout)
                 records.append(record)
     except UnsupportedDocument:

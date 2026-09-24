@@ -50,6 +50,10 @@ api = [
     "uvicorn>=0.29",
     "python-multipart>=0.0.9",
 ]
+# Crop and flatten documents in phone photos before OCR.
+photo = [
+    "opencv-python-headless>=4.8",
+]
 # Persistent review queue (ReviewOptions(enqueue=True)); SQLite by default.
 review = [
     "SQLAlchemy>=2.0,<3",
@@ -83,13 +87,13 @@ einvoice = [
     "saxonche>=12.5",
 ]
 all = [
-    "docket-idp[api,tracing,einvoice,postgres]",
+    "docket-idp[api,tracing,einvoice,postgres,photo]",
 ]
 eval = [
     "datasets>=2.19",
 ]
 dev = [
-    "docket-idp[api,eval,einvoice]",
+    "docket-idp[api,eval,einvoice,photo]",
     # The Streamlit demo (examples/streamlit_demo.py) is a repo-only dev tool.
     "streamlit>=1.49",
     "pytest>=8.0",
