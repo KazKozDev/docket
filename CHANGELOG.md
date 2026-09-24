@@ -8,6 +8,13 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+### Removed
+
+- The experimental `delivery_note` schema (`DeliveryNote`, `DeliveryNoteItem`,
+  its validator, examples, fixtures and golden scan). It was never measured
+  and overlapped the stable `waybill`. `delivery_note` stays a document
+  reference kind, so an invoice can still cite a delivery note number.
+
 ### Fixed
 
 - Receipts carry the printed payment block (`amount_tendered`,

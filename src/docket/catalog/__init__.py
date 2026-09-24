@@ -21,7 +21,6 @@ from .common import (
 from .models import (
     AcceptanceActItem,
     BankStatementTransaction,
-    DeliveryNoteItem,
     ReceiptItem,
     WaybillItem,
     AcceptanceAct,
@@ -29,7 +28,6 @@ from .models import (
     BoardingPass,
     Contract,
     CreditNote,
-    DeliveryNote,
     Invoice,
     PurchaseOrder,
     Receipt,
@@ -67,7 +65,6 @@ register_builtins()
 __all__ = [
     "AcceptanceActItem",
     "BankStatementTransaction",
-    "DeliveryNoteItem",
     "ReceiptItem",
     "WaybillItem",
     "AcceptanceAct",
@@ -80,7 +77,6 @@ __all__ = [
     "CitedDocument",
     "Contract",
     "CreditNote",
-    "DeliveryNote",
     "DocumentReference",
     "ENTRY_POINT_GROUP",
     "Invoice",

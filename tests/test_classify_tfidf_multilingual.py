@@ -34,8 +34,6 @@ HELD_OUT = [
     ("boarding_pass", "Porte 34, siège 7F, embarquement 14:05, départ 14:35."),
     ("credit_note", "We refund the price difference for the faulty items against your earlier bill; nothing is payable."),
     ("credit_note", "Gutgeschriebener Betrag für die beschädigte Lieferung, Bezug: ursprüngliche Rechnung vom 3. März."),
-    ("delivery_note", "Goods received complete and undamaged, signed by the storekeeper at the loading dock."),
-    ("delivery_note", "Marchandises livrées ce jour, quantités contrôlées à la réception, signature du destinataire."),
 ]
 
 

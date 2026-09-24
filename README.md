@@ -68,7 +68,7 @@ Exporters refuse what they can't represent faithfully (no line items, tax that d
 
 ## Add custom document types and vendor templates
 
-The catalog has 10 versioned schemas (`docket schemas list`). Eight are stable: invoice, purchase order, receipt, contract, bank statement, acceptance act, waybill and boarding pass. Two are experimental: credit note and delivery note. Add your own as a Pydantic model:
+The catalog has 9 versioned schemas (`docket schemas list`). Eight are stable: invoice, purchase order, receipt, contract, bank statement, acceptance act, waybill and boarding pass. The credit note is experimental. Add your own as a Pydantic model:
 
 ```python
 from datetime import date

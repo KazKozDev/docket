@@ -412,33 +412,6 @@ class Waybill(CitedDocument):
 ServiceType = Literal["electricity", "gas", "water", "heating", "telecom", "internet", "waste", "other"]
 
 
-class DeliveryNoteItem(BaseModel):
-    description: str
-    sku: str | None = None
-    quantity_delivered: float
-    quantity_ordered: float | None = Field(default=None, description="Ordered quantity, if the note shows it.")
-    unit_of_measure: str | None = None
-    batch_number: str | None = None
-
-
-class DeliveryNote(CitedDocument):
-    """A note listing goods handed over to the recipient (Lieferschein,
-    bon de livraison, albarán de entrega)."""
-
-    delivery_note_number: str
-    delivery_date: date
-    supplier: Party
-    recipient: Party
-    delivery_address: Address | None = None
-    references: list[DocumentReference] = Field(
-        default_factory=list, description="Purchase order, order confirmation or invoice it relates to."
-    )
-    items: list[DeliveryNoteItem] = Field(default_factory=list)
-    total_packages: int | None = Field(default=None, ge=0)
-    total_gross_weight_kg: float | None = Field(default=None, ge=0)
-    received_by: str | None = Field(default=None, description="Name of the person who signed for receipt.", json_schema_extra={"pii": "person_name"})
-
-
 __all__ = [
     "AcceptanceAct",
     "AcceptanceActItem",
@@ -447,8 +420,6 @@ __all__ = [
     "BoardingPass",
     "Contract",
     "CreditNote",
-    "DeliveryNote",
-    "DeliveryNoteItem",
     "Invoice",
     "PurchaseOrder",
     "Receipt",
