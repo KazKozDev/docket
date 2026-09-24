@@ -151,3 +151,15 @@ def test_line_items_match_one_to_one():
     scores = line_item_scores(extracted, expected)
     assert scores == {"correct": 1, "extracted": 3, "expected": 2}
     assert prf(1, 3, 2) == {"precision": 0.3333, "recall": 0.5, "f1": 0.4}
+
+
+def test_punctuation_and_spacing_in_names_are_print_noise():
+    from metrics import _values_match
+
+    assert _values_match("SWC ENTERPRISE SDN.BHD", "SWC ENTERPRISE SDN BHD")
+    assert _values_match("HENG KEE DELIGHTS BAK KUT TEH", "HENG KEE DELIGHTS BAK KUT TEH.")
+    assert _values_match("BENS INDEPENDENT GROCER", "BEN'S INDEPENDENT GROCER")
+    assert _values_match("018304/28865", "018304 / 28865")
+    assert not _values_match("ANNAMARIA", "ANNA MARIA")          # a word break is not noise
+    assert not _values_match("Brown Williamson", "Brown & Williamson")
+    assert not _values_match("TSH ROWER HARDWARE", "TSH POWER HARDWARE")

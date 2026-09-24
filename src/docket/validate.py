@@ -747,6 +747,8 @@ def validate_receipt(rec: Receipt, ctx: ValidationContext) -> list[ValidationIss
     issues.extend(
         _check_date_range("transaction_date", rec.transaction_date, max_years_ahead=1)
     )
+    if raw_text:
+        issues.extend(_check_date_convention([("transaction_date", rec.transaction_date)], raw_text))
 
     if rec.merchant_tax_id:
         if checksums.is_vat_shaped(rec.merchant_tax_id):
@@ -1034,6 +1036,12 @@ _DECIMAL_POINT_RE = re.compile(r"\d\.\d{2}(?!\d)")
 # back: AU$/US$/S$/HK$/C$ countries write day-first, and guessing month-first
 # for them would be a misread, not an abstention.
 _DOLLAR_RE = re.compile(r"(?<![A-Z])\$\s?\d")
+# Currencies of countries that write the day first: ringgit (RM / MYR, often
+# only as a column header "Amount (RM)"),
+# Singapore dollar (S$ / SGD), pound, euro, rupee. Weaker than a date that
+# can only be read one way, so the check it feeds only flags a date the page
+# shows written the other way round.
+_DAY_FIRST_CURRENCY_RE = re.compile(r"\b(?:RM|MYR|SGD|GBP|EUR|INR)\b|S\$\s?\d|[£€₹]\s?\d|\d\s?[€£]")
 
 
 def _document_date_convention(raw_text: str) -> str | None:
@@ -1077,7 +1085,9 @@ def _convention_from_currency(raw_text: str) -> str | None:
     """The dollar sign outranks the decimal comma when both appear: US-style
     documents that print comma amounts (the donut invoices, and US vendors
     pandering to European eyes) still write month-first dates."""
-    return "mdy" if _DOLLAR_RE.search(raw_text) else None
+    if _DOLLAR_RE.search(raw_text):
+        return "mdy"
+    return "dmy" if _DAY_FIRST_CURRENCY_RE.search(raw_text) else None
 
 
 def _check_date_convention(

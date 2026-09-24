@@ -1361,3 +1361,29 @@ def test_a_real_mismatch_on_a_taxed_receipt_is_still_an_error():
     rec = Receipt(merchant_name="KEDAI", transaction_date=date(2018, 1, 1), subtotal=46.0, tax_amount=3.0,
                   total_amount=53.0)
     assert [i for i in validate(rec) if i.field == "total_amount" and i.severity == "error"]
+
+
+# ---- day/month order on receipts ------------------------------------------------------------
+
+
+def _order_issues(day: date, page: str):
+    rec = Receipt(merchant_name="KEDAI", transaction_date=day, total_amount=12.50)
+    return [i for i in validate(rec, pages=[page]) if i.field == "transaction_date" and "convention" in i.message]
+
+
+def test_a_ringgit_receipt_is_read_day_first():
+    """SROIE: 10/03/2018 on a Malaysian slip is 10 March; 2018-10-03 is a swap."""
+    page = "KEDAI\nDate: 10/03/2018\nTOTAL RM 12.50"
+    assert _order_issues(date(2018, 10, 3), page)
+    assert _order_issues(date(2018, 3, 10), page) == []
+
+
+def test_no_currency_cue_no_order_verdict():
+    page = "KEDAI\nDate: 10/03/2018\nTOTAL 12.50"
+    assert _order_issues(date(2018, 10, 3), page) == []
+
+
+def test_a_ringgit_column_header_is_a_day_first_cue():
+    page = "KEDAI\nDate: 09/02/2018\nItem | Amount (RM)\nPEN | 5.00\nTOTAL 12.50"
+    assert _order_issues(date(2018, 9, 2), page)
+    assert _order_issues(date(2018, 2, 9), page) == []
