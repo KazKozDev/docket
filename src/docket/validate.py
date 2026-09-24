@@ -9,7 +9,7 @@ free of any LLM call.
 from __future__ import annotations
 
 import re
-from datetime import date
+from datetime import date, datetime
 
 
 from . import amounts, checksums
@@ -470,6 +470,8 @@ def _check_cited_dates(document, raw_text: str) -> list[ValidationIssue]:
             continue
         quote = location.quote
         short = quote if len(quote) <= 60 else quote[:57] + "..."
+        if isinstance(value, datetime):  # a datetime is a date too; compare the day
+            value = value.date()
         if not re.search(r"\d", quote):
             issues.append(ValidationIssue(
                 field=field,
