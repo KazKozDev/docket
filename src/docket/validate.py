@@ -151,9 +151,8 @@ def _check_cited_sources(
         location = locations.get(field)
         cited = location.quote if location is not None else None
         if not cited or not cited.strip():
-            # Line items get no derived-value warning: a row without a citation
-            # is a coverage gap the benchmark measures, while dozens of
-            # warnings per document would drown the real signals.
+            # Line items get no per-field warning: an uncited row is reported
+            # once, below, rather than as dozens of warnings.
             if "[PAGE " in raw_text and field not in item_fields:
                 # No citation means the value was computed, not read. Real
                 # invoices do this: one printed "Total excl. VAT 372.00" and
@@ -234,7 +233,28 @@ def _check_cited_sources(
                     )
                 )
 
+    if "[PAGE " in raw_text:
+        issues.extend(_uncited_rows(document, item_fields, locations))
     return issues
+
+
+def _uncited_rows(document, item_fields: dict[str, float], locations) -> list[ValidationIssue]:
+    """A line-item row none of whose values cites a line is an error.
+
+    Rows go into the export — an XRechnung or Peppol invoice carries every
+    line — so a row with no source line is data nothing on the page stands
+    behind. One issue for all such rows keeps the review readable.
+    """
+    rows = sorted({field.split("].", 1)[0] + "]" for field in item_fields})
+    uncited = [row for row in rows if not any(key.startswith(f"{row}.") for key in locations)]
+    if not uncited:
+        return []
+    path = uncited[0].split("[", 1)[0]
+    return [ValidationIssue(
+        field=path,
+        message=f"{len(uncited)} of {len(rows)} row(s) cite no source line ({', '.join(uncited[:5])}"
+                + (", …" if len(uncited) > 5 else "") + ") — nothing on the page confirms them",
+    )]
 
 
 def _citations_of(document) -> dict[str, str]:

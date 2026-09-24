@@ -56,6 +56,10 @@
     "total_amount": {
       "page": 1,
       "quote": "Gutschriftsbetrag: 357.00 EUR"
+    },
+    "line_items[0].total": {
+      "page": 1,
+      "quote": "Eichenbretter | 2 | 150.00 | 300.00"
     }
   }
 }

@@ -204,6 +204,8 @@ SETTINGS: tuple[Setting, ...] = (
             "Langfuse tracing (optional).", optional=True),
     Setting("LANGFUSE_HOST", "tracing.langfuse_host", "LANGFUSE_HOST", "str", "https://cloud.langfuse.com",
             "Langfuse server."),
+    Setting("LANGFUSE_CONTENT", "tracing.langfuse_content", "DOCKET_LANGFUSE_CONTENT", "bool", False,
+            "Send prompts and model answers (document text) to Langfuse; off traces model, latency and sizes only."),
 )
 
 # Below this many characters per PDF page the page is treated as a scan.
@@ -450,5 +452,6 @@ CLOUD_EQUIVALENT_USD_PER_1M_TOKENS: float
 LANGFUSE_PUBLIC_KEY: str | None
 LANGFUSE_SECRET_KEY: str | None
 LANGFUSE_HOST: str
+LANGFUSE_CONTENT: bool
 
 configure()

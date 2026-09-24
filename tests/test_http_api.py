@@ -35,6 +35,7 @@ PAYLOAD = {
         "subtotal": {"page": 1, "quote": "Subtotal: 100.00"},
         "tax_amount": {"page": 1, "quote": "VAT: 21.00"},
         "total_amount": {"page": 1, "quote": "Total: 121.00"},
+        "line_items[0].total": {"page": 1, "quote": "Widget | 2 | 50.00 | 100.00"},
     },
 }
 
@@ -283,3 +284,20 @@ def test_review_workbench_is_packaged(client):
     response = client.get("/review")
     assert response.status_code == 200
     assert "Review queue" in response.text and "field_sources" in response.text
+
+
+@pytest.mark.parametrize("host, key, no_auth, refused", [
+    ("127.0.0.1", None, False, False),
+    ("localhost", None, False, False),
+    ("::1", None, False, False),
+    ("0.0.0.0", None, False, True),
+    ("10.0.0.5", None, False, True),
+    ("0.0.0.0", "secret", False, False),
+    ("0.0.0.0", None, True, False),
+])
+def test_api_refuses_to_serve_openly_beyond_loopback(monkeypatch, host, key, no_auth, refused):
+    from docket import api
+
+    monkeypatch.setattr(api.config, "API_KEY", key)
+    assert bool(api.unauthenticated_exposure(host, no_auth=no_auth)) is refused
+

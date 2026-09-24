@@ -108,14 +108,20 @@ def _trace(name: str, model: str, input_: object, output: object, start: float) 
     client = _get_langfuse()
     if client is None:
         return
+    # Prompts carry the document's text — invoices, contracts, bank details.
+    # They leave the machine only when the operator says so.
+    content = {"input": input_, "output": output} if config.LANGFUSE_CONTENT else {}
     try:
         client.start_observation(
             name=name,
             as_type="generation",
             model=model,
-            input=input_,
-            output=output,
-            metadata={"latency_s": round(time.monotonic() - start, 3)},
+            **content,
+            metadata={
+                "latency_s": round(time.monotonic() - start, 3),
+                "input_chars": len(str(input_)),
+                "output_chars": len(str(output)),
+            },
         ).end()
         client.flush()
     except Exception:

@@ -83,6 +83,14 @@
     "total_amount": {
       "page": 1,
       "quote": "Total due: 1512.00 GBP"
+    },
+    "line_items[0].total": {
+      "page": 1,
+      "quote": "Hydraulic seal kit | 12 | 45.00 | 540.00"
+    },
+    "line_items[1].total": {
+      "page": 1,
+      "quote": "Brake pad set | 6 | 120.00 | 720.00"
     }
   }
 }
