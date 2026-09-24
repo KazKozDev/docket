@@ -184,6 +184,14 @@ class Receipt(CitedDocument):
     )
     total_amount: float
     payment_method: str | None = None
+    amount_tendered: float | None = Field(
+        default=None,
+        description="Amount the customer paid, if printed (cash handed over, or the card charge line).",
+    )
+    change_given: float | None = Field(
+        default=None,
+        description="Change returned to the customer, if printed. 0 when the receipt prints a zero change.",
+    )
     card_last_four: str | None = Field(
         default=None,
         description="Last 4 digits of the payment card used (e.g. '1234'), if printed.",
