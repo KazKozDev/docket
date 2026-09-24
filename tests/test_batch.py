@@ -279,15 +279,15 @@ def test_csv_columns_are_stable_across_schemas(options, invoices):
 
     batch = process_batch(invoices(1), options)
     stream = io.StringIO()
-    note = json.loads((Path(__file__).parent / "fixtures/catalog/delivery_note.expected.json").read_text())
-    other = make_result(schema_id="delivery_note", schema_version="1.0", document_type="delivery_note",
-                        extracted=get_schema("delivery_note").model.model_validate(note).model_dump(mode="json"))
+    waybill = json.loads((Path(__file__).parent / "fixtures/catalog/waybill.expected.json").read_text())
+    other = make_result(schema_id="waybill", schema_version="1.1", document_type="waybill",
+                        extracted=get_schema("waybill").model.model_validate(waybill).model_dump(mode="json"))
     tabular.write_results_csv(batch.results + [other, make_result(extracted=None, schema_id="ad:hoc")], stream)
     rows = list(csv.DictReader(io.StringIO(stream.getvalue())))
     assert tuple(rows[0]) == tabular.RESULT_COLUMNS
     assert rows[0]["issuer"] == "Acme GmbH" and rows[0]["document_number"] == "INV-0"
-    assert rows[1]["issuer"] == "Holzwerk Bayern GmbH" and rows[1]["document_number"] == "LS-2026-0117"
-    assert rows[1]["total_amount"] == ""  # a delivery note has no amounts; the column is still there
+    assert rows[1]["issuer"] == "Holzwerk Bayern GmbH" and rows[1]["document_number"] == "CMR-448120"
+    assert rows[1]["recipient"] == "Bois du Nord SARL"  # same columns, filled from the waybill's own fields
     assert rows[2]["total_amount"] == ""
 
 

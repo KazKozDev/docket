@@ -19,7 +19,7 @@ FIXTURES = Path(__file__).parent / "fixtures" / "catalog"
 IDS = [s.schema_id for s in BUILTIN_SCHEMAS]
 ORIGINAL = {"invoice", "receipt", "contract", "purchase_order", "bank_statement", "acceptance_act", "waybill",
             "boarding_pass"}
-ADDED = {"credit_note", "delivery_note"}
+ADDED = {"credit_note"}
 
 
 def _fixture(schema_id: str) -> tuple[str, dict]:
@@ -64,7 +64,6 @@ def test_keywords_cover_several_languages(schema_id):
         "acceptance_act": ["acceptance act", "Abnahmeprotokoll", "verbale di collaudo"],
         "waybill": ["waybill", "Frachtbrief", "lettre de voiture"],
         "boarding_pass": ["boarding pass", "Bordkarte", "carte d'embarquement"],
-        "delivery_note": ["delivery note", "Lieferschein", "bon de livraison", "pakbon"],
     }[schema_id]
     spec = get_schema(schema_id)
     for name in names:
