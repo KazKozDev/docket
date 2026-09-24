@@ -132,6 +132,13 @@ class DocumentResult(BaseModel):
         description="Where each extracted field was read — kept beside the data, not inside it.",
     )
     validation_issues: list[ValidationIssue] = Field(default_factory=list)
+    corroborated: dict[str, str] = Field(
+        default_factory=dict,
+        description=(
+            "Fields another document confirmed, and what confirmed them — e.g. "
+            "{'total_amount': 'purchase order PO-9988 total'}. Set by docket.corroborate()."
+        ),
+    )
     needs_review: bool = False
     review_reasons: list[str] = Field(default_factory=list)
     metrics: ProcessingMetrics = Field(default_factory=ProcessingMetrics)
