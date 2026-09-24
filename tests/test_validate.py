@@ -1340,3 +1340,24 @@ def test_a_ringgit_column_header_is_a_day_first_cue():
     page = "KEDAI\nDate: 09/02/2018\nItem | Amount (RM)\nPEN | 5.00\nTOTAL 12.50"
     assert _order_issues(date(2018, 9, 2), page)
     assert _order_issues(date(2018, 2, 9), page) == []
+
+
+def test_space_grouped_totals_match_their_cited_line():
+    """A French or Polish invoice prints 12 261,98; that is one amount."""
+    from docket.validate import _check_cited_sources
+
+    invoice = flat_invoice(
+        invoice_number="F-1", issue_date=date(2026, 3, 1), vendor_name="A", customer_name="B",
+        subtotal=11147.25, tax_amount=1114.73, total_amount=12261.98,
+        field_locations={
+            "subtotal": {"page": 1, "quote": "Sous-total 11 147,25"},
+            "tax_amount": {"page": 1, "quote": "TVA 1 114,73"},
+            "total_amount": {"page": 1, "quote": "Total $ 12 261,98"},
+        },
+    )
+    text = "[PAGE 1]\nSous-total 11 147,25\nTVA 1 114,73\nTotal $ 12 261,98"
+    fields = {"subtotal": 11147.25, "tax_amount": 1114.73, "total_amount": 12261.98}
+    assert _check_cited_sources(invoice, text, fields) == []
+
+    wrong = invoice.model_copy(update={"total_amount": 12261.89})
+    assert _check_cited_sources(wrong, text, {**fields, "total_amount": 12261.89})
