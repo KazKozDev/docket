@@ -14,12 +14,12 @@ def sample_invoice() -> Invoice:
         issue_date=date(2026, 9, 15),
         due_date=date(2026, 10, 15),
         vendor_name="Acme Solutions SL",
-        vendor_vat_number="ESB12345678",
+        vendor_vat_number="ESB12345674",
         vendor_iban="ES9121000418450200051332",
         vendor_bic="CAIXESBBXXX",
         vendor_address="Paseo de la Castellana 45, Madrid",
         customer_name="Global Logistics SA",
-        customer_tax_id="ESA87654321",
+        customer_tax_id="ESA87654323",
         customer_address="Avenida Diagonal 120, Barcelona",
         purchase_order_number="PO-9988",
         payment_reference="REF-INV-001",
@@ -104,7 +104,7 @@ def test_facturae_xml_export():
         "fe:Parties/fe:SellerParty/fe:TaxIdentification/fe:TaxIdentificationNumber",
         ns,
     )
-    assert seller_nif.text == "ESB12345678"
+    assert seller_nif.text == "ESB12345674"
 
     inv_num = root.find("fe:Invoices/fe:Invoice/fe:InvoiceHeader/fe:InvoiceNumber", ns)
     assert inv_num.text == "INV-2026-001"

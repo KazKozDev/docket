@@ -1,6 +1,6 @@
 from datetime import date
 
-from docket.catalog import AcceptanceAct, AcceptanceActItem, BankStatement, BankStatementTransaction, Contract, Invoice, LineItem, Receipt, ReceiptItem, Waybill, WaybillItem
+from docket.catalog import BankStatement, BankStatementTransaction, Contract, Invoice, LineItem, Receipt, ReceiptItem, Waybill, WaybillItem
 from docket.validate import assess_contract_risks, validate
 from tests.factories import flat_invoice, flat_po
 
@@ -1103,55 +1103,6 @@ def test_bank_statement_bad_iban_flagged():
     assert any(i.field == "account_iban" for i in issues)
 
 
-def test_acceptance_act_validates_cleanly():
-    act = AcceptanceAct(
-        act_number="ACT-001",
-        act_date=date(2026, 3, 1),
-        customer_name="Alpha Corp",
-        contractor_name="Beta Services LLC",
-        subtotal=1000.0,
-        tax_amount=200.0,
-        total_amount=1200.0,
-        items=[
-            AcceptanceActItem(
-                description="Security Audit",
-                quantity=1.0,
-                unit_price=1000.0,
-                total=1000.0,
-            )
-        ],
-        claims_waived=True,
-    )
-    assert validate(act) == []
-
-
-def test_acceptance_act_self_contracting_flagged():
-    act = AcceptanceAct(
-        act_number="ACT-001",
-        act_date=date(2026, 3, 1),
-        customer_name="Acme Corporation",
-        contractor_name="Acme Corp",  # same entity
-        subtotal=100.0,
-        total_amount=100.0,
-    )
-    issues = validate(act)
-    assert any(i.field == "contractor_name" for i in issues)
-
-
-def test_acceptance_act_total_mismatch_flagged():
-    act = AcceptanceAct(
-        act_number="ACT-001",
-        act_date=date(2026, 3, 1),
-        customer_name="Client LLC",
-        contractor_name="Vendor Inc",
-        subtotal=1000.0,
-        tax_amount=200.0,
-        total_amount=1500.0,  # wrong
-    )
-    issues = validate(act)
-    assert any(i.field == "total_amount" for i in issues)
-
-
 def test_waybill_validates_cleanly():
     wb = Waybill(
         waybill_number="WB-101",
@@ -1296,14 +1247,16 @@ def test_dates_read_from_their_cited_line_pass_in_any_numeric_form():
 def test_a_datetime_is_checked_by_its_day():
     from datetime import datetime
 
-    from docket.catalog import BoardingPass
+    from docket.catalog import CitedDocument, adhoc
 
-    boarding = BoardingPass(
-        passenger_name="Jane Doe", booking_reference="ABC123", flight_number="BA475",
-        departure_airport="BCN", arrival_airport="LHR", departure_datetime=datetime(2026, 10, 2, 7, 45),
+    class Shipment(CitedDocument):
+        departure_datetime: datetime
+
+    shipment = Shipment(
+        departure_datetime=datetime(2026, 10, 2, 7, 45),
         field_locations={"departure_datetime": {"page": 1, "quote": "Departure: 2026-10-02 07:45"}},
     )
-    issues = validate(boarding, pages=["BOARDING PASS\nDeparture: 2026-10-02 07:45"])
+    issues = validate(shipment, pages=["SHIPMENT\nDeparture: 2026-10-02 07:45"], spec=adhoc(Shipment))
     assert not [i for i in issues if i.field == "departure_datetime"]
 
 

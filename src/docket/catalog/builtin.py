@@ -16,9 +16,7 @@ from __future__ import annotations
 
 from .corpus import CORPUS
 from .models import (
-    AcceptanceAct,
     BankStatement,
-    BoardingPass,
     Contract,
     CreditNote,
     Invoice,
@@ -283,33 +281,6 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         migrations=_FLAT_MIGRATION,
     ),
     SchemaSpec(
-        schema_id="acceptance_act",
-        version="1.1",
-        display_name="Acceptance act",
-        model=AcceptanceAct,
-        description="Acceptance act / certificate of completed work or services",
-        keywords=(
-            pattern(
-                r"\bacceptance act\b|\bact of acceptance\b|\bcertificate of acceptance\b|"
-                r"\bакт выполненных работ\b|\bакт приема\b",
-                3.0,
-            ),
-            pattern(
-                r"\bservices rendered\b|\bservicios prestados\b|\btrabajos realizados\b|\bacta de recepci[óo]n\b", 2.0
-            ),
-            pattern(r"\bno mutual claims\b|\bsin reclamaciones\b|\bпретензий не имеют\b|\bwork completed\b", 2.0),
-            pattern(r"\bcontractor\b|\bcontratista\b|\bподрядчик\b|\bзаказчик\b", 1.0),
-        ) + _names(
-            r"abnahmeprotokoll|abnahmebescheinigung|proc[èe]s-verbal de r[ée]ception|"
-            r"verbale di collaudo|certificato di collaudo|opleveringsrapport|"
-            r"protocolo de aceita[çc][ãa]o|protok[óo][łl] odbioru"
-        ),
-        summary={"document_number": "act_number", "document_date": "act_date", "issuer": "contractor_name", "recipient": "customer_name", "currency": "currency", "subtotal": "subtotal", "tax_amount": "tax_amount", "total_amount": "total_amount"},
-        line_items=LineItems("items", {c: c for c in ("description", "quantity", "unit_of_measure", "unit_price", "total")}),
-        cited_fields=("customer_name", "contractor_name", "total_amount"),
-        migrations=_FLAT_MIGRATION,
-    ),
-    SchemaSpec(
         schema_id="waybill",
         version="1.1",
         display_name="Waybill",
@@ -334,28 +305,6 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         cited_fields=("shipper_name", "consignee_name", "waybill_number"),
         migrations=_FLAT_MIGRATION,
     ),
-    SchemaSpec(
-        schema_id="boarding_pass",
-        version="1.1",
-        display_name="Boarding pass",
-        model=BoardingPass,
-        description="Airline boarding pass",
-        keywords=(
-            pattern(r"\bboarding pass\b|\btarjeta de embarque\b", 3.0),
-            pattern(r"\bgate\b|\bpuerta de embarque\b", 2.0),
-            pattern(r"\bseat\b|\basiento\b", 2.0),
-            pattern(r"\bflight\b|\bvuelo\b", 2.0),
-            pattern(r"\bboarding time\b|\bembarque\b|\bpnr\b|\bbooking ref", 1.0),
-        ) + _names(
-            r"bordkarte|carte d'embarquement|carta d'imbarco|instapkaart|cart[ãa]o de embarque|karta pok[łl]adowa"
-        ),
-        summary={"document_number": "booking_reference", "document_date": "departure_datetime", "recipient": "passenger_name"},
-        cited_fields=(
-            "passenger_name", "booking_reference", "flight_number",
-            "departure_airport", "arrival_airport", "departure_datetime",
-        ),
-        migrations=_FLAT_MIGRATION,
-    ),
 )
 
 
@@ -363,10 +312,8 @@ def register_builtins() -> None:
     from dataclasses import replace
 
     from ..validate import (
-        validate_acceptance_act,
         validate_bank_statement,
         validate_billing,
-        validate_boarding_pass,
         validate_contract,
         validate_purchase_order,
         validate_receipt,
@@ -380,9 +327,7 @@ def register_builtins() -> None:
         "contract": (validate_contract,),
         "purchase_order": (validate_purchase_order,),
         "bank_statement": (validate_bank_statement,),
-        "acceptance_act": (validate_acceptance_act,),
         "waybill": (validate_waybill,),
-        "boarding_pass": (validate_boarding_pass,),
     }
     for spec in BUILTIN_SCHEMAS:
         _register(

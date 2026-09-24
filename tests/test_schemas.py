@@ -3,7 +3,7 @@ from datetime import date
 import pytest
 from pydantic import ValidationError
 
-from docket.catalog import AcceptanceAct, AcceptanceActItem, BankStatement, BankStatementTransaction, Contract, LineItem, Receipt, ReceiptItem, Waybill, WaybillItem
+from docket.catalog import BankStatement, BankStatementTransaction, Contract, LineItem, Receipt, ReceiptItem, Waybill, WaybillItem
 from tests.factories import flat_invoice, flat_po
 
 
@@ -334,32 +334,6 @@ def test_bank_statement_schema():
     )
     assert len(stmt.transactions) == 2
     assert stmt.closing_balance == 15000.0
-
-
-def test_acceptance_act_schema():
-    act = AcceptanceAct(
-        act_number="ACT-2026-01",
-        act_date=date(2026, 2, 28),
-        contract_reference="CTR-2026/01",
-        customer_name="Client Corp",
-        contractor_name="Service Provider LLC",
-        items=[
-            AcceptanceActItem(
-                description="Software architecture audit",
-                quantity=1.0,
-                unit_price=5000.0,
-                total=5000.0,
-                unit_of_measure="service",
-            )
-        ],
-        subtotal=5000.0,
-        tax_amount=1000.0,
-        total_amount=6000.0,
-        claims_waived=True,
-        signatories=["Alice Smith (Client)", "Bob Jones (Provider)"],
-    )
-    assert act.claims_waived is True
-    assert len(act.signatories) == 2
 
 
 def test_waybill_schema():
