@@ -19,9 +19,12 @@ Sources (see README for licenses/links):
   - hf-tuner/rvl-cdip-document-classification (RVL-CDIP subsample) ->
     invoices (label "invoice") and a matched set of non-invoice business
     documents labeled "unknown", same out-of-distribution purpose as FUNSD.
-  - Humayoun/DocILE100 (DocILE subsample) -> business documents, doc_type
-    "invoice" (DocILE is an invoice/order corpus; its per-field KIE labels
-    aren't carried in this mirror, so field grading isn't attempted).
+  - Humayoun/DocILE100 (DocILE subsample) -> invoices only. DocILE mixes
+    invoices with purchase orders, contracts, proposals and remittance
+    advices, and the mirror carries no document type, so a document is
+    kept only if plain Tesseract finds INVOICE / BILL / BILLING in the upper
+    third of the page, where the title is. Vendor name, invoice number and
+    date are graded.
 
     python eval/download_real_samples.py [--n 5] [--only sroie,funsd]
 
@@ -225,6 +228,22 @@ def download_rvl_cdip(n: int) -> None:
         (OUT_DIR / f"{stem}.expected.json").write_text(json.dumps({"doc_type": doc_type}, indent=2))
 
 
+_BILL_TITLE_RE = re.compile(r"^(invoice|bill|billing|billed)\b", re.I)
+
+
+def _titled_as_invoice(image) -> bool:
+    """INVOICE / BILL / BILLING printed in the upper third of the page, read
+    by plain Tesseract. A fixed rule of our own, applied before docket ever
+    sees the document, so it cannot be tuned to docket's answers."""
+    import pytesseract
+
+    data = pytesseract.image_to_data(image, lang="eng", output_type=pytesseract.Output.DICT)
+    return any(
+        _BILL_TITLE_RE.match(word.strip(".:#*|")) and top < image.height / 3
+        for word, top in zip(data["text"], data["top"])
+    )
+
+
 def download_docile(n: int) -> None:
     print(f"Humayoun/DocILE100 (DocILE subsample) -> {n} business document(s)")
     print(
@@ -234,7 +253,17 @@ def download_docile(n: int) -> None:
         "ungraded rather than bent into a shape it doesn't fit."
     )
     ds = load_dataset("Humayoun/DocILE100", split="train", streaming=True)
-    for i, row in enumerate(itertools.islice(ds, n)):
+    for stale in OUT_DIR.glob("invoice_docile_*"):
+        stale.unlink()
+    kept = 0
+    for i, row in enumerate(ds):
+        if kept == n:
+            break
+        image = row["image"].convert("RGB")
+        if not _titled_as_invoice(image):
+            print(f"  skipped DocILE row {i}: no INVOICE/BILL title")
+            continue
+        kept += 1
         expected: dict = {"doc_type": "invoice"}
         try:
             vendor = json.loads(row["text"]).get("Vendor Information", {})
@@ -247,8 +276,8 @@ def download_docile(n: int) -> None:
         if (d := _parse_date_flex(vendor.get("invoiceDate"))) is not None:
             expected["issue_date"] = d
 
-        stem = f"invoice_docile_{i:02d}"
-        row["image"].convert("RGB").save(OUT_DIR / f"{stem}.jpg", quality=90)
+        stem = f"invoice_docile_{i:02d}"  # the dataset row, so a document keeps its name
+        image.save(OUT_DIR / f"{stem}.jpg", quality=90)
         (OUT_DIR / f"{stem}.expected.json").write_text(json.dumps(expected, indent=2))
 
 
