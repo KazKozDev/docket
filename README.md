@@ -92,16 +92,17 @@ Registered schemas are classified, extracted, citation-checked and exported like
 
 ## Measure extraction accuracy on public datasets
 
-198 scans: the project's labelled golden set plus real documents from public Hugging Face datasets (DocILE, SROIE, CORD, FUNSD, RVL-CDIP, donut-style invoices), graded field by field against the datasets' own ground truth. Every tool gets the same documents and the same field metric; the slower tools ran on an evenly spaced subsample:
+195 scans: the project's labelled golden set plus real documents from public Hugging Face datasets (DocILE, SROIE, CORD, FUNSD, RVL-CDIP, donut-style invoices), graded field by field against the datasets' own ground truth. On the latest full run, docket gets **0.85 field accuracy**: 0.96 on the golden set, 0.98 on donut invoices, 0.78 on SROIE receipts. 68% of documents come back with every field right.
 
-| | docs | field accuracy | docket on the same docs |
+Against the pip-installable alternatives, each tool is graded only on the documents and fields it supports, and docket is graded on exactly the same ones:
+
+| | docs | tool | docket on the same docs |
 |---|---|---|---|
-| docket | 179 | 0.72 | — |
-| docpick 0.1.3 | 55 | 0.61 | 0.71 |
-| ocrcontext 0.1.5 | 55 | 0.04 | 0.69 |
-| invoice2data 1.0.1 | 44 | 0.00 | 0.90 |
+| docpick 0.1.3 | 55 | 0.61 | **0.85** |
+| ocrcontext 0.1.5 | 55 | 0.04 | **0.83** |
+| invoice2data 1.0.1 | 44 | 0.00 | **0.89** |
 
-Where the document type is classified right, docket's field accuracy is 0.84–0.97 by source. Method, per-source results and how to rerun: [docs/BENCHMARKS.md](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
+Method, per-source results and how to rerun: [docs/BENCHMARKS.md](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
 
 ## How it works
 
@@ -139,10 +140,10 @@ Priority, lowest to highest: defaults, a TOML file (`--config` or `DOCKET_CONFIG
 
 ## Limitations
 
-- A silent wrong answer is possible: on a 198-scan real-world corpus, 35% of "succeeded, no review" documents had at least one wrong field, mostly degraded thermal receipts. See [benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
-- Classification is the weak tier on unusual documents; field accuracy is 0.84–0.97 where the type is right.
+- A silent wrong answer is possible: on the 195-scan corpus, 46% of "succeeded, no review" documents (27 of 59) had at least one wrong field, mostly misread dates and totals on degraded thermal receipts. Date and payment checks added since catch part of them. See [benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
+- Two thirds of documents still go to review, which is the intended path when anything is uncertain. Scanned DocILE invoices are the weakest source (0.43).
 - The vision model has been seen changing digits so that a page reconciles.
-- Windows is untested. A document takes a median of 6.4–22.7 s depending on the OCR backend, longer with the vision model.
+- Windows is untested. A document takes a median of 6.4–22.7 s depending on the OCR backend (8.7 s on the full corpus with Tesseract), longer with the vision model.
 
 <details>
 <summary>Extras, HTTP service, Docker, development</summary>
