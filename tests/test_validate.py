@@ -1331,3 +1331,33 @@ def test_cash_rounding_and_card_payments_are_consistent():
     assert _total_issues(_paid_receipt(38.13, 50.0, 11.85)) == []   # rounded to 0.05 at the till
     assert _total_issues(_paid_receipt(56.0, 56.0, 0.0)) == []       # exact / card
     assert _total_issues(_paid_receipt(56.0, 100.0, None)) == []     # no change printed: nothing to check
+
+
+# ---- tax-inclusive receipts (GST/VAT already in the prices) ---------------------------------
+
+
+def test_tax_inclusive_item_prices_sum_to_the_total():
+    """SROIE: items 4.90, "Total incl GST 4.90", GST 6% 0.28 (subtotal 4.62)."""
+    rec = Receipt(merchant_name="KEDAI", transaction_date=date(2018, 1, 1), subtotal=4.62, tax_amount=0.28,
+                  total_amount=4.90, items=[ReceiptItem(description="A", price=3.50), ReceiptItem(description="B", price=1.40)])
+    assert not [i for i in validate(rec) if i.field == "items"]
+
+
+def test_a_tax_inclusive_subtotal_is_not_taxed_again():
+    """SROIE: subtotal 38.90 already includes the GST 2.20 the slip prints."""
+    rec = Receipt(merchant_name="KEDAI", transaction_date=date(2018, 1, 1), subtotal=38.90, tax_amount=2.20,
+                  total_amount=38.90)
+    assert not [i for i in validate(rec) if i.field == "total_amount"]
+
+
+def test_pre_tax_unit_price_with_a_tax_inclusive_line_total():
+    """65.00 x 1 at 6% GST printed as a 68.90 line."""
+    rec = Receipt(merchant_name="KEDAI", transaction_date=date(2018, 1, 1), subtotal=65.0, tax_amount=3.90,
+                  total_amount=68.90, items=[ReceiptItem(description="A", quantity=1, unit_price=65.0, price=68.90)])
+    assert not [i for i in validate(rec) if i.field.startswith("items")]
+
+
+def test_a_real_mismatch_on_a_taxed_receipt_is_still_an_error():
+    rec = Receipt(merchant_name="KEDAI", transaction_date=date(2018, 1, 1), subtotal=46.0, tax_amount=3.0,
+                  total_amount=53.0)
+    assert [i for i in validate(rec) if i.field == "total_amount" and i.severity == "error"]
