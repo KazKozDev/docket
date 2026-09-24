@@ -15,13 +15,19 @@ from __future__ import annotations
 
 import importlib
 import re
+from collections.abc import Callable
 from importlib.metadata import entry_points
-from typing import Callable, Union
 
 from pydantic import BaseModel
 
 from ..errors import ConfigurationError
-from .base import BackendStatus, BackendUnavailable, Capabilities, OcrBackend, OcrSettings
+from .base import (
+    BackendStatus,
+    BackendUnavailable,
+    Capabilities,
+    OcrBackend,
+    OcrSettings,
+)
 
 ENTRY_POINT_GROUP = "docket.ocr_backends"
 
@@ -35,7 +41,7 @@ _BUILTIN: dict[str, str] = {
     "docling": "docket.ocr.docling:DoclingBackend",
     "vlm": "docket.ocr.vlm:VlmBackend",
 }
-_REGISTRY: dict[str, Union[str, BackendFactory]] = dict(_BUILTIN)
+_REGISTRY: dict[str, str | BackendFactory] = dict(_BUILTIN)
 _plugins_loaded = False
 
 
@@ -142,9 +148,9 @@ def list_ocr_backends(settings: OcrSettings | None = None) -> list[BackendInfo]:
 
 
 __all__ = [
+    "ENTRY_POINT_GROUP",
     "BackendFactory",
     "BackendInfo",
-    "ENTRY_POINT_GROUP",
     "OcrBackendError",
     "backend_names",
     "get_ocr_backend",

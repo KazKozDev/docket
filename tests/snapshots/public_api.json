@@ -1,6 +1,6 @@
 {
   "functions": {
-    "export_document": "(source: \"'DocumentResult | BaseModel'\", format: 'str', options: 'ExportOptions | None' = None) -> 'ExportResult'",
+    "export_document": "(source: 'DocumentResult | BaseModel', format: 'str', options: 'ExportOptions | None' = None) -> 'ExportResult'",
     "get_ocr_backend": "(name: 'str', settings: 'OcrSettings | None' = None) -> 'OcrBackend'",
     "get_schema": "(schema_id: 'str', version: 'str | None' = None) -> 'SchemaSpec | None'",
     "list_exporters": "() -> 'list[Exporter]'",
@@ -40,14 +40,14 @@
       "validation_issues": {"annotation": "list[docket.schemas.ValidationIssue]", "required": false}
     },
     "OcrOptions": {
-      "backend": {"annotation": "typing.Union[str, docket.ocr.base.OcrBackend, NoneType]", "required": false},
+      "backend": {"annotation": "str | docket.ocr.base.OcrBackend | None", "required": false},
       "deskew": {"annotation": "bool | None", "required": false},
       "detect_rotation": {"annotation": "bool | None", "required": false},
       "device": {"annotation": "str | None", "required": false},
       "docling_cell_matching": {"annotation": "bool | None", "required": false},
       "docling_table_mode": {"annotation": "typing.Optional[typing.Literal['fast', 'accurate']]", "required": false},
       "dpi": {"annotation": "int | None", "required": false},
-      "fallbacks": {"annotation": "list[typing.Union[str, docket.ocr.base.OcrBackend]] | None", "required": false},
+      "fallbacks": {"annotation": "list[str | docket.ocr.base.OcrBackend] | None", "required": false},
       "languages": {"annotation": "list[str] | str | None", "required": false},
       "min_confidence": {"annotation": "float | None", "required": false},
       "paddle_model": {"annotation": "typing.Optional[typing.Literal['mobile', 'medium']]", "required": false},
@@ -70,6 +70,10 @@
       "extract_attempts": {"annotation": "int", "required": false},
       "llm_calls": {"annotation": "int", "required": false},
       "llm_estimated_tokens": {"annotation": "int", "required": false},
+      "llm_input_tokens": {"annotation": "int", "required": false},
+      "llm_models": {"annotation": "list[str]", "required": false},
+      "llm_output_tokens": {"annotation": "int", "required": false},
+      "llm_unreported_calls": {"annotation": "int", "required": false},
       "pages": {"annotation": "int", "required": false},
       "stage_seconds": {"annotation": "dict[str, float]", "required": false},
       "template_id": {"annotation": "str | None", "required": false}

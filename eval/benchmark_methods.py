@@ -20,11 +20,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from docket.classify import classify_llm, classify_rules  # noqa: E402
-from docket.classify_tfidf import classify_tfidf  # noqa: E402
-from docket.llm_client import LLMError, vision_transcribe  # noqa: E402
-from docket.ocr import DocumentSource  # noqa: E402
-from docket.ocr.tesseract import TesseractBackend  # noqa: E402
+from docket.classify import classify_llm, classify_rules
+from docket.classify_tfidf import classify_tfidf
+from docket.llm_client import LLMError, vision_transcribe
+from docket.ocr import DocumentSource
+from docket.ocr.tesseract import TesseractBackend
 
 ROOT = Path(__file__).parent
 DIRS = [ROOT / "golden_dataset", ROOT / "real_samples"]

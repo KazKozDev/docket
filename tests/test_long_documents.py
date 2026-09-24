@@ -1,6 +1,5 @@
 from datetime import date
 
-
 from docket import extract as extract_module
 from docket.catalog import Invoice
 

@@ -1,5 +1,5 @@
-from PIL import Image, ImageDraw
 import pytest
+from PIL import Image, ImageDraw
 
 from docket.ocr.deskew import deskew_image
 

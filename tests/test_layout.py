@@ -91,9 +91,9 @@ def test_engine_line_grouping_keeps_skewed_lines_apart():
     """Two skewed lines whose word boxes brush against each other must not
     interleave: the engine's own line identity wins over a flat band."""
     words = []
-    for i, token in enumerate("the quick brown fox jumps".split()):
+    for i, token in enumerate(["the", "quick", "brown", "fox", "jumps"]):
         words.append(RawWord(token, 20 + 60 * i, 20 + 3 * i, 70 + 60 * i, 32 + 3 * i, 0.9, line_key="a"))
-    for i, token in enumerate("over the lazy dog again".split()):
+    for i, token in enumerate(["over", "the", "lazy", "dog", "again"]):
         words.append(RawWord(token, 20 + 60 * i, 30 + 3 * i, 70 + 60 * i, 42 + 3 * i, 0.9, line_key="b"))
     page = _page(words)
     assert [line.text for line in page.lines] == [

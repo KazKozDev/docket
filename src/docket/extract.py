@@ -88,7 +88,7 @@ def _validated_call(
         attempt += 1
         try:
             raw = chat_json(prompt, schema=schema)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — any model failure is one failed attempt, retried below
             log.warning(
                 "extraction request failed",
                 extra={"attempt": attempt, "error_type": type(exc).__name__},
@@ -192,7 +192,7 @@ def extract_pages(
                 ),
                 schema=schema,
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — one failed chunk must not lose the others
             candidate = {"_chunk_error": True}
         candidates.append({"candidate": candidate, "source": chunk})
 

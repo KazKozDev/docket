@@ -39,14 +39,13 @@ from __future__ import annotations
 
 import re
 from datetime import date
-from typing import get_args, get_origin, Union
+from typing import Any, Union, get_args, get_origin
 
 from pydantic import BaseModel, Field
 
 from .amounts import parse_amount
 from .catalog import SchemaSpec
 from .layout.models import DocumentLayout
-
 
 # ---- the template model ----------------------------------------------------------------------
 
@@ -196,6 +195,7 @@ def _find_rule(layout: DocumentLayout, rule: FieldRule) -> tuple[int, str, str] 
 
 
 def _read_items(layout: DocumentLayout, rule: ItemsRule, spec: SchemaSpec):
+    assert spec.line_items is not None  # an items rule is only accepted for schemas with rows
     page = layout.page(rule.page)
     if page is None or rule.table >= len(page.tables):
         return [], {}
@@ -230,6 +230,7 @@ def _read_items(layout: DocumentLayout, rule: ItemsRule, spec: SchemaSpec):
 
 
 def _coerce_item_attr(spec: SchemaSpec, attr: str, raw: str):
+    assert spec.line_items is not None
     item_model = _annotation_of(spec.model, spec.line_items.path)
     if isinstance(raw, str) and _kind_of(item_model, attr) == "number":
         return parse_amount(raw)
@@ -244,10 +245,10 @@ def _convention(text: str) -> str | None:
 
 def _annotation_of(model: type[BaseModel], path: str):
     """The model class or field annotation a dotted path points into."""
-    current: object = model
+    current: Any = model
     for part in path.split("."):
         name, _, index = part.partition("[")
-        annotation = current.model_fields[name].annotation  # type: ignore[union-attr]
+        annotation = current.model_fields[name].annotation
         if get_origin(annotation) is list:
             annotation = get_args(annotation)[0]
         if index:
@@ -262,6 +263,7 @@ def _annotation_of(model: type[BaseModel], path: str):
 
 def _kind_of(model_or_annotation: object, name: str) -> str:
     """'date', 'number' or 'text' — how to coerce a captured string."""
+    annotation: Any
     if isinstance(model_or_annotation, type) and issubclass(model_or_annotation, BaseModel):
         annotation = model_or_annotation.model_fields[name].annotation
     else:
@@ -310,21 +312,21 @@ def _set_path(data: dict, path: str, value) -> None:
     for part in parts[:-1]:
         name, _, index = part.partition("[")
         if index:
-            index = int(index.rstrip("]"))
+            position = int(index.rstrip("]"))
             bucket = current.setdefault(name, [])
-            while len(bucket) <= index:
+            while len(bucket) <= position:
                 bucket.append({})
-            current = bucket[index]
+            current = bucket[position]
         else:
             current = current.setdefault(name, {})
     leaf = parts[-1]
     name, _, index = leaf.partition("[")
     if index:
-        index = int(index.rstrip("]"))
+        position = int(index.rstrip("]"))
         bucket = current.setdefault(name, [])
-        while len(bucket) <= index:
+        while len(bucket) <= position:
             bucket.append({})
-        bucket[index] = value
+        bucket[position] = value
     else:
         current[name] = value
 

@@ -13,6 +13,7 @@ measured on real documents). Every migration from 1.0 is automatic.
 """
 from __future__ import annotations
 
+from typing import cast
 
 from .corpus import CORPUS
 from .models import (
@@ -24,7 +25,15 @@ from .models import (
     Receipt,
     Waybill,
 )
-from .registry import LineItems, Migration, SchemaSpec, _register, keywords, pattern
+from .registry import (
+    LineItems,
+    Migration,
+    SchemaSpec,
+    Validator,
+    _register,
+    keywords,
+    pattern,
+)
 from .rules import (
     validate_credit_note,
 )
@@ -333,7 +342,8 @@ def register_builtins() -> None:
         _register(
             replace(
                 spec,
-                validators=rules[spec.schema_id],
+                # Each validator takes its own schema; the registry pairs them.
+                validators=cast("tuple[Validator, ...]", rules[spec.schema_id]),
                 examples=tuple(CORPUS[spec.schema_id]),
                 builtin=True,
             )

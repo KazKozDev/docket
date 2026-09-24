@@ -14,9 +14,10 @@ from __future__ import annotations
 
 import shutil
 import threading
+from collections.abc import Iterator
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterator, Literal
+from typing import Literal
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
@@ -201,9 +202,9 @@ def results(job: Job) -> Iterator[tuple[JobDocument, DocumentResult]]:
             continue
         by_stored[Path(result.source).name] = result
     for document in job.documents:
-        result = by_stored.get(document.stored_as)
-        if result is not None:
-            yield document, result.model_copy(update={"source": document.filename})
+        stored = by_stored.get(document.stored_as)
+        if stored is not None:
+            yield document, stored.model_copy(update={"source": document.filename})
 
 
 def remove_uploads(job_id: str) -> None:

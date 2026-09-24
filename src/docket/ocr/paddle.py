@@ -54,7 +54,7 @@ def _engine(key: tuple, factory):
 def _words_of_line(tokens: list[str], boxes: list, line_key: int, score: float) -> list[RawWord]:
     """Join PaddleOCR's per-token boxes into whitespace-separated words."""
     words: list[RawWord] = []
-    text, parts = "", []
+    text, parts = "", list[tuple]()
 
     def flush() -> None:
         nonlocal text, parts
@@ -237,7 +237,7 @@ class PaddleOCRBackend(OcrBackend):
         try:
             with lock:
                 result = engine.predict(bgr)[0]
-        except Exception as exc:  # noqa: BLE001 — engine errors surface as OcrError
+        except Exception as exc:
             raise OcrError(f"PaddleOCR failed on page {page.number}: {exc}") from exc
 
         preprocessed = result.get("doc_preprocessor_res") or {}
@@ -271,12 +271,12 @@ class PaddleOCRBackend(OcrBackend):
         try:
             with lock:
                 table_result = pipeline.predict(image, use_ocr_model=False, overall_ocr_res=ocr_result)[0]
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             raise OcrError(f"PaddleOCR table recognition failed: {exc}") from exc
         hints = []
         tolerance = max(3.0, 0.4 * line_height)
         for table in table_result.get("table_res_list") or []:
-            boxes = [tuple(float(v) for v in b[:4]) for b in table.get("cell_box_list") or []]
+            boxes = [(float(b[0]), float(b[1]), float(b[2]), float(b[3])) for b in table.get("cell_box_list") or []]
             cells = cells_from_boxes(boxes, tolerance)
             if len({c.row for c in cells}) < 2 or len({c.column for c in cells}) < 2:
                 continue

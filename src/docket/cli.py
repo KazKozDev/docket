@@ -105,14 +105,15 @@ class _Sink:
 
         self.args = args
         self.tabular = tabular
-        self.stream = open(args.output, "w", encoding="utf-8", newline="") if args.output else sys.stdout
+        # Open for the writer's lifetime; close() below releases them.
+        self.stream = open(args.output, "w", encoding="utf-8", newline="") if args.output else sys.stdout  # noqa: SIM115
         self.items_stream = None
         self.count = 0
         if args.format == "csv":
             self.summary = tabular.CsvWriter(self.stream, tabular.RESULT_COLUMNS)
             items_path = args.line_items or (f"{Path(args.output).with_suffix('')}.line_items.csv" if args.output else None)
             if items_path:
-                self.items_stream = open(items_path, "w", encoding="utf-8", newline="")
+                self.items_stream = open(items_path, "w", encoding="utf-8", newline="")  # noqa: SIM115
                 self.items = tabular.CsvWriter(self.items_stream, tabular.ITEM_COLUMNS)
         elif args.format == "json":
             self.stream.write("[")
@@ -175,11 +176,10 @@ def _cmd_process(args: argparse.Namespace) -> int:
 
 
 def _cmd_batch(args: argparse.Namespace) -> int:
-    from .batch import BatchOptions, process_batch
-
-    from .options import resolve
-
     import glob as globlib
+
+    from .batch import BatchOptions, process_batch
+    from .options import resolve
 
     options = resolve(_options(args))  # configuration errors before any file is opened
     if not Path(args.input).exists() and not globlib.has_magic(args.input):
@@ -190,7 +190,7 @@ def _cmd_batch(args: argparse.Namespace) -> int:
         glob=args.glob,
         workers=args.workers,
         fail_fast=args.fail_fast,
-        checkpoint=checkpoint,
+        checkpoint=Path(checkpoint) if checkpoint else None,
         keep_results=False,
     )
     sink = _Sink(args)
@@ -256,10 +256,10 @@ def _cmd_templates(args: argparse.Namespace) -> int:
         return EXIT_OK
     if args.template_id is None:
         raise ConfigurationError("`docket templates show` needs a template id")
-    template = get_vendor_template(args.template_id)
-    if template is None:
+    found = get_vendor_template(args.template_id)
+    if found is None:
         raise ConfigurationError(f"unknown vendor template {args.template_id!r}")
-    _print_json(template.model_dump(mode="json"))
+    _print_json(found.model_dump(mode="json"))
     return EXIT_OK
 
 

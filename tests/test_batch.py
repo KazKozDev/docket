@@ -12,8 +12,15 @@ from pathlib import Path
 
 import pytest
 
-from docket import BatchOptions, ProcessOptions, ReviewOptions, config, limits, process_batch
-from docket import cli
+from docket import (
+    BatchOptions,
+    ProcessOptions,
+    ReviewOptions,
+    cli,
+    config,
+    limits,
+    process_batch,
+)
 from docket import extract as extract_module
 from docket.batch import iter_batch, iter_sources
 from docket.export import tabular
@@ -207,7 +214,7 @@ def test_llm_calls_are_bounded_across_workers(options, invoices, monkeypatch):
         time.sleep(0.03)
         prompt = payload["messages"][0]["content"]
         number = prompt.split("Invoice no: ")[1].split("\n")[0]
-        return json.dumps(_payload(number))
+        return llm_client._Reply(json.dumps(_payload(number)), input_tokens=100, output_tokens=20)
 
     monkeypatch.setattr(extract_module, "chat_json", llm_client.chat_json)
     monkeypatch.setattr(config, "LLM_PROVIDER", "ollama")
@@ -219,6 +226,8 @@ def test_llm_calls_are_bounded_across_workers(options, invoices, monkeypatch):
     # Each result counts only its own call: usage is per document, not shared.
     assert {r.metrics.llm_calls for r in batch.results} == {1}
     assert batch.metrics.llm_calls == 10
+    assert {(r.metrics.llm_input_tokens, r.metrics.llm_output_tokens) for r in batch.results} == {(100, 20)}
+    assert batch.metrics.llm_input_tokens == 1000 and batch.metrics.llm_unreported_calls == 0
 
 
 def test_no_temporary_files_are_left(options, invoices, tmp_path):

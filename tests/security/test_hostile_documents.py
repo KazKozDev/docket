@@ -7,8 +7,8 @@ from io import BytesIO
 
 from pypdf import PdfWriter
 
-from docket import OcrOptions, ProcessOptions, ReviewOptions, process_document
-from docket import config, extract as extract_module
+from docket import OcrOptions, ProcessOptions, ReviewOptions, config, process_document
+from docket import extract as extract_module
 
 
 def _options() -> ProcessOptions:

@@ -25,9 +25,15 @@ from __future__ import annotations
 
 import csv
 import json
-from typing import IO, Iterable, Iterator
+from collections.abc import Iterable, Iterator
+from typing import IO, cast
 
-from ..catalog.registry import LINE_ITEM_COLUMNS, SUMMARY_COLUMNS, SchemaSpec, get_schema
+from ..catalog.registry import (
+    LINE_ITEM_COLUMNS,
+    SUMMARY_COLUMNS,
+    SchemaSpec,
+    get_schema,
+)
 from ..result import DocumentResult
 
 RESULT_COLUMNS: tuple[str, ...] = (
@@ -110,7 +116,7 @@ def line_item_rows(result: DocumentResult) -> Iterator[dict[str, object]]:
     spec = _spec(result)
     if spec is None or spec.line_items is None or not result.extracted:
         return
-    items = _at(result.extracted, spec.line_items.path) or []
+    items = cast(list, _at(result.extracted, spec.line_items.path) or [])
     for n, item in enumerate(items, start=1):
         row: dict[str, object] = {
             "document_id": result.document_id,
@@ -159,9 +165,9 @@ def write_jsonl(results: Iterable[DocumentResult], stream: IO[str], *, include_l
 
 
 __all__ = [
-    "CsvWriter",
     "ITEM_COLUMNS",
     "RESULT_COLUMNS",
+    "CsvWriter",
     "jsonl_line",
     "line_item_rows",
     "result_row",

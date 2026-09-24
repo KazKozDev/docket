@@ -49,7 +49,7 @@ EVAL = Path(__file__).resolve().parent
 ROOT = EVAL.parent
 sys.path.insert(0, str(EVAL))
 
-from metrics import field_accuracy, source_of  # noqa: E402
+from metrics import field_accuracy, source_of
 
 DATASETS = [ROOT / "eval" / "golden_dataset", ROOT / "eval" / "real_samples"]
 SCANS = {".jpg", ".jpeg", ".png", ".pdf"}
@@ -149,7 +149,9 @@ def fail(path, expected, field_map, exc, started) -> dict:
 
 def run_invoice2data(docs, env):
     from invoice2data.api import extract_data
-    from invoice2data.input import paddleocr as paddle_reader  # its tesseract reader needs imagemagick; paddle is in the venv anyway
+    from invoice2data.input import (
+        paddleocr as paddle_reader,  # its tesseract reader needs imagemagick; paddle is in the venv anyway
+    )
 
     for path, expected in docs:
         if expected.get("doc_type") != "invoice" or path.suffix.lower() == ".pdf":
@@ -182,7 +184,7 @@ def run_docpick(docs, env):
 
     pipeline = DocpickPipeline()
     for path, expected in docs:
-        doc_type, schema, field_map = {
+        _doc_type, schema, field_map = {
             "invoice": ("invoice", InvoiceSchema, DOCPICK_INVOICE),
             "receipt": ("receipt", ReceiptSchema, DOCPICK_RECEIPT),
         }.get(expected.get("doc_type"), (None, None, None))

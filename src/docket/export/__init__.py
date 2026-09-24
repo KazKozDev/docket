@@ -17,18 +17,18 @@ is a callable that registers one or more exporters when called.
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from dataclasses import dataclass
 from functools import partial
 from importlib.metadata import entry_points
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, Field
 
 from ..catalog.models import CreditNote, Invoice
+from ..einvoice.validator import EInvoiceValidationResult
 from . import en16931
 from .facturae import export_to_facturae_xml
-
-from ..einvoice.validator import EInvoiceValidationResult
 
 if TYPE_CHECKING:
     from ..result import DocumentResult
@@ -138,7 +138,7 @@ class ExportResult(BaseModel):
 
 
 def export_document(
-    source: "DocumentResult | BaseModel", format: str, options: ExportOptions | None = None
+    source: DocumentResult | BaseModel, format: str, options: ExportOptions | None = None
 ) -> ExportResult:
     """Render a processed document in the named format.
 
@@ -180,10 +180,14 @@ def export_document(
     if options.validate_einvoice:
         if exporter.einvoice_profile is None:
             raise ExportError(f"{exporter.name} is not an e-invoice format; there are no official rules to validate it against")
-        from ..einvoice.validator import EInvoiceValidationOptions, validate_einvoice
+        from ..einvoice.validator import (
+            EInvoiceValidationOptions,
+            Profile,
+            validate_einvoice,
+        )
 
         validation = validate_einvoice(
-            content.encode("utf-8"), EInvoiceValidationOptions(profile=exporter.einvoice_profile)
+            content.encode("utf-8"), EInvoiceValidationOptions(profile=Profile(exporter.einvoice_profile))
         )
     return ExportResult(
         format=exporter.name, media_type=exporter.media_type, content=content, einvoice_validation=validation

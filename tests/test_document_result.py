@@ -4,7 +4,8 @@ configuration errors raised before any page is read."""
 import pymupdf as fitz
 import pytest
 
-from docket import extract as extract_module, pipeline
+from docket import extract as extract_module
+from docket import pipeline
 from docket.ocr import BackendUnavailable, OcrBackendError, UnknownLanguage
 from docket.options import OcrOptions, ProcessOptions, ReviewOptions
 from docket.result import DocumentResult, DocumentStatus
@@ -85,7 +86,7 @@ def test_every_cited_field_resolves_to_a_region(invoice_result):
     assert " ".join(page.word(i).text for i in total.word_ids) == "Total due: EUR 121.00"
     # Lines were laid out top to bottom, so the boxes are too.
     assert sources["invoice_number"].bbox.y0 < sources["total_amount"].bbox.y0
-    x0, y0, x1, y1 = total.bbox.to_absolute(page.width, page.height)
+    x0, _y0, _x1, y1 = total.bbox.to_absolute(page.width, page.height)
     assert 70 <= x0 <= 74 and y1 <= page.height
 
 

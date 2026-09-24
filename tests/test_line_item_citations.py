@@ -8,7 +8,8 @@ model stubbed — the same pattern as test_document_result.py.
 import pymupdf as fitz
 import pytest
 
-from docket import extract as extract_module, pipeline
+from docket import extract as extract_module
+from docket import pipeline
 from docket.options import OcrOptions, ProcessOptions, ReviewOptions
 from docket.result import DocumentStatus
 
@@ -215,7 +216,7 @@ def test_highlights_draw_everything_from_the_result(result):
     # Drawable in page coordinates: the union box of the first item's row.
     page = result.layout.pages[0]
     _, _, region = next(h for h in highlights if h[0] == "line_items[0].quantity")
-    x0, y0, x1, y1 = region.bbox.to_absolute(page.width, page.height)
+    x0, _y0, _x1, y1 = region.bbox.to_absolute(page.width, page.height)
     assert 70 <= x0 <= 78 and y1 <= page.height
 
 

@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-
 from docket.catalog import get_schema
 from docket.validate import validate
 

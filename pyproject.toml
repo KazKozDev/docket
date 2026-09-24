@@ -98,6 +98,9 @@ dev = [
     "pymupdf>=1.24",
     "build>=1.2",
     "twine>=5.0",
+    # Pinned: new releases add default rules; bump deliberately, with the fixes.
+    "ruff==0.16.8",
+    "mypy==1.18.2",
 ]
 
 [project.scripts]
@@ -129,6 +132,21 @@ docket = [
     "einvoice/resources/factur-x/**/*",
     "einvoice/resources/cii-d16b/**/*",
 ]
+
+[tool.ruff.lint]
+ignore = [
+    "C408",  # dict(key=...) reads better than a literal in kwargs-style test factories
+    "DTZ",   # document dates are calendar dates, not instants; there is no zone to attach
+]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI declares request parameters as call defaults by design.
+extend-immutable-calls = ["fastapi.File", "fastapi.Form", "fastapi.Depends", "fastapi.Header"]
+
+[tool.mypy]
+files = ["src/docket"]
+# Optional extras (paddleocr, docling, saxonche, langfuse, ...) ship no stubs.
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

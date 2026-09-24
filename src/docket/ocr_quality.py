@@ -44,7 +44,7 @@ from . import config
 from .llm_client import (
     LLMError,
     chat_json,
-)  # noqa: F401  (LLMError re-exported for tests)
+)
 from .logging_setup import get_logger
 
 log = get_logger()

@@ -228,7 +228,7 @@ def download_rvl_cdip(n: int) -> None:
         (OUT_DIR / f"{stem}.expected.json").write_text(json.dumps({"doc_type": doc_type}, indent=2))
 
 
-_BILL_TITLE_RE = re.compile(r"^(invoice|bill|billing|billed)\b", re.I)
+_BILL_TITLE_RE = re.compile(r"^(invoice|bill|billing|billed)\b", re.IGNORECASE)
 
 
 def _titled_as_invoice(image) -> bool:

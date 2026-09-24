@@ -8,8 +8,16 @@ layouts for the rule mechanics.
 import pytest
 
 import docket.templates as templates_module
-from docket import catalog, extract as extract_module, pipeline
-from docket.layout.models import BoundingBox, DocumentLayout, PageLayout, Table, TableCell, TextLine
+from docket import catalog, pipeline
+from docket import extract as extract_module
+from docket.layout.models import (
+    BoundingBox,
+    DocumentLayout,
+    PageLayout,
+    Table,
+    TableCell,
+    TextLine,
+)
 from docket.options import OcrOptions, ProcessOptions, ReviewOptions
 from docket.result import DocumentStatus
 from docket.templates import (
@@ -93,7 +101,7 @@ def _pdf(path, lines=LINES):
 def test_lines_after_reads_the_line_below_the_label():
     layout = _layout("Bill to:\nIberia Mantenimiento SA")
     rule = FieldRule(field="buyer.name", label="Bill to", value=r"^(.+?)\s*$", lines_after=1)
-    page, quote, captured = templates_module._find_rule(layout, rule)
+    _page, quote, captured = templates_module._find_rule(layout, rule)
     assert captured == "Iberia Mantenimiento SA"
     assert quote.startswith("Bill to:")  # the citation names the label line
 

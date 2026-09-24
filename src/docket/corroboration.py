@@ -61,8 +61,7 @@ def corroborate(
     for label, tx_currency, tx_amount, text in _payments(transactions):
         if total is None or tx_currency != currency or abs(abs(tx_amount) - abs(total)) > amount_tolerance:
             continue
-        names_number = number_field is not None and _alnum(getattr(document, number_field)) in _alnum(text)
-        if names_number:
+        if number_field is not None and _alnum(getattr(document, number_field)) in _alnum(text):
             confirmed[number_field] = label
             confirmed["total_amount"] = label
             break

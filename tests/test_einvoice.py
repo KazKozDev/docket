@@ -27,10 +27,10 @@ from docket.einvoice import (
     extract_facturx_xml,
     fetch,
     generate_facturx_pdf,
-    validate_pdfa,
     validate_einvoice,
-    verify_facturx_round_trip,
+    validate_pdfa,
     validator,
+    verify_facturx_round_trip,
 )
 from docket.export import ExportError, ExportOptions, export_document
 
@@ -306,6 +306,7 @@ def _facturx_pdf(tmp_path: Path, xml: bytes, name: str = "factur-x.xml") -> Path
 
 def _blank_pdf() -> bytes:
     from io import BytesIO
+
     from pypdf import PdfWriter
 
     output = BytesIO()
@@ -317,6 +318,7 @@ def _blank_pdf() -> bytes:
 
 def test_factur_x_pdf_generation_embeds_xml_and_xmp():
     from io import BytesIO
+
     from pypdf import PdfReader
 
     xml = export_document(complete_invoice(), "factur-x-en16931").content.encode()

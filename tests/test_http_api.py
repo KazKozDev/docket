@@ -11,7 +11,8 @@ import time
 import pytest
 from fastapi.testclient import TestClient
 
-from docket import api, config, extract as extract_module, job_store, review_queue
+from docket import api, config, job_store, review_queue
+from docket import extract as extract_module
 
 INVOICE = (
     "INVOICE\nInvoice no: INV-7\nDate: 2026-03-02\nFrom: Acme GmbH\nTo: Beta SA\n"

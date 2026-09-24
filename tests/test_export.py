@@ -3,8 +3,8 @@
 import xml.etree.ElementTree as ET
 from datetime import date
 
-from docket.export import export_to_facturae_xml
 from docket.catalog import BankStatement, BankStatementTransaction, Invoice, LineItem
+from docket.export import export_to_facturae_xml
 from tests.factories import flat_invoice
 
 

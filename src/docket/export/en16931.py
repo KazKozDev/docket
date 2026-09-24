@@ -119,8 +119,8 @@ def unit_code(unit: str | None) -> str:
 class VatGroup:
     category: str
     rate: Decimal
-    taxable: Decimal = Decimal("0")
-    tax: Decimal = Decimal("0")
+    taxable: Decimal = Decimal(0)
+    tax: Decimal = Decimal(0)
 
 
 @dataclass
@@ -172,7 +172,7 @@ def _rate(doc) -> Decimal | None:
         return Decimal(str(doc.tax_rate_percent))
     base = money(doc.subtotal) - money(doc.discount_amount) + money(doc.shipping_amount)
     if doc.tax_amount == 0:
-        return Decimal("0")
+        return Decimal(0)
     if base == 0:
         return None
     rate = (money(doc.tax_amount) / base * 100).quantize(_CENT, rounding=ROUND_HALF_UP)
@@ -214,7 +214,7 @@ def semantic(doc: Invoice | CreditNote) -> Semantic:
         only.taxable += charge - allowance
     for group in groups.values():
         group.tax = money(group.taxable * group.rate / 100)
-    tax_total = sum((g.tax for g in groups.values()), Decimal("0"))
+    tax_total = sum((g.tax for g in groups.values()), Decimal(0))
     stated_tax = money(doc.tax_amount)
     if len(groups) == 1:
         # One rate: the stated tax is the breakdown's tax. EN 16931 allows
@@ -232,7 +232,7 @@ def semantic(doc: Invoice | CreditNote) -> Semantic:
         raise EN16931Error(
             f"VAT by rate sums to {_fmt(tax_total)}, but the document states tax {_fmt(stated_tax)}"
         )
-    line_total = sum((line.net for line in lines), Decimal("0"))
+    line_total = sum((line.net for line in lines), Decimal(0))
     if abs(line_total - money(doc.subtotal)) > _CENT:
         raise EN16931Error(f"lines sum to {_fmt(line_total)}, subtotal is {_fmt(money(doc.subtotal))} (BR-CO-10)")
     tax_exclusive = line_total - allowance + charge
@@ -240,7 +240,7 @@ def semantic(doc: Invoice | CreditNote) -> Semantic:
     account = doc.payment_account
     return Semantic(
         credit_note=credit_note,
-        number=doc.credit_note_number if credit_note else doc.invoice_number,
+        number=getattr(doc, "credit_note_number" if credit_note else "invoice_number"),
         issue_date=doc.issue_date.isoformat(),
         type_code="381" if credit_note else "380",
         currency=doc.currency.upper(),
@@ -263,7 +263,7 @@ def semantic(doc: Invoice | CreditNote) -> Semantic:
         tax_total=tax_total,
         tax_inclusive=tax_inclusive,
         payable=tax_inclusive,
-        notes=[doc.reason] if credit_note and doc.reason else [],
+        notes=[doc.reason] if isinstance(doc, CreditNote) and doc.reason else [],
     )
 
 
@@ -588,4 +588,4 @@ def render(doc: Invoice | CreditNote, profile: str) -> str:
     return (_Ubl() if spec.syntax == "ubl" else _Cii()).render(sem, spec)
 
 
-__all__ = ["EN16931Error", "PROFILES", "ProfileSpec", "Semantic", "render", "semantic", "unit_code"]
+__all__ = ["PROFILES", "EN16931Error", "ProfileSpec", "Semantic", "render", "semantic", "unit_code"]

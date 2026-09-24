@@ -20,11 +20,12 @@ from docket import (
     export_document,
     pipeline,
 )
-from docket import classify as classify_module, extract as extract_module
-from docket.catalog import SchemaError as DocumentTypeError, load_schema
+from docket import classify as classify_module
+from docket import extract as extract_module
+from docket.catalog import Invoice, load_schema
+from docket.catalog import SchemaError as DocumentTypeError
 from docket.options import resolve
 from docket.result import DocumentStatus
-from docket.catalog import Invoice
 
 INVOICE_TEXT = (
     "INVOICE\nInvoice no: INV-7\nDate: 2026-03-02\nFrom: Acme GmbH\nTo: Beta SA\n"
