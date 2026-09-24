@@ -220,3 +220,25 @@ def test_pipeline_benchmark_resumes_from_its_checkpoint(tmp_path, monkeypatch):
     assert second["documents"][:2] == first["documents"]
     assert benchmark_ocr.run_pipeline("paddle-mobile", docs[:1], checkpoint)["documents"]  # per config
     assert calls[-1] == "doc0.png"
+
+
+def test_pipeline_benchmark_records_source_and_key_field_confidence(tmp_path, monkeypatch):
+    """One run must hold what tuning DOCKET_MIN_SOURCE_CONFIDENCE needs."""
+    sys.path.insert(0, str(ROOT / "eval"))
+    import benchmark_ocr
+    from docket.result import SourceLocation
+    from tests.factories import make_result
+
+    sources = {
+        "total_amount": SourceLocation(page=1, quote="Total 18.00", confidence=0.42),
+        "invoice_number": SourceLocation(page=1, quote="INV-1"),
+    }
+    monkeypatch.setattr(benchmark_ocr, "process_document",
+                        lambda path, options: make_result(source=str(path), field_sources=sources))
+    docs = [(tmp_path / "receipt_sroie_03.jpg", {"doc_type": "invoice"}), (tmp_path / "x_scan.png", {"doc_type": "invoice"})]
+
+    rows = benchmark_ocr.run_pipeline("tesseract", docs)["documents"]
+
+    assert [r["source"] for r in rows] == ["sroie", "golden"]
+    assert rows[0]["key_source_confidence"] == {"total_amount": 0.42, "invoice_number": None}
+

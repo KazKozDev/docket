@@ -49,7 +49,7 @@ EVAL = Path(__file__).resolve().parent
 ROOT = EVAL.parent
 sys.path.insert(0, str(EVAL))
 
-from metrics import field_accuracy  # noqa: E402
+from metrics import field_accuracy, source_of  # noqa: E402
 
 DATASETS = [ROOT / "eval" / "golden_dataset", ROOT / "eval" / "real_samples"]
 SCANS = {".jpg", ".jpeg", ".png", ".pdf"}
@@ -95,14 +95,6 @@ def documents() -> list[tuple[Path, dict]]:
                     found.append((candidate, json.loads(expected_path.read_text())))
                     break
     return found
-
-
-def source_of(name: str) -> str:
-    for prefix, label in (("invoice_hf", "donut"), ("receipt_sroie", "sroie"),
-                          ("invoice_docile", "docile"), ("receipt_hf", "cord")):
-        if name.startswith(prefix):
-            return label
-    return "golden"
 
 
 def expected_keys(expected: dict) -> set[str]:
