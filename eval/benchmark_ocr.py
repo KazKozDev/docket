@@ -49,6 +49,7 @@ from metrics import (  # noqa: E402
     field_accuracy,
     line_item_scores,
     prf,
+    source_of,
     table_cell_matches,
     value_at,
     word_scores,
@@ -58,6 +59,7 @@ from docket import __version__, catalog, config  # noqa: E402
 from docket.ocr import AcquisitionOptions, OcrSettings, acquire  # noqa: E402
 from docket.options import OcrOptions, ProcessOptions, ReviewOptions  # noqa: E402
 from docket.pipeline import process_document  # noqa: E402
+from docket.review_reasons import key_field_confidence  # noqa: E402
 
 DATASETS = [ROOT / "eval" / "golden_dataset", ROOT / "eval" / "real_samples"]
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
@@ -230,6 +232,7 @@ def run_pipeline(name: str, docs: list[tuple[Path, dict]], checkpoint: Path | No
         vlm_pages = sum(1 for p in pages if p.backend == "vlm")
         rows.append({
             "document": path.name,
+            "source": source_of(path.name),
             "status": result.status.value,
             "error": result.error.code if result.error else None,
             "expected_type": expected.get("doc_type"),
@@ -243,6 +246,9 @@ def run_pipeline(name: str, docs: list[tuple[Path, dict]], checkpoint: Path | No
             "success": result.status.value != "failed" and classified and correct == total,
             "needs_review": result.needs_review,
             "review_reasons": result.review_reasons,
+            # Recorded so the review threshold can be tuned from one run
+            # without running the pipeline again.
+            "key_source_confidence": key_field_confidence(result),
             "seconds": round(seconds, 2),
             "acquire_seconds": result.metrics.stage_seconds.get("acquire"),
             "pages": len(pages),
