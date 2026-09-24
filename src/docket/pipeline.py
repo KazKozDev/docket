@@ -149,7 +149,7 @@ def _resolve_sources(extracted: dict, acquisition: Acquisition) -> dict[str, Sou
         status = "conflicting" if len(located) > 1 and located[0].match_score >= 1.0 else (
             "verified" if located[0].match_score >= 1.0 else "fuzzy"
         )
-        regions = [SourceRegion(page=page_number, bbox=l.bbox, word_ids=l.word_ids) for l in located]
+        regions = [SourceRegion(page=page_number, bbox=match.bbox, word_ids=match.word_ids) for match in located]
         sources[field] = SourceLocation(
             page=page_number,
             quote=quote,
@@ -158,7 +158,7 @@ def _resolve_sources(extracted: dict, acquisition: Acquisition) -> dict[str, Sou
             regions=regions,
             bbox=located[0].bbox,
             word_ids=located[0].word_ids,
-            confidence=max(l.confidence for l in located),
+            confidence=max(match.confidence for match in located),
             located_by=located_by,
         )
     return sources

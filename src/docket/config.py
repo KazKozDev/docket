@@ -336,10 +336,10 @@ def _semantic_errors() -> list[str]:
 
     errors = []
     try:
-        parse_languages(OCR_LANGUAGES)
+        parse_languages(globals()["OCR_LANGUAGES"])
     except UnknownLanguage as exc:
         errors.append(f"ocr.languages ({SOURCES.get('OCR_LANGUAGES', 'default')}): {exc}")
-    device = PADDLE_DEVICE
+    device = globals()["PADDLE_DEVICE"]
     if not (device in ("cpu", "gpu") or (device.startswith("gpu:") and device[4:].isdigit())):
         errors.append(f"paddle.device ({SOURCES.get('PADDLE_DEVICE', 'default')}) = {device!r}: "
                       "expected cpu, gpu or gpu:N")

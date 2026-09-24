@@ -1,3 +1,5 @@
+import pytest
+
 from docket.checksums import validate_iban, validate_vat
 
 
@@ -223,10 +225,7 @@ def test_brazil_cnpj_and_cpf():
     assert scheme == "Brazilian CPF"
 
 
-import pytest as _pytest
-
-
-@_pytest.mark.parametrize(
+@pytest.mark.parametrize(
     "value, ok",
     [
         ("GB123456789", True), ("GB123456789012", True), ("GBGD123", True), ("GB-771-4402", False),

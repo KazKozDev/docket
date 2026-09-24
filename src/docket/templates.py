@@ -200,9 +200,8 @@ def _read_items(layout: DocumentLayout, rule: ItemsRule, spec: SchemaSpec):
     if page is None or rule.table >= len(page.tables):
         return [], {}
     grid = page.tables[rule.table].grid()[1 if rule.header else 0 :]
-    attr_by_column = {column: attr for attr, column in rule.columns.items()}
     rows: list[dict] = []
-    citations: dict[str, Citation] = {}
+    citations: dict[str, dict] = {}
     for row in grid:
         item: dict = {}
         quote = " ".join(cell for cell in row)

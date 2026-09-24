@@ -8,16 +8,14 @@ the grand-total line entirely. Confidence measures how crisp the pixels
 looked; validation measures whether the numbers mean anything.
 """
 from datetime import date
-from pathlib import Path
 
 import pytest
 
 from docket import pipeline, review_queue
 from docket.ocr import AcquisitionError
 from docket.result import DocumentResult
-from docket.catalog import Invoice
 from docket.schemas import ValidationIssue
-from tests.factories import acquisition, flat_invoice, flat_po, make_result, text_acquisition, words_page
+from tests.factories import acquisition, flat_invoice, make_result, text_acquisition, words_page
 
 _ERROR = [ValidationIssue(field="total_amount", message="does not add up")]
 

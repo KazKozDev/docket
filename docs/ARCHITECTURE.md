@@ -28,7 +28,7 @@ Docket converts unstructured or semi-structured documents (invoices, receipts, c
                                            v
 +---------------------------------------------------------------------------------------+
 |                              Structured Extraction Tier                               |
-|   - Versioned schema catalog: 14 built-in Pydantic schemas + registered ones          |
+|   - Versioned schema catalog: 9 built-in Pydantic schemas + registered ones           |
 |   - JSON Schema contract enforcement via local Ollama LLM                             |
 |   - Verbatim Source Citations (field_sources / field_locations)                       |
 +---------------------------------------------------------------------------------------+
@@ -335,7 +335,7 @@ Classification determines which Pydantic schema will govern extraction:
 
 Every tier reads the schema catalog, so a registered schema takes part in all three.
 
-1. **Keyword Rules**: each schema's weighted `keywords` (English and Spanish cues, plus the document's own name in German, French, Italian, Dutch, Portuguese and Polish; the added schemas carry their names in the main EU languages). If the top schema leads the runner-up by 2 points, it classifies immediately; confidence is the winner's share of all matched weight. With 14 schemas more text matches several of them — a certificate of origin mentioning its invoice number scored 0.46 and went to review on classification confidence alone — so that share is lower than it was with 8.
+1. **Keyword Rules**: each schema's weighted `keywords` (English and Spanish cues, plus the document's own name in German, French, Italian, Dutch, Portuguese and Polish). If the top schema leads the runner-up by 2 points, it classifies immediately; confidence is the winner's share of all matched weight. Similar terms across the 9 built-in schemas can lower confidence and send a document to review.
 2. **TF-IDF Classifier**: word and character n-grams trained on each schema's `examples` (paraphrases in EN, ES, DE, FR, IT, NL, PT; 12–26 per built-in schema). Above `DOCKET_TFIDF_CONFIDENCE_FLOOR` it skips the LLM call. It is skipped when any registered schema brought no examples, because it would file that type under a neighbour. On the 34-sentence held-out set in `tests/test_classify_tfidf_multilingual.py` it is right 33 times, confident 19 times and never confidently wrong; on the clean bank-statement fixture it was confidently wrong (invoice, 0.71) — the rules tier answers first there.
 3. **LLM Fallback**: Invoked only when rule-based and TF-IDF classifiers cannot make a confident decision.
 

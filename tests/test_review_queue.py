@@ -4,10 +4,9 @@ from pathlib import Path
 import pytest
 
 from docket import review_queue, review_reasons
-from docket.catalog import Invoice
 from docket.schemas import ClassificationResult, ValidationIssue
 from docket.result import DocumentResult
-from tests.factories import acquisition, flat_invoice, flat_po, make_result, words_page
+from tests.factories import acquisition, flat_invoice, make_result, words_page
 
 
 def _result(**overrides) -> DocumentResult:

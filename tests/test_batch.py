@@ -17,7 +17,7 @@ from docket import cli
 from docket import extract as extract_module
 from docket.batch import iter_batch, iter_sources
 from docket.export import tabular
-from docket.options import OcrOptions, resolve
+from docket.options import OcrOptions
 from docket.result import DocumentStatus
 from tests.factories import make_result
 

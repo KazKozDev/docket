@@ -9,7 +9,6 @@ import pytest
 
 import docket.templates as templates_module
 from docket import catalog, extract as extract_module, pipeline
-from docket.catalog import SchemaSpec
 from docket.layout.models import BoundingBox, DocumentLayout, PageLayout, Table, TableCell, TextLine
 from docket.options import OcrOptions, ProcessOptions, ReviewOptions
 from docket.result import DocumentStatus
@@ -386,7 +385,7 @@ def test_unmatched_document_reads_through_the_model_as_before(tmp_path, monkeypa
 
     monkeypatch.setattr(pipeline, "extract_pages", fake_extract)
     result = pipeline.process_document(
-        _pdf(tmp_path / "inv.pdf", [l.replace("Northgate Supplies Ltd", "Whoever Ltd") for l in LINES]),
+        _pdf(tmp_path / "inv.pdf", [line.replace("Northgate Supplies Ltd", "Whoever Ltd") for line in LINES]),
         _options(),
     )
     assert calls["n"] == 1

@@ -362,7 +362,7 @@ def validate_einvoice(
 
     def finish(**updates) -> EInvoiceValidationResult:
         final = result.model_copy(update=updates)
-        valid = not final.errors and bool(final.layers) and all(l.ran and l.passed for l in final.layers)
+        valid = not final.errors and bool(final.layers) and all(layer.ran and layer.passed for layer in final.layers)
         return final.model_copy(
             update={"valid": valid, "elapsed_seconds": round(time.monotonic() - started, 3)}
         )
