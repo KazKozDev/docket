@@ -9,7 +9,7 @@ free of any LLM call.
 from __future__ import annotations
 
 import re
-from datetime import date
+from datetime import date, datetime
 
 
 from . import amounts, checksums
@@ -431,6 +431,68 @@ def _check_material_locations(
                     message=f"cited source region does not appear on page {location.page}",
                 )
             )
+    return issues
+
+
+def _numeric_date_readings(first: str, second: str, year: str) -> set[date]:
+    """Every date a printed d/m/y or m/d/y triple can mean."""
+    y = int(year)
+    if len(year) == 2:
+        y += 2000 if y < 70 else 1900
+    readings = set()
+    for day, month in ((int(first), int(second)), (int(second), int(first))):
+        try:
+            readings.add(date(y, month, day))
+        except ValueError:
+            pass
+    return readings
+
+
+def _check_cited_dates(document, raw_text: str) -> list[ValidationIssue]:
+    """A date must be read from the line it cites.
+
+    The model sometimes invents a date it could not read (2020-01-01,
+    2024-01-01 on thermal receipts) and cites any line on the page, the
+    merchant name or a TAX INVOICE header. The quote exists, so the location
+    check passes; the value was never on it. Only two cases are errors, both
+    certain without knowing the language: a cited line with no digit at all,
+    and a cited line whose numeric dates all mean something else. Dates
+    spelled with month names are left alone.
+    """
+    if "[PAGE " not in raw_text:
+        return []
+    locations = getattr(document, "field_locations", None) or {}
+    issues: list[ValidationIssue] = []
+    for field in type(document).model_fields:
+        value = getattr(document, field, None)
+        location = locations.get(field)
+        if not isinstance(value, date) or location is None or not (location.quote or "").strip():
+            continue
+        quote = location.quote
+        short = quote if len(quote) <= 60 else quote[:57] + "..."
+        if isinstance(value, datetime):  # a datetime is a date too; compare the day
+            value = value.date()
+        if not re.search(r"\d", quote):
+            issues.append(ValidationIssue(
+                field=field,
+                message=f"{value.isoformat()} cites {short!r}, which holds no date — the value was not read there",
+            ))
+            continue
+        printed = _NUMERIC_DATE_RE.findall(quote) + _ISO_DATE_RE.findall(quote)
+        readings = set()
+        for groups in printed:
+            if len(groups[0]) == 4:  # yyyy-mm-dd
+                try:
+                    readings.add(date(int(groups[0]), int(groups[1]), int(groups[2])))
+                except ValueError:
+                    pass
+            else:
+                readings |= _numeric_date_readings(*groups)
+        if printed and value not in readings:
+            issues.append(ValidationIssue(
+                field=field,
+                message=f"{value.isoformat()} cites {short!r}, whose printed date cannot be read as that day",
+            ))
     return issues
 
 
@@ -919,6 +981,7 @@ def _appears_in(value: str, normalized_text: str) -> bool:
 # every extracted date must be readable under it. "11/02/2019" alone is
 # ambiguous, but next to a "26/02/2019" the document has declared day-first.
 _NUMERIC_DATE_RE = re.compile(r"(?<!\d)(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2,4})(?!\d)")
+_ISO_DATE_RE = re.compile(r"(?<!\d)(\d{4})[/.\-](\d{1,2})[/.\-](\d{1,2})(?!\d)")
 
 
 # "404,00" / "1.278,00": a decimal comma. "1,800.00" / "12.50": a decimal point.
@@ -1759,6 +1822,8 @@ def validate(
     issues: list[ValidationIssue] = []
     if raw_text and spec.required_citations:
         issues.extend(_check_material_locations(document, raw_text, spec.required_citations))
+    if raw_text:
+        issues.extend(_check_cited_dates(document, raw_text))
     for validator in spec.validators:
         issues.extend(validator(document, ctx) or [])
     return issues
