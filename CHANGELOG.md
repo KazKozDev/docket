@@ -16,7 +16,8 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 - A document number (`invoice_number`, `po_number`, …) must be printed on the
   line it cites; a model that cited one line and wrote another number was
   previously accepted.
-- `DOCKET_MIN_SOURCE_CONFIDENCE` (0.75): a key field whose cited words OCR
+- `DOCKET_MIN_SOURCE_CONFIDENCE` (0.80, calibrated on the 195-scan benchmark
+  corpus — see BENCHMARKS): a key field whose cited words OCR
   recognised below it sends the document to review instead of succeeding.
 
 ### Changed
@@ -24,7 +25,11 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 - `export_document` on a schema instance (not a `DocumentResult`) now runs
   the schema's checks first and refuses on errors when `require_valid` is set.
 - The false-success rate is the headline benchmark metric in the README and
-  BENCHMARKS.
+  BENCHMARKS, measured on the latest full run: 13/66 silent successes wrong
+  (20%), 3/24 excluding SROIE receipts — down from 27/59 (46%). On that run
+  the low-confidence check flagged 57 documents (17 actually wrong) and the
+  document-number check none; `DOCKET_MIN_SOURCE_CONFIDENCE` moves from 0.75
+  to the measured minimum, 0.80.
 
 ### Removed
 

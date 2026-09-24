@@ -153,7 +153,7 @@ SETTINGS: tuple[Setting, ...] = (
             "float", 0.65, "Confidence TF-IDF needs to answer instead of the LLM.", minimum=0, maximum=1),
     Setting("MIN_CLASSIFICATION_CONFIDENCE", "classify.min_confidence", "DOCKET_MIN_CONFIDENCE", "float", 0.55,
             "Below this classification confidence a document goes to review.", minimum=0, maximum=1),
-    Setting("MIN_SOURCE_CONFIDENCE", "review.min_source_confidence", "DOCKET_MIN_SOURCE_CONFIDENCE", "float", 0.75,
+    Setting("MIN_SOURCE_CONFIDENCE", "review.min_source_confidence", "DOCKET_MIN_SOURCE_CONFIDENCE", "float", 0.8,
             "A key field read from OCR words below this confidence sends the document to review.",
             minimum=0, maximum=1),
     Setting("REVIEW_QUEUE_ENABLED", "review.enabled", "DOCKET_REVIEW_QUEUE_ENABLED", "bool", False,
