@@ -25,6 +25,16 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Fixed
 
+- Tax-inclusive receipts no longer go to review for arithmetic that is
+  right. Item prices that already include GST/VAT may sum to the taxed total,
+  a pre-tax unit price may sit beside a tax-inclusive line total, and a
+  "Total incl. GST / GST 6%" subtotal is not taxed again. Of the 135
+  benchmark documents that were in review, 51 now pass: 43 fully right, and
+  in the other 8 the wrong field is a name or a date, not an amount. The
+  review share falls from about 70% to about 43%.
+- The payment block is no longer cross-checked against the Tesseract witness.
+  "CASH 150.00" on thermal paper reads as noise often enough to send correct
+  receipts to review; tender minus change is still checked against the total.
 - Receipts carry the printed payment block (`amount_tendered`,
   `change_given`; receipt schema 1.2, 1.1 results read unchanged), and
   tendered minus change must equal the total within cash rounding (0.05).

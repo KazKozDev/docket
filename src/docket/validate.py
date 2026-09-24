@@ -789,11 +789,19 @@ def validate_receipt(rec: Receipt, ctx: ValidationContext) -> list[ValidationIss
                     )
                 )
 
+    # Receipts in GST/VAT-inclusive countries (MY, SG, AU, most of the EU)
+    # print item prices with the tax already in, and sometimes a pre-tax
+    # unit price beside a tax-inclusive line total. The tax rate the receipt
+    # states lets both layouts be checked instead of flagged.
+    pre_tax = rec.subtotal or (rec.total_amount - rec.tax_amount)
+    tax_rate = rec.tax_amount / pre_tax if rec.tax_amount > 0 and pre_tax > 0 else 0.0
+
     if rec.items:
         for idx, item in enumerate(rec.items):
             if item.unit_price is not None and item.quantity > 0:
                 expected_line_total = round(item.quantity * item.unit_price, 2)
-                if not _isclose(expected_line_total, item.price):
+                with_tax = round(expected_line_total * (1 + tax_rate), 2)
+                if not (_isclose(expected_line_total, item.price) or (tax_rate and _isclose(with_tax, item.price))):
                     issues.append(
                         ValidationIssue(
                             field=f"items[{idx}]",
@@ -813,18 +821,22 @@ def validate_receipt(rec: Receipt, ctx: ValidationContext) -> list[ValidationIss
         # consistent; only flag when neither closes.
         if rec.subtotal > 0:
             base = rec.subtotal
-            ok = any(_isclose(items_sum, b) for b in (rec.subtotal, rec.subtotal + rec.discount_amount))
+            candidates = [rec.subtotal, rec.subtotal + rec.discount_amount]
         else:
             # No subtotal line: back tax, tip and discount out of the total.
             base = rec.total_amount - rec.tax_amount - rec.tip_amount + rec.discount_amount
-            ok = _isclose(items_sum, base)
+            candidates = [base]
+        # Tax-inclusive item prices sum to the pre-tax amount plus the tax.
+        if rec.tax_amount > 0:
+            candidates += [c + rec.tax_amount for c in candidates]
+        ok = any(_isclose(items_sum, b) for b in candidates)
         if not ok:
             issues.append(
                 ValidationIssue(
                     field="items",
                     message=(
-                        f"items sum to {items_sum:.2f}, but the pre-tax amount they should "
-                        f"match is {base:.2f}"
+                        f"items sum to {items_sum:.2f}, but the amount they should match is "
+                        f"{base:.2f} before tax" + (f" or {base + rec.tax_amount:.2f} with it" if rec.tax_amount > 0 else "")
                     ),
                 )
             )
@@ -834,7 +846,12 @@ def validate_receipt(rec: Receipt, ctx: ValidationContext) -> list[ValidationIss
         # applied, so accept the printed-total arithmetic under either layout.
         without_discount = rec.subtotal + rec.tax_amount + rec.tip_amount
         with_discount = without_discount - rec.discount_amount
-        if not any(_isclose(e, rec.total_amount) for e in (with_discount, without_discount)):
+        expected = [with_discount, without_discount]
+        # "Total incl. GST 38.90 / GST 6% 2.20": the tax is shown but already
+        # inside the subtotal, so it is not added on top.
+        if rec.tax_amount > 0:
+            expected += [with_discount - rec.tax_amount, without_discount - rec.tax_amount]
+        if not any(_isclose(e, rec.total_amount) for e in expected):
             issues.append(
                 ValidationIssue(
                     field="total_amount",
@@ -881,11 +898,10 @@ def validate_receipt(rec: Receipt, ctx: ValidationContext) -> list[ValidationIss
         if rec.discount_amount:
             numeric_fields["discount_amount"] = rec.discount_amount
         issues.extend(_check_cited_sources(rec, raw_text, numeric_fields))
+        # Not the payment block: Tesseract reads "CASH 150.00" on thermal paper
+        # as noise often enough that a disagreement proves nothing there, and
+        # tender minus change is already checked against the total.
         witness_fields = [("total_amount", rec.total_amount)]
-        if rec.amount_tendered:
-            witness_fields.append(("amount_tendered", rec.amount_tendered))
-        if rec.change_given:
-            witness_fields.append(("change_given", rec.change_given))
         if rec.subtotal:
             witness_fields.append(("subtotal", rec.subtotal))
         if rec.tax_amount:
