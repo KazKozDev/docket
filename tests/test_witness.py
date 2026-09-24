@@ -47,6 +47,7 @@ def _invoice(**overrides):
             "subtotal": {"page": 1, "quote": "Subtotal: USD 8000.00"},
             "tax_amount": {"page": 1, "quote": "Sales Tax: USD 450.00"},
             "total_amount": {"page": 1, "quote": "Total: USD 8,450.00"},
+            "line_items[0].total": {"page": 1, "quote": "Prototype | 2 | 4000.00 | 8000.00"},
         },
     }
     base.update(overrides)
@@ -192,6 +193,7 @@ def test_a_witness_that_never_read_the_line_stays_silent():
 def test_uncited_fields_are_not_cross_checked():
     # Line items carry no citation, so there is no line to anchor on and
     # nothing is claimed about them either way.
+    base = _invoice()
     inv = _invoice(
         line_items=[
             LineItem(
@@ -200,7 +202,8 @@ def test_uncited_fields_are_not_cross_checked():
                 unit_price=20230450.0,
                 total=20230450.0,
             )
-        ]
+        ],
+        field_locations={k: v for k, v in base.model_dump()["field_locations"].items() if "[" not in k},
     )
     issues = validate(inv, PRIMARY, witness_pages=WITNESS_AGREES)
     assert not [

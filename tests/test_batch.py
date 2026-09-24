@@ -46,6 +46,7 @@ def _payload(n="INV-7"):
             "subtotal": {"page": 1, "quote": "Subtotal: 100.00"},
             "tax_amount": {"page": 1, "quote": "VAT: 21.00"},
             "total_amount": {"page": 1, "quote": "Total: 121.00"},
+            "line_items[0].total": {"page": 1, "quote": "Widget | 2 | 50.00 | 100.00"},
         },
     }
 

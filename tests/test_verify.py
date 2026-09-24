@@ -29,6 +29,8 @@ CITATIONS = {
     "subtotal": {"page": 1, "quote": "Base imponible: 1.500,00"},
     "tax_amount": {"page": 1, "quote": "IVA 21%: 315,00"},
     "total_amount": {"page": 1, "quote": "Total: 1.815,00 EUR"},
+    "line_items[0].total": {"page": 1, "quote": "Consulting Services 10 x 100,00 = 1.000,00"},
+    "line_items[1].total": {"page": 1, "quote": "Software License 1 x 500,00 = 500,00"},
 }
 
 
