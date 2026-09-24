@@ -4,8 +4,20 @@ on:
   push:
     branches: [main, master]
   pull_request:
+  # The release workflow runs this whole file first and publishes only if it passes.
+  workflow_call:
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "ruff>=0.6,<1"
+      - run: ruff check src tests eval scripts examples
+
   test:
     runs-on: ubuntu-latest
     strategy:

@@ -166,6 +166,8 @@ pip install "docket-idp[docling]"   # Docling/TableFormer backend
 pip install "docket-idp[all]"       # + Langfuse tracing and e-invoice validation
 ```
 
+Langfuse tracing starts only when `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` are set, and then records model, latency and sizes. Prompts and answers, which contain the document's text, are sent only with `DOCKET_LANGFUSE_CONTENT=true`.
+
 ### HTTP service and Docker
 
 Reference applications on the same library contract, for other languages:
@@ -175,7 +177,7 @@ docker run -p 8000:8000 -e DOCKET_API_KEY=secret ghcr.io/kazkozdev/docket
 curl -H "Authorization: Bearer secret" -F file=@invoice.pdf localhost:8000/process
 ```
 
-`POST /jobs` handles multi-file jobs with CSV/JSONL downloads; the typed contract is [`docs/openapi.json`](https://github.com/KazKozDev/docket/blob/master/docs/openapi.json), with interactive docs at `/docs`.
+Without `DOCKET_API_KEY`, `docket-api` serves only on 127.0.0.1; on any other address it refuses to start unless you pass `--no-auth` (an authenticating proxy in front). `POST /jobs` handles multi-file jobs with CSV/JSONL downloads; the typed contract is [`docs/openapi.json`](https://github.com/KazKozDev/docket/blob/master/docs/openapi.json), with interactive docs at `/docs`.
 
 ### Development
 

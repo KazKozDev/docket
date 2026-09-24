@@ -165,3 +165,6 @@
 # langfuse_secret_key = ""  # unset
 # Langfuse server. Env: LANGFUSE_HOST.
 # langfuse_host = "https://cloud.langfuse.com"
+# Send prompts and answers, i.e. the document text, to Langfuse. Off, traces
+# carry model, latency and sizes only. Env: DOCKET_LANGFUSE_CONTENT.
+# langfuse_content = false

@@ -637,8 +637,32 @@ def update_review(document_id: str, update: ReviewUpdate) -> dict:
         raise ApiError(422, "invalid_review_update", str(exc)) from exc
 
 
+def unauthenticated_exposure(host: str, *, no_auth: bool) -> str | None:
+    """Why the API must not start as configured, or None.
+
+    Without DOCKET_API_KEY every endpoint is open, and job results with
+    invoice and contract data sit on disk behind it. That is fine on the
+    loopback interface; on any other address it has to be a deliberate
+    choice (`--no-auth`, e.g. behind an authenticating proxy), not a default.
+    """
+    import ipaddress
+
+    if config.API_KEY is not None or no_auth or host == "localhost":
+        return None
+    try:
+        if ipaddress.ip_address(host).is_loopback:
+            return None
+    except ValueError:
+        pass
+    return (
+        f"refusing to serve on {host} without DOCKET_API_KEY: every endpoint would be open. "
+        "Set DOCKET_API_KEY, bind to 127.0.0.1, or pass --no-auth if something in front "
+        "of docket authenticates requests."
+    )
+
+
 def run() -> None:
-    """Console entry point: `docket-api [--host H] [--port P] [--config PATH]`."""
+    """Console entry point: `docket-api [--host H] [--port P] [--config PATH] [--no-auth]`."""
     import argparse
     import sys
 
@@ -649,6 +673,8 @@ def run() -> None:
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--config", metavar="PATH",
                         help="TOML settings file (default: DOCKET_CONFIG, else ./docket.toml if present)")
+    parser.add_argument("--no-auth", action="store_true",
+                        help="serve without DOCKET_API_KEY on a non-loopback address (an authenticating proxy is in front)")
     args = parser.parse_args()
     config.configure_app(args.config)
     try:
@@ -656,4 +682,8 @@ def run() -> None:
     except ConfigurationError as exc:
         print(f"Configuration error: {exc}", file=sys.stderr)
         raise SystemExit(3) from None
+    refusal = unauthenticated_exposure(args.host, no_auth=args.no_auth)
+    if refusal:
+        print(f"Configuration error: {refusal}", file=sys.stderr)
+        raise SystemExit(3)
     uvicorn.run(app, host=args.host, port=args.port)

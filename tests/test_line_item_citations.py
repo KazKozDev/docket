@@ -219,14 +219,21 @@ def test_highlights_draw_everything_from_the_result(result):
     assert 70 <= x0 <= 78 and y1 <= page.height
 
 
-def test_missing_item_citation_does_not_warn_but_bad_one_fails(tmp_path, monkeypatch):
-    """An uncited item is a coverage gap, not a validation failure — but a
-    cited value that the row does not contain is."""
+def test_uncited_rows_need_review(tmp_path, monkeypatch):
+    """Rows go into the e-invoice export; one no line confirms is not a success."""
     cites = {f: q for f, q in CITES.items() if not f.startswith("line_items")}
     result = _process(tmp_path, monkeypatch, _payload(field_locations={
         f: {"page": 1, "quote": q} for f, q in cites.items()}))
-    assert result.status == DocumentStatus.SUCCEEDED, result.review_reasons
-    assert not any(i.field.startswith("line_items") for i in result.validation_issues)
+    assert result.status == DocumentStatus.NEEDS_REVIEW
+    [issue] = [i for i in result.validation_issues if i.field == "line_items"]
+    assert "row(s) cite no source line" in issue.message
+
+
+def test_a_row_cited_by_any_of_its_values_counts_as_cited(tmp_path, monkeypatch):
+    cites = {f: q for f, q in CITES.items() if not f.startswith("line_items") or f.endswith(".total")}
+    result = _process(tmp_path, monkeypatch, _payload(field_locations={
+        f: {"page": 1, "quote": q} for f, q in cites.items()}))
+    assert not [i for i in result.validation_issues if i.field == "line_items"]
 
 def test_derived_unit_price_is_grounded_by_its_row(tmp_path, monkeypatch):
     """A row that prints quantity 2 and total 4.98 grounds a unit price of
@@ -237,6 +244,7 @@ def test_derived_unit_price_is_grounded_by_its_row(tmp_path, monkeypatch):
     cites.update({
         "line_items[0].quantity": row, "line_items[0].unit_price": row,
         "line_items[0].total": row, "line_items[0].description": row,
+        "line_items[1].total": "2    Toner schwarz        6    58.50     351.00",
         "subtotal": "Subtotal: EUR 355.98", "total_amount": "Total due: EUR 472.25",
     })
     payload = _payload(
