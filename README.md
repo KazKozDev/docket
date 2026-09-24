@@ -96,9 +96,9 @@ Registered schemas are classified, extracted, citation-checked and exported like
 
 ## Measure extraction accuracy on public datasets
 
-The number that matters most is how often docket says "succeeded" and is wrong, because that result goes straight into the books unseen. On the latest full run it was **27 of 59 silent successes (46%)**, mostly misread dates and totals on degraded thermal receipts; the checks added since (date order, payment arithmetic, document numbers against their cited line, OCR confidence on key fields) target exactly those and have not been measured yet.
+The number that matters most is how often docket says "succeeded" and is wrong, because that result goes straight into the books unseen. On the latest full run it was **13 of 66 silent successes (20%)**, down from 27 of 59 (46%) on a slightly different corpus before the checks that target it (date order, payment arithmetic, document numbers against their cited line, OCR confidence on key fields); excluding the SROIE Malaysian receipts, which the checks are not tuned for, it is **3 of 24 (13%)**. On that run the confidence check sent 57 documents to review, 17 of them actually wrong; the document-number check flagged none.
 
-195 scans: the project's labelled golden set plus real documents from public Hugging Face datasets (DocILE, SROIE, CORD, FUNSD, RVL-CDIP, donut-style invoices), graded field by field against the datasets' own ground truth. On the same run, docket gets **0.85 field accuracy**: 0.96 on the golden set, 0.98 on donut invoices, 0.78 on SROIE receipts. 68% of documents come back with every field right.
+195 scans: the project's labelled golden set plus real documents from public Hugging Face datasets (DocILE, SROIE, CORD, FUNSD, RVL-CDIP, donut-style invoices), graded field by field against the datasets' own ground truth. On the same run, docket gets **0.88 field accuracy**: 0.96 on the golden set, 0.99 on donut invoices, 0.80 on SROIE receipts. 73% of documents come back with every field right.
 
 Against the pip-installable alternatives, each tool is graded only on the documents and fields it supports, and docket is graded on exactly the same ones:
 
@@ -132,7 +132,7 @@ Priority, lowest to highest: defaults, a TOML file (`--config` or `DOCKET_CONFIG
 | `DOCKET_OCR_FALLBACKS` | `vlm` | Backends tried when a page's reading is rejected |
 | `DOCKET_OCR_LANGUAGES` | `en` | ISO 639-1 codes, e.g. `en,de,fr` |
 | `DOCKET_MIN_CONFIDENCE` | `0.55` | Classification confidence below which a document goes to review |
-| `DOCKET_MIN_SOURCE_CONFIDENCE` | `0.75` | OCR confidence a key field's cited words need, or the document goes to review |
+| `DOCKET_MIN_SOURCE_CONFIDENCE` | `0.8` | OCR confidence a key field's cited words need, or the document goes to review |
 | `DOCKET_REVIEW_QUEUE_ENABLED` | `false` | Persist flagged documents in the review queue (`[review]` extra) |
 | `DOCKET_REVIEW_DATABASE_URL` | `sqlite:///data/review.db` | Review store; PostgreSQL with the `[postgres]` extra |
 | `DOCKET_BATCH_WORKERS` | `4` | Documents in flight per batch |
@@ -147,7 +147,7 @@ Priority, lowest to highest: defaults, a TOML file (`--config` or `DOCKET_CONFIG
 
 ## Limitations
 
-- A silent wrong answer is possible: on the 195-scan corpus, 46% of "succeeded, no review" documents (27 of 59) had at least one wrong field, mostly misread dates and totals on degraded thermal receipts. Checks added since target them but are unmeasured. See [benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
+- A silent wrong answer is possible: on the 195-scan corpus, 20% of "succeeded, no review" documents (13 of 66) had at least one wrong field — 10 of the 13 are degraded Malaysian thermal receipts (SROIE); excluding that source it is 3 of 24 (13%). See [benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
 - Two thirds of documents still go to review, which is the intended path when anything is uncertain. Scanned DocILE invoices are the weakest source (0.43).
 - The vision model has been seen changing digits so that a page reconciles.
 - Windows is untested. A document takes a median of 6.4–22.7 s depending on the OCR backend (8.7 s on the full corpus with Tesseract), longer with the vision model.
