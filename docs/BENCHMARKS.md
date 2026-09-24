@@ -56,6 +56,17 @@ design (purchase order); two receipt scans still extract wrong values from
 garbled Tesseract text without triggering review — the false-success metric
 that stage 2 measures.
 
+## Credit notes
+
+The credit note is the one experimental schema, kept because EN 16931 exports
+it. There are no real credit notes with field labels in the corpus, so it is
+measured on four synthetic golden scans: French (AVOIR), German (GUTSCHRIFT),
+Spanish (FACTURA RECTIFICATIVA) and the official EN 16931 UBL example
+(`ubl-tc434-creditnote1.xml`) printed as a page. Two runs (tesseract config,
+`deepseek-v4.1-flash:cloud`) gave the same result: type right 4/4, fields
+34/35. The one miss is the French seller name, which passed without review.
+It stays experimental until it is measured on real documents.
+
 ## Extended corpus
 
 **DocILE is filtered to invoices.** The DocILE mirror mixes invoices with

@@ -1,0 +1,57 @@
+{
+  "doc_type": "credit_note",
+  "credit_note_number": "018304 / 28865",
+  "issue_date": "2019-09-23",
+  "seller.name": "My Supplier Company N.V.",
+  "buyer.name": "My Customer Company S.A.",
+  "subtotal": 100.11,
+  "tax_amount": 0.0,
+  "total_amount": 100.11,
+  "currency": "EUR",
+  "_schema": "credit_note",
+  "_line_items": [
+    {
+      "description": "Exoneration du versement du PP",
+      "quantity": 1,
+      "total": 100.11
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Description",
+          "Qty",
+          "Unit price",
+          "Amount"
+        ],
+        [
+          "Exoneration du versement du PP",
+          "1",
+          "100.11",
+          "100.11"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "CREDIT NOTE / NOTE DE CREDIT",
+    "My Supplier Company N.V.",
+    "De Grote Meir 22",
+    "2000 ANTWERPEN",
+    "VAT: BE0000000196",
+    "Credit note no.: 018304 / 28865",
+    "Date: 23/09/2019",
+    "Customer:",
+    "My Customer Company S.A.",
+    "Boulevard Sint Michel 53",
+    "1000 BRUXELLES",
+    "Description Qty Unit price Amount",
+    "Exoneration du versement du PP 1 100.11 100.11",
+    "Total excl. VAT: EUR 100.11",
+    "VAT 0%: EUR 0.00",
+    "Total incl. VAT: EUR 100.11"
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py"
+}

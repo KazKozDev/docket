@@ -1,0 +1,72 @@
+{
+  "doc_type": "credit_note",
+  "credit_note_number": "GS-2026-0412",
+  "issue_date": "2026-08-14",
+  "seller.name": "Holzwerk Bayern GmbH",
+  "buyer.name": "Schreinerei Maier KG",
+  "seller.tax_ids[0].value": "DE811907980",
+  "subtotal": 330.0,
+  "tax_amount": 62.7,
+  "total_amount": 392.7,
+  "currency": "EUR",
+  "_schema": "credit_note",
+  "_line_items": [
+    {
+      "description": "Eichenbretter 30 mm",
+      "quantity": 4,
+      "total": 250.0
+    },
+    {
+      "description": "Buchenleisten",
+      "quantity": 10,
+      "total": 80.0
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Bezeichnung",
+          "Menge",
+          "Einzelpreis",
+          "Betrag"
+        ],
+        [
+          "Eichenbretter 30 mm",
+          "4",
+          "62,50",
+          "250,00"
+        ],
+        [
+          "Buchenleisten",
+          "10",
+          "8,00",
+          "80,00"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "GUTSCHRIFT",
+    "Holzwerk Bayern GmbH",
+    "Industriestr. 8",
+    "83022 Rosenheim",
+    "USt-IdNr.: DE811907980",
+    "Gutschrift-Nr.: GS-2026-0412",
+    "Datum: 14.08.2026",
+    "zur Rechnung: RE-2026-1188",
+    "Kunde:",
+    "Schreinerei Maier KG",
+    "Werkstrasse 3",
+    "83022 Rosenheim",
+    "Grund: Preisnachlass wegen Transportschaden",
+    "Bezeichnung Menge Einzelpreis Betrag",
+    "Eichenbretter 30 mm 4 62,50 250,00",
+    "Buchenleisten 10 8,00 80,00",
+    "Nettobetrag: 330,00 EUR",
+    "USt. 19 %: 62,70 EUR",
+    "Gesamtbetrag: 392,70 EUR"
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py"
+}
