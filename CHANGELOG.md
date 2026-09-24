@@ -8,6 +8,17 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+### Fixed
+
+- Amounts with thousands grouped by a space ("12 261,98", as printed in
+  France, Poland, the Nordics and Czechia) and in accounting parentheses
+  ("(5,020.24)") are read whole when checked against their cited line. They
+  were split into two numbers, so correct totals failed validation: re-scoring
+  the saved benchmark messages, review outside SROIE drops from 51 to 36 of 75
+  documents. One wrong document (parties swapped) that only this bug had kept
+  in review now succeeds; party assignment is not something the amount checks
+  can see.
+
 ### Added
 
 - `verify(document, text, document_type=...)`: docket's deterministic checks
