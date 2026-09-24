@@ -9,7 +9,8 @@ returns as `succeeded` with nothing for review, the share with at least one
 wrong field (`false_success_rate` in `benchmark_ocr.py` output). A document
 sent to review costs a person a minute; a wrong one that succeeds reaches the
 books unseen. Field accuracy matters, but only after this number is near zero.
-Latest full run: 27/59 (46%), before the checks listed under the results table.
+Latest full run: 13/66 (20%) — and 3/24 (13%) excluding the SROIE Malaysian
+receipts, which the checks are not tuned for.
 
 ```bash
 python eval/run_eval.py               # accuracy, P/R/F1, latency on the golden set
@@ -92,23 +93,26 @@ same benchmark: the golden set plus real documents from Hugging Face
 field-level ground truth where the source dataset carries it. Tesseract
 config, `deepseek-v4.1-flash:cloud` for text and vision.
 
-Latest full run: commit `de96112` (docket 0.4.0 plus the classification fix
-and schema removals of #19–#20), 195 scans, before the DocILE filter above and
-before the date and payment checks (#22, #23). Previous run: docket 0.3.0,
-commit `c0bfa05`. Both columns cover the same 195 documents:
+Latest full run: commit `68f8eea` (docket 0.4.0 plus the checks of #22–#30
+and the DocILE filter above; the benchmark records each document's dataset
+source and key-field OCR confidences there). The first two columns cover the
+same 195 documents; the `68f8eea` column runs on the current corpus — three
+schemas removed in #30 and DocILE filtered to invoices — so the columns are
+close but not exactly comparable.
 
-| metric | 0.3.0 | `de96112` |
-|---|---|---|
-| false successes (silent wrong answers) | 19/52 (37%) | **27/59 (46%)** |
-| field accuracy | 0.71 | **0.85** |
-| documents fully right | 53% | 68% |
-| document type right | 139 | 176 |
-| documents in review | 143 | 136 |
-| median seconds per document | 7.1 | 8.7 |
+| metric | 0.3.0 | `de96112` | `68f8eea` |
+|---|---|---|---|
+| false successes (silent wrong answers) | 19/52 (37%) | 27/59 (46%) | **13/66 (20%)** |
+| field accuracy | 0.71 | 0.85 | **0.88** |
+| documents fully right | 53% | 68% | **73%** |
+| document type right | 139 | 176 | **183** |
+| documents in review | 143 | 136 | **129** (133 at the 0.80 default) |
+| median seconds per document | 7.1 | 8.7 | **7.7** |
 
 By source (`de96112`): golden 0.96, donut invoices 0.98, SROIE receipts
 0.78 (0.49 before; 110/120 now classified as receipts, 72 before), DocILE
-0.43.
+0.43. By source (`68f8eea`): golden 0.96, donut invoices 0.99, SROIE
+receipts 0.80, DocILE (invoices only) 0.71.
 
 Almost all of the gain is receipt classification. A TAX INVOICE header on
 Malaysian till slips no longer files them under a separate `tax_invoice`
@@ -116,12 +120,31 @@ type (#19). The rise in silent wrong answers comes from the same place:
 receipts that used to be misfiled and sent to review are now filed
 correctly, and a few of their fields are still misread on degraded thermal
 paper. The date check (#22) and payment check (#23) were added against
-exactly those cases; see the CHANGELOG. Two more came after them and are
-also unmeasured: a document number must be printed on the line it cites, and
-a key field read from OCR words below `DOCKET_MIN_SOURCE_CONFIDENCE` goes to
-review. Most "misclassified invoices" on
-DocILE were purchase orders, contracts and proposals labelled `invoice` by
-our downloader, which is why DocILE is now filtered.
+exactly those cases, and the `68f8eea` run measures all four checks
+together: a key field read from OCR words below `DOCKET_MIN_SOURCE_CONFIDENCE`
+sent 57 documents to review, 17 of them actually wrong (30% precision); a
+document number must be printed on the line it cites, and that check flagged
+no document on this corpus. `DOCKET_MIN_SOURCE_CONFIDENCE` was chosen
+from the same run by re-scoring the per-document key-field confidences it
+recorded (`eval/analyze_pr30.py`):
+
+| threshold | false successes | documents in review |
+|---|---|---|
+| 0.50 | 13/66 (20%) | 107/195 (55%) |
+| 0.60 | 13/66 (20%) | 114/195 (59%) |
+| 0.70 | 13/66 (20%) | 124/195 (64%) |
+| 0.75 (previous default) | 13/66 (20%) | 129/195 (66%) |
+| **0.80 (new default)** | **12/62 (19%)** | 133/195 (68%) |
+| 0.85 | 11/53 (21%) | 142/195 (73%) |
+| 0.90 | 9/44 (21%) | 151/195 (77%) |
+
+0.80 is the sweep's minimum, though only by one document, so treat it as a
+reasonable setting rather than a calibrated one: every threshold at or below 0.75 leaves the
+same 13 false successes, and above 0.80 the silent set loses correct
+documents faster than wrong ones, so the rate rises while reviews grow.
+Most "misclassified invoices" on DocILE were purchase orders, contracts and
+proposals labelled `invoice` by our downloader, which is why DocILE is now
+filtered.
 
 ## Against the pip-installable competition
 
