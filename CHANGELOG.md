@@ -8,8 +8,29 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+### Added
+
+- `verify(document, text, document_type=...)`: docket's deterministic checks
+  on an extraction made elsewhere (another LLM, a cloud OCR service), returning
+  a `DocumentResult` that `export_document` accepts or refuses like its own.
+- A document number (`invoice_number`, `po_number`, …) must be printed on the
+  line it cites; a model that cited one line and wrote another number was
+  previously accepted.
+- `DOCKET_MIN_SOURCE_CONFIDENCE` (0.75): a key field whose cited words OCR
+  recognised below it sends the document to review instead of succeeding.
+
+### Changed
+
+- `export_document` on a schema instance (not a `DocumentResult`) now runs
+  the schema's checks first and refuses on errors when `require_valid` is set.
+- The false-success rate is the headline benchmark metric in the README and
+  BENCHMARKS.
+
 ### Removed
 
+- The `boarding_pass` and `acceptance_act` schemas (`BoardingPass`,
+  `AcceptanceAct`, `AcceptanceActItem`, their validators, examples, fixtures
+  and golden scans): docket covers accounts-payable documents.
 - The experimental `delivery_note` schema (`DeliveryNote`, `DeliveryNoteItem`,
   its validator, examples, fixtures and golden scan). It was never measured
   and overlapped the stable `waybill`. `delivery_note` stays a document

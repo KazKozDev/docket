@@ -15,9 +15,7 @@ from datetime import date, datetime
 from . import amounts, checksums
 from .catalog.common import Party
 from .catalog.models import (
-    AcceptanceAct,
     BankStatement,
-    BoardingPass,
     Contract,
     CreditNote,
     PurchaseOrder,
@@ -491,6 +489,40 @@ def _check_cited_dates(document, raw_text: str) -> list[ValidationIssue]:
             issues.append(ValidationIssue(
                 field=field,
                 message=f"{value.isoformat()} cites {short!r}, whose printed date cannot be read as that day",
+            ))
+    return issues
+
+
+def _alnum(text: str) -> str:
+    return "".join(ch for ch in text.casefold() if ch.isalnum())
+
+
+def _check_cited_identifiers(document, raw_text: str) -> list[ValidationIssue]:
+    """A document number must be printed on the line it cites.
+
+    The location check only proves the quote is on the page; an amount is
+    then checked against the numbers on it, a date against its dates. A
+    number like "INV-2026-001" had no such check, so a model that read
+    one number and wrote another — or cited the header and invented the
+    rest — passed. Spacing and punctuation are ignored ("INV 2026/001"
+    prints the same identifier); anything else is a different number.
+    """
+    if "[PAGE " not in raw_text:
+        return []
+    locations = getattr(document, "field_locations", None) or {}
+    issues: list[ValidationIssue] = []
+    for field in type(document).model_fields:
+        value = getattr(document, field, None)
+        location = locations.get(field)
+        if not field.endswith("_number") or not isinstance(value, str) or not _alnum(value):
+            continue
+        if location is None or not (location.quote or "").strip():
+            continue
+        if _alnum(value) not in _alnum(location.quote):
+            quote = location.quote if len(location.quote) <= 60 else location.quote[:57] + "..."
+            issues.append(ValidationIssue(
+                field=field,
+                message=f"{value!r} cites {quote!r}, which does not print it — the value was not read there",
             ))
     return issues
 
@@ -1402,84 +1434,6 @@ def validate_contract(c: Contract, ctx: ValidationContext) -> list[ValidationIss
     return issues
 
 
-_IATA_RE = re.compile(r"^[A-Z]{3}$")
-_FLIGHT_RE = re.compile(r"^[A-Z0-9]{2,3}\s?\d{1,4}[A-Z]?$")
-_PNR_RE = re.compile(r"^[A-Z0-9]{6}$")
-
-
-def validate_boarding_pass(bp: BoardingPass, ctx: ValidationContext) -> list[ValidationIssue]:
-    raw_text = ctx.raw_text
-    """A boarding pass has no sums to reconcile, so the checks are all about
-    controlled vocabularies: IATA station codes, a carrier-prefixed flight
-    number, a six-character record locator. Those formats are exact, which
-    makes a violation proof of a bad read rather than a hint.
-    """
-    issues: list[ValidationIssue] = []
-
-    if not bp.passenger_name.strip():
-        issues.append(
-            ValidationIssue(field="passenger_name", message="empty passenger name")
-        )
-
-    for field, code in (
-        ("departure_airport", bp.departure_airport),
-        ("arrival_airport", bp.arrival_airport),
-    ):
-        if not _IATA_RE.match(code.strip().upper()):
-            issues.append(
-                ValidationIssue(
-                    field=field,
-                    message=f"{code!r} is not a three-letter IATA station code",
-                )
-            )
-
-    if bp.departure_airport.strip().upper() == bp.arrival_airport.strip().upper():
-        issues.append(
-            ValidationIssue(
-                field="arrival_airport",
-                message="departure and arrival airports are the same",
-            )
-        )
-
-    if not _FLIGHT_RE.match(bp.flight_number.strip().upper()):
-        issues.append(
-            ValidationIssue(
-                field="flight_number",
-                message=f"{bp.flight_number!r} doesn't look like a carrier code plus flight number",
-            )
-        )
-
-    if not _PNR_RE.match(bp.booking_reference.strip().upper()):
-        issues.append(
-            ValidationIssue(
-                field="booking_reference",
-                message=f"{bp.booking_reference!r} is not a six-character record locator",
-            )
-        )
-
-    issues.extend(
-        _check_date_range(
-            "departure_datetime", bp.departure_datetime.date(), max_years_ahead=2
-        )
-    )
-
-    if raw_text is not None:
-        normalized_text = _normalize(raw_text)
-        for field, value in (
-            ("booking_reference", bp.booking_reference),
-            ("flight_number", bp.flight_number),
-        ):
-            if value.strip() and not _appears_in(value, normalized_text):
-                issues.append(
-                    ValidationIssue(
-                        field=field,
-                        message=f"{value!r} does not appear in the document text",
-                    )
-                )
-
-    return issues
-
-
 def validate_purchase_order(po: PurchaseOrder, ctx: ValidationContext) -> list[ValidationIssue]:
     issues: list[ValidationIssue] = []
     if not po.po_number.strip():
@@ -1646,105 +1600,6 @@ def validate_bank_statement(stmt: BankStatement, ctx: ValidationContext) -> list
     return issues
 
 
-def validate_acceptance_act(act: AcceptanceAct, ctx: ValidationContext) -> list[ValidationIssue]:
-    issues: list[ValidationIssue] = []
-
-    if not act.act_number.strip():
-        issues.append(
-            ValidationIssue(
-                field="act_number", message="empty act number", severity="error"
-            )
-        )
-    if not act.customer_name.strip():
-        issues.append(
-            ValidationIssue(
-                field="customer_name", message="empty customer name", severity="error"
-            )
-        )
-    if not act.contractor_name.strip():
-        issues.append(
-            ValidationIssue(
-                field="contractor_name",
-                message="empty contractor name",
-                severity="error",
-            )
-        )
-
-    if _core_name(act.customer_name) == _core_name(act.contractor_name):
-        issues.append(
-            ValidationIssue(
-                field="contractor_name",
-                message="customer and contractor resolve to the same entity",
-                severity="error",
-            )
-        )
-
-    issues.extend(_check_date_range("act_date", act.act_date, max_years_ahead=1))
-
-    # Total check: subtotal + tax_amount == total_amount
-    expected_total = round(act.subtotal + act.tax_amount, 2)
-    if not _isclose(expected_total, act.total_amount):
-        issues.append(
-            ValidationIssue(
-                field="total_amount",
-                message=f"subtotal ({act.subtotal:.2f}) + tax ({act.tax_amount:.2f}) = {expected_total:.2f}, total_amount says {act.total_amount:.2f}",
-                severity="error",
-            )
-        )
-
-    # Line items check
-    if act.items:
-        for idx, item in enumerate(act.items):
-            expected_item_total = round(item.quantity * item.unit_price, 2)
-            if not _isclose(expected_item_total, item.total):
-                issues.append(
-                    ValidationIssue(
-                        field=f"items[{idx}]",
-                        message=(
-                            f"quantity ({item.quantity}) * unit_price ({item.unit_price:.2f}) = {expected_item_total:.2f}, "
-                            f"does not match line total {item.total:.2f}"
-                        ),
-                        severity="error",
-                    )
-                )
-        items_sum = round(sum(i.total for i in act.items), 2)
-        if not _isclose(items_sum, act.subtotal):
-            issues.append(
-                ValidationIssue(
-                    field="items",
-                    message=f"items sum to {items_sum:.2f}, but subtotal is {act.subtotal:.2f}",
-                    severity="error",
-                )
-            )
-
-    # Check contractor and customer tax IDs if present
-    for field_name, tax_val in [
-        ("contractor_tax_id", act.contractor_tax_id),
-        ("customer_tax_id", act.customer_tax_id),
-    ]:
-        if tax_val:
-            tax_ok, scheme = checksums.validate_tax_id(tax_val)
-            if tax_ok is False:
-                issues.append(
-                    ValidationIssue(
-                        field=field_name,
-                        message=f"{tax_val!r} fails the {scheme} checksum or format",
-                        severity="error",
-                    )
-                )
-
-    if not act.claims_waived:
-        issues.append(
-            ValidationIssue(
-                field="claims_waived",
-                message="act records reservations or outstanding claims between parties",
-                severity="warning",
-            )
-        )
-
-    return issues
-
-
 def validate_waybill(wb: Waybill, ctx: ValidationContext) -> list[ValidationIssue]:
     issues: list[ValidationIssue] = []
 
@@ -1872,6 +1727,7 @@ def validate(
         issues.extend(_check_material_locations(document, raw_text, spec.required_citations))
     if raw_text:
         issues.extend(_check_cited_dates(document, raw_text))
+        issues.extend(_check_cited_identifiers(document, raw_text))
     for validator in spec.validators:
         issues.extend(validator(document, ctx) or [])
     return issues

@@ -104,6 +104,9 @@
 # Python library; enable it explicitly for the review UI. Env:
 # DOCKET_REVIEW_QUEUE_ENABLED.
 # enabled = false
+# A key field (total, date, number, parties) read from OCR words below this
+# confidence sends the document to review. Env: DOCKET_MIN_SOURCE_CONFIDENCE.
+# min_source_confidence = 0.75
 # SQLAlchemy URL for SQLite or PostgreSQL review storage. Env: DOCKET_REVIEW_DATABASE_URL.
 # database_url = "sqlite:///data/review.db"
 # Review task lease duration before another reviewer can claim it. Env: DOCKET_REVIEW_LOCK_SECONDS.

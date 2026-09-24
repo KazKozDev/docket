@@ -81,9 +81,9 @@
     }
   },
   "names": [
-    "AcceptanceAct", "Address", "BackendUnavailable", "BankAccount", "BankStatement",
+    "Address", "BackendUnavailable", "BankAccount", "BankStatement",
     "BankTransaction", "BatchError", "BatchMetrics", "BatchOptions", "BatchResult",
-    "BoardingPass", "BoundingBox", "Capabilities", "Citation", "CitedDocument",
+    "BoundingBox", "Capabilities", "Citation", "CitedDocument",
     "ClassificationResult", "ConfigurationError", "Contract", "CreditNote", "Discrepancy",
     "DiscrepancyType", "DocumentError", "DocumentLayout", "DocumentReference", "DocumentResult",
     "DocumentStatus", "EInvoiceProfile", "EInvoiceResourcesMissing", "EInvoiceUnavailable", "EInvoiceValidationOptions",
@@ -101,6 +101,6 @@
     "list_vendor_templates", "load_schema", "match_invoice_to_po", "match_invoices_to_contract", "match_receipt_to_transactions",
     "match_three_way", "migrate", "pii_fields", "process_batch", "process_document",
     "register_exporter", "register_ocr_backend", "register_schema", "register_vendor_template", "unregister_schema",
-    "unregister_vendor_template", "validate_einvoice", "validate_pdfa", "verify_facturx_round_trip"
+    "unregister_vendor_template", "validate_einvoice", "validate_pdfa", "verify", "verify_facturx_round_trip"
   ]
 }

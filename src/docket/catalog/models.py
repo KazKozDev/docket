@@ -3,8 +3,8 @@
 Invoice-family documents (invoice, credit note, tax invoice, purchase order)
 and every schema added in 2.x are built from the shared blocks in
 `common.py` — Party, Address, TaxIdentifier, DocumentReference, Money. The
-older flat schemas (receipt, contract, boarding pass, bank statement,
-acceptance act, waybill) keep their field layout.
+older flat schemas (receipt, contract, bank statement, waybill) keep their
+field layout.
 
 Each model doubles as the contract handed to the LLM (its JSON Schema) and
 as the first validator of what comes back. Registration metadata — ids,
@@ -12,7 +12,7 @@ versions, keywords, cited fields, rules — lives in `builtin.py`.
 """
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date
 from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
@@ -289,37 +289,6 @@ class Contract(CitedDocument):
     key_obligations: list[str] = Field(default_factory=list)
 
 
-class BoardingPass(CitedDocument):
-    """Airline travel document. Unlike an invoice it has no arithmetic to
-    check, but almost every field is drawn from a controlled vocabulary —
-    IATA codes, a carrier-prefixed flight number, a six-character booking
-    reference — so the validation leans on format rules instead of sums.
-    """
-
-    passenger_name: str = Field(json_schema_extra={"pii": "person_name"})
-    booking_reference: str = Field(
-        description="Six-character PNR / record locator, e.g. 'X4H2QP'.",
-        json_schema_extra={"pii": "travel"},
-    )
-    flight_number: str = Field(
-        description="Carrier code plus number, e.g. 'IB3241' or 'BA475'.",
-        json_schema_extra={"pii": "travel"},
-    )
-    departure_airport: str = Field(
-        description="Three-letter IATA code of the origin, e.g. 'BCN'.",
-        json_schema_extra={"pii": "travel"},
-    )
-    arrival_airport: str = Field(
-        description="Three-letter IATA code of the destination, e.g. 'LHR'.",
-        json_schema_extra={"pii": "travel"},
-    )
-    departure_datetime: datetime = Field(json_schema_extra={"pii": "travel"})
-    boarding_time: str | None = Field(default=None, json_schema_extra={"pii": "travel"})
-    seat: str | None = Field(default=None, json_schema_extra={"pii": "travel"})
-    gate: str | None = Field(default=None, json_schema_extra={"pii": "travel"})
-    cabin_class: str | None = Field(default=None, json_schema_extra={"pii": "travel"})
-
-
 class BankStatementTransaction(BaseModel):
     transaction_date: date
     value_date: date | None = None
@@ -345,35 +314,6 @@ class BankStatement(CitedDocument):
     total_deposits: float = 0.0
     total_withdrawals: float = 0.0
     transactions: list[BankStatementTransaction] = Field(default_factory=list)
-
-
-class AcceptanceActItem(BaseModel):
-    description: str
-    quantity: float = 1.0
-    unit_price: float
-    total: float
-    unit_of_measure: str | None = None
-
-
-class AcceptanceAct(CitedDocument):
-    act_number: str
-    act_date: date
-    contract_reference: str | None = None
-    invoice_reference: str | None = None
-    customer_name: str = Field(json_schema_extra={"pii": "person_name"})
-    customer_tax_id: str | None = Field(default=None, json_schema_extra={"pii": "tax_id"})
-    contractor_name: str = Field(json_schema_extra={"pii": "person_name"})
-    contractor_tax_id: str | None = Field(default=None, json_schema_extra={"pii": "tax_id"})
-    items: list[AcceptanceActItem] = Field(default_factory=list)
-    subtotal: float
-    tax_amount: float = 0.0
-    total_amount: float
-    currency: str = Field(default="USD", min_length=3, max_length=3)
-    claims_waived: bool = Field(
-        default=True,
-        description="Whether the document confirms services were rendered satisfactorily with no mutual claims.",
-    )
-    signatories: list[str] = Field(default_factory=list, json_schema_extra={"pii": "person_name"})
 
 
 class WaybillItem(BaseModel):
@@ -413,11 +353,8 @@ ServiceType = Literal["electricity", "gas", "water", "heating", "telecom", "inte
 
 
 __all__ = [
-    "AcceptanceAct",
-    "AcceptanceActItem",
     "BankStatement",
     "BankStatementTransaction",
-    "BoardingPass",
     "Contract",
     "CreditNote",
     "Invoice",
