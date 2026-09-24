@@ -58,6 +58,43 @@ def parse_amount(raw: str) -> float | None:
         return None
 
 
+# "1 199,97", "48 801,10": thousands grouped by a space — plain, no-break or
+# thin — as France, Poland, the Nordics and Czechia print them. MONEY_RE
+# stops at the space and sees 1 and 199,97; this reads the whole number.
+_SPACES = " \u00a0\u202f\u2009"
+SPACE_GROUPED_RE = re.compile(
+    rf"(?<![\w.,])\d{{1,3}}(?:[{_SPACES}]\d{{3}})+(?:[.,]\d{{1,2}})?(?!\w|[.,]\d)"
+)
+
+
+def amount_readings(text: str) -> list[tuple[int, float]]:
+    """Every way the amounts in `text` can be read, as (offset, value).
+
+    Besides each token MONEY_RE finds, a space-grouped number also counts
+    whole ("1 199,97" gives 1.0, 199.97 and 1199.97), and an amount in
+    accounting parentheses or after a minus also counts negative
+    ("(5,020.24)" gives 5020.24 and -5020.24). A space or a dash between two
+    numbers is ambiguous — a quantity and a price, or a separator — so the
+    readings are added, never substituted: a value that matches any of them
+    is printed on the line; one that matches none is not.
+    """
+    readings: list[tuple[int, float]] = []
+    for match in MONEY_RE.finditer(text):
+        value = parse_amount(match.group(1))
+        if value is None:
+            continue
+        readings.append((match.start(), value))
+        before = text[: match.start()].rstrip(_SPACES + "$€£")
+        after = text[match.end():].lstrip(_SPACES)
+        if value and ((before.endswith("(") and after.startswith(")")) or before.endswith(("-", "−"))):
+            readings.append((match.start(), -value))
+    for match in SPACE_GROUPED_RE.finditer(text):
+        value = parse_amount(re.sub(f"[{_SPACES}]", "", match.group(0)))
+        if value is not None:
+            readings.append((match.start(), value))
+    return readings
+
+
 def amounts_in(text: str) -> list[float]:
     """Every parseable money amount in a string, in order of appearance."""
     values = []

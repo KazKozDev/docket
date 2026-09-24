@@ -89,11 +89,8 @@ def _amounts_on_line(line: str) -> list[float]:
     """
     values: list[float] = []
     percent_spans = [m.span() for m in _PERCENT_RE.finditer(line)]
-    for match in amounts.MONEY_RE.finditer(line):
-        if any(start <= match.start() < end for start, end in percent_spans):
-            continue
-        value = amounts.parse_amount(match.group(1))
-        if value is not None:
+    for offset, value in amounts.amount_readings(line):
+        if not any(start <= offset < end for start, end in percent_spans):
             values.append(value)
     return values
 

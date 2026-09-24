@@ -6,7 +6,7 @@ silently, inside the layer whose whole job is catching errors.
 """
 import pytest
 
-from docket.amounts import amounts_in, parse_amount
+from docket.amounts import amount_readings, amounts_in, parse_amount
 
 
 @pytest.mark.parametrize(
@@ -53,3 +53,32 @@ def test_the_two_conventions_agree_on_the_same_invoice():
     spanish = amounts_in("1.234,56")
     american = amounts_in("1,234.56")
     assert spanish == american == [1234.56]
+
+
+def _values(text):
+    return [value for _, value in amount_readings(text)]
+
+
+@pytest.mark.parametrize("line, amount", [
+    ("$ 48 801,10", 48801.10),            # plain space
+    ("1 199,97", 1199.97),           # no-break space
+    ("Total 12 261,98 €", 12261.98),  # narrow no-break space
+    ("143 572,15", 143572.15),            # two groups
+])
+def test_space_grouped_thousands_are_read_whole(line, amount):
+    assert amount in _values(line)
+
+
+def test_space_grouping_adds_a_reading_and_keeps_the_separate_ones():
+    # "2 100.00" can be a quantity and a price; both readings stay.
+    assert _values("Qty 2 100.00") == [2.0, 100.0, 2100.0]
+
+
+def test_accounting_parentheses_and_minus_read_negative_too():
+    assert _values("$ (5,020.24)") == [5020.24, -5020.24]
+    assert -60.0 in _values("Discount -60.00")
+
+
+def test_spaced_digits_that_are_not_thousands_stay_apart():
+    assert _values("10 27 20") == [10.0, 27.0, 20.0]
+    assert _values("1 2345,00") == [1.0, 2345.0]
