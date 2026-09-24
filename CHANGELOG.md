@@ -16,8 +16,8 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 - A document number (`invoice_number`, `po_number`, …) must be printed on the
   line it cites; a model that cited one line and wrote another number was
   previously accepted.
-- `DOCKET_MIN_SOURCE_CONFIDENCE` (0.80, calibrated on the 195-scan benchmark
-  corpus — see BENCHMARKS): a key field whose cited words OCR
+- `DOCKET_MIN_SOURCE_CONFIDENCE` (0.80, the best of a threshold sweep on one
+  195-scan run, one document ahead of 0.75 — see BENCHMARKS): a key field whose cited words OCR
   recognised below it sends the document to review instead of succeeding.
 
 ### Changed

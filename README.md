@@ -96,7 +96,7 @@ Registered schemas are classified, extracted, citation-checked and exported like
 
 ## Measure extraction accuracy on public datasets
 
-The number that matters most is how often docket says "succeeded" and is wrong, because that result goes straight into the books unseen. On the latest full run it was **13 of 66 silent successes (20%)**, down from 27 of 59 (46%) before the checks that target it (date order, payment arithmetic, document numbers against their cited line, OCR confidence on key fields); excluding the SROIE Malaysian receipts, which the checks are not tuned for, it is **3 of 24 (13%)**. On that run the confidence check sent 57 documents to review, 17 of them actually wrong; the document-number check flagged none.
+The number that matters most is how often docket says "succeeded" and is wrong, because that result goes straight into the books unseen. On the latest full run it was **13 of 66 silent successes (20%)**, down from 27 of 59 (46%) on a slightly different corpus before the checks that target it (date order, payment arithmetic, document numbers against their cited line, OCR confidence on key fields); excluding the SROIE Malaysian receipts, which the checks are not tuned for, it is **3 of 24 (13%)**. On that run the confidence check sent 57 documents to review, 17 of them actually wrong; the document-number check flagged none.
 
 195 scans: the project's labelled golden set plus real documents from public Hugging Face datasets (DocILE, SROIE, CORD, FUNSD, RVL-CDIP, donut-style invoices), graded field by field against the datasets' own ground truth. On the same run, docket gets **0.88 field accuracy**: 0.96 on the golden set, 0.99 on donut invoices, 0.80 on SROIE receipts. 73% of documents come back with every field right.
 
