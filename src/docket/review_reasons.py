@@ -45,21 +45,29 @@ def _weakly_read_fields(result: DocumentResult) -> list[str]:
     that looks past the text, so a low one on a field that must be right
     goes to a human instead of out as a success.
     """
+    floor = config.MIN_SOURCE_CONFIDENCE
+    return [
+        f"{field} was read from words OCR recognised with low confidence ({weakest:.2f} < {floor:.2f})"
+        for field, weakest in key_field_confidence(result).items()
+        if weakest is not None and weakest < floor
+    ]
+
+
+def key_field_confidence(result: DocumentResult) -> dict[str, float | None]:
+    """For each cited field of the result's schema: the lowest OCR confidence
+    among the words its citation resolved to (a list field counts each
+    element). None when no citation carries one, e.g. a PDF text layer."""
     from . import catalog
 
     spec = catalog.get_schema(result.schema_id) if result.schema_id else None
     if spec is None:
-        return []
-    floor = config.MIN_SOURCE_CONFIDENCE
-    reasons = []
+        return {}
+    confidences = {}
     for field in spec.required_citations:
         sources = [s for key, s in result.field_sources.items() if key == field or key.startswith(f"{field}[")]
-        weakest = min((s.confidence for s in sources if s.confidence is not None), default=None)
-        if weakest is not None and weakest < floor:
-            reasons.append(
-                f"{field} was read from words OCR recognised with low confidence ({weakest:.2f} < {floor:.2f})"
-            )
-    return reasons
+        if sources:
+            confidences[field] = min((s.confidence for s in sources if s.confidence is not None), default=None)
+    return confidences
 
 
-__all__ = ["reasons_for"]
+__all__ = ["key_field_confidence", "reasons_for"]
