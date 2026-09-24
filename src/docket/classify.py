@@ -9,7 +9,6 @@ all three the moment it is registered.
 """
 from __future__ import annotations
 
-import re
 
 from . import catalog, config
 from .classify_tfidf import classify_tfidf

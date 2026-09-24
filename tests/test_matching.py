@@ -6,7 +6,7 @@ from docket.matching import (
     match_receipt_to_transactions,
     match_three_way,
 )
-from docket.catalog import Contract, Invoice, LineItem, PurchaseOrder, Receipt, Waybill, WaybillItem
+from docket.catalog import Contract, LineItem, Receipt, Waybill, WaybillItem
 from docket.schemas import BankTransaction, DiscrepancyType, MatchingStatus
 from tests.factories import flat_invoice, flat_po
 

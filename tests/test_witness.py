@@ -19,9 +19,9 @@ from docket.layout import build_page, text_only_page
 from docket.ocr import AcquisitionOptions, acquire
 from docket.ocr.tesseract import page_confidence, words_from_data
 from docket.ocr.witness import confident_amounts
-from docket.catalog import Invoice, LineItem
+from docket.catalog import LineItem
 from docket.validate import validate
-from tests.factories import ScriptedBackend, flat_invoice, flat_po, words_page, write_png
+from tests.factories import ScriptedBackend, flat_invoice, words_page, write_png
 
 
 def _invoice(**overrides):

@@ -72,7 +72,7 @@ def test_ids_link_words_lines_and_blocks():
     for line in page.lines:
         for word_id in line.word_ids:
             assert page.word(word_id).line_id == line.id
-    assert len(page.blocks) == 1 and page.blocks[0].line_ids == [l.id for l in page.lines]
+    assert len(page.blocks) == 1 and page.blocks[0].line_ids == [line.id for line in page.lines]
     assert all(w.block_id == page.blocks[0].id for w in page.words)
 
 

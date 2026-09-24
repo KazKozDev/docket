@@ -3,7 +3,7 @@ from datetime import date
 import pytest
 from pydantic import ValidationError
 
-from docket.catalog import AcceptanceAct, AcceptanceActItem, BankStatement, BankStatementTransaction, Contract, Invoice, LineItem, PurchaseOrder, Receipt, ReceiptItem, Waybill, WaybillItem
+from docket.catalog import AcceptanceAct, AcceptanceActItem, BankStatement, BankStatementTransaction, Contract, LineItem, Receipt, ReceiptItem, Waybill, WaybillItem
 from tests.factories import flat_invoice, flat_po
 
 

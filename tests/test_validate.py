@@ -1,6 +1,6 @@
 from datetime import date
 
-from docket.catalog import AcceptanceAct, AcceptanceActItem, BankStatement, BankStatementTransaction, Contract, Invoice, LineItem, PurchaseOrder, Receipt, ReceiptItem, Waybill, WaybillItem
+from docket.catalog import AcceptanceAct, AcceptanceActItem, BankStatement, BankStatementTransaction, Contract, Invoice, LineItem, Receipt, ReceiptItem, Waybill, WaybillItem
 from docket.validate import assess_contract_risks, validate
 from tests.factories import flat_invoice, flat_po
 

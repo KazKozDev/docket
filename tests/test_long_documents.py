@@ -1,6 +1,5 @@
 from datetime import date
 
-import pymupdf as fitz
 
 from docket import extract as extract_module
 from docket.catalog import Invoice

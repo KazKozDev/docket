@@ -20,7 +20,6 @@ from .catalog.models import (
     BoardingPass,
     Contract,
     CreditNote,
-    Invoice,
     PurchaseOrder,
     Receipt,
     Waybill,
@@ -1482,7 +1481,6 @@ def validate_boarding_pass(bp: BoardingPass, ctx: ValidationContext) -> list[Val
 
 
 def validate_purchase_order(po: PurchaseOrder, ctx: ValidationContext) -> list[ValidationIssue]:
-    raw_text = ctx.raw_text
     issues: list[ValidationIssue] = []
     if not po.po_number.strip():
         issues.append(
@@ -1543,7 +1541,6 @@ def validate_purchase_order(po: PurchaseOrder, ctx: ValidationContext) -> list[V
 
 
 def validate_bank_statement(stmt: BankStatement, ctx: ValidationContext) -> list[ValidationIssue]:
-    raw_text = ctx.raw_text
     issues: list[ValidationIssue] = []
 
     if not stmt.bank_name.strip():
@@ -1650,7 +1647,6 @@ def validate_bank_statement(stmt: BankStatement, ctx: ValidationContext) -> list
 
 
 def validate_acceptance_act(act: AcceptanceAct, ctx: ValidationContext) -> list[ValidationIssue]:
-    raw_text = ctx.raw_text
     issues: list[ValidationIssue] = []
 
     if not act.act_number.strip():
@@ -1750,7 +1746,6 @@ def validate_acceptance_act(act: AcceptanceAct, ctx: ValidationContext) -> list[
 
 
 def validate_waybill(wb: Waybill, ctx: ValidationContext) -> list[ValidationIssue]:
-    raw_text = ctx.raw_text
     issues: list[ValidationIssue] = []
 
     if not wb.waybill_number.strip():
