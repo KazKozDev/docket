@@ -21,7 +21,6 @@ from .models import (
     BoardingPass,
     Contract,
     CreditNote,
-    DeliveryNote,
     Invoice,
     PurchaseOrder,
     Receipt,
@@ -30,7 +29,6 @@ from .models import (
 from .registry import LineItems, Migration, SchemaSpec, _register, keywords, pattern
 from .rules import (
     validate_credit_note,
-    validate_delivery_note,
 )
 
 
@@ -358,22 +356,6 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         ),
         migrations=_FLAT_MIGRATION,
     ),
-    SchemaSpec(
-        schema_id="delivery_note",
-        version="1.0",
-        display_name="Delivery note",
-        status="experimental",
-        model=DeliveryNote,
-        description="Delivery note / packing slip / Lieferschein listing goods handed over to the recipient",
-        keywords=keywords(
-            "delivery note", "delivery slip", "packing slip", "lieferschein", "bon de livraison",
-            "albarán de entrega", "nota de entrega", "bolla di consegna", "pakbon", "leveringsbon",
-            "guia de remessa", "dowód dostawy",
-        ) + keywords("received by", "empfangen", "quantity delivered", "gelieferte menge", weight=1.0),
-        summary={"document_number": "delivery_note_number", "document_date": "delivery_date", "issuer": "supplier.name", "recipient": "recipient.name"},
-        line_items=LineItems("items", {"description": "description", "sku": "sku", "quantity": "quantity_delivered", "unit_of_measure": "unit_of_measure"}),
-        cited_fields=("delivery_note_number", "delivery_date", "supplier.name", "recipient.name"),
-    ),
 )
 
 
@@ -401,7 +383,6 @@ def register_builtins() -> None:
         "acceptance_act": (validate_acceptance_act,),
         "waybill": (validate_waybill,),
         "boarding_pass": (validate_boarding_pass,),
-        "delivery_note": (validate_delivery_note,),
     }
     for spec in BUILTIN_SCHEMAS:
         _register(

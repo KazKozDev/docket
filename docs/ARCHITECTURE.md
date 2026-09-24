@@ -309,9 +309,9 @@ keyed by `(schema_id, version)`:
   `Citation`, `CitedDocument`.
 - **Built-ins**: invoice 2.0 and purchase order 2.0 (parties as `Party`,
   PO numbers as references), credit note (same billing structure and rules
-  as the invoice, plus its own), receipt / contract / bank statement /
-  acceptance act / waybill / boarding pass 1.1 (flat, as before, minus
-  `doc_type`) and delivery note 1.0. A GST/VAT "tax invoice" is an
+  as the invoice, plus its own), receipt 1.2 (1.1 plus the payment block)
+  and contract / bank statement / acceptance act / waybill / boarding pass
+  1.1 (flat, as before, minus `doc_type`). A GST/VAT "tax invoice" is an
   invoice: its registration numbers and tax are invoice fields. Fixtures and expected extractions for each are
   in `tests/fixtures/catalog/`.
 - **Versions and migrations**: several versions of a schema can be
