@@ -15,6 +15,14 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   and overlapped the stable `waybill`. `delivery_note` stays a document
   reference kind, so an invoice can still cite a delivery note number.
 
+### Changed
+
+- Published benchmark numbers updated to the latest full run (commit
+  de96112, 195 scans): field accuracy 0.85 (0.71 on 0.3.0, same documents),
+  and docket against docpick / ocrcontext / invoice2data on their own
+  documents and fields 0.85 / 0.83 / 0.89. The README table no longer mixes
+  docket's overall score with the head-to-head rows.
+
 ### Fixed
 
 - Receipts carry the printed payment block (`amount_tendered`,
