@@ -5,6 +5,8 @@ the LLM — see tests/test_metrics.py.
 """
 from __future__ import annotations
 
+import re
+
 
 def value_at(data: dict | None, path: str):
     """Value at a dotted path with optional list indices; None if absent."""
@@ -47,6 +49,18 @@ def field_accuracy(extracted: dict | None, expected: dict) -> tuple[int, int, li
     return correct, len(graded_keys), mismatches
 
 
+_PUNCT_RE = re.compile(r"[.,;:/\\\-_()\"*]+")
+
+
+def _canon(text: str) -> str:
+    """A value as a reader would compare it: case, punctuation and spacing
+    are print noise ("SDN.BHD" is "SDN BHD", "TEH." is "TEH", "BEN'S" is
+    "BENS"), letters and word breaks are not ("ANNAMARIA" is not "ANNA
+    MARIA"). Applied to every tool alike."""
+    text = text.lower().replace("'", "").replace("\u2019", "")
+    return " ".join(_PUNCT_RE.sub(" ", text).split())
+
+
 def _values_match(got, expected) -> bool:
     if isinstance(expected, float) or isinstance(got, float):
         try:
@@ -54,7 +68,7 @@ def _values_match(got, expected) -> bool:
         except (TypeError, ValueError):
             return False
     if isinstance(expected, str) and isinstance(got, str):
-        if got.strip().lower() == expected.strip().lower():
+        if _canon(got) == _canon(expected):
             return True
         # Identifiers printed in groups ("CH93 0076 2011 ...") are the same value.
         return not any(c.isspace() for c in expected.strip()) and "".join(got.split()).lower() == expected.strip().lower()
