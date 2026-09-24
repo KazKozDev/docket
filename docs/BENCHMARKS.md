@@ -58,6 +58,16 @@ that stage 2 measures.
 
 ## Extended corpus
 
+**DocILE is filtered to invoices.** The DocILE mirror mixes invoices with
+purchase orders, broadcast contracts, proposals and remittance advices, and
+carries no document type; labelling all of them `invoice` counted docket
+wrong for reading "PURCHASE ORDER" or "NETWORK SPOT CONTRACT" correctly. Since
+September 2026 `download_real_samples.py` keeps a DocILE document only if plain
+Tesseract finds INVOICE / BILL / BILLING in the upper third of the original
+page image, a fixed rule applied before docket sees the document. Of the
+first 28 rows it kept 15 and skipped 13. Results before and after this
+change are not directly comparable on the DocILE rows.
+
 Downloaded with `eval/download_real_samples.py --n` per source, then the
 same benchmark: 198 scans — the golden set plus real documents
 from Hugging Face (DocILE, donut-style invoices, SROIE receipts, CORD,
