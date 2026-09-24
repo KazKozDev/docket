@@ -106,7 +106,7 @@ close but not exactly comparable.
 | field accuracy | 0.71 | 0.85 | **0.88** |
 | documents fully right | 53% | 68% | **73%** |
 | document type right | 139 | 176 | **183** |
-| documents in review | 143 | 136 | **129** |
+| documents in review | 143 | 136 | **129** (133 at the 0.80 default) |
 | median seconds per document | 7.1 | 8.7 | **7.7** |
 
 By source (`de96112`): golden 0.96, donut invoices 0.98, SROIE receipts
@@ -124,7 +124,7 @@ exactly those cases, and the `68f8eea` run measures all four checks
 together: a key field read from OCR words below `DOCKET_MIN_SOURCE_CONFIDENCE`
 sent 57 documents to review, 17 of them actually wrong (30% precision); a
 document number must be printed on the line it cites, and that check flagged
-no document on this corpus. `DOCKET_MIN_SOURCE_CONFIDENCE` is calibrated
+no document on this corpus. `DOCKET_MIN_SOURCE_CONFIDENCE` was chosen
 from the same run by re-scoring the per-document key-field confidences it
 recorded (`eval/analyze_pr30.py`):
 
@@ -138,7 +138,8 @@ recorded (`eval/analyze_pr30.py`):
 | 0.85 | 11/53 (21%) | 142/195 (73%) |
 | 0.90 | 9/44 (21%) | 151/195 (77%) |
 
-0.80 is the sweep's minimum: every threshold at or below 0.75 leaves the
+0.80 is the sweep's minimum, though only by one document, so treat it as a
+reasonable setting rather than a calibrated one: every threshold at or below 0.75 leaves the
 same 13 false successes, and above 0.80 the silent set loses correct
 documents faster than wrong ones, so the rate rises while reviews grow.
 Most "misclassified invoices" on DocILE were purchase orders, contracts and
