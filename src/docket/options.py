@@ -32,6 +32,7 @@ from .ocr import (
     parse_languages,
     resolve_chain,
 )
+from .ocr.preprocess import Preprocessor
 
 BackendSpec = str | OcrBackend
 
@@ -51,6 +52,16 @@ class OcrOptions(BaseModel):
     min_confidence: float | None = Field(default=None, ge=0.0, le=1.0)
     detect_rotation: bool | None = None
     deskew: bool | None = None
+    crop_photos: bool | None = Field(
+        default=None, description="Crop and flatten the document in a photo. Env: DOCKET_OCR_CROP_PHOTOS."
+    )
+    min_text_height: float | None = Field(
+        default=None, ge=0, description="Re-read small text enlarged below this word height (px). Env: DOCKET_OCR_MIN_TEXT_HEIGHT."
+    )
+    preprocess: Preprocessor | None = Field(
+        default=None,
+        description="Your own step on every page image, (image, page number) -> image, after cropping and before OCR.",
+    )
     use_pdf_text: bool = Field(default=True, description="Take a usable PDF text layer without OCR.")
     dpi: int | None = Field(default=None, ge=50, le=600)
     device: str | None = Field(default=None, description="PaddleOCR device. Env: DOCKET_PADDLE_DEVICE.")
@@ -149,6 +160,9 @@ def resolve(options: ProcessOptions | None = None) -> ResolvedOptions:
         dpi=_pick(ocr.dpi, config.OCR_DPI),
         detect_rotation=_pick(ocr.detect_rotation, config.OCR_DETECT_ROTATION),
         deskew=_pick(ocr.deskew, config.OCR_DESKEW),
+        crop_photos=_pick(ocr.crop_photos, config.OCR_CROP_PHOTOS),
+        min_text_height=_pick(ocr.min_text_height, config.OCR_MIN_TEXT_HEIGHT),
+        preprocess=ocr.preprocess,
         tesseract_psm=config.TESSERACT_PSM,
         paddle_model=_pick(ocr.paddle_model, config.PADDLE_MODEL),
         paddle_tables=_pick(ocr.paddle_tables, config.PADDLE_TABLES),

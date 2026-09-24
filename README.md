@@ -112,7 +112,7 @@ Method, per-source results and how to rerun: [docs/BENCHMARKS.md](https://github
 
 ## How it works
 
-Text comes from the cheapest source that works, page by page: PDF text layer, then OCR (Tesseract, PaddleOCR, Docling or a plugin), then a vision model only when OCR is unusable. Classification tries keyword rules, TF-IDF, then an LLM. Extraction fills a Pydantic schema and cites the verbatim line for every value; schema errors go back to the model. Validation never calls a model: arithmetic to the cent, dates, IBAN, VAT and tax-ID check digits, and that every cited line contains the value. Anything uncertain goes to review instead of being silently fixed.
+Text comes from the cheapest source that works, page by page: PDF text layer, then OCR (Tesseract, PaddleOCR, Docling or a plugin), then a vision model only when OCR is unusable. Before OCR, a phone photo of a receipt or invoice is cropped to the paper and flattened (the `[photo]` extra), and Tesseract re-reads small text enlarged; `OcrOptions(preprocess=fn)` adds your own step on every page image. Classification tries keyword rules, TF-IDF, then an LLM. Extraction fills a Pydantic schema and cites the verbatim line for every value; schema errors go back to the model. Validation never calls a model: arithmetic to the cent, dates, IBAN, VAT and tax-ID check digits, and that every cited line contains the value. Anything uncertain goes to review instead of being silently fixed.
 
 ```
 document → text layer / OCR / VLM → classify → extract + cite → validate → JSON or review
@@ -131,6 +131,8 @@ Priority, lowest to highest: defaults, a TOML file (`--config` or `DOCKET_CONFIG
 | `DOCKET_OCR_BACKEND` | `auto` | `tesseract`, `paddle`, `docling`, `auto` or a plugin name |
 | `DOCKET_OCR_FALLBACKS` | `vlm` | Backends tried when a page's reading is rejected |
 | `DOCKET_OCR_LANGUAGES` | `en` | ISO 639-1 codes, e.g. `en,de,fr` |
+| `DOCKET_OCR_CROP_PHOTOS` | `true` | Crop and flatten the document in a photo (needs `[photo]`) |
+| `DOCKET_OCR_MIN_TEXT_HEIGHT` | `20` | Tesseract re-reads a page enlarged when words are shorter than this (px); `0` off |
 | `DOCKET_MIN_CONFIDENCE` | `0.55` | Classification confidence below which a document goes to review |
 | `DOCKET_MIN_SOURCE_CONFIDENCE` | `0.8` | OCR confidence a key field's cited words need, or the document goes to review |
 | `DOCKET_REVIEW_QUEUE_ENABLED` | `false` | Persist flagged documents in the review queue (`[review]` extra) |
@@ -163,6 +165,7 @@ pip install "docket-idp[einvoice]"  # official e-invoice validation
 pip install "docket-idp[review]"    # persistent review queue (SQLAlchemy; [postgres] for PostgreSQL)
 pip install "docket-idp[paddle]"    # PaddleOCR backend
 pip install "docket-idp[docling]"   # Docling/TableFormer backend
+pip install "docket-idp[photo]"     # crop and flatten documents in phone photos (OpenCV)
 pip install "docket-idp[all]"       # + Langfuse tracing and e-invoice validation
 ```
 
