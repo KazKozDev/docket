@@ -26,12 +26,8 @@ HELD_OUT = [
     ("purchase_order", "Merci de livrer les références suivantes à notre entrepôt aux prix de votre offre."),
     ("bank_statement", "Buchungstag, Valuta, Verwendungszweck, Soll, Haben. Kontostand am Ende des Zeitraums."),
     ("bank_statement", "Solde au début de la période, débits, crédits, solde en fin de période."),
-    ("acceptance_act", "Die Leistungen wurden vollständig erbracht und vom Auftraggeber ohne Mängel abgenommen."),
-    ("acceptance_act", "Les prestations ont été réalisées et réceptionnées sans réserve par le client."),
     ("waybill", "Absender, Empfänger, Frachtführer, 18 Packstücke, Gesamtgewicht brutto 612 kg."),
     ("waybill", "Consignor, consignee and carrier details; 6 pallets, gross weight 1,240 kg."),
-    ("boarding_pass", "Flugsteig B12, Sitz 23A, Einstieg ab 09:10, Abflug 09:40."),
-    ("boarding_pass", "Porte 34, siège 7F, embarquement 14:05, départ 14:35."),
     ("credit_note", "We refund the price difference for the faulty items against your earlier bill; nothing is payable."),
     ("credit_note", "Gutgeschriebener Betrag für die beschädigte Lieferung, Bezug: ursprüngliche Rechnung vom 3. März."),
 ]

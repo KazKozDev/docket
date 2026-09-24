@@ -17,8 +17,7 @@ from docket.validate import validate
 
 FIXTURES = Path(__file__).parent / "fixtures" / "catalog"
 IDS = [s.schema_id for s in BUILTIN_SCHEMAS]
-ORIGINAL = {"invoice", "receipt", "contract", "purchase_order", "bank_statement", "acceptance_act", "waybill",
-            "boarding_pass"}
+ORIGINAL = {"invoice", "receipt", "contract", "purchase_order", "bank_statement", "waybill"}
 ADDED = {"credit_note"}
 
 
@@ -61,9 +60,7 @@ def test_keywords_cover_several_languages(schema_id):
         "contract": ["agreement", "Vertrag", "contrat", "contrato"],
         "purchase_order": ["purchase order", "Bestellung", "bon de commande"],
         "bank_statement": ["bank statement", "Kontoauszug", "estratto conto"],
-        "acceptance_act": ["acceptance act", "Abnahmeprotokoll", "verbale di collaudo"],
         "waybill": ["waybill", "Frachtbrief", "lettre de voiture"],
-        "boarding_pass": ["boarding pass", "Bordkarte", "carte d'embarquement"],
     }[schema_id]
     spec = get_schema(schema_id)
     for name in names:

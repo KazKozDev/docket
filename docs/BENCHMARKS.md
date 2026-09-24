@@ -4,6 +4,13 @@ Measurements behind the accuracy and limitation claims in the README. Every
 number is produced by a script in `eval/`; per-document JSON lands in
 `eval/results/`.
 
+The headline metric is the **false-success rate**: of the documents docket
+returns as `succeeded` with nothing for review, the share with at least one
+wrong field (`false_success_rate` in `benchmark_ocr.py` output). A document
+sent to review costs a person a minute; a wrong one that succeeds reaches the
+books unseen. Field accuracy matters, but only after this number is near zero.
+Latest full run: 27/59 (46%), before the checks listed under the results table.
+
 ```bash
 python eval/run_eval.py               # accuracy, P/R/F1, latency on the golden set
 python eval/benchmark_methods.py      # rules vs TF-IDF vs LLM comparison (incl. confidence)
@@ -92,11 +99,11 @@ commit `c0bfa05`. Both columns cover the same 195 documents:
 
 | metric | 0.3.0 | `de96112` |
 |---|---|---|
+| false successes (silent wrong answers) | 19/52 (37%) | **27/59 (46%)** |
 | field accuracy | 0.71 | **0.85** |
 | documents fully right | 53% | 68% |
 | document type right | 139 | 176 |
 | documents in review | 143 | 136 |
-| false successes (silent wrong answers) | 19/52 (37%) | 27/59 (46%) |
 | median seconds per document | 7.1 | 8.7 |
 
 By source (`de96112`): golden 0.96, donut invoices 0.98, SROIE receipts
@@ -109,7 +116,10 @@ type (#19). The rise in silent wrong answers comes from the same place:
 receipts that used to be misfiled and sent to review are now filed
 correctly, and a few of their fields are still misread on degraded thermal
 paper. The date check (#22) and payment check (#23) were added against
-exactly those cases; see the CHANGELOG. Most "misclassified invoices" on
+exactly those cases; see the CHANGELOG. Two more came after them and are
+also unmeasured: a document number must be printed on the line it cites, and
+a key field read from OCR words below `DOCKET_MIN_SOURCE_CONFIDENCE` goes to
+review. Most "misclassified invoices" on
 DocILE were purchase orders, contracts and proposals labelled `invoice` by
 our downloader, which is why DocILE is now filtered.
 

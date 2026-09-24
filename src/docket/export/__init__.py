@@ -118,7 +118,8 @@ class ExportOptions(BaseModel):
         default=True,
         description=(
             "Refuse to export a DocumentResult that failed, has validation errors, or "
-            "needs review. Never emit a binding e-invoice from unchecked data."
+            "needs review, or a schema instance whose own checks fail. Never emit an "
+            "e-invoice from unchecked data."
         ),
     )
 
@@ -142,7 +143,10 @@ def export_document(
     """Render a processed document in the named format.
 
     `source` is a DocumentResult (its typed document is exported) or a schema
-    instance you built yourself (exported as is, no validity check).
+    instance you built yourself. A schema instance has no source text, so
+    its citations can't be checked; its arithmetic, dates and check digits
+    are, and errors there refuse the export like a failed result would. To
+    check an extraction made elsewhere against its document, use `verify()`.
     """
     from ..result import DocumentResult
 
@@ -160,6 +164,17 @@ def export_document(
             raise ExportError(f"{source.source} has no extracted document to export")
     else:
         document = source
+        if options.require_valid:
+            from ..catalog import for_model
+            from ..validate import validate
+
+            spec = for_model(type(document))
+            errors = [i for i in validate(document, spec=spec) if i.severity == "error"] if spec else []
+            if errors:
+                raise ExportError(
+                    f"not exporting {type(document).__name__}: "
+                    + "; ".join(dict.fromkeys(f"{i.field}: {i.message}" for i in errors))
+                )
     content = exporter(document)
     validation = None
     if options.validate_einvoice:

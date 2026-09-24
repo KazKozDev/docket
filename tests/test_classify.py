@@ -97,17 +97,17 @@ def test_ambiguous_text_falls_back_to_llm(monkeypatch):
     assert result.confidence == 0.4
 
 
-def test_llm_classifier_prompt_includes_boarding_pass(monkeypatch):
+def test_llm_classifier_prompt_includes_waybill(monkeypatch):
     captured = []
 
     def fake_chat(prompt):
         captured.append(prompt)
-        return {"doc_type": "boarding_pass", "confidence": 0.8}
+        return {"doc_type": "waybill", "confidence": 0.8}
 
     monkeypatch.setattr(classify_module, "chat_json", fake_chat)
-    result = classify_module.classify_llm("Passenger and itinerary")
-    assert result.doc_type == "boarding_pass"
-    assert '"boarding_pass"' in captured[0]
+    result = classify_module.classify_llm("Consignor and consignee")
+    assert result.doc_type == "waybill"
+    assert '"waybill"' in captured[0]
 
 
 def test_llm_classifier_reads_all_long_document_chunks(monkeypatch):
@@ -115,15 +115,15 @@ def test_llm_classifier_reads_all_long_document_chunks(monkeypatch):
 
     def fake_chat(prompt):
         prompts.append(prompt)
-        if "TAIL_BOARDING_PASS" in prompt:
-            return {"doc_type": "boarding_pass", "confidence": 1.0}
+        if "TAIL_WAYBILL" in prompt:
+            return {"doc_type": "waybill", "confidence": 1.0}
         return {"doc_type": "unknown", "confidence": 0.1}
 
     monkeypatch.setattr(classify_module, "chat_json", fake_chat)
     monkeypatch.setattr(classify_module.config, "EXTRACT_CHUNK_CHARS", 1000)
-    result = classify_module.classify_llm("x" * 1100 + "TAIL_BOARDING_PASS")
+    result = classify_module.classify_llm("x" * 1100 + "TAIL_WAYBILL")
     assert len(prompts) == 2
-    assert result.doc_type == "boarding_pass"
+    assert result.doc_type == "waybill"
 
 
 def test_llm_outage_falls_back_to_tfidf_answer(monkeypatch):
@@ -221,18 +221,6 @@ def test_bank_statement_classified_by_rules():
     assert result.method == "rules"
 
 
-def test_acceptance_act_classified_by_rules():
-    text = """
-    CERTIFICATE OF ACCEPTANCE / ACT OF ACCEPTANCE
-    Act of completion for services rendered under contract #123.
-    Contractor confirms all work completed in full.
-    Both parties confirm no mutual claims exist.
-    """
-    result = classify(text)
-    assert result.doc_type == "acceptance_act"
-    assert result.method == "rules"
-
-
 def test_waybill_classified_by_rules():
     text = """
     INTERNATIONAL CONSIGNMENT NOTE / WAYBILL (CMR)
@@ -260,9 +248,7 @@ def test_waybill_classified_by_rules():
         ("Bon de commande 4711", "purchase_order"),
         ("Kontoauszug Nr. 9 / 2026", "bank_statement"),
         ("Estratto conto corrente", "bank_statement"),
-        ("Abnahmeprotokoll Projekt Alpha", "acceptance_act"),
         ("Frachtbrief / lettre de voiture", "waybill"),
-        ("Bordkarte LH 123", "boarding_pass"),
     ],
 )
 def test_eu_document_names(text, expected):

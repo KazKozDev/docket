@@ -93,7 +93,7 @@ def test_golden_scans_have_complete_ground_truth():
     golden = ROOT / "eval" / "golden_dataset"
     # receipt_scan predates the generator and has no text or table ground truth.
     scans = sorted(p for p in golden.glob("*_scan.expected.json") if p.name != "receipt_scan.expected.json")
-    assert len(scans) >= 15
+    assert len(scans) >= 13
     for path in scans:
         expected = json.loads(path.read_text(encoding="utf-8"))
         document = [p for p in golden.glob(path.name.replace(".expected.json", ".*")) if p != path]

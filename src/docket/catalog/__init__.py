@@ -19,13 +19,10 @@ from .common import (
     TaxIdentifier,
 )
 from .models import (
-    AcceptanceActItem,
     BankStatementTransaction,
     ReceiptItem,
     WaybillItem,
-    AcceptanceAct,
     BankStatement,
-    BoardingPass,
     Contract,
     CreditNote,
     Invoice,
@@ -63,16 +60,13 @@ from .registry import (
 register_builtins()
 
 __all__ = [
-    "AcceptanceActItem",
     "BankStatementTransaction",
     "ReceiptItem",
     "WaybillItem",
-    "AcceptanceAct",
     "Address",
     "BUILTIN_SCHEMAS",
     "BankAccount",
     "BankStatement",
-    "BoardingPass",
     "Citation",
     "CitedDocument",
     "Contract",

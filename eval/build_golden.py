@@ -532,42 +532,6 @@ DOCS: list[Doc] = [
         ],
     ),
     Doc(
-        name="acceptance_act_scan",
-        schema="acceptance_act",
-        pages=[[
-            ("title", "ACT OF ACCEPTANCE OF SERVICES"),
-            ("gap", 20),
-            ("lines", ["Act No. AA-2026-044", "Date: 31 March 2026", "Under Service Agreement No. SA-2025-117"]),
-            ("gap", 30),
-            ("para", "Pixelforge Studio LLC (the \"Contractor\", Tax ID 84-3920175) has rendered and Orion Retail LLC "
-                     "(the \"Customer\", Tax ID 27-5518043) has accepted the following services:"),
-            ("gap", 20),
-            ("table", Table(
-                ["No.", "Service", "Qty", "Price", "Amount"],
-                [["1", "UX research phase", "1", "3,200.00", "3,200.00"],
-                 ["2", "UI design, screens", "24", "150.00", "3,600.00"]],
-                [0.08, 0.46, 0.10, 0.18, 0.18], "llrrr")),
-            ("gap", 20),
-            ("right", ["Subtotal: 6,800.00 USD", "Sales tax: 0.00 USD", "Total: 6,800.00 USD"]),
-            ("gap", 30),
-            ("para", "The services were rendered in full and on time. The Customer has no claims regarding the "
-                     "scope, quality or timing of the services."),
-            ("gap", 40),
-            ("cols", ["Contractor:", "Pixelforge Studio LLC", "Marco Ruiz, CEO"],
-                     ["Customer:", "Orion Retail LLC", "Dana Whitfield, COO"]),
-        ]],
-        expected={
-            "doc_type": "acceptance_act", "act_number": "AA-2026-044", "act_date": "2026-03-31",
-            "contract_reference": "SA-2025-117", "customer_name": "Orion Retail LLC",
-            "contractor_name": "Pixelforge Studio LLC", "subtotal": 6800.0, "total_amount": 6800.0,
-            "currency": "USD", "claims_waived": True,
-        },
-        line_items=[
-            {"description": "UX research phase", "quantity": 1, "total": 3200.0},
-            {"description": "UI design, screens", "quantity": 24, "total": 3600.0},
-        ],
-    ),
-    Doc(
         name="waybill_scan",
         schema="waybill",
         pages=[[
@@ -603,25 +567,6 @@ DOCS: list[Doc] = [
             {"description": "Pine boards 25x100 mm", "quantity": 180},
             {"description": "Birch plywood 18 mm", "quantity": 60},
         ],
-    ),
-    Doc(
-        name="boarding_pass_scan",
-        schema="boarding_pass",
-        size=(1700, 760),
-        margin=70,
-        font_size=30,
-        pages=[[
-            ("title", "BOARDING PASS"),
-            ("gap", 20),
-            ("cols", ["Passenger", "OKONKWO/CHIDI MR", "Flight", "LH 1843", "From", "FRANKFURT FRA"],
-                     ["Booking ref", "K7Q2PL", "Date", "03 OCT 2026  07:25", "To", "BARCELONA BCN"]),
-            ("gap", 20),
-            ("line", "Boarding 06:45    Gate A26    Seat 14C    Economy"),
-        ]],
-        expected={
-            "doc_type": "boarding_pass", "passenger_name": "OKONKWO/CHIDI MR", "booking_reference": "K7Q2PL",
-            "flight_number": "LH 1843", "seat": "14C", "gate": "A26",
-        },
     ),
 ]
 

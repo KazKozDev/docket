@@ -1,6 +1,6 @@
 # Architecture
 
-Docket converts unstructured or semi-structured documents (invoices, receipts, contracts, boarding passes) into validated, auditable JSON objects with line citations and human review escalation.
+Docket converts unstructured or semi-structured documents (invoices, credit notes, receipts, purchase orders, bank statements, waybills, contracts) into validated, auditable JSON objects with line citations and human review escalation.
 
 ```
 +---------------------------------------------------------------------------------------+
@@ -310,7 +310,7 @@ keyed by `(schema_id, version)`:
 - **Built-ins**: invoice 2.0 and purchase order 2.0 (parties as `Party`,
   PO numbers as references), credit note (same billing structure and rules
   as the invoice, plus its own), receipt 1.2 (1.1 plus the payment block)
-  and contract / bank statement / acceptance act / waybill / boarding pass
+  and contract / bank statement / waybill
   1.1 (flat, as before, minus `doc_type`). A GST/VAT "tax invoice" is an
   invoice: its registration numbers and tax are invoice fields. Fixtures and expected extractions for each are
   in `tests/fixtures/catalog/`.
@@ -390,7 +390,6 @@ Validation never calls a model. It executes deterministic arithmetic and mathema
   subtotal already discounted) or below it, so the items-sum and balancing
   rules accept either layout and flag only when neither closes.
 - **Bank Statements**: Validates balance equation `opening_balance + total_deposits - total_withdrawals == closing_balance`, sums of transaction deposits and withdrawals, running balance continuity across consecutive transaction entries, and bank IBAN check digits.
-- **Acceptance Acts**: Validates services completion `subtotal + tax == total_amount`, line item pricing `quantity * unit_price == total`, distinct counterparties (customer != contractor), tax ID formats for customer and contractor, and warns if `claims_waived` is false.
 - **Waybills / Consignment Notes (CMR, ТОРГ-12)**: Validates physical logistics balancing: sum of item quantities vs `total_quantity`, sum of gross weights vs `total_gross_weight_kg`, line item pricing `quantity * unit_price == price`, distinct consignor and consignee, and carrier tracking.
 - **Citation Grounding**: Asserts that every cited quote exists in the document and contains the claimed numerical value.
 - **Contract Legal Validation**: Asserts counterparty sanity (an entity cannot contract with itself; parent/subsidiary relationships trigger reviews), verifies that parties, governing law, payment terms, and signatories exist verbatim in the source text, checks term dates and notice/cure period limits, and runs automated risk factor assessment (unlimited liability, auto-renewal trap).
