@@ -326,3 +326,15 @@ def citation_coverage_summary(rows: list[dict]) -> dict:
         "line_item_citation_coverage": share("line_items", "cited"),
         "line_item_location_coverage": share("line_items", "located"),
     }
+
+
+_SOURCES = (
+    ("invoice_hf", "donut"), ("receipt_sroie", "sroie"), ("invoice_docile", "docile"), ("receipt_hf", "cord"),
+    ("invoice_rvlcdip", "rvl-cdip"), ("other_rvlcdip", "rvl-cdip"), ("form_funsd", "funsd"),
+    ("contract_hf", "contract-hf"),
+)
+
+
+def source_of(name: str) -> str:
+    """The public dataset a document file came from; the golden set otherwise."""
+    return next((label for prefix, label in _SOURCES if name.startswith(prefix)), "golden")
