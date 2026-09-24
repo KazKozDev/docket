@@ -847,8 +847,31 @@ def validate_receipt(rec: Receipt, ctx: ValidationContext) -> list[ValidationIss
                 )
             )
 
+    # Cash handed over minus change returned is what was actually charged.
+    # It catches a total whose decimal point the OCR dropped ("170" for
+    # 1.70, beside "Cash 100.00 / Change 98.30") — self-consistent on its
+    # own, but not with the payment block. Cash rounding (to 0.05 in MY,
+    # CH, ...) is allowed for.
+    if rec.amount_tendered is not None and rec.change_given is not None:
+        paid = rec.amount_tendered - rec.change_given
+        if not _isclose(paid, rec.total_amount, tol=0.05):
+            issues.append(
+                ValidationIssue(
+                    field="total_amount",
+                    message=(
+                        f"amount tendered {rec.amount_tendered:.2f} - change {rec.change_given:.2f} "
+                        f"= {paid:.2f}, total_amount says {rec.total_amount:.2f}"
+                    ),
+                    severity="error",
+                )
+            )
+
     if raw_text is not None:
         numeric_fields = {"total_amount": rec.total_amount}
+        if rec.amount_tendered:
+            numeric_fields["amount_tendered"] = rec.amount_tendered
+        if rec.change_given:
+            numeric_fields["change_given"] = rec.change_given
         if rec.subtotal:
             numeric_fields["subtotal"] = rec.subtotal
         if rec.tax_amount:
@@ -859,6 +882,10 @@ def validate_receipt(rec: Receipt, ctx: ValidationContext) -> list[ValidationIss
             numeric_fields["discount_amount"] = rec.discount_amount
         issues.extend(_check_cited_sources(rec, raw_text, numeric_fields))
         witness_fields = [("total_amount", rec.total_amount)]
+        if rec.amount_tendered:
+            witness_fields.append(("amount_tendered", rec.amount_tendered))
+        if rec.change_given:
+            witness_fields.append(("change_given", rec.change_given))
         if rec.subtotal:
             witness_fields.append(("subtotal", rec.subtotal))
         if rec.tax_amount:

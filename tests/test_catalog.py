@@ -189,3 +189,11 @@ def test_a_1_0_result_still_yields_a_typed_invoice():
                    "customer_name": "B", "subtotal": 1, "total_amount": 1},
     )
     assert result.document.seller.name == "A"
+
+
+def test_receipt_results_of_version_1_1_read_as_1_2():
+    from docket.catalog import migrate
+
+    data = {"merchant_name": "A", "transaction_date": "2026-01-01", "total_amount": 5.0}
+    assert migrate("receipt", data, "1.1") == data
+    assert migrate("receipt", {**data, "doc_type": "receipt"}, "1.0") == data

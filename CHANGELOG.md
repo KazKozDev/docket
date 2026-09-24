@@ -10,6 +10,11 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Fixed
 
+- Receipts carry the printed payment block (`amount_tendered`,
+  `change_given`; receipt schema 1.2, 1.1 results read unchanged), and
+  tendered minus change must equal the total within cash rounding (0.05).
+  It catches a total the OCR misread while the payment lines are right,
+  e.g. "170" for 1.70 beside "Cash 100.00 / Change 98.30".
 - A date must be read from the line it cites. The model sometimes invented
   a date it could not read (2020-01-01, 2024-01-01 on thermal receipts) and
   cited the merchant name or a TAX INVOICE header; the quote existed, so
