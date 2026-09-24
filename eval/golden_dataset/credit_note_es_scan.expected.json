@@ -1,0 +1,72 @@
+{
+  "doc_type": "credit_note",
+  "credit_note_number": "R-2026-0077",
+  "issue_date": "2026-07-02",
+  "seller.name": "Suministros Levante SL",
+  "buyer.name": "Talleres Montjuic SA",
+  "seller.tax_ids[0].value": "ESB86561412",
+  "subtotal": 201.0,
+  "tax_amount": 42.21,
+  "total_amount": 243.21,
+  "currency": "EUR",
+  "_schema": "credit_note",
+  "_line_items": [
+    {
+      "description": "Tornillo inox M8 (caja)",
+      "quantity": 6,
+      "total": 147.0
+    },
+    {
+      "description": "Arandela plana M8 (caja)",
+      "quantity": 6,
+      "total": 54.0
+    }
+  ],
+  "_tables": [
+    {
+      "page": 1,
+      "cells": [
+        [
+          "Concepto",
+          "Cant.",
+          "Precio",
+          "Importe"
+        ],
+        [
+          "Tornillo inox M8 (caja)",
+          "6",
+          "24,50",
+          "147,00"
+        ],
+        [
+          "Arandela plana M8 (caja)",
+          "6",
+          "9,00",
+          "54,00"
+        ]
+      ]
+    }
+  ],
+  "_text": [
+    "FACTURA RECTIFICATIVA",
+    "Suministros Levante SL",
+    "Calle Colon 14",
+    "46004 Valencia",
+    "NIF: ESB86561412",
+    "N.o rectificativa: R-2026-0077",
+    "Fecha: 02/07/2026",
+    "Factura rectificada: F-2026-0931",
+    "Cliente:",
+    "Talleres Montjuic SA",
+    "Carrer de Sants 120",
+    "08014 Barcelona",
+    "Motivo: devolucion de mercancia",
+    "Concepto Cant. Precio Importe",
+    "Tornillo inox M8 (caja) 6 24,50 147,00",
+    "Arandela plana M8 (caja) 6 9,00 54,00",
+    "Base imponible: 201,00 EUR",
+    "IVA 21 %: 42,21 EUR",
+    "Total: 243,21 EUR"
+  ],
+  "_source": "synthetic scan rendered by eval/build_golden.py"
+}
