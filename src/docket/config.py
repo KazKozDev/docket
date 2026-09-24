@@ -119,6 +119,11 @@ SETTINGS: tuple[Setting, ...] = (
             "A page reading is accepted at this confidence (0..1).", minimum=0, maximum=1),
     Setting("OCR_DETECT_ROTATION", "ocr.detect_rotation", "DOCKET_OCR_DETECT_ROTATION", "bool", True,
             "Detect and undo page rotation on scans (Tesseract OSD)."),
+    Setting("OCR_CROP_PHOTOS", "ocr.crop_photos", "DOCKET_OCR_CROP_PHOTOS", "bool", True,
+            "Find the document in a photo and flatten it before OCR (needs the [photo] extra)."),
+    Setting("OCR_MIN_TEXT_HEIGHT", "ocr.min_text_height", "DOCKET_OCR_MIN_TEXT_HEIGHT", "float", 20.0,
+            "Tesseract re-reads a page enlarged when its typical word is shorter than this (px); 0 disables.",
+            minimum=0, maximum=200),
     Setting("OCR_DESKEW", "ocr.deskew", "DOCKET_OCR_DESKEW", "bool", True,
             "Correct fine scan skew before raster OCR."),
     Setting("OCR_DPI", "ocr.dpi", "DOCKET_OCR_DPI", "int", 200,
@@ -419,6 +424,8 @@ OCR_LANGUAGES: list[str]
 OCR_MIN_CONFIDENCE: float
 OCR_DETECT_ROTATION: bool
 OCR_DESKEW: bool
+OCR_CROP_PHOTOS: bool
+OCR_MIN_TEXT_HEIGHT: float
 OCR_DPI: int
 TESSERACT_PSM: int
 OCR_CONCURRENCY: int

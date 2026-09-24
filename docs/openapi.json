@@ -4197,6 +4197,31 @@
             "description": "Fine clockwise correction in degrees, applied after orthogonal rotation.",
             "default": 0.0
           },
+          "crop_quad": {
+            "anyOf": [
+              {
+                "items": {
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array",
+                  "maxItems": 2,
+                  "minItems": 2
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crop Quad",
+            "description": "When the page was cropped out of a photo: its corners (top-left, top-right, bottom-right, bottom-left) in the original image, normalized 0..1. Word boxes are on the flattened page."
+          },
           "backend": {
             "type": "string",
             "title": "Backend",

@@ -14,6 +14,7 @@ import pdfplumber
 from PIL import Image
 
 from .. import pdf as pdf_render
+from .preprocess import Preprocessor, Quad, crop_document
 
 PDF_SUFFIXES = {".pdf"}
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
@@ -35,8 +36,12 @@ class DocumentSource:
         dpi: int = 200,
         max_pages: int | None = None,
         max_pixels: int | None = None,
+        crop_photos: bool = False,
+        preprocess: Preprocessor | None = None,
     ):
         self.path = Path(path)
+        self.crop_photos = crop_photos
+        self.preprocess = preprocess
         suffix = self.path.suffix.lower()
         if suffix in PDF_SUFFIXES:
             self.kind: SourceKind = "pdf"
@@ -122,6 +127,7 @@ class PageSource:
         self.document = document
         self.number = number
         self._image: Image.Image | None = None
+        self.crop_quad: Quad | None = None
 
     @property
     def kind(self) -> SourceKind:
@@ -132,17 +138,24 @@ class PageSource:
         return self.document.plumber.pages[self.number - 1]
 
     def image(self) -> Image.Image:
+        """The page as OCR sees it: rendered or decoded, cropped out of a
+        photo when that is on, then through the caller's preprocessor."""
         if self._image is None:
             if self.kind == "pdf":
-                self._image = pdf_render.render_page(
-                    self.document.path, self.number - 1, self.document.dpi
-                )
+                image = pdf_render.render_page(self.document.path, self.number - 1, self.document.dpi)
             elif self.kind == "image":
-                with Image.open(self.document.path) as image:
-                    image.seek(self.number - 1)
-                    self._image = image.convert("RGB")
+                with Image.open(self.document.path) as source:
+                    source.seek(self.number - 1)
+                    image = source.convert("RGB")
+                # A rendered PDF page is already the page; only a picture
+                # can hold the document inside a larger frame.
+                if self.document.crop_photos:
+                    image, self.crop_quad = crop_document(image)
             else:
                 raise UnsupportedDocument("a plain-text source has no page image")
+            if self.document.preprocess is not None:
+                image = self.document.preprocess(image, self.number)
+            self._image = image
         return self._image
 
     def image_png(self) -> bytes:

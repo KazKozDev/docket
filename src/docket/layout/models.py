@@ -176,6 +176,13 @@ class PageLayout(BaseModel):
         le=15.0,
         description="Fine clockwise correction in degrees, applied after orthogonal rotation.",
     )
+    crop_quad: list[tuple[float, float]] | None = Field(
+        default=None,
+        description=(
+            "When the page was cropped out of a photo: its corners (top-left, top-right, bottom-right, "
+            "bottom-left) in the original image, normalized 0..1. Word boxes are on the flattened page."
+        ),
+    )
     backend: str = Field(description="OCR backend that produced this page.")
     confidence: float | None = Field(
         default=None,

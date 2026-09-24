@@ -19,9 +19,11 @@ Register it with `docket.ocr.register_ocr_backend`, expose it through the
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from typing import TYPE_CHECKING, ClassVar, Literal
 
-from pydantic import BaseModel, Field
+from PIL import Image
+from pydantic import BaseModel, ConfigDict, Field
 
 from ..errors import ConfigurationError
 from ..layout import DocumentLayout, PageLayout
@@ -76,6 +78,8 @@ class BackendStatus(BaseModel):
 class OcrSettings(BaseModel):
     """Engine-independent settings each backend maps to its own options."""
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     languages: list[str] = Field(
         default_factory=lambda: ["en"], description="ISO 639-1 codes, e.g. ['en', 'de']."
     )
@@ -85,6 +89,18 @@ class OcrSettings(BaseModel):
     deskew: bool = Field(
         default=True,
         description="Correct small scan angles before OCR; orthogonal rotation is controlled separately.",
+    )
+    crop_photos: bool = Field(
+        default=True,
+        description="Find the document in a photo and flatten it before OCR (needs the [photo] extra).",
+    )
+    min_text_height: float = Field(
+        default=20.0, ge=0.0,
+        description="Tesseract re-reads a page enlarged when its typical word is shorter than this, in px; 0 disables.",
+    )
+    preprocess: Callable[[Image.Image, int], Image.Image] | None = Field(
+        default=None,
+        description="Your own step on every page image (image, page number) -> image, after cropping, before OCR.",
     )
     word_confidence_floor: float = Field(
         default=0.60, ge=0.0, le=1.0,
