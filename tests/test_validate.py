@@ -1291,3 +1291,17 @@ def test_dates_read_from_their_cited_line_pass_in_any_numeric_form():
     assert _date_issues(date(2017, 12, 28), "12-28-17") == []          # month-first, two-digit year
     assert _date_issues(date(2017, 12, 28), "2017-12-28 10:14") == []  # ISO
     assert _date_issues(date(2017, 12, 28), "28 December 2017") == []  # month names are left alone
+
+
+def test_a_datetime_is_checked_by_its_day():
+    from datetime import datetime
+
+    from docket.catalog import BoardingPass
+
+    boarding = BoardingPass(
+        passenger_name="Jane Doe", booking_reference="ABC123", flight_number="BA475",
+        departure_airport="BCN", arrival_airport="LHR", departure_datetime=datetime(2026, 10, 2, 7, 45),
+        field_locations={"departure_datetime": {"page": 1, "quote": "Departure: 2026-10-02 07:45"}},
+    )
+    issues = validate(boarding, pages=["BOARDING PASS\nDeparture: 2026-10-02 07:45"])
+    assert not [i for i in issues if i.field == "departure_datetime"]
