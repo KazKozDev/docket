@@ -26,7 +26,7 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal, Union
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -38,7 +38,7 @@ from .registry import get_ocr_backend
 from .source import DocumentSource, PageSource, UnsupportedDocument
 from .witness import confident_amounts
 
-BackendSpec = Union[str, OcrBackend]
+BackendSpec = str | OcrBackend
 
 # `auto` picks the first of these that can run here.
 AUTO_ORDER = ("tesseract", "paddle")
@@ -55,7 +55,7 @@ class AcquisitionOptions(BaseModel):
         default="auto", description="Primary OCR backend: a name, 'auto', or an OcrBackend instance."
     )
     fallbacks: list[BackendSpec] = Field(
-        default_factory=lambda: ["vlm"], description="Tried in order when the primary reading is rejected."
+        default_factory=lambda: list[BackendSpec](["vlm"]), description="Tried in order when the primary reading is rejected."
     )
     use_pdf_text: bool = True
     min_confidence: float = Field(default=0.60, ge=0.0, le=1.0)
@@ -191,15 +191,16 @@ def _read_page(
 
     if page.kind == "pdf" and options.use_pdf_text and not options.escalate:
         start = time.monotonic()
+        text_layer: PageLayout | None
         try:
-            layout = pdf_text.recognize_page(page)
-            problem = text_layer_problem(layout)
+            text_layer = pdf_text.recognize_page(page)
+            problem = text_layer_problem(text_layer)
         except OcrError as exc:
-            layout, problem = None, str(exc)
+            text_layer, problem = None, str(exc)
         seconds = round(time.monotonic() - start, 3)
-        if layout is not None and problem is None:
+        if text_layer is not None and problem is None:
             attempts.append(Attempt(backend=pdf_text.name, outcome="accepted", seconds=seconds))
-            return layout, PageAcquisition(page=page.number, backend=pdf_text.name, attempts=attempts)
+            return text_layer, PageAcquisition(page=page.number, backend=pdf_text.name, attempts=attempts)
         attempts.append(Attempt(backend=pdf_text.name, outcome="rejected", reason=problem, seconds=seconds))
 
     runnable = [b for b in chain if "image" in b.capabilities.inputs]

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, cast
 
 from pydantic import BaseModel
 
@@ -30,7 +30,8 @@ def _walk(value: object, path: str, found: list[PiiField]) -> None:
         for name, field in value.__class__.model_fields.items():
             child = getattr(value, name)
             child_path = f"{path}.{name}" if path else name
-            category = (field.json_schema_extra or {}).get("pii")
+            extra = field.json_schema_extra if isinstance(field.json_schema_extra, dict) else {}
+            category = cast("PiiCategory | None", extra.get("pii"))
             if category and child not in (None, "", [], {}):
                 if isinstance(child, list):
                     found.extend(PiiField(path=f"{child_path}[{i}]", category=category) for i in range(len(child)))

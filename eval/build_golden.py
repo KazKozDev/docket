@@ -405,22 +405,22 @@ DOCS: list[Doc] = [
         pages=[[
             ("title", "SOFTWARE MAINTENANCE AGREEMENT"),
             ("gap", 30),
-            ("para", "This Software Maintenance Agreement (the \"Agreement\") is entered into as of "
+            ("para", ("This Software Maintenance Agreement (the \"Agreement\") is entered into as of "
                      "January 1, 2026 (the \"Effective Date\") by and between Helix Data Systems Ltd, a company "
                      "registered in Ireland (the \"Provider\"), and Greenfield Municipal Utilities, a public "
-                     "utility (the \"Customer\")."),
+                     "utility (the \"Customer\").")),
             ("gap", 20),
-            ("para", "1. Services. The Provider shall maintain and support the Customer's billing platform, "
-                     "including corrective releases, security patches and a service desk available on business days."),
-            ("para", "2. Term. The Agreement runs for twenty-four months from the Effective Date and ends on "
+            ("para", ("1. Services. The Provider shall maintain and support the Customer's billing platform, "
+                     "including corrective releases, security patches and a service desk available on business days.")),
+            ("para", ("2. Term. The Agreement runs for twenty-four months from the Effective Date and ends on "
                      "December 31, 2027. It renews automatically for successive twelve-month periods unless either "
-                     "party gives at least ninety (90) days' written notice before the end of the current term."),
-            ("para", "3. Fees. The Customer shall pay a total fee of EUR 96,000.00, invoiced in eight equal "
-                     "quarterly instalments and payable within thirty days of the invoice date."),
-            ("para", "4. Breach. Either party may terminate this Agreement if the other party materially breaches it "
-                     "and fails to cure the breach within thirty (30) days of written notice."),
-            ("para", "5. Liability. Each party's aggregate liability is limited to the fees paid in the twelve "
-                     "months preceding the claim."),
+                     "party gives at least ninety (90) days' written notice before the end of the current term.")),
+            ("para", ("3. Fees. The Customer shall pay a total fee of EUR 96,000.00, invoiced in eight equal "
+                     "quarterly instalments and payable within thirty days of the invoice date.")),
+            ("para", ("4. Breach. Either party may terminate this Agreement if the other party materially breaches it "
+                     "and fails to cure the breach within thirty (30) days of written notice.")),
+            ("para", ("5. Liability. Each party's aggregate liability is limited to the fees paid in the twelve "
+                     "months preceding the claim.")),
             ("para", "6. Governing Law. This Agreement is governed by the laws of Ireland."),
             ("gap", 40),
             ("cols", ["For Helix Data Systems Ltd", "Name: Ciara Byrne", "Title: Managing Director"],

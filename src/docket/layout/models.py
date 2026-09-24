@@ -10,7 +10,8 @@ copies, so a word's geometry has exactly one home in the serialized result.
 """
 from __future__ import annotations
 
-from typing import Iterable, Literal
+from collections.abc import Iterable
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -28,7 +29,7 @@ class BoundingBox(BaseModel):
     y1: float = Field(ge=0.0, le=1.0)
 
     @model_validator(mode="after")
-    def _ordered(self) -> "BoundingBox":
+    def _ordered(self) -> BoundingBox:
         if self.x1 < self.x0 or self.y1 < self.y0:
             raise ValueError(f"inverted box: {self}")
         return self
@@ -36,7 +37,7 @@ class BoundingBox(BaseModel):
     @classmethod
     def from_absolute(
         cls, x0: float, y0: float, x1: float, y1: float, width: float, height: float
-    ) -> "BoundingBox":
+    ) -> BoundingBox:
         """Normalize a box given in the page's own units, clamping to the page."""
         if width <= 0 or height <= 0:
             raise ValueError("page width and height must be positive")
@@ -49,7 +50,7 @@ class BoundingBox(BaseModel):
         return cls(x0=nx0, y0=ny0, x1=nx1, y1=ny1)
 
     @classmethod
-    def union(cls, boxes: Iterable["BoundingBox"]) -> "BoundingBox":
+    def union(cls, boxes: Iterable[BoundingBox]) -> BoundingBox:
         boxes = list(boxes)
         if not boxes:
             raise ValueError("union of no boxes")
@@ -76,7 +77,7 @@ class BoundingBox(BaseModel):
     def center_y(self) -> float:
         return (self.y0 + self.y1) / 2
 
-    def contains_center_of(self, other: "BoundingBox") -> bool:
+    def contains_center_of(self, other: BoundingBox) -> bool:
         cx = (other.x0 + other.x1) / 2
         return self.x0 <= cx <= self.x1 and self.y0 <= other.center_y <= self.y1
 

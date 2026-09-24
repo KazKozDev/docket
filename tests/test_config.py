@@ -225,9 +225,8 @@ def test_http_server_refuses_to_start(monkeypatch):
     from docket import api
 
     monkeypatch.setattr(config, "ERRORS", ["DOCKET_MAX_CONCURRENT_JOBS='0': must be at least 1"])
-    with pytest.raises(ConfigurationError, match="MAX_CONCURRENT_JOBS"):
-        with TestClient(api.app):
-            pass
+    with pytest.raises(ConfigurationError, match="MAX_CONCURRENT_JOBS"), TestClient(api.app):
+        pass
 
 
 def test_docket_api_command_exits_with_code_3(tmp_path, monkeypatch, capsys):

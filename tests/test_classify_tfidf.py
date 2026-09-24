@@ -1,7 +1,6 @@
 from docket.classify_tfidf import classify_tfidf
 
 
-
 def test_returns_a_classification_result():
     result = classify_tfidf(
         "Please remit payment for services rendered within 30 days."

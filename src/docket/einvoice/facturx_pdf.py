@@ -12,7 +12,12 @@ from xml.etree import ElementTree
 from pydantic import BaseModel, Field
 
 from ..errors import ConfigurationError
-from .validator import EInvoiceValidationOptions, EInvoiceValidationResult, Profile, validate_einvoice
+from .validator import (
+    EInvoiceValidationOptions,
+    EInvoiceValidationResult,
+    Profile,
+    validate_einvoice,
+)
 
 Source = str | Path | bytes
 FacturXLevel = Literal["minimum", "basicwl", "basic", "en16931", "extended", "autodetect"]
@@ -150,9 +155,8 @@ def validate_pdfa(
     path: Path | None = None
     try:
         if isinstance(source_pdf, bytes):
-            handle = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
-            handle.write(source_pdf)
-            handle.close()
+            with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as handle:
+                handle.write(source_pdf)
             path = Path(handle.name)
         else:
             path = Path(source_pdf)

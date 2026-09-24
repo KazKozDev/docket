@@ -15,16 +15,16 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from metrics import (  # noqa: E402
+from metrics import (
+    error_breakdown,
     field_accuracy,
     field_precision_recall_f1,
-    error_breakdown,
     review_safety_metrics,
     validation_detection_metrics,
 )
 
-from docket import config  # noqa: E402
-from docket.pipeline import process_document  # noqa: E402
+from docket import config
+from docket.pipeline import process_document
 
 DEFAULT_DIR = Path(__file__).parent / "golden_dataset"
 RESULTS_DIR = Path(__file__).parent / "results"

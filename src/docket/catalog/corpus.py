@@ -7,7 +7,7 @@ Spanish, German, French, Italian, Dutch and Portuguese for every type.
 Custom schemas contribute their own through `SchemaSpec.examples`.
 """
 
-CORPUS: dict[str, tuple[str, ...]] = {  # schema_id -> paraphrased sample sentences
+CORPUS: dict[str, list[str]] = {  # schema_id -> paraphrased sample sentences
     "invoice": [
         'Please remit payment within 30 days of the statement date to the account below.',
         'Balance owed for services rendered last month, itemized by hour and rate.',

@@ -53,7 +53,7 @@ def _fix_rotation(chars: list[dict]) -> int:
         turn = {(1, 0): 0, (0, -1): 270, (-1, 0): 180, (0, 1): 90}.get((a, b))
         if turn is not None:
             votes[turn] = votes.get(turn, 0) + 1
-    return max(votes, key=votes.get) if votes else 0
+    return max(votes, key=votes.__getitem__) if votes else 0
 
 
 def _turn(x0: float, y0: float, x1: float, y1: float, turn: int, w: float, h: float):
@@ -76,14 +76,14 @@ def _table_hints(plumber_page, turn: int, w: float, h: float) -> list[TableHint]
     for table in tables:
         # Index rows and columns on the upright boxes, so a turned page's
         # table reads in its upright order.
-        cells = [_turn(*c, turn, w, h) for c in table.cells if c]
+        cells = [_turn(c[0], c[1], c[2], c[3], turn, w, h) for c in table.cells if c]
         if not cells:
             continue
         hint_cells = cells_from_boxes(cells, tolerance=0.5)
         # A table with one row or one column is a box around text, not a table.
         if len({c.row for c in hint_cells}) < 2 or len({c.column for c in hint_cells}) < 2:
             continue
-        bx = _turn(*table.bbox, turn, w, h)
+        bx = _turn(table.bbox[0], table.bbox[1], table.bbox[2], table.bbox[3], turn, w, h)
         hints.append(TableHint(x0=bx[0], y0=bx[1], x1=bx[2], y1=bx[3], cells=hint_cells))
     return hints
 
@@ -122,7 +122,7 @@ class PDFTextBackend(OcrBackend):
                 raw = extract_words(upright, keep_blank_chars=False)
             else:
                 raw = plumber_page.extract_words(keep_blank_chars=False)
-        except Exception as exc:  # noqa: BLE001 — malformed content streams
+        except Exception as exc:
             raise OcrError(f"could not read the text layer of page {page.number}: {exc}") from exc
         words = [
             RawWord(text=item["text"], x0=item["x0"], y0=item["top"], x1=item["x1"], y1=item["bottom"])

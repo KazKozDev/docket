@@ -19,8 +19,9 @@ from __future__ import annotations
 
 import hashlib
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Literal, cast
 
 from pydantic import BaseModel
 
@@ -41,7 +42,6 @@ from .ocr import (
 )
 from .ocr_quality import looks_garbled
 from .options import ProcessOptions, ResolvedOptions, resolve
-from .review_reasons import reasons_for
 from .result import (
     DocumentError,
     DocumentResult,
@@ -49,6 +49,7 @@ from .result import (
     ProcessingMetrics,
     SourceLocation,
 )
+from .review_reasons import reasons_for
 from .schemas import ClassificationResult, ValidationIssue
 from .validate import validate
 
@@ -66,7 +67,7 @@ class _Stages:
     def __init__(self) -> None:
         self.seconds: dict[str, float] = {}
 
-    def timed(self, stage: str) -> "_Timer":
+    def timed(self, stage: str) -> _Timer:
         return _Timer(self.seconds, stage)
 
 
@@ -146,7 +147,7 @@ def _resolve_sources(extracted: dict, acquisition: Acquisition) -> dict[str, Sou
         if not located:
             sources[field] = SourceLocation(page=page_number, quote=quote)
             continue
-        status = "conflicting" if len(located) > 1 and located[0].match_score >= 1.0 else (
+        status: Literal["verified", "fuzzy", "conflicting"] = "conflicting" if len(located) > 1 and located[0].match_score >= 1.0 else (
             "verified" if located[0].match_score >= 1.0 else "fuzzy"
         )
         regions = [SourceRegion(page=page_number, bbox=match.bbox, word_ids=match.word_ids) for match in located]
@@ -229,11 +230,11 @@ def _read(
     """Schema selection, extraction and validation of one acquired reading."""
     doc = {"document": path.name}
     with stages.timed("classify"), log_stage(log, "select_schema", **doc):
-        doc_type, classification = select_schema(acquisition, options.document_type)
+        doc_type, classification = select_schema(acquisition, cast("SchemaSpec | None", options.document_type))
     _notify(on_stage, "classify", classification)
 
     language, _ = detect_language(acquisition.text)
-    common = {
+    common: dict[str, Any] = {
         "source": str(path),
         "document_id": document_id,
         "status": DocumentStatus.SUCCEEDED,
@@ -395,6 +396,10 @@ def process_document(
                     "stage_seconds": {k: round(v, 3) for k, v in stages.seconds.items()},
                     "pages": len(result.layout.pages) if result.layout else 0,
                     "llm_calls": llm_usage.calls,
+                    "llm_models": llm_usage.models,
+                    "llm_input_tokens": llm_usage.input_tokens,
+                    "llm_output_tokens": llm_usage.output_tokens,
+                    "llm_unreported_calls": llm_usage.unreported_calls,
                     "llm_estimated_tokens": llm_usage.estimated_tokens,
                     "escalated_to_vlm": escalated,
                 }

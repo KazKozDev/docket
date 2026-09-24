@@ -106,7 +106,8 @@ def key_field_confidence(result: DocumentResult) -> dict[str, float | None]:
             # A line can hold two values ("Invoice INV-7 date 2026-03-01");
             # each field answers for the words whose digits are its own.
             own = [w for w in digit_words if any(_digits(w.text) in form for form in forms)] or digit_words
-            readings.append(min(w.confidence for w in own) if own else source.confidence)
+            scores = [w.confidence for w in own if w.confidence is not None]
+            readings.append(min(scores) if scores else source.confidence)
         confidences[field] = min((c for c in readings if c is not None), default=None)
     return confidences
 
@@ -163,9 +164,10 @@ def _reconciled_amounts(result: DocumentResult) -> set[str]:
         rows = value_at(document, spec.line_items.path) or []
         column = spec.line_items.columns["total"]
         row_totals = [getattr(row, column, None) for row in rows]
-        if len(row_totals) >= 2 and all(isinstance(t, (int, float)) for t in row_totals):
+        numeric = [float(t) for t in row_totals if isinstance(t, (int, float))]
+        if len(numeric) >= 2 and len(numeric) == len(row_totals):
             for name in ("subtotal", "total_amount"):
-                if amount(name) and abs(sum(row_totals) - amount(name)) <= 0.01:
+                if amount(name) and abs(sum(numeric) - amount(name)) <= 0.01:
                     reconciled.add(name)
     return reconciled
 

@@ -4,8 +4,8 @@ from pathlib import Path
 import pytest
 
 from docket import review_queue, review_reasons
-from docket.schemas import ClassificationResult, ValidationIssue
 from docket.result import DocumentResult
+from docket.schemas import ClassificationResult, ValidationIssue
 from tests.factories import acquisition, flat_invoice, make_result, words_page
 
 

@@ -34,9 +34,10 @@ from __future__ import annotations
 
 import os
 import sys
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 from dotenv import load_dotenv
 
@@ -237,20 +238,21 @@ def _parse(setting: Setting, raw: Any, from_env: bool, base: Path | None) -> Any
             return raw.strip().lower() in _TRUE
         raise ValueError("expected true or false")
     if kind in ("int", "float"):
+        number: int | float
         if from_env:
             try:
-                value = int(raw.strip()) if kind == "int" else float(raw.strip())
+                number = int(raw.strip()) if kind == "int" else float(raw.strip())
             except ValueError:
                 raise ValueError(f"expected {'an integer' if kind == 'int' else 'a number'}") from None
         elif isinstance(raw, bool) or not isinstance(raw, (int, float)) or (kind == "int" and isinstance(raw, float)):
             raise ValueError(f"expected {'an integer' if kind == 'int' else 'a number'}")
         else:
-            value = float(raw) if kind == "float" else raw
-        if setting.minimum is not None and value < setting.minimum:
+            number = float(raw) if kind == "float" else raw
+        if setting.minimum is not None and number < setting.minimum:
             raise ValueError(f"must be at least {setting.minimum:g}")
-        if setting.maximum is not None and value > setting.maximum:
+        if setting.maximum is not None and number > setting.maximum:
             raise ValueError(f"must be at most {setting.maximum:g}")
-        return value
+        return number
     if kind == "list":
         if isinstance(raw, str):
             items = raw.split(",")

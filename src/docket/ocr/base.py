@@ -115,10 +115,10 @@ class OcrBackend(ABC):
         """Whether this backend can run here — cheap, no page is read."""
 
     @abstractmethod
-    def recognize_page(self, page: "PageSource") -> PageLayout:
+    def recognize_page(self, page: PageSource) -> PageLayout:
         """Read one page. Raise OcrError on failure, never return None."""
 
-    def recognize_document(self, document: "DocumentSource") -> DocumentLayout:
+    def recognize_document(self, document: DocumentSource) -> DocumentLayout:
         """Read every page. Override when the engine is faster on a whole file."""
         return DocumentLayout(pages=[self.recognize_page(p) for p in document.pages()])
 

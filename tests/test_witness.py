@@ -15,11 +15,11 @@ that region stays silent.
 """
 from datetime import date
 
+from docket.catalog import LineItem
 from docket.layout import build_page, text_only_page
 from docket.ocr import AcquisitionOptions, acquire
 from docket.ocr.tesseract import page_confidence, words_from_data
 from docket.ocr.witness import confident_amounts
-from docket.catalog import LineItem
 from docket.validate import validate
 from tests.factories import ScriptedBackend, flat_invoice, words_page, write_png
 
@@ -61,10 +61,10 @@ PRIMARY = (
 )
 
 # What Tesseract independently read of the same page.
-WITNESS_AGREES = [
+WITNESS_AGREES = [(
     "Prototype | 2 | 4000.00 | 8000.00\n"
     "Subtotal: USD 8000.00\nSales Tax: USD 450.00\nTotal: USD 8,450.00"
-]
+)]
 
 
 def _data(texts, confs, lefts, widths, lines=None):

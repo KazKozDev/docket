@@ -19,15 +19,21 @@ from __future__ import annotations
 import importlib.util
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal, Union
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from . import config
 from .errors import ConfigurationError
-from .ocr import AcquisitionOptions, OcrBackend, OcrSettings, parse_languages, resolve_chain
+from .ocr import (
+    AcquisitionOptions,
+    OcrBackend,
+    OcrSettings,
+    parse_languages,
+    resolve_chain,
+)
 
-BackendSpec = Union[str, OcrBackend]
+BackendSpec = str | OcrBackend
 
 
 class OcrOptions(BaseModel):

@@ -2,11 +2,10 @@ import pytest
 
 from docket import pipeline
 from docket.catalog import Receipt
+from docket.layout import text_only_page
 from docket.schemas import ClassificationResult
 from docket.validate import validate
 from tests.factories import acquisition, words_page
-from docket.layout import text_only_page
-
 
 TEXT = "Example Shop\n2026-03-18\nSUBTOTAL 167.93\nTAX 12.59\nTOTAL 180.52"
 

@@ -7,7 +7,6 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import BaseModel
 
-import docket.catalog.registry as registry
 import docket.export as export_module
 from docket import (
     CitedDocument,
@@ -18,14 +17,23 @@ from docket import (
     SchemaSpec,
     ValidationIssue,
     add_validator,
+    api,
     export_document,
     keywords,
     process_document,
     register_exporter,
     register_schema,
+    validate,
 )
-from docket import api, classify as classify_module, extract as extract_module, validate
-from docket.catalog import get_schema, list_schemas, migrate, unregister_schema
+from docket import classify as classify_module
+from docket import extract as extract_module
+from docket.catalog import (
+    get_schema,
+    list_schemas,
+    migrate,
+    registry,
+    unregister_schema,
+)
 from docket.catalog.registry import Migration
 from docket.result import DocumentResult, SourceLocation
 from docket.schemas import ClassificationResult

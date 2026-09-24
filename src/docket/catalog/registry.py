@@ -22,9 +22,10 @@ from __future__ import annotations
 
 import re
 import typing
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field, replace
 from importlib.metadata import entry_points
-from typing import TYPE_CHECKING, Callable, Iterable, Literal
+from typing import TYPE_CHECKING, Literal
 
 from pydantic import BaseModel
 
@@ -74,13 +75,13 @@ class Keyword:
 def keywords(*phrases: str, weight: float = DEFAULT_KEYWORD_WEIGHT) -> tuple[Keyword, ...]:
     """Literal phrases matched on word boundaries, one Keyword each."""
     return tuple(
-        Keyword(re.compile(rf"\b{re.escape(p)}\b", re.I), weight) for p in phrases
+        Keyword(re.compile(rf"\b{re.escape(p)}\b", re.IGNORECASE), weight) for p in phrases
     )
 
 
 def pattern(regex: str, weight: float = DEFAULT_KEYWORD_WEIGHT) -> Keyword:
     """One Keyword from a regular expression (case-insensitive)."""
-    return Keyword(re.compile(regex, re.I), weight)
+    return Keyword(re.compile(regex, re.IGNORECASE), weight)
 
 
 @dataclass(frozen=True)
@@ -182,7 +183,7 @@ class SchemaSpec:
 
         return [e.name for e in list_exporters() if issubclass(self.model, e.accepts)]
 
-    def info(self) -> "SchemaInfo":
+    def info(self) -> SchemaInfo:
         return SchemaInfo(
             schema_id=self.schema_id,
             version=self.version,
@@ -281,7 +282,7 @@ def check_model(model: object, *, cited_fields: Iterable[str] | None = None) -> 
         raise SchemaError(f"a schema must be a Pydantic BaseModel subclass, got {model!r}")
     try:
         model.model_json_schema()
-    except Exception as exc:  # noqa: BLE001 — pydantic raises several types here
+    except Exception as exc:
         raise SchemaError(
             f"{model.__name__} cannot be described as JSON Schema, which extraction needs: {exc}"
         ) from exc
@@ -330,12 +331,14 @@ def _register(spec: SchemaSpec, *, replace_existing: bool = False) -> SchemaSpec
     for other in list_schemas(all_versions=True):
         if other.model is spec.model and other.schema_id != spec.schema_id:
             raise SchemaError(f"{spec.model.__name__} is already registered as {other.schema_id!r}")
+    version = spec.version
+    assert version is not None  # only ad-hoc specs are unversioned, and they are never registered
     versions = _REGISTRY.setdefault(spec.schema_id, {})
-    existing = versions.get(spec.version)
+    existing = versions.get(version)
     if existing is not None and (existing.builtin or not replace_existing):
-        raise SchemaError(f"schema {spec.schema_id!r} version {spec.version} is already registered")
+        raise SchemaError(f"schema {spec.schema_id!r} version {version} is already registered")
     spec = replace(spec, registered=True, display_name=spec.title)
-    versions[spec.version] = spec
+    versions[version] = spec
     return spec
 
 
@@ -379,7 +382,7 @@ def _load_plugins() -> None:
         for spec in produced or ():
             if not isinstance(spec, SchemaSpec):
                 raise SchemaError(f"entry point {ep.name!r} produced {spec!r}, not a SchemaSpec")
-            existing = _REGISTRY.get(spec.schema_id, {}).get(spec.version)
+            existing = _REGISTRY.get(spec.schema_id, {}).get(spec.version or "")
             if existing is None or existing.model is not spec.model:
                 _register(spec)
 
@@ -484,6 +487,7 @@ def resolve(
                 f"document type {schema_id!r} uses {spec.model.__name__}, not {model.__name__}"
             )
         return spec
+    assert model is not None  # both None returned above
     spec = for_model(model) or adhoc(model)
     if version is not None and spec.version != version:
         raise SchemaError(f"{model.__name__} is version {spec.version}, not {version}")
@@ -516,16 +520,16 @@ def migrate(schema_id: str, data: dict, from_version: str, to_version: str | Non
 
 __all__ = [
     "ENTRY_POINT_GROUP",
-    "Keyword",
     "LINE_ITEM_COLUMNS",
+    "SUMMARY_COLUMNS",
+    "UNKNOWN",
+    "Keyword",
     "LineItems",
     "Migration",
     "MigrationInfo",
     "SchemaError",
     "SchemaInfo",
     "SchemaSpec",
-    "SUMMARY_COLUMNS",
-    "UNKNOWN",
     "ValidationContext",
     "Validator",
     "add_validator",
