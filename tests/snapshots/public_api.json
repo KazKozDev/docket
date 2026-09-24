@@ -21,6 +21,7 @@
     },
     "DocumentResult": {
       "classification": {"annotation": "docket.schemas.ClassificationResult | None", "required": false},
+      "corroborated": {"annotation": "dict[str, str]", "required": false},
       "document_id": {"annotation": "str", "required": true},
       "document_type": {"annotation": "str | None", "required": false},
       "error": {"annotation": "docket.result.DocumentError | None", "required": false},
@@ -95,7 +96,7 @@
     "Receipt", "ReviewOptions", "SchemaError", "SchemaInfo", "SchemaSpec",
     "SourceLocation", "Table", "TableCell", "TaxIdentifier", "TextLine",
     "ValidationContext", "ValidationIssue", "VendorTemplate", "Waybill", "WordToken",
-    "__version__", "add_validator", "export_document", "export_to_facturae_xml", "extract_facturx_xml",
+    "__version__", "add_validator", "corroborate", "export_document", "export_to_facturae_xml", "extract_facturx_xml",
     "fetch_einvoice_resources", "generate_facturx_pdf", "get_exporter", "get_ocr_backend", "get_schema",
     "get_vendor_template", "keywords", "list_exporters", "list_ocr_backends", "list_schemas",
     "list_vendor_templates", "load_schema", "match_invoice_to_po", "match_invoices_to_contract", "match_receipt_to_transactions",

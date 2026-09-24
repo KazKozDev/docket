@@ -226,15 +226,19 @@ def test_pipeline_benchmark_records_source_and_key_field_confidence(tmp_path, mo
     """One run must hold what tuning DOCKET_MIN_SOURCE_CONFIDENCE needs."""
     sys.path.insert(0, str(ROOT / "eval"))
     import benchmark_ocr
-    from docket.result import SourceLocation
-    from tests.factories import make_result
+    from datetime import date
 
+    from docket.result import SourceLocation
+    from tests.factories import flat_invoice, make_result
+
+    invoice = flat_invoice(invoice_number="INV-1", issue_date=date(2026, 3, 1), vendor_name="A",
+                           customer_name="B", subtotal=18.0, total_amount=18.0)
     sources = {
         "total_amount": SourceLocation(page=1, quote="Total 18.00", confidence=0.42),
         "invoice_number": SourceLocation(page=1, quote="INV-1"),
     }
-    monkeypatch.setattr(benchmark_ocr, "process_document",
-                        lambda path, options: make_result(source=str(path), field_sources=sources))
+    monkeypatch.setattr(benchmark_ocr, "process_document", lambda path, options: make_result(
+        source=str(path), field_sources=sources, extracted=invoice.model_dump(mode="json", exclude={"field_locations"})))
     docs = [(tmp_path / "receipt_sroie_03.jpg", {"doc_type": "invoice"}), (tmp_path / "x_scan.png", {"doc_type": "invoice"})]
 
     rows = benchmark_ocr.run_pipeline("tesseract", docs)["documents"]
