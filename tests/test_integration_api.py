@@ -5,8 +5,8 @@ import json
 import pypdfium2 as pdfium
 import pytest
 
-from docket import config, llm_client, pdf
-from docket import cli
+from docket import cli, config, llm_client, pdf
+from docket.catalog import Invoice
 from docket.export import (
     ExportError,
     export_document,
@@ -14,8 +14,6 @@ from docket.export import (
     list_exporters,
     register_exporter,
 )
-from docket.catalog import Invoice
-
 from tests.test_export import sample_bank_statement, sample_invoice
 
 
@@ -93,7 +91,7 @@ class _Response:
 def test_openai_compatible_backend(monkeypatch):
     captured: dict = {}
 
-    def fake_post(url, json=None, headers=None, timeout=None):  # noqa: ANN001
+    def fake_post(url, json=None, headers=None, timeout=None):
         captured.update(url=url, payload=json, headers=headers)
         return _Response({"choices": [{"message": {"content": '{"ok": true}'}}]})
 
@@ -114,7 +112,7 @@ def test_openai_vision_sends_data_url(monkeypatch, tmp_path):
     image.write_bytes(b"img")
     captured: dict = {}
 
-    def fake_post(url, json=None, headers=None, timeout=None):  # noqa: ANN001
+    def fake_post(url, json=None, headers=None, timeout=None):
         captured.update(json)
         return _Response({"choices": [{"message": {"content": " text "}}]})
 

@@ -462,9 +462,9 @@ def validate_tax_id(
         hint == "CA"
         and (
             re.match(r"^\d{9}$", cleaned)
-            or re.match(r"^\d{9}\s*[A-Z]{2}\s*\d{4}$", cleaned, re.I)
+            or re.match(r"^\d{9}\s*[A-Z]{2}\s*\d{4}$", cleaned, re.IGNORECASE)
         )
-    ) or (bool(re.match(r"^\d{9}\s*[A-Z]{2}\s*\d{4}$", cleaned, re.I))):
+    ) or (bool(re.match(r"^\d{9}\s*[A-Z]{2}\s*\d{4}$", cleaned, re.IGNORECASE))):
         return validate_ca_bn(cleaned), "Canadian BN"
 
     # Brazilian CNPJ / CPF:

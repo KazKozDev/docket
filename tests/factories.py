@@ -3,7 +3,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from docket.layout import DocumentLayout, PageLayout, RawWord, build_page, text_only_page
+from docket.layout import (
+    DocumentLayout,
+    PageLayout,
+    RawWord,
+    build_page,
+    text_only_page,
+)
 from docket.ocr import (
     Acquisition,
     AcquisitionReport,

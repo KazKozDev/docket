@@ -4292,9 +4292,36 @@
             "title": "Llm Calls",
             "default": 0
           },
+          "llm_models": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Llm Models",
+            "description": "Models called, in first-use order."
+          },
+          "llm_input_tokens": {
+            "type": "integer",
+            "title": "Llm Input Tokens",
+            "description": "Prompt tokens the provider reported.",
+            "default": 0
+          },
+          "llm_output_tokens": {
+            "type": "integer",
+            "title": "Llm Output Tokens",
+            "description": "Completion tokens the provider reported.",
+            "default": 0
+          },
+          "llm_unreported_calls": {
+            "type": "integer",
+            "title": "Llm Unreported Calls",
+            "description": "Calls whose provider reported no token counts; not in the two sums above.",
+            "default": 0
+          },
           "llm_estimated_tokens": {
             "type": "integer",
             "title": "Llm Estimated Tokens",
+            "description": "Characters / 4 over every call, reported or not.",
             "default": 0
           },
           "extract_attempts": {

@@ -7,6 +7,7 @@ EN 16931 formats live in en16931.py and are validated by docket.einvoice.
 from __future__ import annotations
 
 import xml.etree.ElementTree as ET
+
 from ..catalog.models import Invoice
 from ._parties import address_line, iban, tax_number, vat_number
 

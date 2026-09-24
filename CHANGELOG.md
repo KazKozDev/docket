@@ -31,6 +31,13 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Added
 
+- Real LLM usage per document: `ProcessingMetrics.llm_input_tokens` /
+  `llm_output_tokens` from what the provider reports (Ollama
+  `prompt_eval_count`/`eval_count`, OpenAI `usage`), `llm_unreported_calls`
+  for calls that reported nothing, and `llm_models` for the models used.
+  `BatchMetrics` sums them. The chars/4 `llm_estimated_tokens` stays.
+- CI type-checks `src/docket` with mypy (pinned, like ruff, in the `dev`
+  extra); the codebase was brought to zero errors.
 - `corroborate(result, purchase_order=..., transactions=...)`: a purchase
   order total, or a bank payment of the total in the same currency, confirms
   that field; a payment whose text carries the invoice number confirms the
@@ -49,6 +56,11 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Changed
 
+- LLM retries honour `Retry-After` (seconds or an HTTP date, capped at
+  60 s) and otherwise back off exponentially with jitter, instead of a fixed
+  linear delay.
+- ruff moved to 0.16.8 and its wider default rule set; the codebase is clean
+  under it.
 - The low-OCR-confidence review rule looks only at the words holding the
   value's own digits, not the label beside it or another value on the same
   line; names are no longer gated; subtotal and total that reconcile across

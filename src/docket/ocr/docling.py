@@ -152,8 +152,15 @@ class DoclingBackend(OcrBackend):
 
     def _converter(self):
         from docling.datamodel.base_models import InputFormat
-        from docling.datamodel.pipeline_options import PdfPipelineOptions, TableFormerMode
-        from docling.document_converter import DocumentConverter, ImageFormatOption, PdfFormatOption
+        from docling.datamodel.pipeline_options import (
+            PdfPipelineOptions,
+            TableFormerMode,
+        )
+        from docling.document_converter import (
+            DocumentConverter,
+            ImageFormatOption,
+            PdfFormatOption,
+        )
 
         options = PdfPipelineOptions(
             do_ocr=True, do_table_structure=True, generate_page_images=False,
@@ -187,7 +194,7 @@ class DoclingBackend(OcrBackend):
             layout = document_from_docling(result.document, backend=self.name)
             self._document_cache = {cache_key: layout}
             return layout
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             raise OcrError(f"Docling failed on {document.path.name}: {exc}") from exc
 
     def recognize_page(self, page: PageSource):

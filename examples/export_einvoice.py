@@ -10,7 +10,14 @@ Run `docket formats` for everything available.
 """
 import sys
 
-from docket import ExportError, ExportOptions, ProcessOptions, ReviewOptions, export_document, process_document
+from docket import (
+    ExportError,
+    ExportOptions,
+    ProcessOptions,
+    ReviewOptions,
+    export_document,
+    process_document,
+)
 
 path, fmt = sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else "xrechnung-ubl"
 result = process_document(path, ProcessOptions(document_type="invoice", review=ReviewOptions(enqueue=False)))

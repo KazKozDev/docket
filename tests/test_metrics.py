@@ -3,10 +3,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "eval"))
 
-from metrics import (  # noqa: E402
+from metrics import (
+    error_breakdown,
     field_accuracy,
     field_precision_recall_f1,
-    error_breakdown,
     review_safety_metrics,
     validation_detection_metrics,
 )

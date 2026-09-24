@@ -4,8 +4,9 @@ import inspect
 import json
 from pathlib import Path
 
-import docket
 import pytest
+
+import docket
 from docket import (
     DocumentError,
     DocumentResult,
@@ -15,7 +16,6 @@ from docket import (
     ReviewOptions,
 )
 from docket._deprecation import warn_deprecated
-
 
 SNAPSHOT = Path(__file__).parent / "snapshots" / "public_api.json"
 KEY_FUNCTIONS = (

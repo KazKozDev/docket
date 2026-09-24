@@ -3,7 +3,6 @@ import pytest
 from docket import classify as classify_module
 from docket.classify import classify, classify_rules
 
-
 INVOICE_TEXT = """
 INVOICE
 Invoice #: INV-2026-0042

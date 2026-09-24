@@ -33,14 +33,17 @@ def test_eval_script_imports_cleanly(script):
         [
             sys.executable,
             "-c",
-            f"import importlib.util,sys; sys.path.insert(0, {str(ROOT / 'src')!r}); "
-            f"sys.path.insert(0, {str(ROOT / 'eval')!r}); "
-            f"spec=importlib.util.spec_from_file_location('m', {str(script)!r}); "
-            f"m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)",
+            (
+                f"import importlib.util,sys; sys.path.insert(0, {str(ROOT / 'src')!r}); "
+                f"sys.path.insert(0, {str(ROOT / 'eval')!r}); "
+                f"spec=importlib.util.spec_from_file_location('m', {str(script)!r}); "
+                f"m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)"
+            ),
         ],
         capture_output=True,
         text=True,
         timeout=120,
+        check=False,
     )
     assert result.returncode == 0, result.stderr[-1500:]
 
@@ -200,6 +203,7 @@ def test_pipeline_benchmark_resumes_from_its_checkpoint(tmp_path, monkeypatch):
     """A long run killed half-way must continue where it stopped, not restart."""
     sys.path.insert(0, str(ROOT / "eval"))
     import benchmark_ocr
+
     from tests.factories import make_result
 
     calls = []
@@ -225,8 +229,9 @@ def test_pipeline_benchmark_resumes_from_its_checkpoint(tmp_path, monkeypatch):
 def test_pipeline_benchmark_records_source_and_key_field_confidence(tmp_path, monkeypatch):
     """One run must hold what tuning DOCKET_MIN_SOURCE_CONFIDENCE needs."""
     sys.path.insert(0, str(ROOT / "eval"))
-    import benchmark_ocr
     from datetime import date
+
+    import benchmark_ocr
 
     from docket.result import SourceLocation
     from tests.factories import flat_invoice, make_result

@@ -12,7 +12,13 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from docket.ocr import BackendUnavailable, DocumentSource, OcrSettings, UnknownLanguage, get_ocr_backend
+from docket.ocr import (
+    BackendUnavailable,
+    DocumentSource,
+    OcrSettings,
+    UnknownLanguage,
+    get_ocr_backend,
+)
 from docket.ocr import paddle as paddle_module
 from docket.ocr.languages import paddle_language
 from docket.ocr.paddle import PaddleOCRBackend, page_confidence, words_from_result
@@ -247,7 +253,7 @@ except BackendUnavailable as exc:
 assert not any(m.split(".")[0] in {"paddle", "paddleocr", "paddlex"} for m in sys.modules)
 """
     result = subprocess.run(
-        [sys.executable, "-c", code], capture_output=True, text=True, timeout=120, cwd=ROOT
+        [sys.executable, "-c", code], capture_output=True, text=True, timeout=120, cwd=ROOT, check=False
     )
     assert result.returncode == 0, result.stderr[-2000:]
     assert result.stdout.strip().endswith("OK")

@@ -7,11 +7,24 @@ Provides:
 """
 from __future__ import annotations
 
-from typing import Sequence
+from collections.abc import Sequence
 
 from .catalog.common import LineItem
-from .catalog.models import Contract, Invoice, PurchaseOrder, Receipt, Waybill, WaybillItem
-from .schemas import BankTransaction, Discrepancy, DiscrepancyType, MatchingStatus, MatchResult
+from .catalog.models import (
+    Contract,
+    Invoice,
+    PurchaseOrder,
+    Receipt,
+    Waybill,
+    WaybillItem,
+)
+from .schemas import (
+    BankTransaction,
+    Discrepancy,
+    DiscrepancyType,
+    MatchingStatus,
+    MatchResult,
+)
 from .validate import _core_name, _isclose
 
 
@@ -327,27 +340,28 @@ def match_invoices_to_contract(
     # 4. Cumulative Budget Ceiling Check
     variance = 0.0
     matched_amount = total_billed
-    if contract.contract_value is not None:
-        if total_billed > contract.contract_value and not _isclose(
-            total_billed, contract.contract_value
-        ):
-            overage = round(total_billed - contract.contract_value, 2)
-            variance = overage
-            matched_amount = contract.contract_value
-            discrepancies.append(
-                Discrepancy(
-                    type=DiscrepancyType.BUDGET_EXCEEDED,
-                    field="contract_value",
-                    expected=contract.contract_value,
-                    actual=total_billed,
-                    difference=overage,
-                    severity="error",
-                    message=(
-                        f"Cumulative invoices total ({total_billed:.2f}) exceeds "
-                        f"contract value limit ({contract.contract_value:.2f}) by {overage:.2f}"
-                    ),
-                )
+    if (
+        contract.contract_value is not None
+        and total_billed > contract.contract_value
+        and not _isclose(total_billed, contract.contract_value)
+    ):
+        overage = round(total_billed - contract.contract_value, 2)
+        variance = overage
+        matched_amount = contract.contract_value
+        discrepancies.append(
+            Discrepancy(
+                type=DiscrepancyType.BUDGET_EXCEEDED,
+                field="contract_value",
+                expected=contract.contract_value,
+                actual=total_billed,
+                difference=overage,
+                severity="error",
+                message=(
+                    f"Cumulative invoices total ({total_billed:.2f}) exceeds "
+                    f"contract value limit ({contract.contract_value:.2f}) by {overage:.2f}"
+                ),
             )
+        )
 
     has_errors = any(d.severity == "error" for d in discrepancies)
     status = MatchingStatus.DISCREPANCY if has_errors else MatchingStatus.MATCHED
@@ -398,9 +412,8 @@ def match_receipt_to_transactions(
             continue
 
         # Card check (if both have card_last_four)
-        if receipt.card_last_four and tx.card_last_four:
-            if receipt.card_last_four != tx.card_last_four:
-                continue
+        if receipt.card_last_four and tx.card_last_four and receipt.card_last_four != tx.card_last_four:
+            continue
 
         # Date tolerance check
         days_diff = abs((tx.transaction_date - receipt.transaction_date).days)
@@ -559,9 +572,9 @@ def match_three_way(
         po_items[k] = item
 
     wb_items: dict[str, WaybillItem] = {}
-    for item in waybill.items:
-        k = item.sku.strip().lower() if item.sku else item.item_name.strip().lower()
-        wb_items[k] = item
+    for wb_item in waybill.items:
+        k = wb_item.sku.strip().lower() if wb_item.sku else wb_item.item_name.strip().lower()
+        wb_items[k] = wb_item
 
     # 3. Check Invoice items against Waybill (fulfillment) and PO (authorization & price)
     for idx, inv_item in enumerate(invoice.line_items):

@@ -15,7 +15,13 @@ from docket import pipeline, review_queue
 from docket.ocr import AcquisitionError
 from docket.result import DocumentResult
 from docket.schemas import ValidationIssue
-from tests.factories import acquisition, flat_invoice, make_result, text_acquisition, words_page
+from tests.factories import (
+    acquisition,
+    flat_invoice,
+    make_result,
+    text_acquisition,
+    words_page,
+)
 
 _ERROR = [ValidationIssue(field="total_amount", message="does not add up")]
 

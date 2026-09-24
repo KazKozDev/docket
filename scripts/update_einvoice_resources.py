@@ -31,7 +31,13 @@ RESOURCES = ROOT / "src" / "docket" / "einvoice" / "resources"
 FIXTURES = ROOT / "tests" / "fixtures" / "einvoice" / "official"
 
 sys.path.insert(0, str(ROOT / "src"))
-from docket.einvoice.sources import SCHXSLT, SOURCES, SourceError, install, sha256  # noqa: E402
+from docket.einvoice.sources import (
+    SCHXSLT,
+    SOURCES,
+    SourceError,
+    install,
+    sha256,
+)
 
 
 def build(cache: Path) -> None:

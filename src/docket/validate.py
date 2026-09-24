@@ -11,7 +11,6 @@ from __future__ import annotations
 import re
 from datetime import date, datetime
 
-
 from . import amounts, checksums
 from .catalog.common import Party
 from .catalog.models import (
@@ -25,7 +24,7 @@ from .catalog.models import (
 from .catalog.registry import SchemaSpec, ValidationContext
 from .schemas import ValidationIssue
 
-_TAX_ID_RE = re.compile(r"^[A-Z0-9][A-Z0-9\-\.]{4,20}$", re.I)
+_TAX_ID_RE = re.compile(r"^[A-Z0-9][A-Z0-9\-\.]{4,20}$", re.IGNORECASE)
 _BIC_RE = re.compile(r"^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$")
 _AMOUNT_TOLERANCE = 0.01
 
@@ -1230,17 +1229,17 @@ def _check_contract_against_raw_text(
                 )
             )
 
-    for field, value in (
+    for field, stated in (
         ("contract_title", c.contract_title),
         ("governing_law", c.governing_law),
         ("payment_terms", c.payment_terms),
         ("liability_cap", c.liability_cap),
     ):
-        if value and value.strip() and not _appears_in(value, normalized_text):
+        if stated and stated.strip() and not _appears_in(stated, normalized_text):
             issues.append(
                 ValidationIssue(
                     field=field,
-                    message=f"{value!r} does not appear in the document text",
+                    message=f"{stated!r} does not appear in the document text",
                     severity="warning",
                 )
             )
@@ -1255,19 +1254,19 @@ def _check_contract_against_raw_text(
                 )
             )
 
-    for field, value in (
+    for field, when in (
         ("effective_date", c.effective_date),
         ("expiration_date", c.expiration_date),
     ):
-        if value is None:
+        if when is None:
             continue
-        if any(_appears_in(r, normalized_text) for r in _date_renderings(value)):
+        if any(_appears_in(r, normalized_text) for r in _date_renderings(when)):
             continue
         issues.append(
             ValidationIssue(
                 field=field,
                 message=(
-                    f"{value.isoformat()} could not be found in the document text in any common "
+                    f"{when.isoformat()} could not be found in the document text in any common "
                     f"date format — contracts often spell dates out, so this is worth a look "
                     f"rather than proof of an error"
                 ),
@@ -1539,15 +1538,14 @@ def validate_bank_statement(stmt: BankStatement, ctx: ValidationContext) -> list
         )
 
     # IBAN validation
-    if stmt.account_iban:
-        if not checksums.validate_iban(stmt.account_iban):
-            issues.append(
-                ValidationIssue(
-                    field="account_iban",
-                    message=f"{stmt.account_iban!r} fails IBAN checksum or format",
-                    severity="error",
-                )
+    if stmt.account_iban and not checksums.validate_iban(stmt.account_iban):
+        issues.append(
+            ValidationIssue(
+                field="account_iban",
+                message=f"{stmt.account_iban!r} fails IBAN checksum or format",
+                severity="error",
             )
+        )
 
     # Balance reconciliation formula:
     # opening_balance + total_deposits - total_withdrawals == closing_balance
