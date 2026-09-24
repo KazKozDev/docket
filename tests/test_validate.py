@@ -1255,3 +1255,39 @@ def test_element_citation_satisfies_a_list_fields_requirement():
     text = "[PAGE 1]\nMaster Services Agreement\nNorthgate Supplies Ltd\nIberia Mantenimiento SA\nEffective 2026-03-02"
     issues = validate(contract, text)
     assert not any("missing page and source-region citation" in i.message for i in issues), issues
+
+
+# ---- dates must be read from the line they cite -------------------------------------------
+
+_TILL = ["KEDAI BUKU NEW ACHEIVERS\nTAX INVOICE\nDate: 28/12/2017 10:14\nTotal 38.15\nCash 50.00\nChange 11.85"]
+
+
+def _receipt(day: date, quote: str) -> Receipt:
+    return Receipt(
+        merchant_name="KEDAI BUKU NEW ACHEIVERS", transaction_date=day, total_amount=38.15,
+        field_locations={"transaction_date": {"page": 1, "quote": quote}},
+    )
+
+
+def _date_issues(day: date, quote: str):
+    pages = [_TILL[0] + "\n" + quote]  # the quote is on the page; only its content is in question
+    return [i for i in validate(_receipt(day, quote), pages=pages) if i.field == "transaction_date"]
+
+
+def test_an_invented_date_citing_a_line_without_one_is_an_error():
+    """Observed on SROIE till slips: 2020-01-01 'read' from the merchant name."""
+    for quote in ("KEDAI BUKU NEW ACHEIVERS", "TAX INVOICE"):
+        issues = _date_issues(date(2020, 1, 1), quote)
+        assert issues and issues[0].severity == "error" and "holds no date" in issues[0].message
+
+
+def test_a_date_that_its_cited_line_does_not_print_is_an_error():
+    issues = _date_issues(date(2018, 1, 20), "Date: 28/12/2017 10:14")
+    assert issues and issues[0].severity == "error" and "cannot be read as that day" in issues[0].message
+
+
+def test_dates_read_from_their_cited_line_pass_in_any_numeric_form():
+    assert _date_issues(date(2017, 12, 28), "Date: 28/12/2017 10:14") == []
+    assert _date_issues(date(2017, 12, 28), "12-28-17") == []          # month-first, two-digit year
+    assert _date_issues(date(2017, 12, 28), "2017-12-28 10:14") == []  # ISO
+    assert _date_issues(date(2017, 12, 28), "28 December 2017") == []  # month names are left alone
