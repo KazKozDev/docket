@@ -41,6 +41,9 @@
     },
     "OcrOptions": {
       "backend": {"annotation": "str | docket.ocr.base.OcrBackend | None", "required": false},
+      "crop_photos": {"annotation": "bool | None", "required": false},
+      "min_text_height": {"annotation": "float | None", "required": false},
+      "preprocess": {"annotation": "collections.abc.Callable[[PIL.Image.Image, int], PIL.Image.Image] | None", "required": false},
       "deskew": {"annotation": "bool | None", "required": false},
       "detect_rotation": {"annotation": "bool | None", "required": false},
       "device": {"annotation": "str | None", "required": false},

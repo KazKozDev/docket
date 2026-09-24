@@ -31,6 +31,19 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Added
 
+- Phone photos: with the new `[photo]` extra (OpenCV), a photographed
+  receipt or invoice is cropped to the paper and flattened before OCR
+  (`DOCKET_OCR_CROP_PHOTOS`, on by default). Crops that would cut text — a
+  table frame on a scan, a page that already fills the frame — are refused.
+  `PageLayout.crop_quad` records where the page was in the original photo.
+- Small text: when Tesseract's typical word is shorter than
+  `DOCKET_OCR_MIN_TEXT_HEIGHT` (20 px), the page is re-read enlarged (up to
+  3×) and the enlarged reading is kept only if Tesseract is at least as sure
+  of it. On an 11 px synthetic invoice this turns 16/03/2028 and 316.00 back
+  into the printed 15/03/2026 and 315.00.
+- `OcrOptions(preprocess=fn)`: your own `(image, page_number) -> image` step
+  on every page image, after cropping and before OCR (Docling reads the
+  file itself and skips it).
 - Real LLM usage per document: `ProcessingMetrics.llm_input_tokens` /
   `llm_output_tokens` from what the provider reports (Ollama
   `prompt_eval_count`/`eval_count`, OpenAI `usage`), `llm_unreported_calls`

@@ -55,6 +55,13 @@
 # detect_rotation = true
 # Correct fine scan skew before raster OCR. Env: DOCKET_OCR_DESKEW.
 # deskew = true
+# Find the document in a photo (receipt or invoice on a table) and flatten it
+# before OCR; needs the [photo] extra, otherwise photos are read as they are.
+# Env: DOCKET_OCR_CROP_PHOTOS.
+# crop_photos = true
+# Tesseract re-reads a page enlarged when its typical word is shorter than
+# this many pixels (low-resolution scans); 0 disables. Env: DOCKET_OCR_MIN_TEXT_HEIGHT.
+# min_text_height = 20.0
 # Resolution PDF pages are rendered at for OCR. Env: DOCKET_OCR_DPI.
 # dpi = 200
 # Tesseract page-segmentation mode (3 automatic; 6 can suit dense tables). Env:
