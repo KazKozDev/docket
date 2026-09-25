@@ -17,9 +17,10 @@ jobs:
           python-version: "3.12"
           cache: "pip"
       # Versions pinned in the dev extra; mypy needs the runtime deps' types.
-      - run: pip install -e ".[dev,review]"
-      - run: ruff check src tests eval scripts examples
+      - run: pip install -e ".[dev,review]" -e apps/desktop
+      - run: ruff check src tests eval scripts examples apps/desktop
       - run: mypy
+      - run: mypy apps/desktop/src/docket_desktop --follow-imports=silent --ignore-missing-imports
 
   test:
     runs-on: ubuntu-latest
@@ -64,6 +65,20 @@ jobs:
           # Every test in this repo is LLM-free by design (see README) —
           # there's no Ollama server in CI, and there shouldn't need to be.
           DOCKET_REVIEW_DATABASE_URL: sqlite:////tmp/docket-ci-review.db
+
+  desktop-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+      - run: pip install -e . -e apps/desktop pytest build
+      - run: pytest -q apps/desktop/tests
+        env:
+          QT_QPA_PLATFORM: offscreen
+      - run: python -m build apps/desktop
 
   package:
     runs-on: ubuntu-latest
