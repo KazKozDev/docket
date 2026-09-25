@@ -2,15 +2,11 @@
 
 Extract cited, validated JSON from scanned invoices, receipts and contracts. Export EU e-invoices checked against official rules.
 
-```bash
-pip install docket-idp
-```
 
 ![Docket Desktop reviewing a receipt and its extracted fields](docs/assets/docket-desktop-promo.png)
 
 Python library + CLI · Ollama or OpenAI-compatible API · Apache-2.0
 
----
 
 ## Quick start
 
