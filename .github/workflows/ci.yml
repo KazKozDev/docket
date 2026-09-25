@@ -74,6 +74,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
+      - run: sudo apt-get update && sudo apt-get install -y libegl1
       - run: pip install -e . -e apps/desktop pytest build
       - run: pytest -q apps/desktop/tests
         env:
