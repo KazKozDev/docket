@@ -6,7 +6,7 @@ Turn scanned invoices, receipts and contracts into validated JSON with source ci
 pip install docket-idp
 ```
 
-<img width="1653" height="961" alt="demo" src="https://github.com/user-attachments/assets/86355d41-34a7-4201-9699-0fd62080c488" />
+![Docket Desktop reviewing a receipt and its extracted fields](docs/assets/demo-docket.png)
 
 Python library + CLI · Ollama or any OpenAI-compatible API · Every value cited to its source line · Apache-2.0
 
@@ -168,6 +168,12 @@ pip install "docket-idp[docling]"   # Docling/TableFormer backend
 pip install "docket-idp[photo]"     # crop and flatten documents in phone photos (OpenCV)
 pip install "docket-idp[all]"       # + Langfuse tracing and e-invoice validation
 ```
+
+The native invoice and receipt app lives in the separate
+[`apps/desktop`](apps/desktop/) package. From a checkout, install it with
+`python -m pip install -e . -e apps/desktop` and run `docket-desktop`.
+
+For the native, browser-free invoice and receipt workflow, see [Docket Desktop](docs/DESKTOP.md).
 
 Langfuse tracing starts only when `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` are set, and then records model, latency and sizes. Prompts and answers, which contain the document's text, are sent only with `DOCKET_LANGFUSE_CONTENT=true`.
 

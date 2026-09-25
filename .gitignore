@@ -18,6 +18,7 @@ data/
 .serena/
 build/
 dist/
+dist-*/
 .cache/
 
 # Local settings (see docket.example.toml)
