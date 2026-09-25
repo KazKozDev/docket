@@ -8,6 +8,13 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+### Desktop
+
+- Added a separate native macOS invoice and receipt app package in
+  `apps/desktop` (`docket-desktop` command) with PDF/image import, OCR/LLM processing, source preview,
+  human correction and approval, approved-only CSV export, duplicate detection,
+  revision history, local backup/restore, and a PyInstaller build script.
+
 ### Fixed
 
 - A line-item row none of whose values cites a source line sends the

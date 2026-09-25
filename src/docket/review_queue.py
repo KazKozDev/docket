@@ -145,7 +145,7 @@ def enqueue(result: DocumentResult, reasons: list[str], *, database_url: str | N
 
 def list_pending(*, database_url: str | None = None) -> list[dict]:
     with _engine(database_url).connect() as conn:
-        ids = list(conn.execute(select(_TASKS.c.document_id).where(
+        ids: list[str] = list(conn.execute(select(_TASKS.c.document_id).where(
             _TASKS.c.status.in_(("pending", "in_review", "corrected"))).order_by(_TASKS.c.queued_at)).scalars())
         return [record for document_id in ids if (record := _record(conn, document_id)) is not None]
 

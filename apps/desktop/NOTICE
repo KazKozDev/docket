@@ -1,0 +1,21 @@
+docket
+Copyright 2026 Artem Kazakov Kozlov
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This product includes third-party electronic-invoice validation artefacts:
+
+- XRechnung validator configuration and Schematron rules, copyright KoSIT
+  and contributors, licensed under Apache License 2.0.
+- EN 16931 validation artefacts maintained by the ConnectingEurope project,
+  licensed under EUPL 1.2.
+- OASIS Universal Business Language 2.1 schemas, copyright OASIS Open 2013.
+  The OASIS notice and permissions are preserved with the distribution.
+
+It does not include the UN/CEFACT CII D16B schemas, the Peppol BIS Billing
+3.0 rules or the Factur-X (FNFE-MPE / FeRD) artefacts: `docket einvoice
+fetch` downloads them from their publishers on the user's request.
+
+Full available notices are under
+`docket/einvoice/resources/licenses/`. See `docs/THIRD_PARTY_LICENSES.md` for
+source links, obligations, and unresolved redistribution questions.

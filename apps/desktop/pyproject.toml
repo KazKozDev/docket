@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docket-idp-desktop"
+version = "0.4.0"
+description = "Native desktop review app for Docket invoices and receipts"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+dependencies = [
+    "docket-idp>=0.4,<0.5",
+    "PySide6>=6.6,<7",
+    "keyring>=25,<27",
+    "openpyxl>=3.1,<4",
+]
+
+[project.scripts]
+docket-desktop = "docket_desktop.ui:run"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+docket_desktop = ["assets/*.png"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
