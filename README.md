@@ -1,188 +1,126 @@
-# docket — Python library for invoice, receipt and contract OCR extraction with LLMs
+# docket — Python OCR and LLM for invoices, receipts and contracts
 
-Extract cited, validated JSON from scanned invoices, receipts and contracts. Export EU e-invoices checked against official rules.
+Extract cited document data, check it, and export validated invoices.
 
 
-![Docket Desktop reviewing a receipt and its extracted fields](docs/assets/docket-desktop-promo.png)
+![Docket Desktop showing a scanned receipt beside extracted fields](https://raw.githubusercontent.com/KazKozDev/docket/master/docs/assets/docket-desktop-promo.png)
 
 Docket Desktop
 
 
 ## Quick start
 
-With Tesseract and [Ollama](https://ollama.com) or an OpenAI-compatible API configured (see [Requirements](#requirements) and [Configuration](#configuration)):
+You need Python 3.10+, Tesseract for scans, and a reachable text model. Configure Ollama or an OpenAI-compatible API; a vision model is needed for the default OCR fallback. Check the active settings with `docket config show`.
 
 ```bash
-docket process invoice.pdf        # JSON on stdout; exit 2 if validation fails
+docket process invoice.pdf
 ```
 
-```json
-{
-  "status": "succeeded",
-  "document_type": "invoice",
-  "extracted": {"invoice_number": "FAC-2026-0042", "issue_date": "2026-03-15", "total_amount": 1493.82, "currency": "EUR"},
-  "field_sources": {"total_amount": {"page": 1, "quote": "Total factura: 1.493,82 €", "bbox": {"x0": 0.62, "y0": 0.71, "x1": 0.89, "y1": 0.73}}}
-}
-```
+The command prints a JSON result with extracted fields, source citations, validation issues and review reasons. Its exit code is 0 for `succeeded`, 1 for `needs_review`, 2 for `failed`, or 3 for a configuration error.
 
-## Extract invoice data in your Python application
+## Extract invoice, receipt and contract data in Python
+
+Use the typed result in your own application. Keep results needing review out of automatic downstream updates.
 
 ```python
-from docket import ExportError, OcrOptions, ProcessOptions, export_document, process_document
+from docket import DocumentStatus, ProcessOptions, process_document
 
-options = ProcessOptions(document_type="invoice", ocr=OcrOptions(backend="tesseract", fallbacks=["vlm"]))
-result = process_document("invoice.pdf", options)
-try:
-    xml = export_document(result, "xrechnung-ubl").content   # refuses invalid or unreviewed results
-except ExportError:
-    print(result.status, result.review_reasons)
+result = process_document("invoice.pdf", ProcessOptions(document_type="invoice"))
+if result.status == DocumentStatus.SUCCEEDED:
+    print(result.document)
+    print(result.field_sources.get("total_amount"))
+else:
+    print(result.status.value, result.review_reasons)
 ```
 
-`result.document` is typed (`Invoice`, `Receipt`, `Contract`, …); `result.status` is `succeeded`, `needs_review` or `failed`; and `result.field_sources` holds page, quote and box. Processing writes nothing unless requested. For directories, use `process_batch("scans/", options, BatchOptions(workers=4, checkpoint="run.jsonl"))` or `docket batch scans/ --format csv --output results.csv`. Batch processing preserves input order, isolates failures and resumes from checkpoints.
+`result.document` is a Pydantic schema; each available field source includes its page, quote and location. Seven built-in document types are listed by `docket schemas list`. You can register another schema or OCR backend; see the [examples](https://github.com/KazKozDev/docket/tree/master/examples).
 
-## Export and validate XRechnung, Factur-X and Peppol e-invoices
+## Process invoices and receipts in a folder into CSV
 
-| Format | Name | Checked against |
-|---|---|---|
-| UBL 2.1 / Peppol BIS 3.0 | `ubl`, `peppol` | EN 16931 (+ Peppol BIS 3.0.20) |
-| XRechnung 3.0, UBL / CII | `xrechnung-ubl`, `xrechnung-cii` | EN 16931 + XRechnung 3.0.2 |
-| Factur-X / ZUGFeRD CII | `factur-x-en16931`, `factur-x-basic` | Factur-X 1.09 profile rules |
-| Facturae 3.2.2 (Spain) | `facturae` | — |
+Batch processing writes a summary CSV, a line-item CSV and a checkpoint file. Repeating the command resumes completed documents; one failure does not stop the rest.
+
+```bash
+docket batch scans/ --recursive --workers 4 --format csv --output results.csv
+```
+
+Use `--format jsonl` for one complete result per line or `--ocr-backend paddle` after installing the optional PaddleOCR backend.
+
+## Validate and export European e-invoices from PDFs
+
+Install the validator and fetch official rule files that cannot be shipped in the package. Export is refused when the extracted result needs review or the invoice cannot be represented faithfully.
 
 ```bash
 pip install "docket-idp[einvoice]"
-docket einvoice fetch                              # once: Peppol, CII and Factur-X rules are not shipped
-docket process invoice.pdf --export xrechnung-ubl --validate-export
-docket validate-einvoice invoice.xml               # XSD + Schematron; exit 0 valid, 2 invalid, 3 not set up
-docket factur-x create invoice.pdf factur-x.xml -o hybrid.pdf
+docket einvoice fetch
+docket process invoice.pdf --document-type invoice --export xrechnung-ubl --validate-export -o invoice.xml
 ```
 
-Converting a supplier invoice produces EN 16931 data for your books, not a legally issued e-invoice from that supplier.
-
-For data extracted elsewhere, `verify(data, page_texts, document_type="invoice")` checks citations, numbers, dates, arithmetic and check digits, returning a `DocumentResult` subject to the same export rules. Direct schema exports also check arithmetic, dates and check digits.
-
-Exporters reject missing line items or inconsistent tax instead of guessing. Offline validation uses official artifacts pinned in the [manifest](https://github.com/KazKozDev/docket/blob/master/src/docket/einvoice/resources/manifest.json); those without verified redistribution terms are downloaded on request ([licence inventory](https://github.com/KazKozDev/docket/blob/master/docs/THIRD_PARTY_LICENSES.md)). Python APIs include `validate_einvoice()`, `generate_facturx_pdf()` and `verify_facturx_round_trip()`.
-
-## Add custom document types and vendor templates
-
-`docket schemas list` shows seven versioned accounts-payable schemas: invoice, purchase order, receipt, contract, bank statement, waybill and experimental credit note. Add one with a Pydantic model:
-
-```python
-from datetime import date
-from docket import CitedDocument, Party, SchemaSpec, keywords, register_schema
-
-class ParkingTicket(CitedDocument):      # CitedDocument adds page/quote citations
-    ticket_number: str
-    issuing_authority: Party
-    issue_date: date
-    fine: float
-
-register_schema(SchemaSpec(
-    schema_id="parking_ticket", version="1.0", model=ParkingTicket,
-    description="Parking ticket / Strafzettel",
-    keywords=keywords("parking ticket", "strafzettel"),
-    cited_fields=("ticket_number", "issuing_authority.name", "fine"),
-))
-```
-
-Registered schemas use the same classification, extraction, citation checks and exports. `register_vendor_template()` reads known layouts without an LLM and still requires validation; `register_exporter()` adds ERP-specific formats. Schemas, exporters and OCR backends can ship as entry-point plugins; see [`examples/`](https://github.com/KazKozDev/docket/blob/master/examples/).
-
-## Measure extraction accuracy on public datasets
-
-The key risk is a wrong result marked `succeeded`. In the latest run, **13 of 66** such results were wrong (20%); excluding SROIE receipts, **3 of 24** were wrong (13%).
-
-Across 195 labelled scans from the golden set and public datasets (DocILE, SROIE, CORD, FUNSD, RVL-CDIP, donut-style invoices), field accuracy was **0.88**; 73% of documents had every field right.
-
-Against pip-installable alternatives, each tool and docket are graded on the same supported documents and fields:
-
-| | docs | tool | docket on the same docs |
-|---|---|---|---|
-| docpick 0.1.3 | 55 | 0.61 | **0.85** |
-| ocrcontext 0.1.5 | 55 | 0.04 | **0.83** |
-| invoice2data 1.0.1 | 44 | 0.00 | **0.89** |
-
-Method and per-source results: [docs/BENCHMARKS.md](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
+Other built-in formats include UBL, Peppol, XRechnung CII, Factur-X and Facturae (`docket formats`). Converting a supplier PDF gives you data for your books; it does not issue a legal e-invoice on the supplier's behalf.
 
 ## How it works
 
-Each page uses its PDF text layer, OCR (Tesseract, PaddleOCR, Docling or a plugin), or a vision model when OCR is unusable. Optional photo cropping, enlargement and `OcrOptions(preprocess=fn)` prepare images. Rules, TF-IDF and then an LLM classify documents; extraction fills a Pydantic schema with source lines. Deterministic checks cover citations, arithmetic, dates and check digits; uncertain results go to review.
+Docket reads each page from a usable PDF text layer, an OCR backend, or a vision model when OCR is unusable. Rules, TF-IDF and then an LLM classify the document. Extraction fills a versioned Pydantic schema and cites source lines. Deterministic checks cover citations, amounts, dates and check digits; uncertain results go to review. The [architecture](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md) describes the stages and extension points.
 
-```
-document → text layer / OCR / VLM → classify → extract + cite → validate → JSON or review
+```text
+document → PDF text / OCR / vision → classify → extract + cite → validate → JSON or review
 ```
 
 ## Configuration
 
-Priority: defaults → TOML (`--config` or `DOCKET_CONFIG`) → environment → explicit arguments. The CLI and API also load `.env` and `./docket.toml`; importing the library does not. See [`docket.example.toml`](https://github.com/KazKozDev/docket/blob/master/docket.example.toml) or `docket config show` for effective values and sources.
-
-| Variable | Default | What it does |
+| Environment variable | Default | Purpose |
 |---|---|---|
-| `DOCKET_LLM_PROVIDER` | `ollama` | `ollama`, or `openai` for any OpenAI-compatible API |
-| `DOCKET_LLM_BASE_URL` / `DOCKET_LLM_API_KEY` | OpenAI / unset | Endpoint and key for `openai`, e.g. `https://api.mistral.ai/v1` |
-| `DOCKET_TEXT_MODEL` / `DOCKET_VISION_MODEL` | `deepseek-v4.1-flash:cloud` | Models for extraction and for reading scans |
-| `OLLAMA_HOST` | `http://localhost:11434` | Where Ollama is listening |
-| `DOCKET_OCR_BACKEND` | `auto` | `tesseract`, `paddle`, `docling`, `auto` or a plugin name |
-| `DOCKET_OCR_FALLBACKS` | `vlm` | Backends tried when a page's reading is rejected |
-| `DOCKET_OCR_LANGUAGES` | `en` | ISO 639-1 codes, e.g. `en,de,fr` |
-| `DOCKET_OCR_CROP_PHOTOS` | `true` | Crop and flatten the document in a photo (needs `[photo]`) |
-| `DOCKET_OCR_MIN_TEXT_HEIGHT` | `20` | Tesseract re-reads a page enlarged when words are shorter than this (px); `0` off |
-| `DOCKET_MIN_CONFIDENCE` | `0.55` | Classification confidence below which a document goes to review |
-| `DOCKET_MIN_SOURCE_CONFIDENCE` | `0.8` | OCR confidence a key field's cited words need, or the document goes to review |
-| `DOCKET_REVIEW_QUEUE_ENABLED` | `false` | Persist flagged documents in the review queue (`[review]` extra) |
-| `DOCKET_REVIEW_DATABASE_URL` | `sqlite:///data/review.db` | Review store; PostgreSQL with the `[postgres]` extra |
-| `DOCKET_BATCH_WORKERS` | `4` | Documents in flight per batch |
-| `DOCKET_EINVOICE_DOWNLOADS` | `~/.cache/docket/einvoice` | Where `docket einvoice fetch` stores artifacts |
+| `DOCKET_LLM_PROVIDER` | `ollama` | `ollama` or `openai` for an OpenAI-compatible endpoint |
+| `DOCKET_TEXT_MODEL` / `DOCKET_VISION_MODEL` | `deepseek-v4.1-flash:cloud` | Extraction model / page-image model |
+| `OLLAMA_HOST` | `http://localhost:11434` | Ollama server URL |
+| `DOCKET_LLM_BASE_URL` | `https://api.openai.com/v1` | OpenAI-compatible API URL |
+| `DOCKET_LLM_API_KEY` | unset | Key for the OpenAI-compatible API |
+| `DOCKET_OCR_BACKEND` / `DOCKET_OCR_FALLBACKS` | `auto` / `vlm` | Primary OCR / fallback chain |
+| `DOCKET_OCR_LANGUAGES` | `en` | Comma-separated language codes, e.g. `en,de` |
+| `DOCKET_MIN_SOURCE_CONFIDENCE` | `0.8` | Minimum OCR confidence for cited key fields |
+| `DOCKET_CONFIG` | unset | TOML file; environment and explicit options override it; CLI also reads `./docket.toml` |
 
 ## Requirements
 
-- Python 3.10+
-- Tesseract on PATH (or the `[paddle]` / `[docling]` extra)
-- Ollama, or any OpenAI-compatible API (Mistral, OpenAI, Azure, vLLM)
-- macOS or Linux; CI runs on Ubuntu
+- Python 3.10 or newer on macOS or Linux; CI tests Python 3.10–3.12 on Ubuntu.
+- Tesseract on `PATH` for scanned pages, or install the optional PaddleOCR or Docling backend. Usable PDF text layers need no OCR engine.
+- A reachable Ollama server or OpenAI-compatible API, with a text model configured. The `vlm` fallback also needs a vision model.
+- The `[einvoice]` extra and `docket einvoice fetch` for official e-invoice validation.
+- The desktop app is a separate source package in [`apps/desktop`](https://github.com/KazKozDev/docket/tree/master/apps/desktop); its native build targets macOS.
 
 ## Limitations
 
-- Wrong `succeeded` results remain possible (see [benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md)); most came from degraded SROIE receipts. Two thirds of documents go to review, and scanned DocILE invoices are the weakest source (0.43).
-- The vision model has been seen changing digits so that a page reconciles.
-- Windows is untested. A document takes a median of 6.4–22.7 s depending on the OCR backend (8.7 s on the full corpus with Tesseract), longer with the vision model.
+- Wrong fields can still pass as `succeeded`: 13 of 66 such results were wrong in the latest published 195-document run. Review critical values before use ([method and results](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md)).
+- About two thirds of documents in that run needed human review; degraded SROIE receipts were the main source of silent errors.
+- The vision model has been observed changing digits to reconcile totals.
+- Windows is untested. The local macOS app build is unsigned and unnotarized.
+- The desktop workflow handles invoices and receipts; contracts and e-invoice tools remain in the library and CLI.
 
 <details>
-<summary>Extras, HTTP service, Docker, development</summary>
+<summary>Desktop app, extras, HTTP API and development</summary>
+
+### Desktop app
+
+From a checkout, install the separate package with `python -m pip install -e . -e apps/desktop` and run `docket-desktop`. It imports PDF/images, supports correction and approval, and exports approved data as XLSX, CSV or JSON. See the [desktop guide](https://github.com/KazKozDev/docket/blob/master/docs/DESKTOP.md).
 
 ### Extras
 
-```bash
-pip install "docket-idp[api]"       # HTTP service (docket-api)
-pip install "docket-idp[einvoice]"  # official e-invoice validation
-pip install "docket-idp[review]"    # persistent review queue (SQLAlchemy; [postgres] for PostgreSQL)
-pip install "docket-idp[paddle]"    # PaddleOCR backend
-pip install "docket-idp[docling]"   # Docling/TableFormer backend
-pip install "docket-idp[photo]"     # crop and flatten documents in phone photos (OpenCV)
-pip install "docket-idp[all]"       # + Langfuse tracing and e-invoice validation
-```
+`docket-idp[api]` adds the HTTP service; `[photo]` adds photo cropping; `[paddle]` and `[docling]` add OCR backends; `[review]` adds the persistent review queue. See [`pyproject.toml`](https://github.com/KazKozDev/docket/blob/master/pyproject.toml) for the full list.
 
-The native invoice and receipt app is in [`apps/desktop`](apps/desktop/): install with `python -m pip install -e . -e apps/desktop`, then run `docket-desktop` ([guide](docs/DESKTOP.md)).
-
-Langfuse tracing starts only when `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` are set, and then records model, latency and sizes. Prompts and answers, which contain the document's text, are sent only with `DOCKET_LANGFUSE_CONTENT=true`.
-
-### HTTP service and Docker
-
-Reference applications on the same library contract, for other languages:
+### HTTP API and Docker
 
 ```bash
 docker run -p 8000:8000 -e DOCKET_API_KEY=secret ghcr.io/kazkozdev/docket
 curl -H "Authorization: Bearer secret" -F file=@invoice.pdf localhost:8000/process
 ```
 
-Without `DOCKET_API_KEY`, `docket-api` serves only on 127.0.0.1; on any other address it refuses to start unless you pass `--no-auth` (an authenticating proxy in front). `POST /jobs` handles multi-file jobs with CSV/JSONL downloads; the typed contract is [`docs/openapi.json`](https://github.com/KazKozDev/docket/blob/master/docs/openapi.json), with interactive docs at `/docs`.
+See the [OpenAPI specification](https://github.com/KazKozDev/docket/blob/master/docs/openapi.json) for endpoints and responses.
 
 ### Development
 
 ```bash
 git clone https://github.com/KazKozDev/docket.git && cd docket
-python3 -m venv .venv && source .venv/bin/activate && pip install -e ".[dev]"
-pytest                                   # no test needs a running LLM
-streamlit run examples/streamlit_demo.py # demo UI
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]" && pytest
 ```
 
 </details>
@@ -191,10 +129,8 @@ streamlit run examples/streamlit_demo.py # demo UI
 
 <div align="center">
 
-![macOS](https://img.shields.io/badge/macOS-333?style=flat-square&logo=apple&logoColor=fff) ![Linux](https://img.shields.io/badge/Linux-333?style=flat-square&logo=linux&logoColor=fff)
+[![Tests](https://github.com/KazKozDev/docket/actions/workflows/ci.yml/badge.svg)](https://github.com/KazKozDev/docket/actions) [![Python](https://img.shields.io/badge/Python-3.10%2B-333?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/pyproject.toml) [![PyPI](https://img.shields.io/pypi/v/docket-idp?style=flat-square)](https://pypi.org/project/docket-idp/) [![License](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/LICENSE)
 
-![Python](https://img.shields.io/badge/Python-3.10+-333?style=flat-square&logo=python&logoColor=fff) [![PyPI](https://img.shields.io/pypi/v/docket-idp?style=flat-square)](https://pypi.org/project/docket-idp/) [![License](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/LICENSE) [![Tests](https://github.com/KazKozDev/docket/actions/workflows/ci.yml/badge.svg)](https://github.com/KazKozDev/docket/actions)
-
-[Contributing](https://github.com/KazKozDev/docket/blob/master/CONTRIBUTING.md) · [Security](https://github.com/KazKozDev/docket/blob/master/docs/SECURITY.md) · [License](https://github.com/KazKozDev/docket/blob/master/LICENSE) · [Architecture](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md) · [API stability](https://github.com/KazKozDev/docket/blob/master/docs/API_STABILITY.md) · [Benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md) · [Changelog](https://github.com/KazKozDev/docket/blob/master/CHANGELOG.md)
+[Issues](https://github.com/KazKozDev/docket/issues) · [Contributing](https://github.com/KazKozDev/docket/blob/master/CONTRIBUTING.md) · [Security](https://github.com/KazKozDev/docket/blob/master/docs/SECURITY.md) · [License](https://github.com/KazKozDev/docket/blob/master/LICENSE) · [Architecture](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md) · [Benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md) · [Changelog](https://github.com/KazKozDev/docket/blob/master/CHANGELOG.md)
 
 </div>
