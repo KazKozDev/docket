@@ -1,6 +1,6 @@
 # docket — Python library for invoice, receipt and contract OCR extraction with LLMs
 
-Turn scanned invoices, receipts and contracts into validated JSON with source citations, then export EU e-invoices checked against the official rules.
+Extract cited, validated JSON from scanned invoices, receipts and contracts. Export EU e-invoices checked against official rules.
 
 ```bash
 pip install docket-idp
@@ -8,16 +8,15 @@ pip install docket-idp
 
 ![Docket Desktop reviewing a receipt and its extracted fields](docs/assets/demo-docket.png)
 
-Python library + CLI · Ollama or any OpenAI-compatible API · Every value cited to its source line · Apache-2.0
+Python library + CLI · Ollama or OpenAI-compatible API · Apache-2.0
 
 ---
 
 ## Quick start
 
-Needs Python 3.10+, Tesseract on PATH (`brew install tesseract` / `apt install tesseract-ocr`), and an LLM: [Ollama](https://ollama.com) with a text and a vision model pulled, or an OpenAI-compatible API key (see [Configuration](#configuration)).
+With Tesseract and [Ollama](https://ollama.com) or an OpenAI-compatible API configured (see [Requirements](#requirements) and [Configuration](#configuration)):
 
 ```bash
-pip install docket-idp
 docket process invoice.pdf        # JSON on stdout; exit 2 if validation fails
 ```
 
@@ -43,7 +42,7 @@ except ExportError:
     print(result.status, result.review_reasons)
 ```
 
-`result.document` is the typed schema (`Invoice`, `Receipt`, `Contract`, …), `result.status` is `succeeded`, `needs_review` or `failed`, and `result.field_sources` gives the page, quote and box of every value. Nothing is written to disk unless you ask for it. For directories use `process_batch("scans/", options, BatchOptions(workers=4, checkpoint="run.jsonl"))` or `docket batch scans/ --format csv --output results.csv`: input order is kept, one failure never stops the rest, and a rerun skips checkpointed documents.
+`result.document` is typed (`Invoice`, `Receipt`, `Contract`, …); `result.status` is `succeeded`, `needs_review` or `failed`; and `result.field_sources` holds page, quote and box. Processing writes nothing unless requested. For directories, use `process_batch("scans/", options, BatchOptions(workers=4, checkpoint="run.jsonl"))` or `docket batch scans/ --format csv --output results.csv`. Batch processing preserves input order, isolates failures and resumes from checkpoints.
 
 ## Export and validate XRechnung, Factur-X and Peppol e-invoices
 
@@ -54,8 +53,6 @@ except ExportError:
 | Factur-X / ZUGFeRD CII | `factur-x-en16931`, `factur-x-basic` | Factur-X 1.09 profile rules |
 | Facturae 3.2.2 (Spain) | `facturae` | — |
 
-Formats for a particular ERP or accounting system (SAP, Xero, QuickBooks, 1C) are not built in: register your own with `register_exporter()`.
-
 ```bash
 pip install "docket-idp[einvoice]"
 docket einvoice fetch                              # once: Peppol, CII and Factur-X rules are not shipped
@@ -64,15 +61,15 @@ docket validate-einvoice invoice.xml               # XSD + Schematron; exit 0 va
 docket factur-x create invoice.pdf factur-x.xml -o hybrid.pdf
 ```
 
-Converting a supplier's scanned or PDF invoice gives you its data in the EN 16931 model for your own books and checks; it does not turn it into a legally issued e-invoice, which only the supplier can send.
+Converting a supplier invoice produces EN 16931 data for your books, not a legally issued e-invoice from that supplier.
 
-Extracted the data with something else? `verify(data, page_texts, document_type="invoice")` runs the same checks against the source text (every cited quote on its page, every number and date on its cited line, arithmetic, check digits) and returns the same `DocumentResult`, so `export_document` accepts or refuses it on the same terms. A schema instance passed straight to `export_document` is checked for arithmetic, dates and check digits before it is exported.
+For data extracted elsewhere, `verify(data, page_texts, document_type="invoice")` checks citations, numbers, dates, arithmetic and check digits, returning a `DocumentResult` subject to the same export rules. Direct schema exports also check arithmetic, dates and check digits.
 
-Exporters refuse what they can't represent faithfully (no line items, tax that doesn't match the lines) instead of guessing. Validation runs offline with the official artifacts, pinned by SHA-256 in the [manifest](https://github.com/KazKozDev/docket/blob/master/src/docket/einvoice/resources/manifest.json). Artifacts without verified redistribution terms are downloaded on request, not shipped; see the [third-party licence inventory](https://github.com/KazKozDev/docket/blob/master/docs/THIRD_PARTY_LICENSES.md). In Python: `validate_einvoice("invoice.xml")`, and `generate_facturx_pdf()` / `verify_facturx_round_trip()` for PDF/A-3 with veraPDF.
+Exporters reject missing line items or inconsistent tax instead of guessing. Offline validation uses official artifacts pinned in the [manifest](https://github.com/KazKozDev/docket/blob/master/src/docket/einvoice/resources/manifest.json); those without verified redistribution terms are downloaded on request ([licence inventory](https://github.com/KazKozDev/docket/blob/master/docs/THIRD_PARTY_LICENSES.md)). Python APIs include `validate_einvoice()`, `generate_facturx_pdf()` and `verify_facturx_round_trip()`.
 
 ## Add custom document types and vendor templates
 
-The catalog has 7 versioned schemas (`docket schemas list`), all for the documents of accounts payable. Six are stable: invoice, purchase order, receipt, contract, bank statement and waybill (the goods receipt in `match_three_way`). The credit note is experimental. Add your own as a Pydantic model:
+`docket schemas list` shows seven versioned accounts-payable schemas: invoice, purchase order, receipt, contract, bank statement, waybill and experimental credit note. Add one with a Pydantic model:
 
 ```python
 from datetime import date
@@ -92,15 +89,15 @@ register_schema(SchemaSpec(
 ))
 ```
 
-Registered schemas are classified, extracted, citation-checked and exported like built-in ones. `register_vendor_template(VendorTemplate(...))` reads a known vendor layout with explicit rules and no LLM, accepted only when validation passes. `register_exporter()` adds output formats. Schemas, exporters and OCR backends can also ship as separate packages via entry points; see [`examples/`](https://github.com/KazKozDev/docket/blob/master/examples/).
+Registered schemas use the same classification, extraction, citation checks and exports. `register_vendor_template()` reads known layouts without an LLM and still requires validation; `register_exporter()` adds ERP-specific formats. Schemas, exporters and OCR backends can ship as entry-point plugins; see [`examples/`](https://github.com/KazKozDev/docket/blob/master/examples/).
 
 ## Measure extraction accuracy on public datasets
 
-The number that matters most is how often docket says "succeeded" and is wrong, because that result goes straight into the books unseen. On the latest full run it was **13 of 66 silent successes (20%)**, down from 27 of 59 (46%) on a slightly different corpus before the checks that target it (date order, payment arithmetic, document numbers against their cited line, OCR confidence on key fields); excluding the SROIE Malaysian receipts, which the checks are not tuned for, it is **3 of 24 (13%)**. On that run the confidence check sent 57 documents to review, 17 of them actually wrong; the document-number check flagged none.
+The key risk is a wrong result marked `succeeded`. In the latest run, **13 of 66** such results were wrong (20%); excluding SROIE receipts, **3 of 24** were wrong (13%).
 
-195 scans: the project's labelled golden set plus real documents from public Hugging Face datasets (DocILE, SROIE, CORD, FUNSD, RVL-CDIP, donut-style invoices), graded field by field against the datasets' own ground truth. On the same run, docket gets **0.88 field accuracy**: 0.96 on the golden set, 0.99 on donut invoices, 0.80 on SROIE receipts. 73% of documents come back with every field right.
+Across 195 labelled scans from the golden set and public datasets (DocILE, SROIE, CORD, FUNSD, RVL-CDIP, donut-style invoices), field accuracy was **0.88**; 73% of documents had every field right.
 
-Against the pip-installable alternatives, each tool is graded only on the documents and fields it supports, and docket is graded on exactly the same ones:
+Against pip-installable alternatives, each tool and docket are graded on the same supported documents and fields:
 
 | | docs | tool | docket on the same docs |
 |---|---|---|---|
@@ -108,11 +105,11 @@ Against the pip-installable alternatives, each tool is graded only on the docume
 | ocrcontext 0.1.5 | 55 | 0.04 | **0.83** |
 | invoice2data 1.0.1 | 44 | 0.00 | **0.89** |
 
-Method, per-source results and how to rerun: [docs/BENCHMARKS.md](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
+Method and per-source results: [docs/BENCHMARKS.md](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
 
 ## How it works
 
-Text comes from the cheapest source that works, page by page: PDF text layer, then OCR (Tesseract, PaddleOCR, Docling or a plugin), then a vision model only when OCR is unusable. Before OCR, a phone photo of a receipt or invoice is cropped to the paper and flattened (the `[photo]` extra), and Tesseract re-reads small text enlarged; `OcrOptions(preprocess=fn)` adds your own step on every page image. Classification tries keyword rules, TF-IDF, then an LLM. Extraction fills a Pydantic schema and cites the verbatim line for every value; schema errors go back to the model. Validation never calls a model: arithmetic to the cent, dates, IBAN, VAT and tax-ID check digits, and that every cited line contains the value. Anything uncertain goes to review instead of being silently fixed.
+Each page uses its PDF text layer, OCR (Tesseract, PaddleOCR, Docling or a plugin), or a vision model when OCR is unusable. Optional photo cropping, enlargement and `OcrOptions(preprocess=fn)` prepare images. Rules, TF-IDF and then an LLM classify documents; extraction fills a Pydantic schema with source lines. Deterministic checks cover citations, arithmetic, dates and check digits; uncertain results go to review.
 
 ```
 document → text layer / OCR / VLM → classify → extract + cite → validate → JSON or review
@@ -120,7 +117,7 @@ document → text layer / OCR / VLM → classify → extract + cite → validate
 
 ## Configuration
 
-Priority, lowest to highest: defaults, a TOML file (`--config` or `DOCKET_CONFIG`), the environment, explicit arguments. Importing docket reads nothing else; the `docket` CLI and `docket-api` also read `.env` and `./docket.toml` from the working directory. Every setting is in [`docket.example.toml`](https://github.com/KazKozDev/docket/blob/master/docket.example.toml); `docket config show` prints effective values and their source.
+Priority: defaults → TOML (`--config` or `DOCKET_CONFIG`) → environment → explicit arguments. The CLI and API also load `.env` and `./docket.toml`; importing the library does not. See [`docket.example.toml`](https://github.com/KazKozDev/docket/blob/master/docket.example.toml) or `docket config show` for effective values and sources.
 
 | Variable | Default | What it does |
 |---|---|---|
@@ -149,8 +146,7 @@ Priority, lowest to highest: defaults, a TOML file (`--config` or `DOCKET_CONFIG
 
 ## Limitations
 
-- A silent wrong answer is possible: on the 195-scan corpus, 20% of "succeeded, no review" documents (13 of 66) had at least one wrong field — 10 of the 13 are degraded Malaysian thermal receipts (SROIE); excluding that source it is 3 of 24 (13%). See [benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md).
-- Two thirds of documents still go to review, which is the intended path when anything is uncertain. Scanned DocILE invoices are the weakest source (0.43).
+- Wrong `succeeded` results remain possible (see [benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md)); most came from degraded SROIE receipts. Two thirds of documents go to review, and scanned DocILE invoices are the weakest source (0.43).
 - The vision model has been seen changing digits so that a page reconciles.
 - Windows is untested. A document takes a median of 6.4–22.7 s depending on the OCR backend (8.7 s on the full corpus with Tesseract), longer with the vision model.
 
@@ -169,11 +165,7 @@ pip install "docket-idp[photo]"     # crop and flatten documents in phone photos
 pip install "docket-idp[all]"       # + Langfuse tracing and e-invoice validation
 ```
 
-The native invoice and receipt app lives in the separate
-[`apps/desktop`](apps/desktop/) package. From a checkout, install it with
-`python -m pip install -e . -e apps/desktop` and run `docket-desktop`.
-
-For the native, browser-free invoice and receipt workflow, see [Docket Desktop](docs/DESKTOP.md).
+The native invoice and receipt app is in [`apps/desktop`](apps/desktop/): install with `python -m pip install -e . -e apps/desktop`, then run `docket-desktop` ([guide](docs/DESKTOP.md)).
 
 Langfuse tracing starts only when `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` are set, and then records model, latency and sizes. Prompts and answers, which contain the document's text, are sent only with `DOCKET_LANGFUSE_CONTENT=true`.
 
