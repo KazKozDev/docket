@@ -6,7 +6,7 @@ Extract cited, validated JSON from scanned invoices, receipts and contracts. Exp
 pip install docket-idp
 ```
 
-![Docket Desktop reviewing a receipt and its extracted fields](docs/assets/demo-docket.png)
+![Docket Desktop reviewing a receipt and its extracted fields](docs/assets/docket-desktop-promo.png)
 
 Python library + CLI · Ollama or OpenAI-compatible API · Apache-2.0
 
