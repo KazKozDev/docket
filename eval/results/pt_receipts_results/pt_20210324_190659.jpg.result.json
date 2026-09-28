@@ -1,0 +1,2202 @@
+{
+ "source": "eval/pt_receipts/pt_20210324_190659.jpg",
+ "document_id": "doc_ab6d3acdfb5e0c6916a4",
+ "status": "succeeded",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 0.95,
+  "method": "llm",
+  "scores": {
+   "invoice": 3.0,
+   "credit_note": 0.0,
+   "receipt": 3.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "tesseract",
+    "degraded": false,
+    "confidence": 0.8230958230958231,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "accepted",
+      "confidence": 0.8230958230958231,
+      "reason": null,
+      "seconds": 5.624
+     }
+    ],
+    "witness": null
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "tesseract",
+    "confidence": 0.8230958230958231,
+    "words": [
+     {
+      "id": "p1-w0",
+      "text": "Brisa",
+      "confidence": 0.9,
+      "bbox": {
+       "x0": 0.024333333333333332,
+       "y0": 0.0325,
+       "x1": 0.11633333333333333,
+       "y1": 0.05775
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l0"
+     },
+     {
+      "id": "p1-w1",
+      "text": "»concessáo",
+      "confidence": 0.58,
+      "bbox": {
+       "x0": 0.14533333333333334,
+       "y0": 0.023,
+       "x1": 0.3576666666666667,
+       "y1": 0.058
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l0"
+     },
+     {
+      "id": "p1-w2",
+      "text": "Rodovi:",
+      "confidence": 0.83,
+      "bbox": {
+       "x0": 0.38066666666666665,
+       "y0": 0.00975,
+       "x1": 0.493,
+       "y1": 0.04625
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l0"
+     },
+     {
+      "id": "p1-w3",
+      "text": "lária,",
+      "confidence": 0.88,
+      "bbox": {
+       "x0": 0.48733333333333334,
+       "y0": 0.0205,
+       "x1": 0.577,
+       "y1": 0.046
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l0"
+     },
+     {
+      "id": "p1-w4",
+      "text": "S.A.",
+      "confidence": 0.89,
+      "bbox": {
+       "x0": 0.5873333333333334,
+       "y0": 0.01975,
+       "x1": 0.6916666666666667,
+       "y1": 0.048
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l0"
+     },
+     {
+      "id": "p1-w5",
+      "text": "Quintá",
+      "confidence": 0.92,
+      "bbox": {
+       "x0": 0.024,
+       "y0": 0.071,
+       "x1": 0.137,
+       "y1": 0.09925
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l1"
+     },
+     {
+      "id": "p1-w6",
+      "text": "da",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.16066666666666668,
+       "y0": 0.069,
+       "x1": 0.19666666666666666,
+       "y1": 0.09225
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l1"
+     },
+     {
+      "id": "p1-w7",
+      "text": "Torre",
+      "confidence": 0.95,
+      "bbox": {
+       "x0": 0.22666666666666666,
+       "y0": 0.066,
+       "x1": 0.31833333333333336,
+       "y1": 0.0915
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l1"
+     },
+     {
+      "id": "p1-w8",
+      "text": "da",
+      "confidence": 0.95,
+      "bbox": {
+       "x0": 0.3426666666666667,
+       "y0": 0.06525,
+       "x1": 0.37733333333333335,
+       "y1": 0.08775
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l1"
+     },
+     {
+      "id": "p1-w9",
+      "text": "Azul",
+      "confidence": 0.0,
+      "bbox": {
+       "x0": 0.4036666666666667,
+       "y0": 0.06425,
+       "x1": 0.4746666666666667,
+       "y1": 0.0905
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l1"
+     },
+     {
+      "id": "p1-w10",
+      "text": "lha",
+      "confidence": 0.0,
+      "bbox": {
+       "x0": 0.48933333333333334,
+       "y0": 0.05275,
+       "x1": 0.5393333333333333,
+       "y1": 0.08775
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l1"
+     },
+     {
+      "id": "p1-w11",
+      "text": "Ediricio",
+      "confidence": 0.0,
+      "bbox": {
+       "x0": 0.5873333333333334,
+       "y0": 0.0405,
+       "x1": 0.763,
+       "y1": 0.084
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l1"
+     },
+     {
+      "id": "p1-w12",
+      "text": "Brisa",
+      "confidence": 0.88,
+      "bbox": {
+       "x0": 0.787,
+       "y0": 0.0535,
+       "x1": 0.8863333333333333,
+       "y1": 0.07725
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l1"
+     },
+     {
+      "id": "p1-w13",
+      "text": "9785-599",
+      "confidence": 0.8,
+      "bbox": {
+       "x0": 0.024666666666666667,
+       "y0": 0.11075,
+       "x1": 0.179,
+       "y1": 0.1395
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l2"
+     },
+     {
+      "id": "p1-w14",
+      "text": "Sao",
+      "confidence": 0.93,
+      "bbox": {
+       "x0": 0.20233333333333334,
+       "y0": 0.11,
+       "x1": 0.25933333333333336,
+       "y1": 0.134
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l2"
+     },
+     {
+      "id": "p1-w15",
+      "text": "Domingos",
+      "confidence": 0.83,
+      "bbox": {
+       "x0": 0.2826666666666667,
+       "y0": 0.1085,
+       "x1": 0.441,
+       "y1": 0.1325
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l2"
+     },
+     {
+      "id": "p1-w16",
+      "text": "de",
+      "confidence": 0.93,
+      "bbox": {
+       "x0": 0.4646666666666667,
+       "y0": 0.106,
+       "x1": 0.5013333333333333,
+       "y1": 0.129
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l2"
+     },
+     {
+      "id": "p1-w17",
+      "text": "Kala",
+      "confidence": 0.38,
+      "bbox": {
+       "x0": 0.525,
+       "y0": 0.10425,
+       "x1": 0.6023333333333334,
+       "y1": 0.12675
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l2"
+     },
+     {
+      "id": "p1-w18",
+      "text": "MCRC",
+      "confidence": 0.93,
+      "bbox": {
+       "x0": 0.024333333333333332,
+       "y0": 0.15275,
+       "x1": 0.101,
+       "y1": 0.1805
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l3"
+     },
+     {
+      "id": "p1-w19",
+      "text": "Cascais",
+      "confidence": 0.32,
+      "bbox": {
+       "x0": 0.12333333333333334,
+       "y0": 0.154,
+       "x1": 0.26066666666666666,
+       "y1": 0.17775
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l3"
+     },
+     {
+      "id": "p1-w20",
+      "text": "e",
+      "confidence": 0.9,
+      "bbox": {
+       "x0": 0.2833333333333333,
+       "y0": 0.154,
+       "x1": 0.301,
+       "y1": 0.17375
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l3"
+     },
+     {
+      "id": "p1-w21",
+      "text": "NIPC",
+      "confidence": 0.91,
+      "bbox": {
+       "x0": 0.3233333333333333,
+       "y0": 0.14675,
+       "x1": 0.40066666666666667,
+       "y1": 0.173
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l3"
+     },
+     {
+      "id": "p1-w22",
+      "text": "502",
+      "confidence": 0.85,
+      "bbox": {
+       "x0": 0.425,
+       "y0": 0.1455,
+       "x1": 0.482,
+       "y1": 0.16925
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l3"
+     },
+     {
+      "id": "p1-w23",
+      "text": "790",
+      "confidence": 0.82,
+      "bbox": {
+       "x0": 0.5133333333333333,
+       "y0": 0.14175,
+       "x1": 0.5636666666666666,
+       "y1": 0.16475
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l3"
+     },
+     {
+      "id": "p1-w24",
+      "text": "024",
+      "confidence": 0.95,
+      "bbox": {
+       "x0": 0.5876666666666667,
+       "y0": 0.14,
+       "x1": 0.6456666666666667,
+       "y1": 0.16325
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l3"
+     },
+     {
+      "id": "p1-w25",
+      "text": "Capital",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.024,
+       "y0": 0.1925,
+       "x1": 0.15533333333333332,
+       "y1": 0.224
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l4"
+     },
+     {
+      "id": "p1-w26",
+      "text": "Social:",
+      "confidence": 0.93,
+      "bbox": {
+       "x0": 0.184,
+       "y0": 0.19,
+       "x1": 0.31533333333333335,
+       "y1": 0.21675
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l4"
+     },
+     {
+      "id": "p1-w27",
+      "text": "75",
+      "confidence": 0.92,
+      "bbox": {
+       "x0": 0.3473333333333333,
+       "y0": 0.188,
+       "x1": 0.382,
+       "y1": 0.21225
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l4"
+     },
+     {
+      "id": "p1-w28",
+      "text": "000",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.4053333333333333,
+       "y0": 0.185,
+       "x1": 0.4633333333333333,
+       "y1": 0.2125
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l4"
+     },
+     {
+      "id": "p1-w29",
+      "text": "000",
+      "confidence": 0.8,
+      "bbox": {
+       "x0": 0.48633333333333334,
+       "y0": 0.18125,
+       "x1": 0.5453333333333333,
+       "y1": 0.20975
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l4"
+     },
+     {
+      "id": "p1-w30",
+      "text": "€",
+      "confidence": 0.95,
+      "bbox": {
+       "x0": 0.568,
+       "y0": 0.17925,
+       "x1": 0.5873333333333334,
+       "y1": 0.205
+      },
+      "page": 1,
+      "block_id": "p1-b0",
+      "line_id": "p1-l4"
+     },
+     {
+      "id": "p1-w31",
+      "text": "FACTURA",
+      "confidence": 0.94,
+      "bbox": {
+       "x0": 0.021666666666666667,
+       "y0": 0.276,
+       "x1": 0.16033333333333333,
+       "y1": 0.304
+      },
+      "page": 1,
+      "block_id": "p1-b1",
+      "line_id": "p1-l5"
+     },
+     {
+      "id": "p1-w32",
+      "text": "SIMPLIFICADA",
+      "confidence": 0.04,
+      "bbox": {
+       "x0": 0.183,
+       "y0": 0.27025,
+       "x1": 0.4246666666666667,
+       "y1": 0.30125
+      },
+      "page": 1,
+      "block_id": "p1-b1",
+      "line_id": "p1-l5"
+     },
+     {
+      "id": "p1-w33",
+      "text": "Recibo:",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.021333333333333333,
+       "y0": 0.3615,
+       "x1": 0.15633333333333332,
+       "y1": 0.38825
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l6"
+     },
+     {
+      "id": "p1-w34",
+      "text": "FS",
+      "confidence": 0.9,
+      "bbox": {
+       "x0": 0.184,
+       "y0": 0.35875,
+       "x1": 0.22266666666666668,
+       "y1": 0.386
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l6"
+     },
+     {
+      "id": "p1-w35",
+      "text": "05021061902/0044",
+      "confidence": 0.61,
+      "bbox": {
+       "x0": 0.24533333333333332,
+       "y0": 0.349,
+       "x1": 0.6383333333333333,
+       "y1": 0.3845
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l6"
+     },
+     {
+      "id": "p1-w36",
+      "text": "774",
+      "confidence": 0.61,
+      "bbox": {
+       "x0": 0.5766666666666667,
+       "y0": 0.348,
+       "x1": 0.637,
+       "y1": 0.38975
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l6"
+     },
+     {
+      "id": "p1-w37",
+      "text": "Original",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.68,
+       "y0": 0.342,
+       "x1": 0.8443333333333334,
+       "y1": 0.374
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l6"
+     },
+     {
+      "id": "p1-w38",
+      "text": "Data",
+      "confidence": 0.92,
+      "bbox": {
+       "x0": 0.021666666666666667,
+       "y0": 0.403,
+       "x1": 0.101,
+       "y1": 0.4305
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l7"
+     },
+     {
+      "id": "p1-w39",
+      "text": "e",
+      "confidence": 0.92,
+      "bbox": {
+       "x0": 0.124,
+       "y0": 0.40725,
+       "x1": 0.142,
+       "y1": 0.42925
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l7"
+     },
+     {
+      "id": "p1-w40",
+      "text": "Hora:",
+      "confidence": 0.95,
+      "bbox": {
+       "x0": 0.164,
+       "y0": 0.40125,
+       "x1": 0.25866666666666666,
+       "y1": 0.4315
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l7"
+     },
+     {
+      "id": "p1-w41",
+      "text": "2019-02-21",
+      "confidence": 0.95,
+      "bbox": {
+       "x0": 0.28633333333333333,
+       "y0": 0.39475,
+       "x1": 0.4856666666666667,
+       "y1": 0.42675
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l7"
+     },
+     {
+      "id": "p1-w42",
+      "text": "10:18:54",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.5146666666666667,
+       "y0": 0.389,
+       "x1": 0.6806666666666666,
+       "y1": 0.42175
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l7"
+     },
+     {
+      "id": "p1-w43",
+      "text": "Saida:",
+      "confidence": 0.93,
+      "bbox": {
+       "x0": 0.022,
+       "y0": 0.446,
+       "x1": 0.13766666666666666,
+       "y1": 0.47375
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l8"
+     },
+     {
+      "id": "p1-w44",
+      "text": "0502",
+      "confidence": 0.92,
+      "bbox": {
+       "x0": 0.165,
+       "y0": 0.44275,
+       "x1": 0.2843333333333333,
+       "y1": 0.472
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l8"
+     },
+     {
+      "id": "p1-w45",
+      "text": "-",
+      "confidence": 0.92,
+      "bbox": {
+       "x0": 0.268,
+       "y0": 0.43775,
+       "x1": 0.28633333333333333,
+       "y1": 0.47825
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l8"
+     },
+     {
+      "id": "p1-w46",
+      "text": "Carcavelos",
+      "confidence": 0.87,
+      "bbox": {
+       "x0": 0.289,
+       "y0": 0.43875,
+       "x1": 0.5116666666666667,
+       "y1": 0.47725
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l8"
+     },
+     {
+      "id": "p1-w47",
+      "text": "pv",
+      "confidence": 0.87,
+      "bbox": {
+       "x0": 0.5336666666666666,
+       "y0": 0.442,
+       "x1": 0.5743333333333334,
+       "y1": 0.4695
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l8"
+     },
+     {
+      "id": "p1-w48",
+      "text": "via:",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.024,
+       "y0": 0.489,
+       "x1": 0.09833333333333333,
+       "y1": 0.516
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l9"
+     },
+     {
+      "id": "p1-w49",
+      "text": "106",
+      "confidence": 0.92,
+      "bbox": {
+       "x0": 0.128,
+       "y0": 0.48675,
+       "x1": 0.184,
+       "y1": 0.51525
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l9"
+     },
+     {
+      "id": "p1-w50",
+      "text": "Portageiro:",
+      "confidence": 0.79,
+      "bbox": {
+       "x0": 0.22633333333333333,
+       "y0": 0.484,
+       "x1": 0.44533333333333336,
+       "y1": 0.51475
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l9"
+     },
+     {
+      "id": "p1-w51",
+      "text": "00872",
+      "confidence": 0.58,
+      "bbox": {
+       "x0": 0.4663333333333333,
+       "y0": 0.476,
+       "x1": 0.575,
+       "y1": 0.5095
+      },
+      "page": 1,
+      "block_id": "p1-b2",
+      "line_id": "p1-l9"
+     },
+     {
+      "id": "p1-w52",
+      "text": "Modo",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.025666666666666667,
+       "y0": 0.57475,
+       "x1": 0.10466666666666667,
+       "y1": 0.601
+      },
+      "page": 1,
+      "block_id": "p1-b3",
+      "line_id": "p1-l10"
+     },
+     {
+      "id": "p1-w53",
+      "text": "de",
+      "confidence": 0.93,
+      "bbox": {
+       "x0": 0.12533333333333332,
+       "y0": 0.57325,
+       "x1": 0.16433333333333333,
+       "y1": 0.60075
+      },
+      "page": 1,
+      "block_id": "p1-b3",
+      "line_id": "p1-l10"
+     },
+     {
+      "id": "p1-w54",
+      "text": "Pagamento:",
+      "confidence": 0.91,
+      "bbox": {
+       "x0": 0.186,
+       "y0": 0.57075,
+       "x1": 0.38433333333333336,
+       "y1": 0.60225
+      },
+      "page": 1,
+      "block_id": "p1-b3",
+      "line_id": "p1-l10"
+     },
+     {
+      "id": "p1-w55",
+      "text": "Cartao",
+      "confidence": 0.91,
+      "bbox": {
+       "x0": 0.4116666666666667,
+       "y0": 0.57,
+       "x1": 0.5363333333333333,
+       "y1": 0.598
+      },
+      "page": 1,
+      "block_id": "p1-b3",
+      "line_id": "p1-l10"
+     },
+     {
+      "id": "p1-w56",
+      "text": "Bancar1o",
+      "confidence": 0.31,
+      "bbox": {
+       "x0": 0.559,
+       "y0": 0.569,
+       "x1": 0.7313333333333333,
+       "y1": 0.5965
+      },
+      "page": 1,
+      "block_id": "p1-b3",
+      "line_id": "p1-l10"
+     },
+     {
+      "id": "p1-w57",
+      "text": "Classe:",
+      "confidence": 0.95,
+      "bbox": {
+       "x0": 0.025,
+       "y0": 0.616,
+       "x1": 0.15933333333333333,
+       "y1": 0.645
+      },
+      "page": 1,
+      "block_id": "p1-b3",
+      "line_id": "p1-l11"
+     },
+     {
+      "id": "p1-w58",
+      "text": "1",
+      "confidence": 0.87,
+      "bbox": {
+       "x0": 0.18866666666666668,
+       "y0": 0.61475,
+       "x1": 0.20266666666666666,
+       "y1": 0.64425
+      },
+      "page": 1,
+      "block_id": "p1-b3",
+      "line_id": "p1-l11"
+     },
+     {
+      "id": "p1-w59",
+      "text": "Taxa:",
+      "confidence": 0.87,
+      "bbox": {
+       "x0": 0.24766666666666667,
+       "y0": 0.614,
+       "x1": 0.343,
+       "y1": 0.644
+      },
+      "page": 1,
+      "block_id": "p1-b3",
+      "line_id": "p1-l11"
+     },
+     {
+      "id": "p1-w60",
+      "text": "1,35",
+      "confidence": 0.95,
+      "bbox": {
+       "x0": 0.37333333333333335,
+       "y0": 0.61325,
+       "x1": 0.4533333333333333,
+       "y1": 0.647
+      },
+      "page": 1,
+      "block_id": "p1-b3",
+      "line_id": "p1-l11"
+     },
+     {
+      "id": "p1-w61",
+      "text": "€",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.476,
+       "y0": 0.61325,
+       "x1": 0.495,
+       "y1": 0.642
+      },
+      "page": 1,
+      "block_id": "p1-b3",
+      "line_id": "p1-l11"
+     },
+     {
+      "id": "p1-w62",
+      "text": "PAGAMENTO",
+      "confidence": 0.91,
+      "bbox": {
+       "x0": 0.025,
+       "y0": 0.704,
+       "x1": 0.20566666666666666,
+       "y1": 0.732
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l12"
+     },
+     {
+      "id": "p1-w63",
+      "text": "AUTOMATICO",
+      "confidence": 0.89,
+      "bbox": {
+       "x0": 0.22533333333333333,
+       "y0": 0.7045,
+       "x1": 0.434,
+       "y1": 0.733
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l12"
+     },
+     {
+      "id": "p1-w64",
+      "text": "num:",
+      "confidence": 0.95,
+      "bbox": {
+       "x0": 0.45666666666666667,
+       "y0": 0.71,
+       "x1": 0.5353333333333333,
+       "y1": 0.73325
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l12"
+     },
+     {
+      "id": "p1-w65",
+      "text": "1858",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.566,
+       "y0": 0.70475,
+       "x1": 0.6483333333333333,
+       "y1": 0.73325
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l12"
+     },
+     {
+      "id": "p1-w66",
+      "text": "BANCO",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.024333333333333332,
+       "y0": 0.7475,
+       "x1": 0.124,
+       "y1": 0.7755
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l13"
+     },
+     {
+      "id": "p1-w67",
+      "text": "BP]",
+      "confidence": 0.71,
+      "bbox": {
+       "x0": 0.146,
+       "y0": 0.74825,
+       "x1": 0.201,
+       "y1": 0.77575
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l13"
+     },
+     {
+      "id": "p1-w68",
+      "text": "gi",
+      "confidence": 0.3,
+      "bbox": {
+       "x0": 0.32233333333333336,
+       "y0": 0.7735,
+       "x1": 0.36233333333333334,
+       "y1": 0.77975
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l13"
+     },
+     {
+      "id": "p1-w69",
+      "text": "OUR]",
+      "confidence": 0.36,
+      "bbox": {
+       "x0": 0.481,
+       "y0": 0.75,
+       "x1": 0.804,
+       "y1": 0.7785
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l13"
+     },
+     {
+      "id": "p1-w70",
+      "text": "Wes",
+      "confidence": 0.28,
+      "bbox": {
+       "x0": 0.734,
+       "y0": 0.74825,
+       "x1": 0.7696666666666667,
+       "y1": 0.7835
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l13"
+     },
+     {
+      "id": "p1-w71",
+      "text": "|",
+      "confidence": 0.62,
+      "bbox": {
+       "x0": 0.781,
+       "y0": 0.74825,
+       "x1": 0.805,
+       "y1": 0.7835
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l13"
+     },
+     {
+      "id": "p1-w72",
+      "text": "Local",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.024,
+       "y0": 0.792,
+       "x1": 0.11933333333333333,
+       "y1": 0.821
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l14"
+     },
+     {
+      "id": "p1-w73",
+      "text": "de",
+      "confidence": 0.93,
+      "bbox": {
+       "x0": 0.14666666666666667,
+       "y0": 0.794,
+       "x1": 0.186,
+       "y1": 0.821
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l14"
+     },
+     {
+      "id": "p1-w74",
+      "text": "pagamento:",
+      "confidence": 0.9,
+      "bbox": {
+       "x0": 0.208,
+       "y0": 0.79425,
+       "x1": 0.409,
+       "y1": 0.825
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l14"
+     },
+     {
+      "id": "p1-w75",
+      "text": "A05-02",
+      "confidence": 0.88,
+      "bbox": {
+       "x0": 0.43866666666666665,
+       "y0": 0.7945,
+       "x1": 0.5643333333333334,
+       "y1": 0.8235
+      },
+      "page": 1,
+      "block_id": "p1-b4",
+      "line_id": "p1-l14"
+     },
+     {
+      "id": "p1-w76",
+      "text": "IVA",
+      "confidence": 0.91,
+      "bbox": {
+       "x0": 0.029666666666666668,
+       "y0": 0.8805,
+       "x1": 0.084,
+       "y1": 0.90875
+      },
+      "page": 1,
+      "block_id": "p1-b5",
+      "line_id": "p1-l15"
+     },
+     {
+      "id": "p1-w77",
+      "text": "Incluido",
+      "confidence": 0.81,
+      "bbox": {
+       "x0": 0.11133333333333334,
+       "y0": 0.882,
+       "x1": 0.2693333333333333,
+       "y1": 0.911
+      },
+      "page": 1,
+      "block_id": "p1-b5",
+      "line_id": "p1-l15"
+     },
+     {
+      "id": "p1-w78",
+      "text": "á",
+      "confidence": 0.91,
+      "bbox": {
+       "x0": 0.29233333333333333,
+       "y0": 0.88525,
+       "x1": 0.31033333333333335,
+       "y1": 0.9115
+      },
+      "page": 1,
+      "block_id": "p1-b5",
+      "line_id": "p1-l15"
+     },
+     {
+      "id": "p1-w79",
+      "text": "taxa",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.33566666666666667,
+       "y0": 0.88575,
+       "x1": 0.4146666666666667,
+       "y1": 0.91325
+      },
+      "page": 1,
+      "block_id": "p1-b5",
+      "line_id": "p1-l15"
+     },
+     {
+      "id": "p1-w80",
+      "text": "normal",
+      "confidence": 0.96,
+      "bbox": {
+       "x0": 0.441,
+       "y0": 0.8875,
+       "x1": 0.5626666666666666,
+       "y1": 0.914
+      },
+      "page": 1,
+      "block_id": "p1-b5",
+      "line_id": "p1-l15"
+     }
+    ],
+    "lines": [
+     {
+      "id": "p1-l0",
+      "text": "Brisa »concessáo Rodovi: lária, S.A.",
+      "bbox": {
+       "x0": 0.024333333333333332,
+       "y0": 0.00975,
+       "x1": 0.6916666666666667,
+       "y1": 0.058
+      },
+      "word_ids": [
+       "p1-w0",
+       "p1-w1",
+       "p1-w2",
+       "p1-w3",
+       "p1-w4"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l1",
+      "text": "Quintá da Torre da Azul lha Ediricio Brisa",
+      "bbox": {
+       "x0": 0.024,
+       "y0": 0.0405,
+       "x1": 0.8863333333333333,
+       "y1": 0.09925
+      },
+      "word_ids": [
+       "p1-w5",
+       "p1-w6",
+       "p1-w7",
+       "p1-w8",
+       "p1-w9",
+       "p1-w10",
+       "p1-w11",
+       "p1-w12"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l2",
+      "text": "9785-599 Sao Domingos de Kala",
+      "bbox": {
+       "x0": 0.024666666666666667,
+       "y0": 0.10425,
+       "x1": 0.6023333333333334,
+       "y1": 0.1395
+      },
+      "word_ids": [
+       "p1-w13",
+       "p1-w14",
+       "p1-w15",
+       "p1-w16",
+       "p1-w17"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l3",
+      "text": "MCRC Cascais e NIPC 502 790 024",
+      "bbox": {
+       "x0": 0.024333333333333332,
+       "y0": 0.14,
+       "x1": 0.6456666666666667,
+       "y1": 0.1805
+      },
+      "word_ids": [
+       "p1-w18",
+       "p1-w19",
+       "p1-w20",
+       "p1-w21",
+       "p1-w22",
+       "p1-w23",
+       "p1-w24"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l4",
+      "text": "Capital Social: 75 000 000 €",
+      "bbox": {
+       "x0": 0.024,
+       "y0": 0.17925,
+       "x1": 0.5873333333333334,
+       "y1": 0.224
+      },
+      "word_ids": [
+       "p1-w25",
+       "p1-w26",
+       "p1-w27",
+       "p1-w28",
+       "p1-w29",
+       "p1-w30"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l5",
+      "text": "FACTURA SIMPLIFICADA",
+      "bbox": {
+       "x0": 0.021666666666666667,
+       "y0": 0.27025,
+       "x1": 0.4246666666666667,
+       "y1": 0.304
+      },
+      "word_ids": [
+       "p1-w31",
+       "p1-w32"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l6",
+      "text": "Recibo: FS 05021061902/0044 774 Original",
+      "bbox": {
+       "x0": 0.021333333333333333,
+       "y0": 0.342,
+       "x1": 0.8443333333333334,
+       "y1": 0.38975
+      },
+      "word_ids": [
+       "p1-w33",
+       "p1-w34",
+       "p1-w35",
+       "p1-w36",
+       "p1-w37"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l7",
+      "text": "Data e Hora: 2019-02-21 10:18:54",
+      "bbox": {
+       "x0": 0.021666666666666667,
+       "y0": 0.389,
+       "x1": 0.6806666666666666,
+       "y1": 0.4315
+      },
+      "word_ids": [
+       "p1-w38",
+       "p1-w39",
+       "p1-w40",
+       "p1-w41",
+       "p1-w42"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l8",
+      "text": "Saida: 0502 - Carcavelos pv",
+      "bbox": {
+       "x0": 0.022,
+       "y0": 0.43775,
+       "x1": 0.5743333333333334,
+       "y1": 0.47825
+      },
+      "word_ids": [
+       "p1-w43",
+       "p1-w44",
+       "p1-w45",
+       "p1-w46",
+       "p1-w47"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l9",
+      "text": "via: 106 Portageiro: 00872",
+      "bbox": {
+       "x0": 0.024,
+       "y0": 0.476,
+       "x1": 0.575,
+       "y1": 0.516
+      },
+      "word_ids": [
+       "p1-w48",
+       "p1-w49",
+       "p1-w50",
+       "p1-w51"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l10",
+      "text": "Modo de Pagamento: Cartao Bancar1o",
+      "bbox": {
+       "x0": 0.025666666666666667,
+       "y0": 0.569,
+       "x1": 0.7313333333333333,
+       "y1": 0.60225
+      },
+      "word_ids": [
+       "p1-w52",
+       "p1-w53",
+       "p1-w54",
+       "p1-w55",
+       "p1-w56"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l11",
+      "text": "Classe: 1 Taxa: 1,35 €",
+      "bbox": {
+       "x0": 0.025,
+       "y0": 0.61325,
+       "x1": 0.495,
+       "y1": 0.647
+      },
+      "word_ids": [
+       "p1-w57",
+       "p1-w58",
+       "p1-w59",
+       "p1-w60",
+       "p1-w61"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l12",
+      "text": "PAGAMENTO AUTOMATICO num: 1858",
+      "bbox": {
+       "x0": 0.025,
+       "y0": 0.704,
+       "x1": 0.6483333333333333,
+       "y1": 0.73325
+      },
+      "word_ids": [
+       "p1-w62",
+       "p1-w63",
+       "p1-w64",
+       "p1-w65"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l13",
+      "text": "BANCO BP] | gi | OUR] Wes |",
+      "bbox": {
+       "x0": 0.024333333333333332,
+       "y0": 0.7475,
+       "x1": 0.805,
+       "y1": 0.7835
+      },
+      "word_ids": [
+       "p1-w66",
+       "p1-w67",
+       "p1-w68",
+       "p1-w69",
+       "p1-w70",
+       "p1-w71"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l14",
+      "text": "Local de pagamento: A05-02",
+      "bbox": {
+       "x0": 0.024,
+       "y0": 0.792,
+       "x1": 0.5643333333333334,
+       "y1": 0.825
+      },
+      "word_ids": [
+       "p1-w72",
+       "p1-w73",
+       "p1-w74",
+       "p1-w75"
+      ],
+      "column": null,
+      "table_id": null
+     },
+     {
+      "id": "p1-l15",
+      "text": "IVA Incluido á taxa normal",
+      "bbox": {
+       "x0": 0.029666666666666668,
+       "y0": 0.8805,
+       "x1": 0.5626666666666666,
+       "y1": 0.914
+      },
+      "word_ids": [
+       "p1-w76",
+       "p1-w77",
+       "p1-w78",
+       "p1-w79",
+       "p1-w80"
+      ],
+      "column": null,
+      "table_id": null
+     }
+    ],
+    "blocks": [
+     {
+      "id": "p1-b0",
+      "bbox": {
+       "x0": 0.024,
+       "y0": 0.00975,
+       "x1": 0.8863333333333333,
+       "y1": 0.224
+      },
+      "line_ids": [
+       "p1-l0",
+       "p1-l1",
+       "p1-l2",
+       "p1-l3",
+       "p1-l4"
+      ],
+      "column": null
+     },
+     {
+      "id": "p1-b1",
+      "bbox": {
+       "x0": 0.021666666666666667,
+       "y0": 0.27025,
+       "x1": 0.4246666666666667,
+       "y1": 0.304
+      },
+      "line_ids": [
+       "p1-l5"
+      ],
+      "column": null
+     },
+     {
+      "id": "p1-b2",
+      "bbox": {
+       "x0": 0.021333333333333333,
+       "y0": 0.342,
+       "x1": 0.8443333333333334,
+       "y1": 0.516
+      },
+      "line_ids": [
+       "p1-l6",
+       "p1-l7",
+       "p1-l8",
+       "p1-l9"
+      ],
+      "column": null
+     },
+     {
+      "id": "p1-b3",
+      "bbox": {
+       "x0": 0.025,
+       "y0": 0.569,
+       "x1": 0.7313333333333333,
+       "y1": 0.647
+      },
+      "line_ids": [
+       "p1-l10",
+       "p1-l11"
+      ],
+      "column": null
+     },
+     {
+      "id": "p1-b4",
+      "bbox": {
+       "x0": 0.024,
+       "y0": 0.704,
+       "x1": 0.805,
+       "y1": 0.825
+      },
+      "line_ids": [
+       "p1-l12",
+       "p1-l13",
+       "p1-l14"
+      ],
+      "column": null
+     },
+     {
+      "id": "p1-b5",
+      "bbox": {
+       "x0": 0.029666666666666668,
+       "y0": 0.8805,
+       "x1": 0.5626666666666666,
+       "y1": 0.914
+      },
+      "line_ids": [
+       "p1-l15"
+      ],
+      "column": null
+     }
+    ],
+    "columns": [],
+    "tables": [],
+    "text": "Brisa »concessáo Rodovi: lária, S.A.\nQuintá da Torre da Azul lha Ediricio Brisa\n9785-599 Sao Domingos de Kala\nMCRC Cascais e NIPC 502 790 024\nCapital Social: 75 000 000 €\nFACTURA SIMPLIFICADA\nRecibo: FS 05021061902/0044 774 Original\nData e Hora: 2019-02-21 10:18:54\nSaida: 0502 - Carcavelos pv\nvia: 106 Portageiro: 00872\nModo de Pagamento: Cartao Bancar1o\nClasse: 1 Taxa: 1,35 €\nPAGAMENTO AUTOMATICO num: 1858\nBANCO BP] | gi | OUR] Wes |\nLocal de pagamento: A05-02\nIVA Incluido á taxa normal"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "Brisa »concessáo Rodovi: lária, S.A.",
+  "merchant_tax_id": "502 790 024",
+  "merchant_address": "Quintá da Torre da Azul lha Ediricio Brisa, 9785-599 Sao Domingos de Kala, MCRC Cascais",
+  "transaction_date": "2019-02-21",
+  "currency": "EUR",
+  "receipt_number": "FS 05021061902/0044 774",
+  "items": [
+   {
+    "description": "Taxa: 1,35 €",
+    "price": 1.35,
+    "quantity": 1.0,
+    "unit_price": 1.35
+   }
+  ],
+  "subtotal": 0.0,
+  "tax_amount": 0.0,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 1.35,
+  "payment_method": "Cartao Bancar1o",
+  "amount_tendered": null,
+  "change_given": null,
+  "card_last_four": null,
+  "expense_category": "travel"
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "Brisa »concessáo Rodovi: lária, S.A.",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.024333333333333332,
+      "y0": 0.00975,
+      "x1": 0.6916666666666667,
+      "y1": 0.058
+     },
+     "word_ids": [
+      "p1-w0",
+      "p1-w1",
+      "p1-w2",
+      "p1-w3",
+      "p1-w4"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.024333333333333332,
+    "y0": 0.00975,
+    "x1": 0.6916666666666667,
+    "y1": 0.058
+   },
+   "word_ids": [
+    "p1-w0",
+    "p1-w1",
+    "p1-w2",
+    "p1-w3",
+    "p1-w4"
+   ],
+   "confidence": 0.816,
+   "located_by": "tesseract"
+  },
+  "merchant_tax_id": {
+   "page": 1,
+   "quote": "MCRC Cascais e NIPC 502 790 024",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.024333333333333332,
+      "y0": 0.14,
+      "x1": 0.6456666666666667,
+      "y1": 0.1805
+     },
+     "word_ids": [
+      "p1-w18",
+      "p1-w19",
+      "p1-w20",
+      "p1-w21",
+      "p1-w22",
+      "p1-w23",
+      "p1-w24"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.024333333333333332,
+    "y0": 0.14,
+    "x1": 0.6456666666666667,
+    "y1": 0.1805
+   },
+   "word_ids": [
+    "p1-w18",
+    "p1-w19",
+    "p1-w20",
+    "p1-w21",
+    "p1-w22",
+    "p1-w23",
+    "p1-w24"
+   ],
+   "confidence": 0.8114,
+   "located_by": "tesseract"
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "Quintá da Torre da Azul lha Ediricio Brisa\n9785-599 Sao Domingos de Kala\nMCRC Cascais e NIPC 502 790 024",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.024,
+      "y0": 0.0405,
+      "x1": 0.8863333333333333,
+      "y1": 0.1805
+     },
+     "word_ids": [
+      "p1-w5",
+      "p1-w6",
+      "p1-w7",
+      "p1-w8",
+      "p1-w9",
+      "p1-w10",
+      "p1-w11",
+      "p1-w12",
+      "p1-w13",
+      "p1-w14",
+      "p1-w15",
+      "p1-w16",
+      "p1-w17",
+      "p1-w18",
+      "p1-w19",
+      "p1-w20",
+      "p1-w21",
+      "p1-w22",
+      "p1-w23",
+      "p1-w24"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.024,
+    "y0": 0.0405,
+    "x1": 0.8863333333333333,
+    "y1": 0.1805
+   },
+   "word_ids": [
+    "p1-w5",
+    "p1-w6",
+    "p1-w7",
+    "p1-w8",
+    "p1-w9",
+    "p1-w10",
+    "p1-w11",
+    "p1-w12",
+    "p1-w13",
+    "p1-w14",
+    "p1-w15",
+    "p1-w16",
+    "p1-w17",
+    "p1-w18",
+    "p1-w19",
+    "p1-w20",
+    "p1-w21",
+    "p1-w22",
+    "p1-w23",
+    "p1-w24"
+   ],
+   "confidence": 0.7105,
+   "located_by": "tesseract"
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "Data e Hora: 2019-02-21 10:18:54",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.021666666666666667,
+      "y0": 0.389,
+      "x1": 0.6806666666666666,
+      "y1": 0.4315
+     },
+     "word_ids": [
+      "p1-w38",
+      "p1-w39",
+      "p1-w40",
+      "p1-w41",
+      "p1-w42"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.021666666666666667,
+    "y0": 0.389,
+    "x1": 0.6806666666666666,
+    "y1": 0.4315
+   },
+   "word_ids": [
+    "p1-w38",
+    "p1-w39",
+    "p1-w40",
+    "p1-w41",
+    "p1-w42"
+   ],
+   "confidence": 0.94,
+   "located_by": "tesseract"
+  },
+  "currency": {
+   "page": 1,
+   "quote": "Capital Social: 75 000 000 €",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.024,
+      "y0": 0.17925,
+      "x1": 0.5873333333333334,
+      "y1": 0.224
+     },
+     "word_ids": [
+      "p1-w25",
+      "p1-w26",
+      "p1-w27",
+      "p1-w28",
+      "p1-w29",
+      "p1-w30"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.024,
+    "y0": 0.17925,
+    "x1": 0.5873333333333334,
+    "y1": 0.224
+   },
+   "word_ids": [
+    "p1-w25",
+    "p1-w26",
+    "p1-w27",
+    "p1-w28",
+    "p1-w29",
+    "p1-w30"
+   ],
+   "confidence": 0.92,
+   "located_by": "tesseract"
+  },
+  "receipt_number": {
+   "page": 1,
+   "quote": "Recibo: FS 05021061902/0044 774 Original",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.021333333333333333,
+      "y0": 0.342,
+      "x1": 0.8443333333333334,
+      "y1": 0.38975
+     },
+     "word_ids": [
+      "p1-w33",
+      "p1-w34",
+      "p1-w35",
+      "p1-w36",
+      "p1-w37"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.021333333333333333,
+    "y0": 0.342,
+    "x1": 0.8443333333333334,
+    "y1": 0.38975
+   },
+   "word_ids": [
+    "p1-w33",
+    "p1-w34",
+    "p1-w35",
+    "p1-w36",
+    "p1-w37"
+   ],
+   "confidence": 0.808,
+   "located_by": "tesseract"
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "Classe: 1 Taxa: 1,35 €",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.025,
+      "y0": 0.61325,
+      "x1": 0.495,
+      "y1": 0.647
+     },
+     "word_ids": [
+      "p1-w57",
+      "p1-w58",
+      "p1-w59",
+      "p1-w60",
+      "p1-w61"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.025,
+    "y0": 0.61325,
+    "x1": 0.495,
+    "y1": 0.647
+   },
+   "word_ids": [
+    "p1-w57",
+    "p1-w58",
+    "p1-w59",
+    "p1-w60",
+    "p1-w61"
+   ],
+   "confidence": 0.92,
+   "located_by": "tesseract"
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "Classe: 1 Taxa: 1,35 €",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.025,
+      "y0": 0.61325,
+      "x1": 0.495,
+      "y1": 0.647
+     },
+     "word_ids": [
+      "p1-w57",
+      "p1-w58",
+      "p1-w59",
+      "p1-w60",
+      "p1-w61"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.025,
+    "y0": 0.61325,
+    "x1": 0.495,
+    "y1": 0.647
+   },
+   "word_ids": [
+    "p1-w57",
+    "p1-w58",
+    "p1-w59",
+    "p1-w60",
+    "p1-w61"
+   ],
+   "confidence": 0.92,
+   "located_by": "tesseract"
+  },
+  "items[0].quantity": {
+   "page": 1,
+   "quote": "Classe: 1 Taxa: 1,35 €",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.025,
+      "y0": 0.61325,
+      "x1": 0.495,
+      "y1": 0.647
+     },
+     "word_ids": [
+      "p1-w57",
+      "p1-w58",
+      "p1-w59",
+      "p1-w60",
+      "p1-w61"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.025,
+    "y0": 0.61325,
+    "x1": 0.495,
+    "y1": 0.647
+   },
+   "word_ids": [
+    "p1-w57",
+    "p1-w58",
+    "p1-w59",
+    "p1-w60",
+    "p1-w61"
+   ],
+   "confidence": 0.92,
+   "located_by": "tesseract"
+  },
+  "items[0].unit_price": {
+   "page": 1,
+   "quote": "Classe: 1 Taxa: 1,35 €",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.025,
+      "y0": 0.61325,
+      "x1": 0.495,
+      "y1": 0.647
+     },
+     "word_ids": [
+      "p1-w57",
+      "p1-w58",
+      "p1-w59",
+      "p1-w60",
+      "p1-w61"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.025,
+    "y0": 0.61325,
+    "x1": 0.495,
+    "y1": 0.647
+   },
+   "word_ids": [
+    "p1-w57",
+    "p1-w58",
+    "p1-w59",
+    "p1-w60",
+    "p1-w61"
+   ],
+   "confidence": 0.92,
+   "located_by": "tesseract"
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "Classe: 1 Taxa: 1,35 €",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.025,
+      "y0": 0.61325,
+      "x1": 0.495,
+      "y1": 0.647
+     },
+     "word_ids": [
+      "p1-w57",
+      "p1-w58",
+      "p1-w59",
+      "p1-w60",
+      "p1-w61"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.025,
+    "y0": 0.61325,
+    "x1": 0.495,
+    "y1": 0.647
+   },
+   "word_ids": [
+    "p1-w57",
+    "p1-w58",
+    "p1-w59",
+    "p1-w60",
+    "p1-w61"
+   ],
+   "confidence": 0.92,
+   "located_by": "tesseract"
+  },
+  "payment_method": {
+   "page": 1,
+   "quote": "Modo de Pagamento: Cartao Bancar1o",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.025666666666666667,
+      "y0": 0.569,
+      "x1": 0.7313333333333333,
+      "y1": 0.60225
+     },
+     "word_ids": [
+      "p1-w52",
+      "p1-w53",
+      "p1-w54",
+      "p1-w55",
+      "p1-w56"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.025666666666666667,
+    "y0": 0.569,
+    "x1": 0.7313333333333333,
+    "y1": 0.60225
+   },
+   "word_ids": [
+    "p1-w52",
+    "p1-w53",
+    "p1-w54",
+    "p1-w55",
+    "p1-w56"
+   ],
+   "confidence": 0.804,
+   "located_by": "tesseract"
+  },
+  "expense_category": {
+   "page": 1,
+   "quote": "Saida: 0502 - Carcavelos pv",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.022,
+      "y0": 0.43775,
+      "x1": 0.5743333333333334,
+      "y1": 0.47825
+     },
+     "word_ids": [
+      "p1-w43",
+      "p1-w44",
+      "p1-w45",
+      "p1-w46",
+      "p1-w47"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.022,
+    "y0": 0.43775,
+    "x1": 0.5743333333333334,
+    "y1": 0.47825
+   },
+   "word_ids": [
+    "p1-w43",
+    "p1-w44",
+    "p1-w45",
+    "p1-w46",
+    "p1-w47"
+   ],
+   "confidence": 0.902,
+   "located_by": "tesseract"
+  }
+ },
+ "validation_issues": [
+  {
+   "field": "merchant_tax_id",
+   "message": "'502 790 024' doesn't look like a tax ID",
+   "severity": "warning"
+  }
+ ],
+ "corroborated": {},
+ "needs_review": false,
+ "review_reasons": [],
+ "metrics": {
+  "elapsed_seconds": 9.342,
+  "stage_seconds": {
+   "acquire": 5.651,
+   "classify": 0.419,
+   "extract": 2.771,
+   "validate": 0.002
+  },
+  "pages": 1,
+  "llm_calls": 3,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 2618,
+  "llm_output_tokens": 824,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 2740,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

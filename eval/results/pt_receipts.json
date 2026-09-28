@@ -1,0 +1,3592 @@
+{
+  "environment": {
+    "date": "2026-09-28T16:17:48+00:00",
+    "docket": "0.4.0",
+    "git_commit": "1e5a3cf",
+    "python": "3.12.8",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cpu_count": 10,
+    "tesseract": "tesseract 5.5.3",
+    "paddleocr": "3.7.0",
+    "paddlepaddle": "3.3.1",
+    "llm_provider": "ollama",
+    "text_model": "deepseek-v4.1-flash:cloud",
+    "vision_model": "deepseek-v4.1-flash:cloud",
+    "ocr_languages": [
+      "en",
+      "de",
+      "es",
+      "fr"
+    ],
+    "ocr_dpi": 200,
+    "layout_markers": true,
+    "configs": [
+      "tesseract"
+    ]
+  },
+  "documents": [
+    "pt_20210213_135622.jpg",
+    "pt_20210215_163346.jpg",
+    "pt_20210215_164850.jpg",
+    "pt_20210215_172440.jpg",
+    "pt_20210215_172948.jpg",
+    "pt_20210316_213616.jpg",
+    "pt_20210318_114507.jpg",
+    "pt_20210318_172727.jpg",
+    "pt_20210320_164226.jpg",
+    "pt_20210321_120551.jpg",
+    "pt_20210322_164701.jpg",
+    "pt_20210323_170326.jpg",
+    "pt_20210323_173858.jpg",
+    "pt_20210323_182632.jpg",
+    "pt_20210323_185919.jpg",
+    "pt_20210324_190659.jpg",
+    "pt_20210427_162556.jpg",
+    "pt_20210428_142429.jpg",
+    "pt_20210428_150208.jpg",
+    "pt_20210428_153535.jpg",
+    "pt_20210428_180758.jpg",
+    "pt_20210428_183255.jpg",
+    "pt_20210428_191552.jpg",
+    "pt_20210428_195539.jpg",
+    "pt_20210428_201521.jpg",
+    "pt_20210428_204723.jpg",
+    "pt_20210428_225451.jpg",
+    "pt_20210429_182800.jpg",
+    "pt_20210429_190827.jpg",
+    "pt_20210429_194756.jpg",
+    "pt_20210429_201537.jpg",
+    "pt_20210429_204904.jpg",
+    "pt_20210429_210844.jpg",
+    "pt_20210429_221438.jpg",
+    "pt_20210507_170316.jpg",
+    "pt_20210507_174713.jpg",
+    "pt_20210507_184346.jpg",
+    "pt_20210507_202651.jpg",
+    "pt_20210507_213627.jpg",
+    "pt_20210507_215847.jpg",
+    "pt_20210508_151852.jpg",
+    "pt_20210508_170507.jpg",
+    "pt_20210508_175407.jpg",
+    "pt_20210508_202607.jpg",
+    "pt_20210508_204509.jpg",
+    "pt_20210508_205716.jpg",
+    "pt_20210508_211600.jpg",
+    "pt_20210509_000204.jpg",
+    "pt_20210509_000657.jpg",
+    "pt_20210509_002053.jpg"
+  ],
+  "warm_up_seconds": {
+    "tesseract": 1.02
+  },
+  "ocr_only": {},
+  "pipeline": {
+    "tesseract": {
+      "summary": {
+        "documents": 50,
+        "document_success_rate": 0.02,
+        "field_accuracy": 0.1389,
+        "fields_graded": 288,
+        "line_items": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "expected": 0,
+          "documents_graded": 0
+        },
+        "table_cell_accuracy": null,
+        "seconds_mean": 19.22,
+        "seconds_median": 18.49,
+        "acquire_seconds_mean": 12.93,
+        "vlm_page_share": 0.84,
+        "vlm_document_share": 0.84,
+        "llm_calls": 176,
+        "llm_calls_mean": 3.52,
+        "templates": {
+          "documents": 0,
+          "hit_rate": 0.0,
+          "seconds_mean": null,
+          "llm_extraction_calls_avoided_minimum": 0,
+          "by_id": {}
+        },
+        "citations": {
+          "field_citation_coverage": 0.4583,
+          "field_location_coverage": 0.1736,
+          "line_item_citation_coverage": null,
+          "line_item_location_coverage": null
+        },
+        "silent_successes": 8,
+        "false_successes": 7,
+        "false_success_rate": 0.875,
+        "needs_review": 42,
+        "failed": 0
+      },
+      "documents": [
+        {
+          "document": "pt_20210213_135622.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 12.2,
+              "tax_amount": 2.28
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 2,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 14.48, total_amount says 12.20"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.8525,
+            "issue_date": 0.96,
+            "subtotal": 0.9567,
+            "total_amount": 0.9567
+          },
+          "seconds": 17.95,
+          "acquire_seconds": 11.107,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210215_163346.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "transaction_date",
+              "tax_amount"
+            ],
+            "extracted": {
+              "transaction_date": "2020-10-08",
+              "tax_amount": 0.0
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 5,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 4,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — amount tendered 0.00 - change 0.00 = 0.00, total_amount says 67.30",
+            "validation error: total_amount — an independent OCR reading of 'total eur' gives 67.00, 30.00, but total_amount=67.30 — the transcripts disagree; check against the original page",
+            "transaction_date was read from words OCR recognised with low confidence (0.52 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.52,
+            "total_amount": 0.8325
+          },
+          "seconds": 25.17,
+          "acquire_seconds": 14.72,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210215_164850.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 35.99,
+              "tax_amount": 6.73
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 35.99, subtotal says 29.26"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.9167,
+            "issue_date": 0.96,
+            "subtotal": 0.935,
+            "total_amount": null
+          },
+          "seconds": 22.66,
+          "acquire_seconds": 14.409,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210215_172440.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 24.37,
+              "tax_amount": 4.56
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 18.78, subtotal says 24.37",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 28.93, total_amount says 24.37",
+            "invoice_number was read from words OCR recognised with low confidence (0.65 < 0.80)",
+            "issue_date was read from words OCR recognised with low confidence (0.65 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.6532,
+            "issue_date": 0.6532,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 25.29,
+          "acquire_seconds": 17.455,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210215_172948.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 3.0,
+              "tax_amount": 0.56
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 3.56, total_amount says 3.00"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.9,
+            "issue_date": 0.95,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 24.67,
+          "acquire_seconds": 15.812,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210316_213616.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 15.2,
+              "tax_amount": 2.84
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 18.04, total_amount says 15.20"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 16.27,
+          "acquire_seconds": 12.406,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210318_114507.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 4,
+            "mismatches": [
+              "receipt_number"
+            ],
+            "extracted": {
+              "receipt_number": null
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 3,
+              "located": 0,
+              "total": 4
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 10.2,
+          "acquire_seconds": 8.316,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210318_172727.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 4,
+            "mismatches": [
+              "merchant_name",
+              "transaction_date",
+              "receipt_number",
+              "total_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 0.0
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 0,
+              "located": 0,
+              "total": 4
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — missing page and source-region citation",
+            "validation error: total_amount — missing page and source-region citation"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.88,
+            "issue_date": 0.91
+          },
+          "seconds": 22.06,
+          "acquire_seconds": 17.814,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210320_164226.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 18.7,
+              "tax_amount": 0.0
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 1,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: line_items[0] — line 1 ('GASOLINA SIMPLES 95'): 1 × 1.59 = 1.59, but the line total says 49.53",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 49.53, total_amount says 18.70",
+            "validation error: line_items[0].unit_price — cited line '1,589 EUR / |' states 1589.00, but line_items[0].unit_price=1.59",
+            "invoice_number was read from words OCR recognised with low confidence (0.00 < 0.80)",
+            "total_amount was read from words OCR recognised with low confidence (0.77 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.0,
+            "issue_date": 0.95,
+            "subtotal": 0.92,
+            "total_amount": 0.77
+          },
+          "seconds": 22.9,
+          "acquire_seconds": 16.163,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210321_120551.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 76.85,
+              "tax_amount": 14.37
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 91.22, total_amount says 76.85",
+            "validation error: line_items[0].unit_price — cited line '47,76 l * 1,609 € /l' states 47.76, 1609.00, but line_items[0].unit_price=1.61"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 23.65,
+          "acquire_seconds": 16.81,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 5,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210322_164701.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 20.0,
+              "tax_amount": 3.74
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 23.74, total_amount says 20.00",
+            "validation error: line_items[0].unit_price — cited line '1.459 EUR / L' states 1459.00, but line_items[0].unit_price=1.46"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": 0.9375,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 18.99,
+          "acquire_seconds": 12.892,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 5,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210323_170326.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 50.9,
+              "tax_amount": 9.52
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 50.90, subtotal says 41.38",
+            "invoice_number was read from words OCR recognised with low confidence (0.59 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.5911,
+            "issue_date": null,
+            "subtotal": 0.6941,
+            "total_amount": null
+          },
+          "seconds": 24.29,
+          "acquire_seconds": 14.99,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210323_173858.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 40.0,
+              "tax_amount": 7.48
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 40.00, subtotal says 32.52"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.895,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 27.41,
+          "acquire_seconds": 19.877,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 5,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210323_182632.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 20.51,
+              "tax_amount": 3.84
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 2,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 24.35, total_amount says 20.51"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.9,
+            "issue_date": null,
+            "subtotal": 0.93,
+            "total_amount": 0.93
+          },
+          "seconds": 22.64,
+          "acquire_seconds": 14.407,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210323_185919.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 29.55,
+              "tax_amount": 5.53
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 29.55, subtotal says 24.02"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 14.72,
+          "acquire_seconds": 7.095,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210324_190659.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 5,
+            "mismatches": [
+              "merchant_name",
+              "receipt_number"
+            ],
+            "extracted": {
+              "merchant_name": "Brisa »concessáo Rodovi: lária, S.A.",
+              "receipt_number": "FS 05021061902/0044 774"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 5,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": 0.95,
+            "total_amount": 0.87
+          },
+          "seconds": 9.37,
+          "acquire_seconds": 5.651,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210427_162556.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 2,
+            "total": 5,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "receipt_number"
+            ],
+            "extracted": {
+              "merchant_name": "Estacionamento S.A.",
+              "merchant_tax_id": "503311685",
+              "receipt_number": "881168"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 0,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 10.92,
+          "acquire_seconds": 8.311,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_142429.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 79.79,
+              "tax_amount": 5.41
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 29.39, subtotal says 74.38"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 11.64,
+          "acquire_seconds": 7.663,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_150208.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "merchant_tax_id"
+            ],
+            "extracted": {
+              "merchant_tax_id": "510776914"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 15.75,
+          "acquire_seconds": 12.604,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_153535.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 23.76,
+              "tax_amount": 4.44
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: line_items[0] — line 1 ('CHAVE 2 PALHETOES'): 2 × 10.00 = 20.00, but the line total says 18.00",
+            "validation error: line_items[1] — line 2 ('CHAVE KABA PEXTRA'): 2 × 3.20 = 6.40, but the line total says 5.76",
+            "validation error: subtotal — line items sum to 23.76, subtotal says 19.32",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 21.61, total_amount says 23.76"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 12.71,
+          "acquire_seconds": 7.576,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_180758.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 10.82,
+              "tax_amount": 0.63
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: line_items[0] — line 1 ('C 6% IOG GREGO NAT PD500g'): 6 × 1.34 = 8.04, but the line total says 10.72",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 11.45, total_amount says 10.82",
+            "invoice_number was read from words OCR recognised with low confidence (0.55 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.5458,
+            "issue_date": 0.8769,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 21.76,
+          "acquire_seconds": 15.83,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_183255.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "merchant_name"
+            ],
+            "extracted": {
+              "merchant_name": "LELIMEL MATERIAIS DE CONSTRUÇÃO, LDA"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 15.56,
+          "acquire_seconds": 13.049,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_191552.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 15.21,
+              "tax_amount": 2.84
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 18.05, total_amount says 15.21",
+            "validation error: line_items[0].unit_price — cited line '1.579 EUR/L' states 1579.00, but line_items[0].unit_price=1.58"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 19.11,
+          "acquire_seconds": 11.654,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_195539.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 76.19,
+              "tax_amount": 12.64
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 2,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 78.86, subtotal says 63.55",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 76.14, total_amount says 76.19",
+            "validation error: line_items[2].total — cited source '70,26' does not appear in the document — the value 70.26 is not grounded in anything on the page",
+            "validation error: line_items[2].unit_price — cited line '1,314' states 1314.00, but line_items[2].unit_price=1.31",
+            "validation error: total_amount — an independent OCR reading of 'total euros' gives 6.19, but total_amount=76.19 — the transcripts disagree; check against the original page",
+            "issue_date was read from words OCR recognised with low confidence (0.62 < 0.80)",
+            "subtotal was read from words OCR recognised with low confidence (0.60 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.8589,
+            "issue_date": 0.6167,
+            "subtotal": 0.5958,
+            "total_amount": 0.8836
+          },
+          "seconds": 22.16,
+          "acquire_seconds": 13.661,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_201521.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 6.5,
+              "tax_amount": 1.22
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 7.72, total_amount says 6.50",
+            "validation error: line_items[0].unit_price — cited line '1,654 EUR / L' states 1654.00, but line_items[0].unit_price=1.65",
+            "invoice_number was read from words OCR recognised with low confidence (0.23 < 0.80)",
+            "subtotal was read from words OCR recognised with low confidence (0.77 < 0.80)",
+            "total_amount was read from words OCR recognised with low confidence (0.70 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.2313,
+            "issue_date": 0.8287,
+            "subtotal": 0.7731,
+            "total_amount": 0.7028
+          },
+          "seconds": 25.66,
+          "acquire_seconds": 19.209,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_204723.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 7.0,
+              "tax_amount": 1.31
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 8.31, total_amount says 7.00"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 14.36,
+          "acquire_seconds": 10.913,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_225451.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 1,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": "BP DOMINGOS SEQUEIRA",
+              "merchant_tax_id": "5003959333",
+              "transaction_date": "2019-05-07",
+              "receipt_number": "FR 270651001/03 1664",
+              "tax_amount": 0.0
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 5,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0] — quantity (1.0) * unit_price (1.68) = 1.68, does not match line price 13.00",
+            "validation error: items[0].unit_price — cited line 'PA Lit | x | 1,679 EUR/LIt' states 1679.00, but items[0].unit_price=1.68"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.95,
+            "total_amount": 0.94
+          },
+          "seconds": 22.67,
+          "acquire_seconds": 16.753,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_182800.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 5,
+            "mismatches": [
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 75.1,
+              "tax_amount": 8.83
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: line_items[0] — line 1 ('sopa do dia'): 2 × 5.00 = 10.00, but the line total says 5.00",
+            "validation error: line_items[13] — line 14 ('Agua sem gas 050'): 2 × 2.80 = 5.60, but the line total says 2.80",
+            "validation error: line_items[14] — line 15 ('agua das pedras'): 2 × 2.80 = 5.60, but the line total says 2.80",
+            "validation error: line_items[16] — line 17 ('descafeinado'): 2 × 1.60 = 3.20, but the line total says 1.60",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 83.93, total_amount says 75.10",
+            "validation error: tax_amount — cited line '| 13,00 | 64,07 | 8,33 | 72,40 |' states 13.00, 64.07, 8.33, 72.40, but tax_amount=8.83"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.9,
+            "issue_date": 0.9033,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 40.15,
+          "acquire_seconds": 15.858,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 5,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_190827.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 2.1,
+              "tax_amount": 0.12
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 2,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 2.10, subtotal says 1.98",
+            "validation error: tax_amount — cited line 'TOTAL | 1,38 | 0), 1 | 2,10' states 1.38, 0.00, 1.00, 2.10, but tax_amount=0.12",
+            "invoice_number was read from words OCR recognised with low confidence (0.41 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.41,
+            "issue_date": 0.96,
+            "subtotal": 0.93,
+            "total_amount": 0.48
+          },
+          "seconds": 26.86,
+          "acquire_seconds": 19.563,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_194756.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 4.3,
+              "tax_amount": 0.8
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: line_items[0] — line 1 ('BICHA ACO P/M ONOB 000 35'): 2 × 4.30 = 8.60, but the line total says 4.30",
+            "validation error: subtotal — line items sum to 4.30, subtotal says 3.50",
+            "invoice_number was read from words OCR recognised with low confidence (0.60 < 0.80)",
+            "issue_date was read from words OCR recognised with low confidence (0.55 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.5964,
+            "issue_date": 0.5494,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 18.0,
+          "acquire_seconds": 13.65,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_201537.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 11.6,
+              "tax_amount": 0.67
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 12.27, total_amount says 11.60"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 15.69,
+          "acquire_seconds": 12.13,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_204904.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 40.0,
+              "tax_amount": 7.48
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 47.48, total_amount says 40.00",
+            "validation error: line_items[0].unit_price — cited line '1.554 EUR / L' states 1554.00, but line_items[0].unit_price=1.55"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 14.39,
+          "acquire_seconds": 10.665,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_210844.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 1.88,
+              "tax_amount": 0.11
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 1.88, subtotal says 1.77"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 12.58,
+          "acquire_seconds": 9.295,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_221438.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 14.9,
+              "tax_amount": 2.19
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 2,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 14.90, subtotal says 12.11",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 14.30, total_amount says 14.90"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.86,
+            "issue_date": 0.92,
+            "subtotal": 0.85,
+            "total_amount": 0.96
+          },
+          "seconds": 23.12,
+          "acquire_seconds": 16.337,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210507_170316.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 61.5,
+              "tax_amount": 11.5
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 61.50, subtotal says 50.00",
+            "validation error: line_items[0].unit_price — cited line '2.600' states 2600.00, but line_items[0].unit_price=2.60",
+            "validation error: line_items[1].unit_price — cited line '17.900' states 17900.00, but line_items[1].unit_price=17.90"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 12.29,
+          "acquire_seconds": 8.683,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210507_174713.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 5,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 18.5
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 1,
+              "located": 0,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 14.95,
+          "acquire_seconds": 11.843,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210507_184346.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 5,
+            "mismatches": [
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 50.0,
+              "tax_amount": 9.35
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: line_items[0] — line 1 ('GASOLEO'): 1 × 1.30 = 1.30, but the line total says 50.00",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 59.35, total_amount says 50.00",
+            "validation error: line_items[0].unit_price — cited line '|  | 1.299 Eur/Litros | GASOLEO |  |' states 1299.00, but line_items[0].unit_price=1.30"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 12.13,
+          "acquire_seconds": 8.531,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210507_202651.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 29.99,
+              "tax_amount": 5.61
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 29.99, subtotal says 24.38"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": 0.935
+          },
+          "seconds": 23.85,
+          "acquire_seconds": 16.326,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210507_213627.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 6,
+            "total": 6,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 2,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 10.77,
+          "acquire_seconds": 8.057,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210507_215847.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 11.2,
+              "tax_amount": 0.92
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 11.20, subtotal says 10.28"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 10.02,
+          "acquire_seconds": 5.797,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_151852.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 2.79,
+              "tax_amount": 0.16
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 2,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 2.95, total_amount says 2.79"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.8431,
+            "issue_date": 0.9,
+            "subtotal": 0.925,
+            "total_amount": 0.925
+          },
+          "seconds": 22.81,
+          "acquire_seconds": 15.386,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_170507.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 39.99,
+              "tax_amount": 7.46
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: subtotal — line items sum to 39.99, subtotal says 32.51",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 39.97, total_amount says 39.99"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 13.74,
+          "acquire_seconds": 10.094,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_175407.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 5,
+            "mismatches": [
+              "merchant_tax_id"
+            ],
+            "extracted": {
+              "merchant_tax_id": "NIPC 302 790"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 5,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": 0.94,
+            "total_amount": 0.95
+          },
+          "seconds": 8.4,
+          "acquire_seconds": 5.672,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_202607.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 6,
+            "mismatches": [
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number"
+            ],
+            "extracted": {
+              "merchant_tax_id": "501049108",
+              "transaction_date": "2018-08-07",
+              "receipt_number": "007/884"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 2,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 3,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[1].quantity — cited source '5601966014895 SELADOR\\nSTAND BECKEN BSHD' does not appear in the document — the value 1.00 is not grounded in anything on the page",
+            "transaction_date was read from words OCR recognised with low confidence (0.69 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.688,
+            "total_amount": 0.7435
+          },
+          "seconds": 10.92,
+          "acquire_seconds": 8.233,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_204509.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 85.0,
+              "tax_amount": 15.89
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 100.89, total_amount says 85.00",
+            "validation error: line_items[0].unit_price — cited line '1.318 Eur/L' states 1318.00, but line_items[0].unit_price=1.32",
+            "validation error: tax_amount — an independent OCR reading of 'eur' gives 85.00, but tax_amount=15.89 — the transcripts disagree; check against the original page"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 11.0,
+          "acquire_seconds": 7.959,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_205716.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 5,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 74.15
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 1,
+              "located": 0,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "low classification confidence (0.54 < 0.55)",
+            "issue_date was read from words OCR recognised with low confidence (0.68 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": 0.6767,
+            "subtotal": 0.7464,
+            "total_amount": null
+          },
+          "seconds": 26.46,
+          "acquire_seconds": 20.305,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_211600.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 5,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "receipt_number": null,
+              "total_amount": 20.0,
+              "tax_amount": 3.74
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 1,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 23.74, total_amount says 20.00",
+            "validation error: tax_amount — an independent OCR reading of 'iva' gives 3.00, but tax_amount=3.74 — the transcripts disagree; check against the original page",
+            "issue_date was read from words OCR recognised with low confidence (0.79 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": 0.7945,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 17.96,
+          "acquire_seconds": 13.881,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210509_000204.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "transaction_date"
+            ],
+            "extracted": {
+              "merchant_name": "Moinho Velho",
+              "transaction_date": "2020-12-24"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items — items sum to 27.30, but the amount they should match is 35.12 before tax or 43.20 with it",
+            "validation error: items[0].unit_price — cited line '19,500' states 19500.00, but items[0].unit_price=19.50",
+            "validation error: items[0].price — cited line '1.400KG | 19,500' states 1.00, 19500.00, but items[0].price=27.30"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.92,
+            "total_amount": 0.92
+          },
+          "seconds": 24.04,
+          "acquire_seconds": 15.347,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210509_000657.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 3.7,
+              "tax_amount": 0.25
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 3.95, total_amount says 3.70",
+            "invoice_number was read from words OCR recognised with low confidence (0.41 < 0.80)",
+            "issue_date was read from words OCR recognised with low confidence (0.79 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.4121,
+            "issue_date": 0.785,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 28.66,
+          "acquire_seconds": 15.819,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210509_002053.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": null,
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 26.55,
+              "tax_amount": 2.23
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 28.78, total_amount says 26.55",
+            "validation error: tax_amount — cited line '| C 62 | 19,07 | 1,14 | 20,21 |\\n| D 132 | 1,19 | 0,16 | 1,35 |\\n| E 232 | 4,06...' states 62.00, 19.07, 1.14, 20.21, 132.00, 1.19, 0.16, 1.35, 232.00, 4.06, 0.93, 4.99, but tax_amount=2.23",
+            "invoice_number was read from words OCR recognised with low confidence (0.78 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 0.7777,
+            "issue_date": 0.8227,
+            "subtotal": 0.94,
+            "total_amount": null
+          },
+          "seconds": 41.57,
+          "acquire_seconds": 20.127,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        }
+      ]
+    }
+  }
+}

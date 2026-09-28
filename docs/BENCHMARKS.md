@@ -8,6 +8,8 @@ Two sets were measured:
 - **European sample invoices from the ZUGFeRD corpus**: 28 German and
   French invoices and credit notes. They are published samples with
   invented parties, not real business mail.
+- **Real Portuguese receipts**: 50 phone photos of till documents, with
+  hand-typed fields.
 
 Both sets are small, so treat these numbers as regression checks, not
 accuracy claims about your documents. The raw results are committed in
@@ -156,6 +158,47 @@ eval/results/zugferd_pdf_results`):
   country code (BR-11).
 - **Peppol and XRechnung:** all 7 are invalid, because they lack the
   electronic addresses and buyer reference.
+
+## Real Portuguese receipts
+
+`python eval/download_pt_receipts.py --n 50` takes every 20th document of
+[Francisco-Cruz/InvoicesReceiptsPT](https://huggingface.co/datasets/Francisco-Cruz/InvoicesReceiptsPT)
+(Apache-2.0). These are phone photos of Portuguese till documents from
+shops, restaurants, petrol stations and toll roads, with hand-typed seller
+name, seller NIF, date, number, total and VAT. They are labelled `receipt`,
+which is docket's own type for a till slip. One run, Tesseract with vision
+fallback, `DOCKET_OCR_LANGUAGES` including `pt`.
+
+| | |
+|---|---|
+| classified as receipt | 11/50 |
+| classified as invoice | 39/50 |
+| sent to review | 42 |
+| passed without review | 8, of which 7 have a graded field wrong |
+| total right, on the 11 read as receipts | 11/11 |
+| pages read by the vision model | 42 of 50 |
+| median seconds per document | 18.5 |
+
+docket does not handle these well:
+
+- **The type is wrong on most of them.** The slips print "Fatura" or
+  "Fatura simplificada", and the rules tier scores that as invoice. The
+  invoice checks then treat prices that already include VAT as net. That
+  produces "subtotal + tax ≠ total" and "lines do not add up", which sends
+  42 documents to review. This is the problem the Malaysian "TAX INVOICE"
+  slips had, and it is not fixed for Portuguese.
+- **Of the 8 that passed without review:**
+  - One is a correct extraction, filed as invoice. The grade counts it
+    wrong only because of the type.
+  - One lacks its receipt number.
+  - The rest carry misread photo text into a field: a garbled merchant
+    name, or a wrong or cut-off NIF ("NIPC 302 790"). The cited line holds
+    the same misreading, so the checks agree with it.
+- **An idea, not implemented:** a Portuguese NIF has a check digit, which
+  would catch part of the wrong NIFs.
+- **Labels:** the labels name the shop sign ("Maria da Glória Cab."), where
+  the slip also prints the legal name ("… Cabeleireiros Lda."). An
+  extraction of the legal name counts as wrong.
 
 ## Classification
 

@@ -1,0 +1,700 @@
+{
+ "source": "eval/pt_receipts/pt_20210316_213616.jpg",
+ "document_id": "doc_b106028f715136eef633",
+ "status": "needs_review",
+ "document_type": "invoice",
+ "schema_id": "invoice",
+ "schema_version": "2.0",
+ "classification": {
+  "doc_type": "invoice",
+  "confidence": 1.0,
+  "method": "rules",
+  "scores": {
+   "invoice": 5.0,
+   "credit_note": 0.0,
+   "receipt": 0.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 1.0,
+      "reason": "escalated: kept only as an independent witness",
+      "seconds": 4.157
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 4.007
+     }
+    ],
+    "witness": {
+     "page_number": 1,
+     "width": 3000.0,
+     "height": 4000.0,
+     "unit": "px",
+     "rotation": 0,
+     "deskew_angle": 0.0,
+     "crop_quad": null,
+     "backend": "tesseract",
+     "confidence": 1.0,
+     "words": [
+      {
+       "id": "p1-w0",
+       "text": "\"",
+       "confidence": 0.91,
+       "bbox": {
+        "x0": 0.5643333333333334,
+        "y0": 0.843,
+        "x1": 0.5683333333333334,
+        "y1": 0.84675
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w1",
+       "text": "„om",
+       "confidence": 0.85,
+       "bbox": {
+        "x0": 0.20133333333333334,
+        "y0": 0.934,
+        "x1": 0.23866666666666667,
+        "y1": 0.9465
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w2",
+       "text": "Es",
+       "confidence": 0.86,
+       "bbox": {
+        "x0": 0.25466666666666665,
+        "y0": 0.93475,
+        "x1": 0.277,
+        "y1": 0.9465
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w3",
+       "text": "Privilege",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.296,
+        "y0": 0.935,
+        "x1": 0.41933333333333334,
+        "y1": 0.9505
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w4",
+       "text": "pagaria",
+       "confidence": 0.94,
+       "bbox": {
+        "x0": 0.43666666666666665,
+        "y0": 0.938,
+        "x1": 0.531,
+        "y1": 0.9525
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w5",
+       "text": "menos",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.548,
+        "y0": 0.942,
+        "x1": 0.6163333333333333,
+        "y1": 0.9515
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w6",
+       "text": "(Nao",
+       "confidence": 0.53,
+       "bbox": {
+        "x0": 0.20533333333333334,
+        "y0": 0.954,
+        "x1": 0.25466666666666665,
+        "y1": 0.969
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w7",
+       "text": "aplicável",
+       "confidence": 0.91,
+       "bbox": {
+        "x0": 0.2713333333333333,
+        "y0": 0.954,
+        "x1": 0.391,
+        "y1": 0.96875
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w8",
+       "text": "a",
+       "confidence": 0.93,
+       "bbox": {
+        "x0": 0.4093333333333333,
+        "y0": 0.958,
+        "x1": 0.42,
+        "y1": 0.9665
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w9",
+       "text": "promocS3es)",
+       "confidence": 0.38,
+       "bbox": {
+        "x0": 0.43766666666666665,
+        "y0": 0.95725,
+        "x1": 0.57,
+        "y1": 0.973
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w10",
+       "text": "1,52",
+       "confidence": 0.92,
+       "bbox": {
+        "x0": 0.38433333333333336,
+        "y0": 0.9735,
+        "x1": 0.43466666666666665,
+        "y1": 0.98875
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w11",
+       "text": "eur",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.45066666666666666,
+        "y0": 0.9775,
+        "x1": 0.48933333333333334,
+        "y1": 0.9865
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      }
+     ],
+     "lines": [
+      {
+       "id": "p1-l0",
+       "text": "\"",
+       "bbox": {
+        "x0": 0.5643333333333334,
+        "y0": 0.843,
+        "x1": 0.5683333333333334,
+        "y1": 0.84675
+       },
+       "word_ids": [
+        "p1-w0"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l1",
+       "text": "„om Es Privilege pagaria menos",
+       "bbox": {
+        "x0": 0.20133333333333334,
+        "y0": 0.934,
+        "x1": 0.6163333333333333,
+        "y1": 0.9525
+       },
+       "word_ids": [
+        "p1-w1",
+        "p1-w2",
+        "p1-w3",
+        "p1-w4",
+        "p1-w5"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l2",
+       "text": "(Nao aplicável a promocS3es)",
+       "bbox": {
+        "x0": 0.20533333333333334,
+        "y0": 0.954,
+        "x1": 0.57,
+        "y1": 0.973
+       },
+       "word_ids": [
+        "p1-w6",
+        "p1-w7",
+        "p1-w8",
+        "p1-w9"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l3",
+       "text": "1,52 eur",
+       "bbox": {
+        "x0": 0.38433333333333336,
+        "y0": 0.9735,
+        "x1": 0.48933333333333334,
+        "y1": 0.98875
+       },
+       "word_ids": [
+        "p1-w10",
+        "p1-w11"
+       ],
+       "column": null,
+       "table_id": null
+      }
+     ],
+     "blocks": [
+      {
+       "id": "p1-b0",
+       "bbox": {
+        "x0": 0.5643333333333334,
+        "y0": 0.843,
+        "x1": 0.5683333333333334,
+        "y1": 0.84675
+       },
+       "line_ids": [
+        "p1-l0"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b1",
+       "bbox": {
+        "x0": 0.20133333333333334,
+        "y0": 0.934,
+        "x1": 0.6163333333333333,
+        "y1": 0.98875
+       },
+       "line_ids": [
+        "p1-l1",
+        "p1-l2",
+        "p1-l3"
+       ],
+       "column": null
+      }
+     ],
+     "columns": [],
+     "tables": [],
+     "text": "\"\n„om Es Privilege pagaria menos\n(Nao aplicável a promocS3es)\n1,52 eur"
+    }
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "Sáfil\n\nC. C. ALMA SHOPPING, LOJA 004\n3030-327 COIMBRA\nPT1016 - Tel.: 239 780 134\n\nFatura N.:\nS 10162020A/04507\n\nCASACO\nARRANJOS DIVERSOS       7,60 eur\nX 2\nTOTAL                  15,20€u\n\nCom IVA         23,00%:        2,84 eur\nPagamento: CARTAO MULTIBANCO\nN. Peças                :      2\nAtendido por conceição cruz\nENTREGUE 10/2020 13:01\n57967\n\nirrb-Processado por programa\ncertificado N. 1397/AT\n--------------------------------\nSolaco-Soc. Lav. Coimbra, Lda.\nAv. Vale das Flores, Loja 114\n3030-193 Coimbra\nNIF: 503 115 827\nCRC Coimbra - N. 5399\nCapital Social: 5.000e\n--------------------------------\n\nCLIENTE : Consumidor Final\nMORADA:\nN.C.: Consumidor Final\n\nCom C. Privilege pagaria menos\n(Não aplicável a promoções)\n1,52 eur"
+   }
+  ]
+ },
+ "extracted": {
+  "issue_date": "2020-10-10",
+  "due_date": null,
+  "seller": {
+   "name": "Solaco-Soc. Lav. Coimbra, Lda.",
+   "address": {
+    "street": "Av. Vale das Flores, Loja 114",
+    "additional_line": null,
+    "postal_code": "3030-193",
+    "city": "Coimbra",
+    "region": null,
+    "country_code": "PT",
+    "text": "Av. Vale das Flores, Loja 114\n3030-193 Coimbra"
+   },
+   "tax_ids": [
+    {
+     "value": "503 115 827",
+     "scheme": "vat",
+     "country_code": "PT"
+    }
+   ],
+   "contact_name": null,
+   "email": null,
+   "phone": null,
+   "electronic_address": null,
+   "electronic_address_scheme": null
+  },
+  "buyer": {
+   "name": "Consumidor Final",
+   "address": null,
+   "tax_ids": [],
+   "contact_name": null,
+   "email": null,
+   "phone": null,
+   "electronic_address": null,
+   "electronic_address_scheme": null
+  },
+  "buyer_reference": null,
+  "references": [],
+  "payment_account": null,
+  "payment_reference": null,
+  "payment_terms": null,
+  "currency": "EUR",
+  "line_items": [
+   {
+    "description": "CASACO ARRANJOS DIVERSOS",
+    "quantity": 2.0,
+    "unit_price": 7.6,
+    "total": 15.2,
+    "sku": null,
+    "unit_of_measure": null,
+    "tax_rate_percent": 23.0
+   }
+  ],
+  "subtotal": 15.2,
+  "tax_rate_percent": 23.0,
+  "tax_amount": 2.84,
+  "discount_amount": 0.0,
+  "shipping_amount": 0.0,
+  "total_amount": 15.2,
+  "invoice_number": "S 10162020A/04507"
+ },
+ "field_sources": {
+  "issue_date": {
+   "page": 1,
+   "quote": "ENTREGUE 10/2020 13:01",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.name": {
+   "page": 1,
+   "quote": "Solaco-Soc. Lav. Coimbra, Lda.",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.street": {
+   "page": 1,
+   "quote": "Av. Vale das Flores, Loja 114",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.postal_code": {
+   "page": 1,
+   "quote": "3030-193 Coimbra",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.city": {
+   "page": 1,
+   "quote": "3030-193 Coimbra",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.country_code": {
+   "page": 1,
+   "quote": "NIF: 503 115 827",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.tax_ids[0].value": {
+   "page": 1,
+   "quote": "NIF: 503 115 827",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.tax_ids[0].scheme": {
+   "page": 1,
+   "quote": "NIF: 503 115 827",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.tax_ids[0].country_code": {
+   "page": 1,
+   "quote": "NIF: 503 115 827",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "buyer.name": {
+   "page": 1,
+   "quote": "CLIENTE : Consumidor Final",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "TOTAL                  15,20€u",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].description": {
+   "page": 1,
+   "quote": "CASACO\nARRANJOS DIVERSOS       7,60 eur\nX 2",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].quantity": {
+   "page": 1,
+   "quote": "X 2",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].unit_price": {
+   "page": 1,
+   "quote": "ARRANJOS DIVERSOS       7,60 eur",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].total": {
+   "page": 1,
+   "quote": "TOTAL                  15,20€u",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].tax_rate_percent": {
+   "page": 1,
+   "quote": "Com IVA         23,00%:        2,84 eur",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "TOTAL                  15,20€u",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_rate_percent": {
+   "page": 1,
+   "quote": "Com IVA         23,00%:        2,84 eur",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_amount": {
+   "page": 1,
+   "quote": "Com IVA         23,00%:        2,84 eur",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "TOTAL                  15,20€u",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "invoice_number": {
+   "page": 1,
+   "quote": "Fatura N.:\nS 10162020A/04507",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [
+  {
+   "field": "seller.tax_ids[0]",
+   "message": "'503 115 827' doesn't look like a tax ID",
+   "severity": "warning"
+  },
+  {
+   "field": "tax_rate_percent",
+   "message": "tax_rate_percent (23.0%) on subtotal (15.20) yields 3.50, but tax_amount is 2.84",
+   "severity": "warning"
+  },
+  {
+   "field": "total_amount",
+   "message": "subtotal + tax + shipping - discount = 18.04, total_amount says 15.20",
+   "severity": "error"
+  }
+ ],
+ "corroborated": {},
+ "needs_review": true,
+ "review_reasons": [
+  "validation error: total_amount — subtotal + tax + shipping - discount = 18.04, total_amount says 15.20"
+ ],
+ "metrics": {
+  "elapsed_seconds": 16.234,
+  "stage_seconds": {
+   "acquire": 12.406,
+   "classify": 0.362,
+   "extract": 3.038,
+   "validate": 0.003
+  },
+  "pages": 1,
+  "llm_calls": 4,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 4832,
+  "llm_output_tokens": 1540,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 4377,
+  "extract_attempts": 1,
+  "escalated_to_vlm": true,
+  "template_id": null
+ },
+ "error": null
+}

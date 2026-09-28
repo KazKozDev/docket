@@ -1,0 +1,756 @@
+{
+ "source": "eval/pt_receipts/pt_20210323_185919.jpg",
+ "document_id": "doc_318c82feeb36441c6861",
+ "status": "needs_review",
+ "document_type": "invoice",
+ "schema_id": "invoice",
+ "schema_version": "2.0",
+ "classification": {
+  "doc_type": "invoice",
+  "confidence": 1.0,
+  "method": "rules",
+  "scores": {
+   "invoice": 5.0,
+   "credit_note": 0.0,
+   "receipt": 0.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.0,
+      "reason": "no text recognized",
+      "seconds": 3.534
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 3.535
+     }
+    ],
+    "witness": null
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "DROGARIA SEMINO\nSOC.FERRAMENTAS E FERRAGENS SEMINO LDA\nMATERIAIS DE CONSTRUCAO - FERRAMENTAS\nSEMINO 8125-303 QUARTEIRA TEL289 300 171\nNIF502607300 CA.SO.5000EU CRC 2545 LOULE\nFAX 289388200 * EMAIL sffsemino@sapo.pt\n\nCliente:\nContr: 514407395\n\nFatura Simplificada\nNatureza:Fatura Simplificada\n2019-02-25 15:37 JOAQUIM BATISTA\nFS 2/36035 Original Ter:3\n------------------------------------\n| Quant. | Pr. Unit. | IVA | Desc. | Total |\n|---|---|---|---|---|\n| 903.0090 | SILCA -CHAVE YA - 31 | | | |\n| 2 | 1,25 | 23% | | 2,50 |\n| 903.0068 | SILCA -CHAVE CB - 6 | | | |\n| 2 | 1,25 | 23% | | 2,50 |\n| 903.0091 | SILCA -CHAVE TE - 8XFA | | | |\n| 1 | 1,75 | 23% | | 1,75 |\n| 903.1059 | SILCA -CHAVE PONTOS UC -5R | | | |\n| 2 | 7,60 | 23% | | 15,20 |\n| 903.1054 | SILCA -CHAVE PONTOS IE -26 | | | |\n| 1 | 7,60 | 23% | | 7,60 |\n\nItens: 5\nTotal 29,55 EUR\nForma Pag. VISA 29,55\n\nIva Incluido a Taxa Indicada\n| Taxa | Valor Iva | Base Imp. | Valor Total |\n|---|---|---|---|\n| 23% | 5,53 | 24,02 | 29,55 |\n\nZnKb-Processado por programa certificado\nnº 2/AT - Sage\nEste documento nao constitui documento d\ne transporte, nos termos do Decreto-Lei\nn.º 147/2003"
+   }
+  ]
+ },
+ "extracted": {
+  "issue_date": "2019-02-25",
+  "due_date": null,
+  "seller": {
+   "name": "SOC.FERRAMENTAS E FERRAGENS SEMINO LDA",
+   "address": {
+    "street": "SEMINO",
+    "additional_line": null,
+    "postal_code": "8125-303",
+    "city": "QUARTEIRA",
+    "region": null,
+    "country_code": "PT",
+    "text": "SEMINO 8125-303 QUARTEIRA"
+   },
+   "tax_ids": [
+    {
+     "value": "502607300",
+     "scheme": "tax_id",
+     "country_code": "PT"
+    }
+   ],
+   "contact_name": null,
+   "email": "sffsemino@sapo.pt",
+   "phone": "289 300 171",
+   "electronic_address": null,
+   "electronic_address_scheme": null
+  },
+  "buyer": {
+   "name": "JOAQUIM BATISTA",
+   "address": null,
+   "tax_ids": [],
+   "contact_name": null,
+   "email": null,
+   "phone": null,
+   "electronic_address": null,
+   "electronic_address_scheme": null
+  },
+  "buyer_reference": null,
+  "references": [],
+  "payment_account": null,
+  "payment_reference": null,
+  "payment_terms": null,
+  "currency": "EUR",
+  "line_items": [
+   {
+    "description": "SILCA -CHAVE YA - 31",
+    "quantity": 2.0,
+    "unit_price": 1.25,
+    "total": 2.5,
+    "sku": "903.0090",
+    "unit_of_measure": null,
+    "tax_rate_percent": 23.0
+   },
+   {
+    "description": "SILCA -CHAVE CB - 6",
+    "quantity": 2.0,
+    "unit_price": 1.25,
+    "total": 2.5,
+    "sku": "903.0068",
+    "unit_of_measure": null,
+    "tax_rate_percent": 23.0
+   },
+   {
+    "description": "SILCA -CHAVE TE - 8XFA",
+    "quantity": 1.0,
+    "unit_price": 1.75,
+    "total": 1.75,
+    "sku": "903.0091",
+    "unit_of_measure": null,
+    "tax_rate_percent": 23.0
+   },
+   {
+    "description": "SILCA -CHAVE PONTOS UC -5R",
+    "quantity": 2.0,
+    "unit_price": 7.6,
+    "total": 15.2,
+    "sku": "903.1059",
+    "unit_of_measure": null,
+    "tax_rate_percent": 23.0
+   },
+   {
+    "description": "SILCA -CHAVE PONTOS IE -26",
+    "quantity": 1.0,
+    "unit_price": 7.6,
+    "total": 7.6,
+    "sku": "903.1054",
+    "unit_of_measure": null,
+    "tax_rate_percent": 23.0
+   }
+  ],
+  "subtotal": 24.02,
+  "tax_rate_percent": 23.0,
+  "tax_amount": 5.53,
+  "discount_amount": 0.0,
+  "shipping_amount": 0.0,
+  "total_amount": 29.55,
+  "invoice_number": "FS 2/36035"
+ },
+ "field_sources": {
+  "issue_date": {
+   "page": 1,
+   "quote": "2019-02-25 15:37 JOAQUIM BATISTA",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.name": {
+   "page": 1,
+   "quote": "SOC.FERRAMENTAS E FERRAGENS SEMINO LDA",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.text": {
+   "page": 1,
+   "quote": "SEMINO 8125-303 QUARTEIRA TEL289 300 171",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.street": {
+   "page": 1,
+   "quote": "SEMINO 8125-303 QUARTEIRA TEL289 300 171",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.postal_code": {
+   "page": 1,
+   "quote": "SEMINO 8125-303 QUARTEIRA TEL289 300 171",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.city": {
+   "page": 1,
+   "quote": "SEMINO 8125-303 QUARTEIRA TEL289 300 171",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.country_code": {
+   "page": 1,
+   "quote": "NIF502607300 CA.SO.5000EU CRC 2545 LOULE",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.tax_ids[0].value": {
+   "page": 1,
+   "quote": "NIF502607300 CA.SO.5000EU CRC 2545 LOULE",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.tax_ids[0].scheme": {
+   "page": 1,
+   "quote": "NIF502607300 CA.SO.5000EU CRC 2545 LOULE",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.tax_ids[0].country_code": {
+   "page": 1,
+   "quote": "NIF502607300 CA.SO.5000EU CRC 2545 LOULE",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.email": {
+   "page": 1,
+   "quote": "FAX 289388200 * EMAIL sffsemino@sapo.pt",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.phone": {
+   "page": 1,
+   "quote": "SEMINO 8125-303 QUARTEIRA TEL289 300 171",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "buyer.name": {
+   "page": 1,
+   "quote": "2019-02-25 15:37 JOAQUIM BATISTA",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "Total 29,55 EUR",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].sku": {
+   "page": 1,
+   "quote": "| 903.0090 | SILCA -CHAVE YA - 31 | | | |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].description": {
+   "page": 1,
+   "quote": "| 903.0090 | SILCA -CHAVE YA - 31 | | | |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].quantity": {
+   "page": 1,
+   "quote": "| 2 | 1,25 | 23% | | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].unit_price": {
+   "page": 1,
+   "quote": "| 2 | 1,25 | 23% | | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].tax_rate_percent": {
+   "page": 1,
+   "quote": "| 2 | 1,25 | 23% | | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].total": {
+   "page": 1,
+   "quote": "| 2 | 1,25 | 23% | | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[1].sku": {
+   "page": 1,
+   "quote": "| 903.0068 | SILCA -CHAVE CB - 6 | | | |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[1].description": {
+   "page": 1,
+   "quote": "| 903.0068 | SILCA -CHAVE CB - 6 | | | |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[1].quantity": {
+   "page": 1,
+   "quote": "| 2 | 1,25 | 23% | | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[1].unit_price": {
+   "page": 1,
+   "quote": "| 2 | 1,25 | 23% | | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[1].tax_rate_percent": {
+   "page": 1,
+   "quote": "| 2 | 1,25 | 23% | | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[1].total": {
+   "page": 1,
+   "quote": "| 2 | 1,25 | 23% | | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[2].sku": {
+   "page": 1,
+   "quote": "| 903.0091 | SILCA -CHAVE TE - 8XFA | | | |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[2].description": {
+   "page": 1,
+   "quote": "| 903.0091 | SILCA -CHAVE TE - 8XFA | | | |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[2].quantity": {
+   "page": 1,
+   "quote": "| 1 | 1,75 | 23% | | 1,75 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[2].unit_price": {
+   "page": 1,
+   "quote": "| 1 | 1,75 | 23% | | 1,75 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[2].tax_rate_percent": {
+   "page": 1,
+   "quote": "| 1 | 1,75 | 23% | | 1,75 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[2].total": {
+   "page": 1,
+   "quote": "| 1 | 1,75 | 23% | | 1,75 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[3].sku": {
+   "page": 1,
+   "quote": "| 903.1059 | SILCA -CHAVE PONTOS UC -5R | | | |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[3].description": {
+   "page": 1,
+   "quote": "| 903.1059 | SILCA -CHAVE PONTOS UC -5R | | | |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[3].quantity": {
+   "page": 1,
+   "quote": "| 2 | 7,60 | 23% | | 15,20 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[3].unit_price": {
+   "page": 1,
+   "quote": "| 2 | 7,60 | 23% | | 15,20 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[3].tax_rate_percent": {
+   "page": 1,
+   "quote": "| 2 | 7,60 | 23% | | 15,20 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[3].total": {
+   "page": 1,
+   "quote": "| 2 | 7,60 | 23% | | 15,20 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[4].sku": {
+   "page": 1,
+   "quote": "| 903.1054 | SILCA -CHAVE PONTOS IE -26 | | | |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[4].description": {
+   "page": 1,
+   "quote": "| 903.1054 | SILCA -CHAVE PONTOS IE -26 | | | |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[4].quantity": {
+   "page": 1,
+   "quote": "| 1 | 7,60 | 23% | | 7,60 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[4].unit_price": {
+   "page": 1,
+   "quote": "| 1 | 7,60 | 23% | | 7,60 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[4].tax_rate_percent": {
+   "page": 1,
+   "quote": "| 1 | 7,60 | 23% | | 7,60 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[4].total": {
+   "page": 1,
+   "quote": "| 1 | 7,60 | 23% | | 7,60 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "| 23% | 5,53 | 24,02 | 29,55 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_rate_percent": {
+   "page": 1,
+   "quote": "| 23% | 5,53 | 24,02 | 29,55 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_amount": {
+   "page": 1,
+   "quote": "| 23% | 5,53 | 24,02 | 29,55 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "Total 29,55 EUR",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "invoice_number": {
+   "page": 1,
+   "quote": "FS 2/36035 Original Ter:3",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [
+  {
+   "field": "*",
+   "message": "VLM-transcribed values have no confident OCR support — verify key figures against the original page",
+   "severity": "warning"
+  },
+  {
+   "field": "subtotal",
+   "message": "line items sum to 29.55, subtotal says 24.02",
+   "severity": "error"
+  }
+ ],
+ "corroborated": {},
+ "needs_review": true,
+ "review_reasons": [
+  "validation error: subtotal — line items sum to 29.55, subtotal says 24.02"
+ ],
+ "metrics": {
+  "elapsed_seconds": 14.679,
+  "stage_seconds": {
+   "acquire": 7.095,
+   "classify": 0.002,
+   "extract": 7.575,
+   "validate": 0.006
+  },
+  "pages": 1,
+  "llm_calls": 2,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 4554,
+  "llm_output_tokens": 3407,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 5073,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

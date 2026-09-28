@@ -1,0 +1,1695 @@
+{
+ "source": "eval/pt_receipts/pt_20210507_184346.jpg",
+ "document_id": "doc_d3c23b4181e62ba1bd74",
+ "status": "needs_review",
+ "document_type": "invoice",
+ "schema_id": "invoice",
+ "schema_version": "2.0",
+ "classification": {
+  "doc_type": "invoice",
+  "confidence": 0.62,
+  "method": "rules",
+  "scores": {
+   "invoice": 5.0,
+   "credit_note": 0.0,
+   "receipt": 3.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.24210526315789474,
+      "reason": "confidence 0.24 < 0.60",
+      "seconds": 4.997
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 3.505
+     }
+    ],
+    "witness": {
+     "page_number": 1,
+     "width": 3000.0,
+     "height": 4000.0,
+     "unit": "px",
+     "rotation": 180,
+     "deskew_angle": 0.0,
+     "crop_quad": null,
+     "backend": "tesseract",
+     "confidence": 0.24210526315789474,
+     "words": [
+      {
+       "id": "p1-w0",
+       "text": "ly/99|",
+       "confidence": 0.27,
+       "bbox": {
+        "x0": 0.31433333333333335,
+        "y0": 0.0685,
+        "x1": 0.38466666666666666,
+        "y1": 0.08675
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w1",
+       "text": "0peo1J13.189",
+       "confidence": 0.17,
+       "bbox": {
+        "x0": 0.402,
+        "y0": 0.06825,
+        "x1": 0.5433333333333333,
+        "y1": 0.086
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w2",
+       "text": "“Bod",
+       "confidence": 0.53,
+       "bbox": {
+        "x0": 0.5626666666666666,
+        "y0": 0.06375,
+        "x1": 0.623,
+        "y1": 0.07875
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w3",
+       "text": "WOBBTA",
+       "confidence": 0.39,
+       "bbox": {
+        "x0": 0.46166666666666667,
+        "y0": 0.093,
+        "x1": 0.5366666666666666,
+        "y1": 0.112
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w4",
+       "text": "Bog",
+       "confidence": 0.69,
+       "bbox": {
+        "x0": 0.553,
+        "y0": 0.09575,
+        "x1": 0.5896666666666667,
+        "y1": 0.112
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w5",
+       "text": "a",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.6053333333333333,
+        "y0": 0.0955,
+        "x1": 0.6156666666666667,
+        "y1": 0.1055
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w6",
+       "text": "epuea",
+       "confidence": 0.83,
+       "bbox": {
+        "x0": 0.3863333333333333,
+        "y0": 0.15175,
+        "x1": 0.447,
+        "y1": 0.1675
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w7",
+       "text": "BP",
+       "confidence": 0.87,
+       "bbox": {
+        "x0": 0.4633333333333333,
+        "y0": 0.15125,
+        "x1": 0.4866666666666667,
+        "y1": 0.1675
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w8",
+       "text": "0]0e",
+       "confidence": 0.65,
+       "bbox": {
+        "x0": 0.5023333333333333,
+        "y0": 0.151,
+        "x1": 0.5506666666666666,
+        "y1": 0.167
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w9",
+       "text": "OU",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.5663333333333334,
+        "y0": 0.15075,
+        "x1": 0.59,
+        "y1": 0.1625
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w10",
+       "text": "[eUTY",
+       "confidence": 0.1,
+       "bbox": {
+        "x0": 0.6073333333333333,
+        "y0": 0.14975,
+        "x1": 0.6626666666666666,
+        "y1": 0.16675
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w11",
+       "text": "Jodstp",
+       "confidence": 0.35,
+       "bbox": {
+        "x0": 0.392,
+        "y0": 0.17725,
+        "x1": 0.462,
+        "y1": 0.19425
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w12",
+       "text": "OR",
+       "confidence": 0.84,
+       "bbox": {
+        "x0": 0.47733333333333333,
+        "y0": 0.1785,
+        "x1": 0.49966666666666665,
+        "y1": 0.189
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w13",
+       "text": "sapRa0To9",
+       "confidence": 0.22,
+       "bbox": {
+        "x0": 0.5156666666666667,
+        "y0": 0.17725,
+        "x1": 0.6276666666666667,
+        "y1": 0.194
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w14",
+       "text": "tu",
+       "confidence": 0.51,
+       "bbox": {
+        "x0": 0.5506666666666666,
+        "y0": 0.2205,
+        "x1": 0.6066666666666667,
+        "y1": 0.269
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w15",
+       "text": "LUE",
+       "confidence": 0.37,
+       "bbox": {
+        "x0": 0.551,
+        "y0": 0.253,
+        "x1": 0.5793333333333334,
+        "y1": 0.26825
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w16",
+       "text": "AU",
+       "confidence": 0.43,
+       "bbox": {
+        "x0": 0.605,
+        "y0": 0.255,
+        "x1": 0.621,
+        "y1": 0.26775
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w17",
+       "text": "enusA",
+       "confidence": 0.5,
+       "bbox": {
+        "x0": 0.7586666666666667,
+        "y0": 0.27625,
+        "x1": 0.8163333333333334,
+        "y1": 0.291
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w18",
+       "text": "[2701",
+       "confidence": 0.55,
+       "bbox": {
+        "x0": 0.835,
+        "y0": 0.2755,
+        "x1": 0.8886666666666667,
+        "y1": 0.29125
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w19",
+       "text": "Le",
+       "confidence": 0.75,
+       "bbox": {
+        "x0": 0.353,
+        "y0": 0.33175,
+        "x1": 0.3616666666666667,
+        "y1": 0.335
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w20",
+       "text": "Y",
+       "confidence": 0.91,
+       "bbox": {
+        "x0": 0.744,
+        "y0": 0.3265,
+        "x1": 0.7516666666666667,
+        "y1": 0.34025
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w21",
+       "text": "NH",
+       "confidence": 0.26,
+       "bbox": {
+        "x0": 0.768,
+        "y0": 0.32675,
+        "x1": 0.7903333333333333,
+        "y1": 0.3385
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w22",
+       "text": "»",
+       "confidence": 0.67,
+       "bbox": {
+        "x0": 0.805,
+        "y0": 0.33025,
+        "x1": 0.809,
+        "y1": 0.335
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w23",
+       "text": "/f",
+       "confidence": 0.37,
+       "bbox": {
+        "x0": 0.818,
+        "y0": 0.33075,
+        "x1": 0.8236666666666667,
+        "y1": 0.335
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w24",
+       "text": "PA]",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.8533333333333334,
+        "y0": 0.32525,
+        "x1": 0.8853333333333333,
+        "y1": 0.339
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w25",
+       "text": "PDP",
+       "confidence": 0.55,
+       "bbox": {
+        "x0": 0.81,
+        "y0": 0.4215,
+        "x1": 0.8393333333333334,
+        "y1": 0.4365
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w26",
+       "text": "IN",
+       "confidence": 0.31,
+       "bbox": {
+        "x0": 0.8493333333333334,
+        "y0": 0.42125,
+        "x1": 0.879,
+        "y1": 0.43375
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w27",
+       "text": "JHOH",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.6943333333333334,
+        "y0": 0.445,
+        "x1": 0.8413333333333334,
+        "y1": 0.45975
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w28",
+       "text": "JAI",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.7426666666666667,
+        "y0": 0.444,
+        "x1": 0.7666666666666667,
+        "y1": 0.4635
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w29",
+       "text": "IS",
+       "confidence": 0.87,
+       "bbox": {
+        "x0": 0.7753333333333333,
+        "y0": 0.444,
+        "x1": 0.7926666666666666,
+        "y1": 0.4635
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w30",
+       "text": "1334",
+       "confidence": 0.79,
+       "bbox": {
+        "x0": 0.8013333333333333,
+        "y0": 0.445,
+        "x1": 0.8413333333333334,
+        "y1": 0.45975
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w31",
+       "text": "al",
+       "confidence": 0.81,
+       "bbox": {
+        "x0": 0.7366666666666667,
+        "y0": 0.46875,
+        "x1": 0.7563333333333333,
+        "y1": 0.4785
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w32",
+       "text": "LUaT",
+       "confidence": 0.43,
+       "bbox": {
+        "x0": 0.7483333333333333,
+        "y0": 0.46825,
+        "x1": 0.7903333333333333,
+        "y1": 0.4815
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w33",
+       "text": "{9",
+       "confidence": 0.57,
+       "bbox": {
+        "x0": 0.7986666666666666,
+        "y0": 0.468,
+        "x1": 0.815,
+        "y1": 0.482
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w34",
+       "text": "QUON",
+       "confidence": 0.57,
+       "bbox": {
+        "x0": 0.83,
+        "y0": 0.4675,
+        "x1": 0.8743333333333333,
+        "y1": 0.47875
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w35",
+       "text": "An",
+       "confidence": 0.19,
+       "bbox": {
+        "x0": 0.32166666666666666,
+        "y0": 0.564,
+        "x1": 0.354,
+        "y1": 0.57675
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w36",
+       "text": "90°",
+       "confidence": 0.48,
+       "bbox": {
+        "x0": 0.36766666666666664,
+        "y0": 0.5625,
+        "x1": 0.416,
+        "y1": 0.576
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w37",
+       "text": "0!",
+       "confidence": 0.48,
+       "bbox": {
+        "x0": 0.4013333333333333,
+        "y0": 0.559,
+        "x1": 0.4166666666666667,
+        "y1": 0.57825
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w38",
+       "text": "ANNOWL:",
+       "confidence": 0.16,
+       "bbox": {
+        "x0": 0.337,
+        "y0": 0.60575,
+        "x1": 0.402,
+        "y1": 0.61
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w39",
+       "text": "310543",
+       "confidence": 0.09,
+       "bbox": {
+        "x0": 0.33766666666666667,
+        "y0": 0.60525,
+        "x1": 0.402,
+        "y1": 0.619
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w40",
+       "text": "[2301-45",
+       "confidence": 0.03,
+       "bbox": {
+        "x0": 0.3303333333333333,
+        "y0": 0.6465,
+        "x1": 0.4266666666666667,
+        "y1": 0.66075
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w41",
+       "text": "|",
+       "confidence": 0.83,
+       "bbox": {
+        "x0": 0.6876666666666666,
+        "y0": 0.662,
+        "x1": 0.6886666666666666,
+        "y1": 0.6625
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w42",
+       "text": "O1NRO.Jd",
+       "confidence": 0.41,
+       "bbox": {
+        "x0": 0.4633333333333333,
+        "y0": 0.659,
+        "x1": 0.5383333333333333,
+        "y1": 0.67725
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l15"
+      },
+      {
+       "id": "p1-w43",
+       "text": "‘UN",
+       "confidence": 0.78,
+       "bbox": {
+        "x0": 0.6213333333333333,
+        "y0": 0.657,
+        "x1": 0.648,
+        "y1": 0.674
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l15"
+      },
+      {
+       "id": "p1-w44",
+       "text": "098.",
+       "confidence": 0.91,
+       "bbox": {
+        "x0": 0.662,
+        "y0": 0.66225,
+        "x1": 0.6983333333333334,
+        "y1": 0.66975
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l15"
+      },
+      {
+       "id": "p1-w45",
+       "text": "OU",
+       "confidence": 0.73,
+       "bbox": {
+        "x0": 0.33766666666666667,
+        "y0": 0.76575,
+        "x1": 0.35,
+        "y1": 0.7725
+       },
+       "page": 1,
+       "block_id": "p1-b8",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w46",
+       "text": "41",
+       "confidence": 0.53,
+       "bbox": {
+        "x0": 0.3616666666666667,
+        "y0": 0.76475,
+        "x1": 0.37133333333333335,
+        "y1": 0.77225
+       },
+       "page": 1,
+       "block_id": "p1-b8",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w47",
+       "text": "|",
+       "confidence": 0.53,
+       "bbox": {
+        "x0": 0.38033333333333336,
+        "y0": 0.76475,
+        "x1": 0.386,
+        "y1": 0.77475
+       },
+       "page": 1,
+       "block_id": "p1-b8",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w48",
+       "text": "lone",
+       "confidence": 0.68,
+       "bbox": {
+        "x0": 0.43033333333333335,
+        "y0": 0.763,
+        "x1": 0.464,
+        "y1": 0.77425
+       },
+       "page": 1,
+       "block_id": "p1-b8",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w49",
+       "text": "iad",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.4726666666666667,
+        "y0": 0.7595,
+        "x1": 0.5073333333333333,
+        "y1": 0.77075
+       },
+       "page": 1,
+       "block_id": "p1-b8",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w50",
+       "text": "and",
+       "confidence": 0.82,
+       "bbox": {
+        "x0": 0.542,
+        "y0": 0.76075,
+        "x1": 0.5713333333333334,
+        "y1": 0.7705
+       },
+       "page": 1,
+       "block_id": "p1-b8",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w51",
+       "text": ";",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.67,
+        "y0": 0.75875,
+        "x1": 0.6716666666666666,
+        "y1": 0.7645
+       },
+       "page": 1,
+       "block_id": "p1-b8",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w52",
+       "text": "THe",
+       "confidence": 0.21,
+       "bbox": {
+        "x0": 0.5003333333333333,
+        "y0": 0.92575,
+        "x1": 0.587,
+        "y1": 0.93875
+       },
+       "page": 1,
+       "block_id": "p1-b9",
+       "line_id": "p1-l17"
+      },
+      {
+       "id": "p1-w53",
+       "text": "uN",
+       "confidence": 0.21,
+       "bbox": {
+        "x0": 0.5976666666666667,
+        "y0": 0.9175,
+        "x1": 0.6536666666666666,
+        "y1": 0.932
+       },
+       "page": 1,
+       "block_id": "p1-b9",
+       "line_id": "p1-l17"
+      }
+     ],
+     "lines": [
+      {
+       "id": "p1-l0",
+       "text": "ly/99| 0peo1J13.189 “Bod",
+       "bbox": {
+        "x0": 0.31433333333333335,
+        "y0": 0.06375,
+        "x1": 0.623,
+        "y1": 0.08675
+       },
+       "word_ids": [
+        "p1-w0",
+        "p1-w1",
+        "p1-w2"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l1",
+       "text": "WOBBTA Bog a",
+       "bbox": {
+        "x0": 0.46166666666666667,
+        "y0": 0.093,
+        "x1": 0.6156666666666667,
+        "y1": 0.112
+       },
+       "word_ids": [
+        "p1-w3",
+        "p1-w4",
+        "p1-w5"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l2",
+       "text": "epuea BP 0]0e OU [eUTY",
+       "bbox": {
+        "x0": 0.3863333333333333,
+        "y0": 0.14975,
+        "x1": 0.6626666666666666,
+        "y1": 0.1675
+       },
+       "word_ids": [
+        "p1-w6",
+        "p1-w7",
+        "p1-w8",
+        "p1-w9",
+        "p1-w10"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l3",
+       "text": "Jodstp OR sapRa0To9",
+       "bbox": {
+        "x0": 0.392,
+        "y0": 0.17725,
+        "x1": 0.6276666666666667,
+        "y1": 0.19425
+       },
+       "word_ids": [
+        "p1-w11",
+        "p1-w12",
+        "p1-w13"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l4",
+       "text": "tu",
+       "bbox": {
+        "x0": 0.5506666666666666,
+        "y0": 0.2205,
+        "x1": 0.6066666666666667,
+        "y1": 0.269
+       },
+       "word_ids": [
+        "p1-w14"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l5",
+       "text": "LUE AU",
+       "bbox": {
+        "x0": 0.551,
+        "y0": 0.253,
+        "x1": 0.621,
+        "y1": 0.26825
+       },
+       "word_ids": [
+        "p1-w15",
+        "p1-w16"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l6",
+       "text": "enusA [2701",
+       "bbox": {
+        "x0": 0.7586666666666667,
+        "y0": 0.2755,
+        "x1": 0.8886666666666667,
+        "y1": 0.29125
+       },
+       "word_ids": [
+        "p1-w17",
+        "p1-w18"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l7",
+       "text": "Le | Y NH » /f | PA]",
+       "bbox": {
+        "x0": 0.353,
+        "y0": 0.32525,
+        "x1": 0.8853333333333333,
+        "y1": 0.34025
+       },
+       "word_ids": [
+        "p1-w19",
+        "p1-w20",
+        "p1-w21",
+        "p1-w22",
+        "p1-w23",
+        "p1-w24"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l8",
+       "text": "PDP IN",
+       "bbox": {
+        "x0": 0.81,
+        "y0": 0.42125,
+        "x1": 0.879,
+        "y1": 0.4365
+       },
+       "word_ids": [
+        "p1-w25",
+        "p1-w26"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l9",
+       "text": "JHOH JAI IS 1334",
+       "bbox": {
+        "x0": 0.6943333333333334,
+        "y0": 0.444,
+        "x1": 0.8413333333333334,
+        "y1": 0.4635
+       },
+       "word_ids": [
+        "p1-w27",
+        "p1-w28",
+        "p1-w29",
+        "p1-w30"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l10",
+       "text": "al LUaT {9 QUON",
+       "bbox": {
+        "x0": 0.7366666666666667,
+        "y0": 0.4675,
+        "x1": 0.8743333333333333,
+        "y1": 0.482
+       },
+       "word_ids": [
+        "p1-w31",
+        "p1-w32",
+        "p1-w33",
+        "p1-w34"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l11",
+       "text": "An 90° 0!",
+       "bbox": {
+        "x0": 0.32166666666666666,
+        "y0": 0.559,
+        "x1": 0.4166666666666667,
+        "y1": 0.57825
+       },
+       "word_ids": [
+        "p1-w35",
+        "p1-w36",
+        "p1-w37"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l12",
+       "text": "ANNOWL:",
+       "bbox": {
+        "x0": 0.337,
+        "y0": 0.60575,
+        "x1": 0.402,
+        "y1": 0.61
+       },
+       "word_ids": [
+        "p1-w38"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l13",
+       "text": "310543",
+       "bbox": {
+        "x0": 0.33766666666666667,
+        "y0": 0.60525,
+        "x1": 0.402,
+        "y1": 0.619
+       },
+       "word_ids": [
+        "p1-w39"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l14",
+       "text": "[2301-45 | |",
+       "bbox": {
+        "x0": 0.3303333333333333,
+        "y0": 0.6465,
+        "x1": 0.6886666666666666,
+        "y1": 0.6625
+       },
+       "word_ids": [
+        "p1-w40",
+        "p1-w41"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l15",
+       "text": "O1NRO.Jd | ‘UN 098.",
+       "bbox": {
+        "x0": 0.4633333333333333,
+        "y0": 0.657,
+        "x1": 0.6983333333333334,
+        "y1": 0.67725
+       },
+       "word_ids": [
+        "p1-w42",
+        "p1-w43",
+        "p1-w44"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l16",
+       "text": "OU 41 | | lone iad | and | ;",
+       "bbox": {
+        "x0": 0.33766666666666667,
+        "y0": 0.75875,
+        "x1": 0.6716666666666666,
+        "y1": 0.77475
+       },
+       "word_ids": [
+        "p1-w45",
+        "p1-w46",
+        "p1-w47",
+        "p1-w48",
+        "p1-w49",
+        "p1-w50",
+        "p1-w51"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l17",
+       "text": "THe uN",
+       "bbox": {
+        "x0": 0.5003333333333333,
+        "y0": 0.9175,
+        "x1": 0.6536666666666666,
+        "y1": 0.93875
+       },
+       "word_ids": [
+        "p1-w52",
+        "p1-w53"
+       ],
+       "column": null,
+       "table_id": null
+      }
+     ],
+     "blocks": [
+      {
+       "id": "p1-b0",
+       "bbox": {
+        "x0": 0.31433333333333335,
+        "y0": 0.06375,
+        "x1": 0.623,
+        "y1": 0.112
+       },
+       "line_ids": [
+        "p1-l0",
+        "p1-l1"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b1",
+       "bbox": {
+        "x0": 0.3863333333333333,
+        "y0": 0.14975,
+        "x1": 0.6626666666666666,
+        "y1": 0.19425
+       },
+       "line_ids": [
+        "p1-l2",
+        "p1-l3"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b2",
+       "bbox": {
+        "x0": 0.5506666666666666,
+        "y0": 0.2205,
+        "x1": 0.8886666666666667,
+        "y1": 0.29125
+       },
+       "line_ids": [
+        "p1-l4",
+        "p1-l5",
+        "p1-l6"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b3",
+       "bbox": {
+        "x0": 0.353,
+        "y0": 0.32525,
+        "x1": 0.8853333333333333,
+        "y1": 0.34025
+       },
+       "line_ids": [
+        "p1-l7"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b4",
+       "bbox": {
+        "x0": 0.6943333333333334,
+        "y0": 0.42125,
+        "x1": 0.879,
+        "y1": 0.482
+       },
+       "line_ids": [
+        "p1-l8",
+        "p1-l9",
+        "p1-l10"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b5",
+       "bbox": {
+        "x0": 0.32166666666666666,
+        "y0": 0.559,
+        "x1": 0.4166666666666667,
+        "y1": 0.57825
+       },
+       "line_ids": [
+        "p1-l11"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b6",
+       "bbox": {
+        "x0": 0.337,
+        "y0": 0.60525,
+        "x1": 0.402,
+        "y1": 0.619
+       },
+       "line_ids": [
+        "p1-l12",
+        "p1-l13"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b7",
+       "bbox": {
+        "x0": 0.3303333333333333,
+        "y0": 0.6465,
+        "x1": 0.6983333333333334,
+        "y1": 0.67725
+       },
+       "line_ids": [
+        "p1-l14",
+        "p1-l15"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b8",
+       "bbox": {
+        "x0": 0.33766666666666667,
+        "y0": 0.75875,
+        "x1": 0.6716666666666666,
+        "y1": 0.77475
+       },
+       "line_ids": [
+        "p1-l16"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b9",
+       "bbox": {
+        "x0": 0.5003333333333333,
+        "y0": 0.9175,
+        "x1": 0.6536666666666666,
+        "y1": 0.93875
+       },
+       "line_ids": [
+        "p1-l17"
+       ],
+       "column": null
+      }
+     ],
+     "columns": [],
+     "tables": [],
+     "text": "ly/99| 0peo1J13.189 “Bod\nWOBBTA Bog a\nepuea BP 0]0e OU [eUTY\nJodstp OR sapRa0To9\ntu\nLUE AU\nenusA [2701\nLe | Y NH » /f | PA]\nPDP IN\nJHOH JAI IS 1334\nal LUaT {9 QUON\nAn 90° 0!\nANNOWL:\n310543\n[2301-45 | |\nO1NRO.Jd | ‘UN 098.\nOU 41 | | lone iad | and | ;\nTHe uN"
+    }
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "ermarche\nPosto Abastecimento INTERMARCHE\nINTERVIALONGA SUPERMERCADOS LDA\nUrb. Terras Compridas Lt8\n2625-716 Vialonga\nNIPC: 513 450 866\nTelefone:219 523 156\n\nData Hora POS Operador Turno\n14-12-2019 16:47:19 1 103 4116\nFactura/Recibo\nFT FT1285P1T00A9C8007B67AE/25940\n\n| Qtd. | Preco Un. IVA | Produto | Sub-Total |\n| --- | --- | --- | --- |\n|  | 1.299 Eur/Litros | GASOLEO |  |\n|  | 23 % |  | 50.00 Eur |\n\nNIF: 510776914\nNome Cliente\nFEELSLIKEHOME\nMorada\nLISBOA\n\nDinheiro 50.00\nIva 23.00 %: 9.35 Eur\n\nTotal Venda : 50.00 Eur\n\nBens/Servicos colocados ao dispor\ndo cliente final no acto da venda\n\nObrigado e Boa Viagem\nMQR-Processado por prog. certificado 166/AT"
+   }
+  ]
+ },
+ "extracted": {
+  "issue_date": "2019-12-14",
+  "due_date": null,
+  "seller": {
+   "name": "INTERVIALONGA SUPERMERCADOS LDA",
+   "address": {
+    "street": "Urb. Terras Compridas Lt8",
+    "additional_line": null,
+    "postal_code": "2625-716",
+    "city": "Vialonga",
+    "region": null,
+    "country_code": "PT",
+    "text": "Urb. Terras Compridas Lt8\n2625-716 Vialonga"
+   },
+   "tax_ids": [
+    {
+     "value": "513 450 866",
+     "scheme": "company_registration",
+     "country_code": "PT"
+    }
+   ],
+   "contact_name": null,
+   "email": null,
+   "phone": "219 523 156",
+   "electronic_address": null,
+   "electronic_address_scheme": null
+  },
+  "buyer": {
+   "name": "FEELSLIKEHOME",
+   "address": {
+    "street": null,
+    "additional_line": null,
+    "postal_code": null,
+    "city": "LISBOA",
+    "region": null,
+    "country_code": "PT",
+    "text": "LISBOA"
+   },
+   "tax_ids": [
+    {
+     "value": "510776914",
+     "scheme": "tax_id",
+     "country_code": "PT"
+    }
+   ],
+   "contact_name": null,
+   "email": null,
+   "phone": null,
+   "electronic_address": null,
+   "electronic_address_scheme": null
+  },
+  "buyer_reference": null,
+  "references": [],
+  "payment_account": null,
+  "payment_reference": null,
+  "payment_terms": null,
+  "currency": "EUR",
+  "line_items": [
+   {
+    "description": "GASOLEO",
+    "quantity": 1.0,
+    "unit_price": 1.299,
+    "total": 50.0,
+    "sku": null,
+    "unit_of_measure": "Litros",
+    "tax_rate_percent": 23.0
+   }
+  ],
+  "subtotal": 50.0,
+  "tax_rate_percent": 23.0,
+  "tax_amount": 9.35,
+  "discount_amount": 0.0,
+  "shipping_amount": 0.0,
+  "total_amount": 50.0,
+  "invoice_number": "FT1285P1T00A9C8007B67AE/25940"
+ },
+ "field_sources": {
+  "issue_date": {
+   "page": 1,
+   "quote": "14-12-2019 16:47:19 1 103 4116",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.name": {
+   "page": 1,
+   "quote": "INTERVIALONGA SUPERMERCADOS LDA",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.street": {
+   "page": 1,
+   "quote": "Urb. Terras Compridas Lt8",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.postal_code": {
+   "page": 1,
+   "quote": "2625-716 Vialonga",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.city": {
+   "page": 1,
+   "quote": "2625-716 Vialonga",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.address.text": {
+   "page": 1,
+   "quote": "Urb. Terras Compridas Lt8\n2625-716 Vialonga",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.tax_ids[0].value": {
+   "page": 1,
+   "quote": "NIPC: 513 450 866",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "seller.phone": {
+   "page": 1,
+   "quote": "Telefone:219 523 156",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "buyer.name": {
+   "page": 1,
+   "quote": "FEELSLIKEHOME",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "buyer.address.city": {
+   "page": 1,
+   "quote": "LISBOA",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "buyer.address.text": {
+   "page": 1,
+   "quote": "LISBOA",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "buyer.tax_ids[0].value": {
+   "page": 1,
+   "quote": "NIF: 510776914",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "Total Venda : 50.00 Eur",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].description": {
+   "page": 1,
+   "quote": "|  | 1.299 Eur/Litros | GASOLEO |  |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].quantity": {
+   "page": 1,
+   "quote": "|  | 1.299 Eur/Litros | GASOLEO |  |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].unit_price": {
+   "page": 1,
+   "quote": "|  | 1.299 Eur/Litros | GASOLEO |  |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].total": {
+   "page": 1,
+   "quote": "|  | 23 % |  | 50.00 Eur |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].unit_of_measure": {
+   "page": 1,
+   "quote": "|  | 1.299 Eur/Litros | GASOLEO |  |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "line_items[0].tax_rate_percent": {
+   "page": 1,
+   "quote": "|  | 23 % |  | 50.00 Eur |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "Total Venda : 50.00 Eur",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_rate_percent": {
+   "page": 1,
+   "quote": "Iva 23.00 %: 9.35 Eur",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_amount": {
+   "page": 1,
+   "quote": "Iva 23.00 %: 9.35 Eur",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "Total Venda : 50.00 Eur",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "invoice_number": {
+   "page": 1,
+   "quote": "FT FT1285P1T00A9C8007B67AE/25940",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [
+  {
+   "field": "seller.tax_ids[0]",
+   "message": "'513 450 866' doesn't look like a tax ID",
+   "severity": "warning"
+  },
+  {
+   "field": "tax_rate_percent",
+   "message": "tax_rate_percent (23.0%) on subtotal (50.00) yields 11.50, but tax_amount is 9.35",
+   "severity": "warning"
+  },
+  {
+   "field": "line_items[0]",
+   "message": "line 1 ('GASOLEO'): 1 × 1.30 = 1.30, but the line total says 50.00",
+   "severity": "error"
+  },
+  {
+   "field": "total_amount",
+   "message": "subtotal + tax + shipping - discount = 59.35, total_amount says 50.00",
+   "severity": "error"
+  },
+  {
+   "field": "line_items[0].unit_price",
+   "message": "cited line '|  | 1.299 Eur/Litros | GASOLEO |  |' states 1299.00, but line_items[0].unit_price=1.30",
+   "severity": "error"
+  }
+ ],
+ "corroborated": {},
+ "needs_review": true,
+ "review_reasons": [
+  "validation error: line_items[0] — line 1 ('GASOLEO'): 1 × 1.30 = 1.30, but the line total says 50.00",
+  "validation error: total_amount — subtotal + tax + shipping - discount = 59.35, total_amount says 50.00",
+  "validation error: line_items[0].unit_price — cited line '|  | 1.299 Eur/Litros | GASOLEO |  |' states 1299.00, but line_items[0].unit_price=1.30"
+ ],
+ "metrics": {
+  "elapsed_seconds": 12.09,
+  "stage_seconds": {
+   "acquire": 8.531,
+   "classify": 0.001,
+   "extract": 3.552,
+   "validate": 0.003
+  },
+  "pages": 1,
+  "llm_calls": 2,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 4343,
+  "llm_output_tokens": 1733,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 3968,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}
