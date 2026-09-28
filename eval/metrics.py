@@ -329,7 +329,7 @@ def citation_coverage_summary(rows: list[dict]) -> dict:
 
 
 _SOURCES = (
-    ("invoice_hf", "donut"), ("receipt_sroie", "sroie"), ("invoice_docile", "docile"), ("receipt_hf", "cord"),
+    ("invoice_hf", "donut"), ("invoice_docile", "docile"), ("receipt_hf", "cord"),
     ("invoice_rvlcdip", "rvl-cdip"), ("other_rvlcdip", "rvl-cdip"), ("form_funsd", "funsd"),
     ("contract_hf", "contract-hf"),
 )

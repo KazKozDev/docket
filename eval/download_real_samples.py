@@ -5,8 +5,6 @@ hand-written documents in eval/golden_dataset/.
 
 Sources (see README for licenses/links):
   - katanaml-org/invoices-donut-data-v1  -> invoices (full field mapping)
-  - mp-02/sroie (SROIE / ICDAR 2019)     -> receipts with field mapping
-    (merchant, date, total reconstructed from the word-level NER tags)
   - naver-clova-ix/cord-v2               -> receipts (doc_type only —
     CORD's ground truth doesn't carry merchant name or a clean, unambiguous
     total, so field-level grading isn't attempted; see the note below)
@@ -26,7 +24,7 @@ Sources (see README for licenses/links):
     third of the page, where the title is. Vendor name, invoice number and
     date are graded.
 
-    python eval/download_real_samples.py [--n 5] [--only sroie,funsd]
+    python eval/download_real_samples.py [--n 5] [--only docile,funsd]
 
 Requires the `datasets` package: `pip install -e ".[eval]"` — not a runtime
 dependency of docket itself, so it's kept out of the base install.
@@ -37,7 +35,6 @@ import argparse
 import itertools
 import json
 import re
-from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
@@ -130,7 +127,7 @@ def download_receipts(n: int) -> None:
 
 
 def _parse_date_flex(raw: str | None) -> str | None:
-    """SROIE dates come in whatever format the merchant's till printed."""
+    """Dates in whatever format the document printed."""
     if not raw:
         return None
     raw = raw.strip()
@@ -143,51 +140,6 @@ def _parse_date_flex(raw: str | None) -> str | None:
         except ValueError:
             continue
     return None
-
-
-def _extract_amount(raw: str | None) -> float | None:
-    if not raw:
-        return None
-    match = re.search(r"(\d[\d,]*\.\d{2})", raw)
-    if not match:
-        return None
-    try:
-        return round(float(match.group(1).replace(",", "")), 2)
-    except ValueError:
-        return None
-
-
-def download_sroie(n: int) -> None:
-    print(f"mp-02/sroie (SROIE / ICDAR 2019) -> {n} receipt(s)")
-    print(
-        "  note: labels are word-level (S-COMPANY/S-DATE/S-ADDRESS/S-TOTAL). Words sharing a "
-        "tag are concatenated to rebuild each field — best-effort, so a receipt with two "
-        "TOTAL-tagged regions can produce a merged string that won't parse. Those fields are "
-        "dropped rather than graded against a value we know is wrong."
-    )
-    ds = load_dataset("mp-02/sroie", split="test", streaming=True)
-    label_names = ["S-COMPANY", "S-DATE", "S-ADDRESS", "S-TOTAL", "O"]
-
-    for i, row in enumerate(itertools.islice(ds, n)):
-        spans: dict[str, list[str]] = defaultdict(list)
-        for word, tag in zip(row["words"], row["ner_tags"]):
-            name = label_names[tag]
-            if name == "O":
-                continue
-            spans[name.split("-", 1)[-1]].append(word)
-        joined = {k: " ".join(v) for k, v in spans.items()}
-
-        expected: dict = {"doc_type": "receipt"}
-        if joined.get("COMPANY"):
-            expected["merchant_name"] = joined["COMPANY"]
-        if (d := _parse_date_flex(joined.get("DATE"))) is not None:
-            expected["transaction_date"] = d
-        if (v := _extract_amount(joined.get("TOTAL"))) is not None:
-            expected["total_amount"] = v
-
-        stem = f"receipt_sroie_{i:02d}"
-        row["image"].convert("RGB").save(OUT_DIR / f"{stem}.jpg", quality=90)
-        (OUT_DIR / f"{stem}.expected.json").write_text(json.dumps(expected, indent=2))
 
 
 def download_funsd(n: int) -> None:
@@ -296,7 +248,6 @@ def download_contracts(n: int) -> None:
 
 _DOWNLOADERS = {
     "invoices": download_invoices,
-    "sroie": download_sroie,
     "cord": download_receipts,
     "contracts": download_contracts,
     "funsd": download_funsd,

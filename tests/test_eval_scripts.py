@@ -244,10 +244,10 @@ def test_pipeline_benchmark_records_source_and_key_field_confidence(tmp_path, mo
     }
     monkeypatch.setattr(benchmark_ocr, "process_document", lambda path, options: make_result(
         source=str(path), field_sources=sources, extracted=invoice.model_dump(mode="json", exclude={"field_locations"})))
-    docs = [(tmp_path / "receipt_sroie_03.jpg", {"doc_type": "invoice"}), (tmp_path / "x_scan.png", {"doc_type": "invoice"})]
+    docs = [(tmp_path / "invoice_docile_03.jpg", {"doc_type": "invoice"}), (tmp_path / "x_scan.png", {"doc_type": "invoice"})]
 
     rows = benchmark_ocr.run_pipeline("tesseract", docs)["documents"]
 
-    assert [r["source"] for r in rows] == ["sroie", "golden"]
+    assert [r["source"] for r in rows] == ["docile", "golden"]
     assert rows[0]["key_source_confidence"] == {"total_amount": 0.42, "invoice_number": None}
 

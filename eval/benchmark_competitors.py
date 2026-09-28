@@ -6,8 +6,8 @@
 Runs each tool over the same documents benchmark_ocr.py uses (golden + real
 samples, scans only), adapts each tool's output to the keys of docket's
 expected.json, and grades with the same metrics.field_accuracy. Only
-documents with field-level truth take part (donut invoices, DocILE, SROIE
-receipts, golden scans of invoice/receipt type): the rest of the corpus is
+documents with field-level truth take part (donut invoices, DocILE,
+golden scans of invoice/receipt type): the rest of the corpus is
 doc_type-only, and docpick/ocrcontext take the schema as an input rather
 than classifying, so there is nothing comparable to grade there.
 

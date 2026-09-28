@@ -133,7 +133,7 @@ pay into.
 ## Not covered
 
 - The real-document sets from `eval/download_real_samples.py` (DocILE,
-  SROIE, CORD, FUNSD, RVL-CDIP).
+  donut invoices, CORD, FUNSD, RVL-CDIP, CUAD).
 - The competitor comparison (`eval/benchmark_competitors.py`).
 - Run-to-run variance (`eval/benchmark_variance.py`).
 
