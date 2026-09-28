@@ -593,7 +593,8 @@ def _check_cited_dates(document, raw_text: str) -> list[ValidationIssue]:
                 except ValueError:
                     pass
             else:
-                readings |= _numeric_date_readings(*groups, order=order)
+                first, second, year = groups
+                readings |= _numeric_date_readings(first, second, year, order=order)
         named = _named_month_dates(quote)
         readings |= named
         if (printed or named) and value not in readings:
@@ -779,6 +780,7 @@ def _check_party_ids(party: Party | None, prefix: str) -> list[ValidationIssue]:
             continue
         verdict = _bare_tax_number_ok(value, tax.country_code)
         if verdict is not None:
+            assert tax.country_code is not None  # a verdict needs a country
             if verdict is False:
                 issues.append(ValidationIssue(
                     field=field, message=f"{value!r} fails the {tax.country_code.upper()} tax number checksum"))

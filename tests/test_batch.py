@@ -29,7 +29,7 @@ from docket.result import DocumentStatus
 from tests.factories import make_result
 
 INVOICE = (
-    "INVOICE\nInvoice no: {n}\nDate: 2026-03-02\nFrom: Acme GmbH\nTo: Beta SA\n"
+    "INVOICE\nInvoice no: {n}\nDate: 2026-03-02\nDue date: 2026-04-01\nFrom: Acme GmbH\nTo: Beta SA\n"
     "Widget | 2 | 50.00 | 100.00\nSubtotal: 100.00\nVAT: 21.00\nTotal: 121.00\n"
 )
 

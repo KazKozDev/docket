@@ -41,18 +41,18 @@ def test_only_approved_corrected_documents_are_exported(tmp_path):
     assert store.export_approved(output)[0] == 0
     assert store.export_approved_json(tmp_path / "approved.json") == 0
     data = json.loads(store.get(document_id)["edited_json"])
-    data["merchant_name"] = "=1+1"
+    data["merchant_name"] = "+1+1"
     store.save_edits(document_id, data)
     assert store.approve(document_id) == []
     assert store.export_approved(output)[0] == 1
     with output.open(encoding="utf-8-sig", newline="") as handle:
         row = next(csv.DictReader(handle))
-    assert row["issuer"] == "'=1+1"
+    assert row["issuer"] == "'+1+1"
     assert row["approval_status"] == "approved"
     assert row["filename"] == "receipt.jpg"
     with (tmp_path / "summary-fields.csv").open(encoding="utf-8-sig", newline="") as handle:
         fields = list(csv.DictReader(handle))
-    assert next(item for item in fields if item["path"] == "/merchant_name")["value"] == "'=1+1"
+    assert next(item for item in fields if item["path"] == "/merchant_name")["value"] == "'+1+1"
     assert next(item for item in fields if item["path"] == "/items/0/description")["value"] == "Coffee"
     with (tmp_path / "summary-processing.csv").open(encoding="utf-8-sig", newline="") as handle:
         processing = list(csv.DictReader(handle))
@@ -71,7 +71,7 @@ def test_only_approved_corrected_documents_are_exported(tmp_path):
     assert payload["format_version"] == 2
     assert len(payload["documents"]) == 1
     assert payload["documents"][0]["document_id"] == document_id
-    assert payload["documents"][0]["extracted"]["merchant_name"] == "=1+1"
+    assert payload["documents"][0]["extracted"]["merchant_name"] == "+1+1"
     assert payload["documents"][0]["extracted"]["items"][0]["description"] == "Coffee"
     assert payload["documents"][0]["processing_result"]["metrics"]["llm_calls"] == 2
     assert payload["documents"][0]["processing_result"]["review_reasons"] == ["x" * 17_000]
@@ -84,7 +84,7 @@ def test_only_approved_corrected_documents_are_exported(tmp_path):
     ]
     edit_detail = json.loads(store.history(document_id)[2]["detail_json"])
     assert edit_detail["changes"] == [
-        {"field": "merchant_name", "before": "Shop", "after": "=1+1"}
+        {"field": "merchant_name", "before": "Shop", "after": "+1+1"}
     ]
     assert edit_detail["actor"]
     if os.name != "nt":
@@ -114,7 +114,7 @@ def test_xlsx_export_has_approved_documents_and_line_items(tmp_path):
     destination = tmp_path / "approved.xlsx"
     assert store.export_approved_xlsx(destination) == 0
     data = json.loads(store.get(document_id)["edited_json"])
-    data["merchant_name"] = "=1+1"
+    data["merchant_name"] = "+1+1"
     store.save_edits(document_id, data)
     assert store.approve(document_id) == []
     assert store.export_approved_xlsx(destination) == 1
@@ -123,11 +123,11 @@ def test_xlsx_export_has_approved_documents_and_line_items(tmp_path):
     documents = workbook["Documents"]
     headers = [cell.value for cell in next(documents.rows)]
     issuer = documents.cell(row=2, column=headers.index("issuer") + 1)
-    assert issuer.value == "'=1+1"
+    assert issuer.value == "'+1+1"
     assert issuer.data_type != "f"
     assert documents.cell(row=2, column=headers.index("approval_status") + 1).value == "approved"
     assert workbook["Line items"].cell(row=2, column=5).value == "Coffee"
-    assert any(row[1] == "/merchant_name" and row[4] == "'=1+1"
+    assert any(row[1] == "/merchant_name" and row[4] == "'+1+1"
                for row in workbook["Fields"].iter_rows(min_row=2, values_only=True))
     assert any(row[1] == "/extracted/merchant_name" and row[4] == "Shop"
                for row in workbook["Processing"].iter_rows(min_row=2, values_only=True))

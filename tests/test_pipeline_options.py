@@ -28,7 +28,7 @@ from docket.options import resolve
 from docket.result import DocumentStatus
 
 INVOICE_TEXT = (
-    "INVOICE\nInvoice no: INV-7\nDate: 2026-03-02\nFrom: Acme GmbH\nTo: Beta SA\n"
+    "INVOICE\nInvoice no: INV-7\nDate: 2026-03-02\nDue date: 2026-04-01\nFrom: Acme GmbH\nTo: Beta SA\n"
     "Subtotal: 100.00\nVAT: 21.00\nTotal: 121.00\n"
 )
 
