@@ -190,7 +190,8 @@ def _find_rule(layout: DocumentLayout, rule: FieldRule) -> tuple[int, str, str] 
                             captured = captured.replace(old, new)
                     if rule.strip:
                         captured = "".join(captured.split())
-                    return page.page_number, lines[i].text, captured
+                    # Cite the line the value was read from, not its label.
+                    return page.page_number, lines[j].text, captured
     return None
 
 
@@ -362,7 +363,7 @@ BUILTIN_TEMPLATES: tuple[VendorTemplate, ...] = (
         description="Distribuciones Albufera S.L. — Spanish invoice (golden corpus vendor)",
         issuer=("Distribuciones Albufera",),
         fields=(
-            FieldRule(field="invoice_number", label="Factura n", value=r"Factura n\.[º®o]?:?\s*(\S+)"),
+            FieldRule(field="invoice_number", label="Factura n", value=r"Factura n\.?\s*[º°®o]?\s*:?\s*([A-Z0-9][\w/-]*)"),
             FieldRule(field="issue_date", label="Fecha", value=r"Fecha:?\s*([\d/]+)"),
             FieldRule(field="due_date", label="Vencimiento", value=r"Vencimiento:?\s*([\d/]+)"),
             FieldRule(field="seller.name", value=r"(Distribuciones Albufera S\.L\.)"),

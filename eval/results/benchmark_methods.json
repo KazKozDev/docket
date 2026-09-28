@@ -1,0 +1,50 @@
+{
+  "classification": [
+    {
+      "method": "rules",
+      "n": 6,
+      "answered": 6,
+      "accuracy_on_answered": 1.0,
+      "accuracy_on_all": 1.0,
+      "mean_latency_ms": 0.4,
+      "mean_confidence": 0.867,
+      "confidence_when_correct": 0.867,
+      "confidence_when_wrong": null,
+      "confidently_wrong": 0
+    },
+    {
+      "method": "tfidf",
+      "n": 6,
+      "answered": 6,
+      "accuracy_on_answered": 0.833,
+      "accuracy_on_all": 0.833,
+      "mean_latency_ms": 184.6,
+      "mean_confidence": 0.57,
+      "confidence_when_correct": 0.596,
+      "confidence_when_wrong": 0.44,
+      "confidently_wrong": 0
+    },
+    {
+      "method": "llm",
+      "n": 6,
+      "answered": 6,
+      "accuracy_on_answered": 1.0,
+      "accuracy_on_all": 1.0,
+      "mean_latency_ms": 409.7,
+      "mean_confidence": 0.987,
+      "confidence_when_correct": 0.987,
+      "confidence_when_wrong": null,
+      "confidently_wrong": 0
+    }
+  ],
+  "ocr": [
+    {
+      "image": "receipt_scan.png",
+      "tesseract_confidence": 100.0,
+      "tesseract_chars": 193,
+      "tesseract_latency_s": 1.12,
+      "vlm_chars": 227,
+      "vlm_latency_s": 0.55
+    }
+  ]
+}

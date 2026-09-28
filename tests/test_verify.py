@@ -90,3 +90,60 @@ def test_export_refuses_a_schema_instance_whose_arithmetic_fails():
 
     with pytest.raises(ExportError, match="total"):
         export_document(broken, "ubl")
+
+
+# ---- a value must be printed on the line it cites --------------------------------------------
+
+
+def test_a_single_string_is_checked_like_one_page():
+    """A plain string used to skip the document-number check (it keyed on a
+    [PAGE n] marker only a page list gets)."""
+    result = verify(external_json(invoice_number="INV-2026-007"), PAGE, document_type="invoice")
+
+    assert result.status == DocumentStatus.NEEDS_REVIEW
+    assert any("invoice_number" in r for r in result.review_reasons)
+
+
+def test_a_party_name_not_on_its_cited_line_needs_review():
+    data = external_json()
+    data["seller"]["name"] = "Harbor View Trading Ltd"
+    result = verify(data, [PAGE], document_type="invoice")
+
+    assert result.status == DocumentStatus.NEEDS_REVIEW
+    assert any("seller.name" in r for r in result.review_reasons)
+
+
+def test_a_name_ocr_misspelled_on_the_page_still_passes():
+    page = PAGE.replace("Acme Solutions SL", "Acrne Solutions SL")
+    citations = {**CITATIONS, "seller.name": {"page": 1, "quote": "Acrne Solutions SL  NIF ESB12345674"}}
+    result = verify(external_json(field_locations=citations), [page], document_type="invoice")
+
+    assert result.status == DocumentStatus.SUCCEEDED, result.review_reasons
+
+
+def test_a_date_spelled_with_a_month_name_must_match():
+    page = PAGE.replace("Fecha: 15/09/2026", "Fecha: 9 de septiembre de 2026")
+    citations = {**CITATIONS, "issue_date": {"page": 1, "quote": "Fecha: 9 de septiembre de 2026  Vencimiento: 15/10/2026"}}
+    right = verify(external_json(issue_date="2026-09-09", field_locations=citations), [page], document_type="invoice")
+    swapped = verify(external_json(issue_date="2026-09-09".replace("09-09", "09-10"), field_locations=citations),
+                     [page], document_type="invoice")
+
+    assert right.status == DocumentStatus.SUCCEEDED, right.review_reasons
+    assert any("issue_date" in r for r in swapped.review_reasons)
+
+
+def test_an_ambiguous_date_is_read_the_way_the_page_writes_dates():
+    """15/09 on the same page makes the document day-first, so 01/06 is
+    the first of June, not the sixth of January."""
+    page = PAGE.replace("Pedido: PO-9988", "Pedido: PO-9988  Entrega: 01/06/2026")
+    citations = {**CITATIONS, "due_date": {"page": 1, "quote": "Pedido: PO-9988  Entrega: 01/06/2026"}}
+    result = verify(external_json(due_date="2026-01-06", field_locations=citations), [page], document_type="invoice")
+
+    assert any("due_date" in r for r in result.review_reasons)
+
+
+def test_a_document_number_of_punctuation_only_needs_review():
+    citations = {**CITATIONS, "invoice_number": {"page": 1, "quote": "Factura °: INV-2026-001"}}
+    result = verify(external_json(invoice_number="°:", field_locations=citations), [PAGE], document_type="invoice")
+
+    assert any("invoice_number" in r for r in result.review_reasons)

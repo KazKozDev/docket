@@ -1,0 +1,859 @@
+{
+  "environment": {
+    "date": "2026-09-28T10:02:41+00:00",
+    "docket": "0.4.0",
+    "git_commit": "cd1bd0a",
+    "python": "3.12.8",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cpu_count": 10,
+    "tesseract": "tesseract 5.5.3",
+    "paddleocr": "3.7.0",
+    "paddlepaddle": "3.3.1",
+    "llm_provider": "ollama",
+    "text_model": "deepseek-v4.1-flash:cloud",
+    "vision_model": "deepseek-v4.1-flash:cloud",
+    "ocr_languages": [
+      "en",
+      "de",
+      "es",
+      "fr"
+    ],
+    "ocr_dpi": 200,
+    "layout_markers": true,
+    "configs": [
+      "tesseract"
+    ]
+  },
+  "documents": [
+    "bank_statement_2p_scan.pdf",
+    "contract_scan.jpg",
+    "credit_note_be_scan.jpg",
+    "credit_note_de_scan.jpg",
+    "credit_note_es_scan.jpg",
+    "credit_note_fr_scan.jpg",
+    "invoice_de_scan.jpg",
+    "invoice_es_lowres_scan.jpg",
+    "invoice_rotated_scan.jpg",
+    "purchase_order_scan.jpg",
+    "receipt_market_scan.jpg",
+    "receipt_scan.png",
+    "tax_invoice_scan.jpg",
+    "waybill_scan.jpg"
+  ],
+  "warm_up_seconds": {
+    "tesseract": 1.04
+  },
+  "ocr_only": {},
+  "pipeline": {
+    "tesseract": {
+      "summary": {
+        "documents": 14,
+        "document_success_rate": 0.8571,
+        "field_accuracy": 0.9833,
+        "fields_graded": 120,
+        "line_items": {
+          "precision": 1.0,
+          "recall": 0.9211,
+          "f1": 0.9589,
+          "expected": 38,
+          "documents_graded": 12
+        },
+        "table_cell_accuracy": 0.5566,
+        "seconds_mean": 8.93,
+        "seconds_median": 7.15,
+        "acquire_seconds_mean": 3.62,
+        "vlm_page_share": 0.1333,
+        "vlm_document_share": 0.1429,
+        "llm_calls": 31,
+        "llm_calls_mean": 2.21,
+        "templates": {
+          "documents": 2,
+          "hit_rate": 0.1429,
+          "seconds_mean": 3.71,
+          "llm_extraction_calls_avoided_minimum": 2,
+          "by_id": {
+            "distribuciones-albufera-invoice": 1,
+            "nordlicht-buerobedarf-invoice": 1
+          }
+        },
+        "citations": {
+          "field_citation_coverage": 0.9833,
+          "field_location_coverage": 0.9833,
+          "line_item_citation_coverage": 0.9118,
+          "line_item_location_coverage": 0.9118
+        },
+        "silent_successes": 13,
+        "false_successes": 2,
+        "false_success_rate": 0.1538,
+        "needs_review": 1,
+        "failed": 0
+      },
+      "documents": [
+        {
+          "document": "bank_statement_2p_scan.pdf",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "bank_statement",
+          "classified_as": "bank_statement",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 10,
+            "total": 10,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 10,
+            "extracted": 10,
+            "expected": 10
+          },
+          "citations": {
+            "fields": {
+              "cited": 10,
+              "located": 10,
+              "total": 10
+            },
+            "line_items": {
+              "cited": 20,
+              "located": 20,
+              "total": 20
+            }
+          },
+          "table_cells": {
+            "matched": 12,
+            "expected": 50
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "closing_balance": 0.96
+          },
+          "seconds": 13.33,
+          "acquire_seconds": 5.858,
+          "pages": 2,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract",
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "contract_scan.jpg",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "contract",
+          "classified_as": "contract",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 10,
+            "total": 10,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 10,
+              "located": 10,
+              "total": 10
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "effective_date": 0.96
+          },
+          "seconds": 6.81,
+          "acquire_seconds": 3.496,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "credit_note_be_scan.jpg",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "credit_note",
+          "classified_as": "credit_note",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 8,
+            "total": 8,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 1,
+            "extracted": 1,
+            "expected": 1
+          },
+          "citations": {
+            "fields": {
+              "cited": 8,
+              "located": 8,
+              "total": 8
+            },
+            "line_items": {
+              "cited": 3,
+              "located": 3,
+              "total": 3
+            }
+          },
+          "table_cells": {
+            "matched": 8,
+            "expected": 8
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "credit_note_number": 0.93,
+            "issue_date": 0.96,
+            "total_amount": 0.96
+          },
+          "seconds": 6.14,
+          "acquire_seconds": 2.932,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "credit_note_de_scan.jpg",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "credit_note",
+          "classified_as": "credit_note",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 9,
+            "total": 9,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 8,
+              "located": 8,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 11,
+            "expected": 12
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "credit_note_number": 0.92,
+            "issue_date": 0.96,
+            "total_amount": 0.96
+          },
+          "seconds": 6.85,
+          "acquire_seconds": 3.015,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "credit_note_es_scan.jpg",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "credit_note",
+          "classified_as": "credit_note",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 9,
+            "total": 9,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 11,
+            "expected": 12
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "credit_note_number": 0.91,
+            "issue_date": 0.96,
+            "total_amount": 0.96
+          },
+          "seconds": 9.68,
+          "acquire_seconds": 2.959,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "credit_note_fr_scan.jpg",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "credit_note",
+          "classified_as": "credit_note",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 9,
+            "total": 9,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 12
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "credit_note_number": 0.925,
+            "issue_date": 0.9333,
+            "total_amount": 0.936
+          },
+          "seconds": 17.57,
+          "acquire_seconds": 8.186,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "invoice_de_scan.jpg",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 11,
+            "total": 11,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 3,
+            "extracted": 3,
+            "expected": 3
+          },
+          "citations": {
+            "fields": {
+              "cited": 11,
+              "located": 11,
+              "total": 11
+            },
+            "line_items": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            }
+          },
+          "table_cells": {
+            "matched": 13,
+            "expected": 20
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "invoice_number": 0.92,
+            "issue_date": 0.96,
+            "subtotal": 0.96,
+            "total_amount": 0.96
+          },
+          "seconds": 3.7,
+          "acquire_seconds": 3.231,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": "nordlicht-buerobedarf-invoice"
+        },
+        {
+          "document": "invoice_es_lowres_scan.jpg",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 10,
+            "total": 10,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 3
+          },
+          "citations": {
+            "fields": {
+              "cited": 10,
+              "located": 10,
+              "total": 10
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 9
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 16
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "invoice_number": 0.92,
+            "issue_date": 0.96,
+            "subtotal": 0.91,
+            "total_amount": 0.92
+          },
+          "seconds": 3.71,
+          "acquire_seconds": 3.167,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": "distribuciones-albufera-invoice"
+        },
+        {
+          "document": "invoice_rotated_scan.jpg",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 9,
+            "total": 9,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 3,
+            "extracted": 3,
+            "expected": 3
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            }
+          },
+          "table_cells": {
+            "matched": 14,
+            "expected": 16
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "invoice_number": 0.92,
+            "issue_date": 0.96,
+            "subtotal": 0.91,
+            "total_amount": 0.91
+          },
+          "seconds": 7.28,
+          "acquire_seconds": 2.995,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "purchase_order_scan.jpg",
+          "source": "golden",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "purchase_order",
+          "classified_as": "purchase_order",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 9,
+            "total": 9,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 3,
+            "extracted": 3,
+            "expected": 3
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            }
+          },
+          "table_cells": {
+            "matched": 17,
+            "expected": 20
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "low classification confidence (0.46 < 0.55)"
+          ],
+          "key_source_confidence": {
+            "po_number": 0.91,
+            "po_date": 0.96,
+            "total_amount": 0.95
+          },
+          "seconds": 8.79,
+          "acquire_seconds": 3.143,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "receipt_market_scan.jpg",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "card_last_four"
+            ],
+            "extracted": {
+              "card_last_four": null
+            }
+          },
+          "line_items": {
+            "correct": 4,
+            "extracted": 4,
+            "expected": 4
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 5,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 12,
+              "located": 12,
+              "total": 12
+            }
+          },
+          "table_cells": {
+            "matched": 15,
+            "expected": 15
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": 0.94,
+            "total_amount": 0.89
+          },
+          "seconds": 5.57,
+          "acquire_seconds": 1.975,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "receipt_scan.png",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 4,
+            "total": 4,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 2,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 4,
+              "located": 4,
+              "total": 4
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": 0.96,
+            "total_amount": 0.819
+          },
+          "seconds": 20.31,
+          "acquire_seconds": 3.569,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "tax_invoice_scan.jpg",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 8,
+            "total": 8,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 3,
+            "extracted": 3,
+            "expected": 3
+          },
+          "citations": {
+            "fields": {
+              "cited": 8,
+              "located": 8,
+              "total": 8
+            },
+            "line_items": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            }
+          },
+          "table_cells": {
+            "matched": 14,
+            "expected": 16
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "invoice_number": 0.89,
+            "issue_date": 0.96,
+            "subtotal": 0.92,
+            "total_amount": 0.92
+          },
+          "seconds": 8.22,
+          "acquire_seconds": 3.022,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "waybill_scan.jpg",
+          "source": "golden",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "waybill",
+          "classified_as": "waybill",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 7,
+            "total": 8,
+            "mismatches": [
+              "carrier_name"
+            ],
+            "extracted": {
+              "carrier_name": "TransEuro Freight Sp. z 0.0."
+            }
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 8,
+              "located": 8,
+              "total": 8
+            },
+            "line_items": {
+              "cited": 4,
+              "located": 4,
+              "total": 4
+            }
+          },
+          "table_cells": {
+            "matched": 3,
+            "expected": 15
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "waybill_number": 0.91
+          },
+          "seconds": 7.02,
+          "acquire_seconds": 3.144,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        }
+      ]
+    }
+  }
+}

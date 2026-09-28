@@ -1,0 +1,801 @@
+{
+  "environment": {
+    "date": "2026-09-28T09:40:59+00:00",
+    "docket": "0.4.0",
+    "git_commit": "cd1bd0a",
+    "python": "3.12.8",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cpu_count": 10,
+    "tesseract": "tesseract 5.5.3",
+    "paddleocr": "3.7.0",
+    "paddlepaddle": "3.3.1",
+    "llm_provider": "ollama",
+    "text_model": "deepseek-v4.1-flash:cloud",
+    "vision_model": "deepseek-v4.1-flash:cloud",
+    "ocr_languages": [
+      "en",
+      "de",
+      "es",
+      "fr"
+    ],
+    "ocr_dpi": 200,
+    "layout_markers": true,
+    "configs": [
+      "tesseract",
+      "paddle-mobile",
+      "paddle-medium"
+    ]
+  },
+  "documents": [
+    "bank_statement_2p_scan.pdf",
+    "contract_scan.jpg",
+    "credit_note_be_scan.jpg",
+    "credit_note_de_scan.jpg",
+    "credit_note_es_scan.jpg",
+    "credit_note_fr_scan.jpg",
+    "invoice_de_scan.jpg",
+    "invoice_es_lowres_scan.jpg",
+    "invoice_rotated_scan.jpg",
+    "purchase_order_scan.jpg",
+    "receipt_market_scan.jpg",
+    "receipt_scan.png",
+    "tax_invoice_scan.jpg",
+    "waybill_scan.jpg"
+  ],
+  "warm_up_seconds": {
+    "tesseract": 1.04,
+    "paddle-mobile": 3.58,
+    "paddle-medium": 1.07
+  },
+  "ocr_only": {
+    "tesseract": {
+      "summary": {
+        "documents": 13,
+        "errors": 0,
+        "word_f1_mean": 0.9599,
+        "word_recall_mean": 0.974,
+        "table_cell_accuracy": 0.566,
+        "table_cells_expected": 212,
+        "seconds_mean": 3.22,
+        "seconds_median": 3.02
+      },
+      "documents": [
+        {
+          "document": "bank_statement_2p_scan.pdf",
+          "seconds": 5.85,
+          "pages": 2,
+          "confidence": [
+            1.0,
+            1.0
+          ],
+          "words": {
+            "precision": 0.9766,
+            "recall": 0.9843,
+            "f1": 0.9804,
+            "words": 127
+          },
+          "table_cells": {
+            "matched": 12,
+            "expected": 50
+          }
+        },
+        {
+          "document": "contract_scan.jpg",
+          "seconds": 3.53,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 219
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          }
+        },
+        {
+          "document": "credit_note_be_scan.jpg",
+          "seconds": 2.93,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 64
+          },
+          "table_cells": {
+            "matched": 8,
+            "expected": 8
+          }
+        },
+        {
+          "document": "credit_note_de_scan.jpg",
+          "seconds": 2.97,
+          "pages": 1,
+          "confidence": [
+            0.9819121447028424
+          ],
+          "words": {
+            "precision": 0.8852,
+            "recall": 1.0,
+            "f1": 0.9391,
+            "words": 54
+          },
+          "table_cells": {
+            "matched": 11,
+            "expected": 12
+          }
+        },
+        {
+          "document": "credit_note_es_scan.jpg",
+          "seconds": 2.94,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.9846,
+            "recall": 1.0,
+            "f1": 0.9922,
+            "words": 64
+          },
+          "table_cells": {
+            "matched": 11,
+            "expected": 12
+          }
+        },
+        {
+          "document": "credit_note_fr_scan.jpg",
+          "seconds": 3.02,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.9467,
+            "recall": 0.9595,
+            "f1": 0.953,
+            "words": 74
+          },
+          "table_cells": {
+            "matched": 2,
+            "expected": 12
+          }
+        },
+        {
+          "document": "invoice_de_scan.jpg",
+          "seconds": 3.19,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.9432,
+            "recall": 0.9765,
+            "f1": 0.9595,
+            "words": 85
+          },
+          "table_cells": {
+            "matched": 13,
+            "expected": 20
+          }
+        },
+        {
+          "document": "invoice_es_lowres_scan.jpg",
+          "seconds": 3.17,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.8052,
+            "recall": 0.8158,
+            "f1": 0.8105,
+            "words": 76
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 16
+          }
+        },
+        {
+          "document": "invoice_rotated_scan.jpg",
+          "seconds": 2.98,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.9753,
+            "recall": 1.0,
+            "f1": 0.9875,
+            "words": 79
+          },
+          "table_cells": {
+            "matched": 14,
+            "expected": 16
+          }
+        },
+        {
+          "document": "purchase_order_scan.jpg",
+          "seconds": 3.12,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.9697,
+            "recall": 0.9897,
+            "f1": 0.9796,
+            "words": 97
+          },
+          "table_cells": {
+            "matched": 17,
+            "expected": 20
+          }
+        },
+        {
+          "document": "receipt_market_scan.jpg",
+          "seconds": 1.97,
+          "pages": 1,
+          "confidence": [
+            0.932806324110672
+          ],
+          "words": {
+            "precision": 0.9273,
+            "recall": 0.9808,
+            "f1": 0.9533,
+            "words": 52
+          },
+          "table_cells": {
+            "matched": 15,
+            "expected": 15
+          }
+        },
+        {
+          "document": "tax_invoice_scan.jpg",
+          "seconds": 3.02,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.9767,
+            "recall": 1.0,
+            "f1": 0.9882,
+            "words": 84
+          },
+          "table_cells": {
+            "matched": 14,
+            "expected": 16
+          }
+        },
+        {
+          "document": "waybill_scan.jpg",
+          "seconds": 3.11,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.9149,
+            "recall": 0.9556,
+            "f1": 0.9348,
+            "words": 90
+          },
+          "table_cells": {
+            "matched": 3,
+            "expected": 15
+          }
+        }
+      ]
+    },
+    "paddle-mobile": {
+      "summary": {
+        "documents": 13,
+        "errors": 0,
+        "word_f1_mean": 0.9964,
+        "word_recall_mean": 0.9958,
+        "table_cell_accuracy": 0.7123,
+        "table_cells_expected": 212,
+        "seconds_mean": 8.57,
+        "seconds_median": 7.8
+      },
+      "documents": [
+        {
+          "document": "bank_statement_2p_scan.pdf",
+          "seconds": 15.39,
+          "pages": 2,
+          "confidence": [
+            1.0,
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 127
+          },
+          "table_cells": {
+            "matched": 12,
+            "expected": 50
+          }
+        },
+        {
+          "document": "contract_scan.jpg",
+          "seconds": 12.26,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 219
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          }
+        },
+        {
+          "document": "credit_note_be_scan.jpg",
+          "seconds": 6.84,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.9841,
+            "recall": 0.9688,
+            "f1": 0.9764,
+            "words": 64
+          },
+          "table_cells": {
+            "matched": 8,
+            "expected": 8
+          }
+        },
+        {
+          "document": "credit_note_de_scan.jpg",
+          "seconds": 7.39,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 54
+          },
+          "table_cells": {
+            "matched": 12,
+            "expected": 12
+          }
+        },
+        {
+          "document": "credit_note_es_scan.jpg",
+          "seconds": 7.29,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 64
+          },
+          "table_cells": {
+            "matched": 12,
+            "expected": 12
+          }
+        },
+        {
+          "document": "credit_note_fr_scan.jpg",
+          "seconds": 7.01,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 74
+          },
+          "table_cells": {
+            "matched": 11,
+            "expected": 12
+          }
+        },
+        {
+          "document": "invoice_de_scan.jpg",
+          "seconds": 9.14,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 85
+          },
+          "table_cells": {
+            "matched": 20,
+            "expected": 20
+          }
+        },
+        {
+          "document": "invoice_es_lowres_scan.jpg",
+          "seconds": 7.38,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 76
+          },
+          "table_cells": {
+            "matched": 5,
+            "expected": 16
+          }
+        },
+        {
+          "document": "invoice_rotated_scan.jpg",
+          "seconds": 8.18,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 79
+          },
+          "table_cells": {
+            "matched": 16,
+            "expected": 16
+          }
+        },
+        {
+          "document": "purchase_order_scan.jpg",
+          "seconds": 8.71,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 97
+          },
+          "table_cells": {
+            "matched": 19,
+            "expected": 20
+          }
+        },
+        {
+          "document": "receipt_market_scan.jpg",
+          "seconds": 5.52,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 52
+          },
+          "table_cells": {
+            "matched": 15,
+            "expected": 15
+          }
+        },
+        {
+          "document": "tax_invoice_scan.jpg",
+          "seconds": 7.8,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.9881,
+            "recall": 0.9881,
+            "f1": 0.9881,
+            "words": 84
+          },
+          "table_cells": {
+            "matched": 16,
+            "expected": 16
+          }
+        },
+        {
+          "document": "waybill_scan.jpg",
+          "seconds": 8.52,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.9889,
+            "recall": 0.9889,
+            "f1": 0.9889,
+            "words": 90
+          },
+          "table_cells": {
+            "matched": 5,
+            "expected": 15
+          }
+        }
+      ]
+    },
+    "paddle-medium": {
+      "summary": {
+        "documents": 13,
+        "errors": 0,
+        "word_f1_mean": 0.9905,
+        "word_recall_mean": 0.987,
+        "table_cell_accuracy": 0.7123,
+        "table_cells_expected": 212,
+        "seconds_mean": 21.4,
+        "seconds_median": 19.96
+      },
+      "documents": [
+        {
+          "document": "bank_statement_2p_scan.pdf",
+          "seconds": 39.92,
+          "pages": 2,
+          "confidence": [
+            1.0,
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 127
+          },
+          "table_cells": {
+            "matched": 12,
+            "expected": 50
+          }
+        },
+        {
+          "document": "contract_scan.jpg",
+          "seconds": 27.46,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 219
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          }
+        },
+        {
+          "document": "credit_note_be_scan.jpg",
+          "seconds": 18.67,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 64
+          },
+          "table_cells": {
+            "matched": 8,
+            "expected": 8
+          }
+        },
+        {
+          "document": "credit_note_de_scan.jpg",
+          "seconds": 19.52,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.9811,
+            "recall": 0.963,
+            "f1": 0.972,
+            "words": 54
+          },
+          "table_cells": {
+            "matched": 12,
+            "expected": 12
+          }
+        },
+        {
+          "document": "credit_note_es_scan.jpg",
+          "seconds": 19.25,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 64
+          },
+          "table_cells": {
+            "matched": 12,
+            "expected": 12
+          }
+        },
+        {
+          "document": "credit_note_fr_scan.jpg",
+          "seconds": 18.99,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.9565,
+            "recall": 0.8919,
+            "f1": 0.9231,
+            "words": 74
+          },
+          "table_cells": {
+            "matched": 11,
+            "expected": 12
+          }
+        },
+        {
+          "document": "invoice_de_scan.jpg",
+          "seconds": 21.85,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 85
+          },
+          "table_cells": {
+            "matched": 20,
+            "expected": 20
+          }
+        },
+        {
+          "document": "invoice_es_lowres_scan.jpg",
+          "seconds": 19.58,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 76
+          },
+          "table_cells": {
+            "matched": 5,
+            "expected": 16
+          }
+        },
+        {
+          "document": "invoice_rotated_scan.jpg",
+          "seconds": 20.38,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 79
+          },
+          "table_cells": {
+            "matched": 16,
+            "expected": 16
+          }
+        },
+        {
+          "document": "purchase_order_scan.jpg",
+          "seconds": 21.25,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 97
+          },
+          "table_cells": {
+            "matched": 19,
+            "expected": 20
+          }
+        },
+        {
+          "document": "receipt_market_scan.jpg",
+          "seconds": 10.14,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 52
+          },
+          "table_cells": {
+            "matched": 15,
+            "expected": 15
+          }
+        },
+        {
+          "document": "tax_invoice_scan.jpg",
+          "seconds": 19.96,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 0.988,
+            "recall": 0.9762,
+            "f1": 0.982,
+            "words": 84
+          },
+          "table_cells": {
+            "matched": 16,
+            "expected": 16
+          }
+        },
+        {
+          "document": "waybill_scan.jpg",
+          "seconds": 21.28,
+          "pages": 1,
+          "confidence": [
+            1.0
+          ],
+          "words": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "words": 90
+          },
+          "table_cells": {
+            "matched": 5,
+            "expected": 15
+          }
+        }
+      ]
+    }
+  },
+  "pipeline": {}
+}

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import re
 from datetime import date, datetime
+from difflib import SequenceMatcher
 
 from . import amounts, checksums
 from .catalog.common import Party
@@ -115,7 +116,7 @@ def _item_numeric_fields(document) -> dict[str, float]:
 
 
 def _check_cited_sources(
-    document, raw_text: str, numeric_fields: dict[str, float]
+    document, raw_text: str, numeric_fields: dict[str, float], *, rows: bool = True
 ) -> list[ValidationIssue]:
     """Verify each field against the line the model says it came from.
 
@@ -142,7 +143,7 @@ def _check_cited_sources(
     issues: list[ValidationIssue] = []
     locations = getattr(document, "field_locations", None) or {}
     normalized_text = _normalize(raw_text)
-    item_fields = _item_numeric_fields(document)
+    item_fields = _item_numeric_fields(document) if rows else {}
     numeric_fields = {**item_fields, **numeric_fields}
 
     for field, value in numeric_fields.items():
@@ -232,7 +233,7 @@ def _check_cited_sources(
                     )
                 )
 
-    if "[PAGE " in raw_text:
+    if "[PAGE " in raw_text and rows:
         issues.extend(_uncited_rows(document, item_fields, locations))
     return issues
 
@@ -447,18 +448,69 @@ def _check_material_locations(
     return issues
 
 
-def _numeric_date_readings(first: str, second: str, year: str) -> set[date]:
-    """Every date a printed d/m/y or m/d/y triple can mean."""
+def _numeric_date_readings(first: str, second: str, year: str, order: str | None = None) -> set[date]:
+    """Every date a printed d/m/y or m/d/y triple can mean; only one of the
+    two when the document's `order` ("dmy" / "mdy") is known."""
     y = int(year)
     if len(year) == 2:
         y += 2000 if y < 70 else 1900
     readings = set()
-    for day, month in ((int(first), int(second)), (int(second), int(first))):
+    orders = {"dmy": [(int(first), int(second))], "mdy": [(int(second), int(first))]}.get(
+        order or "", [(int(first), int(second)), (int(second), int(first))]
+    )
+    for day, month in orders:
         try:
             readings.add(date(y, month, day))
         except ValueError:
             pass
     return readings
+
+
+_MONTHS = {
+    name: number
+    for number, names in enumerate(
+        (
+            "january jan januar janvier enero ene",
+            "february feb februar fevrier février febrero",
+            "march mar märz maerz marz mars marzo",
+            "april apr avril abril",
+            "may mai mayo",
+            "june jun juni juin junio",
+            "july jul juli juillet julio",
+            "august aug aout août agosto ago",
+            "september sep sept septembre septiembre",
+            "october oct oktober okt octobre octubre",
+            "november nov novembre noviembre",
+            "december dec dezember dez decembre décembre diciembre dic",
+        ),
+        1,
+    )
+    for name in names.split()
+}
+_WORD = r"([^\W\d_]+)"
+_DAY_MONTH_YEAR_RE = re.compile(r"(?<!\d)(\d{1,2})(?:st|nd|rd|th)?\.?\s+(?:de\s+)?" + _WORD + r"\.?,?\s+(?:de\s+)?(\d{4})(?!\d)")
+_MONTH_DAY_YEAR_RE = re.compile(_WORD + r"\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})(?!\d)")
+
+
+def _named_month_dates(text: str) -> set[date]:
+    """Dates written with a month name: "2 June 2026", "June 2, 2026",
+    "2. Juni 2026", "2 de junio de 2026", "2 juin 2026"."""
+    found = set()
+    lowered = text.lower()
+    for day, word, year in _DAY_MONTH_YEAR_RE.findall(lowered):
+        found.add((int(day), word, int(year)))
+    for word, day, year in _MONTH_DAY_YEAR_RE.findall(lowered):
+        found.add((int(day), word, int(year)))
+    dates = set()
+    for day, word, year in found:
+        month = _MONTHS.get(word)
+        if month is None:
+            continue
+        try:
+            dates.add(date(year, month, day))
+        except ValueError:
+            pass
+    return dates
 
 
 def _check_cited_dates(document, raw_text: str) -> list[ValidationIssue]:
@@ -469,11 +521,12 @@ def _check_cited_dates(document, raw_text: str) -> list[ValidationIssue]:
     merchant name or a TAX INVOICE header. The quote exists, so the location
     check passes; the value was never on it. Only two cases are errors, both
     certain without knowing the language: a cited line with no digit at all,
-    and a cited line whose numeric dates all mean something else. Dates
-    spelled with month names are left alone.
+    and a cited line whose dates all mean something else. A numeric date
+    that could be day- or month-first is read the way the document's own
+    unambiguous dates are written ("01.06.2026" next to a "30.06.2026" is
+    the first of June); a date spelled with a month name has one reading.
     """
-    if "[PAGE " not in raw_text:
-        return []
+    order = _convention_from_dates(raw_text)
     locations = getattr(document, "field_locations", None) or {}
     issues: list[ValidationIssue] = []
     for field in type(document).model_fields:
@@ -500,8 +553,10 @@ def _check_cited_dates(document, raw_text: str) -> list[ValidationIssue]:
                 except ValueError:
                     pass
             else:
-                readings |= _numeric_date_readings(*groups)
-        if printed and value not in readings:
+                readings |= _numeric_date_readings(*groups, order=order)
+        named = _named_month_dates(quote)
+        readings |= named
+        if (printed or named) and value not in readings:
             issues.append(ValidationIssue(
                 field=field,
                 message=f"{value.isoformat()} cites {short!r}, whose printed date cannot be read as that day",
@@ -523,14 +578,17 @@ def _check_cited_identifiers(document, raw_text: str) -> list[ValidationIssue]:
     rest — passed. Spacing and punctuation are ignored ("INV 2026/001"
     prints the same identifier); anything else is a different number.
     """
-    if "[PAGE " not in raw_text:
-        return []
     locations = getattr(document, "field_locations", None) or {}
     issues: list[ValidationIssue] = []
     for field in type(document).model_fields:
         value = getattr(document, field, None)
         location = locations.get(field)
-        if not field.endswith("_number") or not isinstance(value, str) or not _alnum(value):
+        if not field.endswith("_number") or not isinstance(value, str) or not value.strip():
+            continue
+        if not _alnum(value):
+            issues.append(ValidationIssue(
+                field=field, message=f"{value!r} holds no letter or digit — it is not a document number",
+            ))
             continue
         if location is None or not (location.quote or "").strip():
             continue
@@ -543,9 +601,50 @@ def _check_cited_identifiers(document, raw_text: str) -> list[ValidationIssue]:
     return issues
 
 
+_NAME_PATH_RE = re.compile(r"(?:^|[._])(?:name|account_holder|parties_[ab]\[\d+\])$")
+_NAME_MATCH = 0.8
+
+
+def _name_printed(name: str, quote: str) -> bool:
+    """Whether `quote` prints `name`, legal form aside, allowing the few
+    characters OCR gets wrong in a name the model then spelled correctly
+    ("Acrne Supply" for "Acme Supply")."""
+    core, text = _core_name(name), _normalize(quote)
+    if not core or core in text:
+        return True
+    words, width = text.split(), len(core.split())
+    windows = {" ".join(words[i : i + n]) for n in (width - 1, width, width + 1) if n > 0
+               for i in range(max(len(words) - n + 1, 1))}
+    return any(SequenceMatcher(None, core, w).ratio() >= _NAME_MATCH for w in windows)
+
+
+def _check_cited_names(document, raw_text: str) -> list[ValidationIssue]:
+    """A party name must be printed on the line it cites.
+
+    Names have no arithmetic and no check digit, so without this a model
+    that cited the seller line and wrote another company passed every
+    check.
+    """
+    locations = getattr(document, "field_locations", None) or {}
+    issues: list[ValidationIssue] = []
+    for field, location in locations.items():
+        if not _NAME_PATH_RE.search(field) or not (location.quote or "").strip():
+            continue
+        value = value_at(document, field)
+        if not isinstance(value, str) or not value.strip():
+            continue
+        if not _name_printed(value, location.quote):
+            quote = location.quote if len(location.quote) <= 60 else location.quote[:57] + "..."
+            issues.append(ValidationIssue(
+                field=field,
+                message=f"{value!r} cites {quote!r}, which does not print it — the name was not read there",
+            ))
+    return issues
+
+
 def _unconfirmed_vlm_issue() -> ValidationIssue:
-    # The vision model invents digits when reconciling (observed: a printed
-    # 450.00 transcribed as 480.00). With no confident OCR reading backing
+    # The vision model can invent digits when reconciling. With no
+    # confident OCR reading backing
     # any number, self-consistent output proves nothing — one review issue,
     # not one per field, and no value is rewritten.
     return ValidationIssue(
@@ -1166,9 +1265,14 @@ def _check_date_convention(
         ]
 
     other = "mdy" if convention == "dmy" else "dmy"
+    # A date printed with a month name or year-first has one reading under
+    # either convention, so it is found, not contradicted.
+    unambiguous = _named_month_dates(raw_text)
     issues: list[ValidationIssue] = []
     for field, value in fields:
         if any(r in normalized for r in renderings(value, convention)):
+            continue
+        if value in unambiguous or f"{value.year} {value.month:02d} {value.day:02d}" in normalized:
             continue
         if from_dates is None and (
             value.day == value.month or not any(r in normalized for r in renderings(value, other))
@@ -1311,6 +1415,8 @@ def assess_contract_risks(c: Contract) -> list[str]:
 def validate_contract(c: Contract, ctx: ValidationContext) -> list[ValidationIssue]:
     raw_text = ctx.raw_text
     issues: list[ValidationIssue] = []
+    if raw_text is not None and c.contract_value:
+        issues.extend(_check_cited_sources(c, raw_text, {"contract_value": c.contract_value}, rows=False))
 
     for field, names in (("parties_a", c.parties_a), ("parties_b", c.parties_b)):
         if not [n for n in names if n.strip()]:
@@ -1476,6 +1582,12 @@ def validate_purchase_order(po: PurchaseOrder, ctx: ValidationContext) -> list[V
 
     issues.extend(_check_date_range("po_date", po.po_date, max_years_ahead=1))
 
+    if ctx.raw_text is not None:
+        amounts_read = {"subtotal": po.subtotal, "total_amount": po.total_amount}
+        if po.tax_amount:
+            amounts_read["tax_amount"] = po.tax_amount
+        issues.extend(_check_cited_sources(po, ctx.raw_text, amounts_read, rows=False))
+
     expected_total = round(po.subtotal + po.tax_amount, 2)
     if not _isclose(expected_total, po.total_amount):
         issues.append(
@@ -1546,6 +1658,13 @@ def validate_bank_statement(stmt: BankStatement, ctx: ValidationContext) -> list
                 severity="error",
             )
         )
+
+    if ctx.raw_text is not None:
+        issues.extend(_check_cited_sources(stmt, ctx.raw_text, {
+            name: getattr(stmt, name)
+            for name in ("opening_balance", "closing_balance", "total_deposits", "total_withdrawals")
+            if getattr(stmt, name)
+        }, rows=False))
 
     # Balance reconciliation formula:
     # opening_balance + total_deposits - total_withdrawals == closing_balance
@@ -1743,6 +1862,7 @@ def validate(
     if raw_text:
         issues.extend(_check_cited_dates(document, raw_text))
         issues.extend(_check_cited_identifiers(document, raw_text))
+        issues.extend(_check_cited_names(document, raw_text))
     for validator in spec.validators:
         issues.extend(validator(document, ctx) or [])
     return issues

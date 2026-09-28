@@ -1,0 +1,302 @@
+{
+  "rows": [
+    {
+      "doc": "contract_services.txt",
+      "classification_ok": true,
+      "classified_as": "contract",
+      "classification_method": "rules",
+      "ocr_method": "text",
+      "field_accuracy": "11/11",
+      "mismatches": [],
+      "validation_caught_expected_error": true,
+      "validation_expected": false,
+      "validation_expected_detected": false,
+      "validation_alerted": false,
+      "extract_attempts": 1,
+      "needs_review": false,
+      "latency_s": 2.27,
+      "llm_calls": 1,
+      "llm_estimated_tokens": 1935,
+      "est_cloud_cost_usd": 0.000387
+    },
+    {
+      "doc": "invoice_bad_total.txt",
+      "classification_ok": true,
+      "classified_as": "invoice",
+      "classification_method": "rules",
+      "ocr_method": "text",
+      "field_accuracy": "9/9",
+      "mismatches": [],
+      "validation_caught_expected_error": true,
+      "validation_expected": true,
+      "validation_expected_detected": true,
+      "validation_alerted": true,
+      "extract_attempts": 1,
+      "needs_review": true,
+      "latency_s": 2.69,
+      "llm_calls": 1,
+      "llm_estimated_tokens": 3284,
+      "est_cloud_cost_usd": 0.000657
+    },
+    {
+      "doc": "invoice_clean.txt",
+      "classification_ok": true,
+      "classified_as": "invoice",
+      "classification_method": "rules",
+      "ocr_method": "text",
+      "field_accuracy": "9/9",
+      "mismatches": [],
+      "validation_caught_expected_error": true,
+      "validation_expected": false,
+      "validation_expected_detected": false,
+      "validation_alerted": false,
+      "extract_attempts": 1,
+      "needs_review": false,
+      "latency_s": 2.78,
+      "llm_calls": 1,
+      "llm_estimated_tokens": 3261,
+      "est_cloud_cost_usd": 0.000652
+    },
+    {
+      "doc": "invoice_multipage.pdf",
+      "classification_ok": true,
+      "classified_as": "invoice",
+      "classification_method": "rules",
+      "ocr_method": "pdf_text",
+      "field_accuracy": "9/9",
+      "mismatches": [],
+      "validation_caught_expected_error": true,
+      "validation_expected": false,
+      "validation_expected_detected": false,
+      "validation_alerted": false,
+      "extract_attempts": 1,
+      "needs_review": false,
+      "latency_s": 7.79,
+      "llm_calls": 1,
+      "llm_estimated_tokens": 3871,
+      "est_cloud_cost_usd": 0.000774
+    },
+    {
+      "doc": "invoice_spanish.txt",
+      "classification_ok": true,
+      "classified_as": "invoice",
+      "classification_method": "rules",
+      "ocr_method": "text",
+      "field_accuracy": "9/9",
+      "mismatches": [],
+      "validation_caught_expected_error": true,
+      "validation_expected": false,
+      "validation_expected_detected": false,
+      "validation_alerted": false,
+      "extract_attempts": 1,
+      "needs_review": false,
+      "latency_s": 4.28,
+      "llm_calls": 1,
+      "llm_estimated_tokens": 3486,
+      "est_cloud_cost_usd": 0.000697
+    },
+    {
+      "doc": "receipt_coffee.txt",
+      "classification_ok": true,
+      "classified_as": "receipt",
+      "classification_method": "rules",
+      "ocr_method": "text",
+      "field_accuracy": "4/4",
+      "mismatches": [],
+      "validation_caught_expected_error": true,
+      "validation_expected": false,
+      "validation_expected_detected": false,
+      "validation_alerted": false,
+      "extract_attempts": 1,
+      "needs_review": false,
+      "latency_s": 1.81,
+      "llm_calls": 1,
+      "llm_estimated_tokens": 1823,
+      "est_cloud_cost_usd": 0.000365
+    },
+    {
+      "doc": "receipt_taxed.txt",
+      "classification_ok": true,
+      "classified_as": "receipt",
+      "classification_method": "rules",
+      "ocr_method": "text",
+      "field_accuracy": "6/6",
+      "mismatches": [],
+      "validation_caught_expected_error": true,
+      "validation_expected": false,
+      "validation_expected_detected": false,
+      "validation_alerted": false,
+      "extract_attempts": 1,
+      "needs_review": false,
+      "latency_s": 3.24,
+      "llm_calls": 1,
+      "llm_estimated_tokens": 2165,
+      "est_cloud_cost_usd": 0.000433
+    }
+  ],
+  "field_precision_recall_f1": {
+    "contract_title": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1
+    },
+    "parties_a": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1
+    },
+    "parties_b": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1
+    },
+    "effective_date": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1
+    },
+    "expiration_date": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1
+    },
+    "governing_law": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1
+    },
+    "payment_terms": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1
+    },
+    "auto_renewal": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1
+    },
+    "termination_for_convenience": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1
+    },
+    "non_solicit": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1
+    },
+    "key_obligations": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 1
+    },
+    "invoice_number": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 4
+    },
+    "issue_date": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 4
+    },
+    "due_date": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 4
+    },
+    "seller.name": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 4
+    },
+    "buyer.name": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 4
+    },
+    "subtotal": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 5
+    },
+    "tax_amount": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 5
+    },
+    "total_amount": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 6
+    },
+    "currency": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 4
+    },
+    "merchant_name": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 2
+    },
+    "transaction_date": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 2
+    },
+    "payment_method": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 2
+    },
+    "_micro": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 57
+    }
+  },
+  "review_safety": {
+    "incorrect_documents": 0,
+    "incorrect_without_review": 0,
+    "unsafe_pass_rate": 0.0
+  },
+  "validation_detection": {
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "error_breakdown": {
+    "pipeline_errors": 0,
+    "classification_errors": 0,
+    "field_extraction_errors": 0,
+    "unsafe_passes": 0
+  }
+}

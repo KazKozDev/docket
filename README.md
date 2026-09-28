@@ -89,9 +89,8 @@ document → PDF text / OCR / vision → classify → extract + cite → validat
 
 ## Limitations
 
-- Wrong fields can still pass as `succeeded`: 13 of 66 such results were wrong in the latest published 195-document run. Review critical values before use ([method and results](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md)).
-- About two thirds of documents in that run needed human review; degraded SROIE receipts were the main source of silent errors.
-- The vision model has been observed changing digits to reconcile totals.
+- Wrong fields can still pass as `succeeded`. Review critical values before use.
+- The vision model can change digits to reconcile totals.
 - Windows is untested. The local macOS app build is unsigned and unnotarized.
 - The desktop workflow handles invoices and receipts; contracts and e-invoice tools remain in the library and CLI.
 

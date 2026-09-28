@@ -12,6 +12,7 @@ same input fed to both engines rather than only the one the cascade picked.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import statistics
 import sys
@@ -30,14 +31,14 @@ ROOT = Path(__file__).parent
 DIRS = [ROOT / "golden_dataset", ROOT / "real_samples"]
 
 
-def _labeled_texts() -> list[tuple[str, str]]:
+def _labeled_texts(dirs: list[Path]) -> list[tuple[str, str]]:
     """(text, doc_type) pairs for every document that has usable text —
     i.e. everything except the pure-image scans, which classification never
     sees raw pixels for anyway (OCR/VLM already turned them into text by
     the time classify() runs).
     """
     pairs = []
-    for d in DIRS:
+    for d in dirs:
         if not d.exists():
             continue
         for expected_path in sorted(d.glob("*.expected.json")):
@@ -134,8 +135,11 @@ def _bench_ocr(images: list[Path]) -> list[dict]:
 
 
 def main() -> None:
-    pairs = _labeled_texts()
-    print(f"Classification benchmark — {len(pairs)} labeled documents (golden_dataset + real_samples)\n")
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--dataset", action="append", type=Path, help="directory to use (repeatable); default both eval sets")
+    dirs = parser.parse_args().dataset or DIRS
+    pairs = _labeled_texts(dirs)
+    print(f"Classification benchmark — {len(pairs)} labeled documents ({', '.join(d.name for d in dirs)})\n")
 
     rows = [
         _bench_classifier("rules", classify_rules, pairs),
@@ -158,7 +162,7 @@ def main() -> None:
     report: dict = {"classification": rows}
     out.write_text(json.dumps(report, indent=2))
 
-    image_paths = sorted(p for d in DIRS if d.exists() for p in d.glob("*.png"))
+    image_paths = sorted(p for d in dirs if d.exists() for p in d.glob("*.png"))
     if image_paths:
         print(f"\nOCR benchmark — {len(image_paths)} scanned image(s)\n")
         report["ocr"] = _bench_ocr(image_paths)

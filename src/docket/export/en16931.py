@@ -32,6 +32,7 @@ from typing import Literal
 
 from ..catalog.common import Address, Party
 from ..catalog.models import CreditNote, Invoice
+from ._parties import compact, vat_number
 
 Syntax = Literal["ubl", "cii"]
 
@@ -165,6 +166,7 @@ class Semantic:
     tax_inclusive: Decimal
     payable: Decimal
     notes: list[str] = field(default_factory=list)
+    account_number: str | None = None  # BT-84 when there is no IBAN
 
 
 def _rate(doc) -> Decimal | None:
@@ -264,16 +266,18 @@ def semantic(doc: Invoice | CreditNote) -> Semantic:
         tax_inclusive=tax_inclusive,
         payable=tax_inclusive,
         notes=[doc.reason] if isinstance(doc, CreditNote) and doc.reason else [],
+        account_number=account.account_number.replace(" ", "") if account and account.account_number else None,
     )
 
 
 def _vat_id(party: Party) -> str | None:
-    value = party.tax_id("vat")
-    return value.replace(" ", "").replace("-", "").replace(".", "") if value else None
+    value = vat_number(party)
+    return compact(value) if value else None
 
 
 def _tax_registration(party: Party) -> str | None:
-    return party.tax_id("tax_id", "gst")
+    vat = vat_number(party)
+    return next((t.value for t in party.tax_ids if t.scheme in ("tax_id", "gst") and t.value != vat), None)
 
 
 def _legal_id(party: Party) -> str | None:
@@ -281,8 +285,10 @@ def _legal_id(party: Party) -> str | None:
 
 
 def _payment_means(sem: Semantic) -> str:
-    # 58 = SEPA credit transfer (needs an IBAN), 30 = credit transfer.
-    return "58" if sem.iban else "30"
+    # 58 = SEPA credit transfer (needs an IBAN), 30 = credit transfer (needs
+    # an account, BR-61), 1 = instrument not defined: the document names no
+    # account, and a transfer code without one would be invented.
+    return "58" if sem.iban else "30" if sem.account_number else "1"
 
 
 # ---- UBL -----------------------------------------------------------------------------------
@@ -304,6 +310,10 @@ class _Ubl:
         return ET.SubElement(parent, f"{{{CAC}}}{tag}")
 
     def address(self, parent, address: Address | None) -> None:
+        # No address, no element: an empty PostalAddress is its own error
+        # (PEPPOL-EN16931-R008) on top of the missing address (BR-08).
+        if address is None:
+            return
         post = self.cac(parent, "PostalAddress")
         if address is not None:
             if address.street:
@@ -386,9 +396,9 @@ class _Ubl:
             cbc(means, "PaymentDueDate", sem.due_date)
         if sem.payment_reference:
             cbc(means, "PaymentID", sem.payment_reference)
-        if sem.iban:
+        if sem.iban or sem.account_number:
             account = cac(means, "PayeeFinancialAccount")
-            cbc(account, "ID", sem.iban)
+            cbc(account, "ID", sem.iban or sem.account_number)
             if sem.bic:
                 cbc(cac(account, "FinancialInstitutionBranch"), "ID", sem.bic)
         if sem.payment_terms:
@@ -549,6 +559,8 @@ class _Cii:
             ram(ram(means, "PayeePartyCreditorFinancialAccount"), "IBANID", sem.iban)
             if sem.bic and not basic:
                 ram(ram(means, "PayeeSpecifiedCreditorFinancialInstitution"), "BICID", sem.bic)
+        elif sem.account_number:
+            ram(ram(means, "PayeePartyCreditorFinancialAccount"), "ProprietaryID", sem.account_number)
         for g in sem.groups:
             self.tax(settlement, "ApplicableTradeTax", g.category, g.rate, calculated=g.tax, basis=g.taxable)
         group = sem.groups[0]

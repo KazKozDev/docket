@@ -25,6 +25,7 @@ from docket.templates import (
     ItemsRule,
     VendorTemplate,
     extract_with_template,
+    get_vendor_template,
     match_vendor_template,
     register_vendor_template,
     unregister_vendor_template,
@@ -103,7 +104,9 @@ def test_lines_after_reads_the_line_below_the_label():
     rule = FieldRule(field="buyer.name", label="Bill to", value=r"^(.+?)\s*$", lines_after=1)
     _page, quote, captured = templates_module._find_rule(layout, rule)
     assert captured == "Iberia Mantenimiento SA"
-    assert quote.startswith("Bill to:")  # the citation names the label line
+    # The citation is the line the value was read from: the checks compare
+    # every value with the line it cites, and the label line prints no name.
+    assert quote == "Iberia Mantenimiento SA"
 
 
 def test_a_label_line_is_not_its_own_value_when_lines_after_is_set():
@@ -399,3 +402,11 @@ def test_unmatched_document_reads_through_the_model_as_before(tmp_path, monkeypa
     assert calls["n"] == 1
     assert result.metrics.template_id is None
     assert result.status == DocumentStatus.SUCCEEDED
+
+
+def test_albufera_number_survives_a_degree_sign_for_the_ordinal():
+    """OCR reads "n.º" as "n.°"; the rule used to capture "°:" as the number."""
+    layout = _layout("Distribuciones Albufera S.L. | Factura n.°: A-2026/0457")
+    template = get_vendor_template("distribuciones-albufera-invoice")
+    rule = next(r for r in template.fields if r.field == "invoice_number")
+    assert templates_module._find_rule(layout, rule)[2] == "A-2026/0457"

@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from datetime import date
 
 from docket.catalog import BankStatement, BankStatementTransaction, Invoice, LineItem
-from docket.export import export_to_facturae_xml
+from docket.export import export_document, export_to_facturae_xml
 from tests.factories import flat_invoice
 
 
@@ -115,3 +115,44 @@ def test_facturae_xml_export():
     items = root.findall("fe:Invoices/fe:Invoice/fe:Items/fe:InvoiceLine", ns)
     assert len(items) == 2
     assert items[0].find("fe:ItemDescription", ns).text == "Consulting Services"
+
+
+# ---- EN 16931 exporter: nothing invented, nothing dropped -------------------------------------
+
+
+def exportable_invoice() -> Invoice:
+    return sample_invoice().model_copy(update={"discount_amount": 0.0, "total_amount": 1815.0}, deep=True)
+
+
+def test_a_vat_number_labelled_tax_id_is_exported_as_the_seller_vat_id():
+    """Models label a printed "USt-IdNr." `tax_id` as often as `vat`; the
+    number's own EU VAT format decides, or BR-CO-26 fails for want of one."""
+    from docket.catalog.common import TaxIdentifier
+
+    invoice = exportable_invoice()
+    invoice.seller.tax_ids = [TaxIdentifier(value="DE136695976", scheme="tax_id")]
+    xml = export_document(invoice, "ubl").content
+
+    assert "<cbc:CompanyID>DE136695976</cbc:CompanyID>" in xml
+    assert "<cbc:ID>VAT</cbc:ID>" in xml
+    assert "<cbc:ID>FC</cbc:ID>" not in xml  # not also sent as a tax registration
+
+
+def test_without_an_account_the_payment_means_is_not_a_transfer():
+    """A transfer code (30/58) needs an account (BR-61); a document that
+    names none gets 1, instrument not defined, rather than an invented one."""
+    invoice = exportable_invoice()
+    invoice.payment_account = None
+    xml = export_document(invoice, "ubl").content
+
+    assert "<cbc:PaymentMeansCode>1</cbc:PaymentMeansCode>" in xml
+    assert "PayeeFinancialAccount" not in xml
+
+
+def test_a_party_without_an_address_gets_no_empty_address_element():
+    invoice = exportable_invoice()
+    invoice.buyer.address = None
+    xml = export_document(invoice, "ubl").content
+    customer = xml.split("<cac:AccountingCustomerParty>")[1].split("</cac:AccountingCustomerParty>")[0]
+
+    assert "PostalAddress" not in customer

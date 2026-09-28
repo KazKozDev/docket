@@ -2,16 +2,35 @@
 name, one address line and one tax number per party."""
 from __future__ import annotations
 
+import re
+
 from ..catalog.common import Address, Party
+
+# An EU VAT number is its country prefix plus 8-12 characters: DE136695976,
+# ESB12345674, NL123456789B01. The model labels one printed as "USt-IdNr."
+# or "NIF" `tax_id` as often as `vat`; the format says which it is.
+_VAT_RE = re.compile(
+    r"^(?:AT|BE|BG|CY|CZ|DE|DK|EE|EL|ES|FI|FR|GB|HR|HU|IE|IT|LT|LU|LV|MT|NL|PL|PT|RO|SE|SI|SK|XI)"
+    r"(?=[0-9A-Z]*\d)[0-9A-Z]{8,12}$"
+)
+
+
+def compact(value: str) -> str:
+    return value.replace(" ", "").replace("-", "").replace(".", "").upper()
 
 
 def vat_number(party: Party) -> str | None:
-    return party.tax_id("vat")
+    """The party's VAT number: one labelled `vat`, else any identifier
+    written in the EU VAT format."""
+    labelled = party.tax_id("vat")
+    if labelled:
+        return labelled
+    return next((t.value for t in party.tax_ids if _VAT_RE.match(compact(t.value))), None)
 
 
 def tax_number(party: Party) -> str | None:
     """VAT number if the party has one, else any other tax identifier."""
-    return party.tax_id("vat") or party.tax_id()
+    return vat_number(party) or party.tax_id()
 
 
 def address_line(address: Address | None) -> str | None:

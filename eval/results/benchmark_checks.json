@@ -1,0 +1,967 @@
+{
+  "summary": {
+    "documents": 18,
+    "clean_succeeded": 18,
+    "false_alarms": [],
+    "by_mutation": {
+      "digit_in_total": {
+        "applied": 16,
+        "caught": 16
+      },
+      "consistent_inflation": {
+        "applied": 13,
+        "caught": 13
+      },
+      "tax_off": {
+        "applied": 13,
+        "caught": 13
+      },
+      "day_month_swap": {
+        "applied": 9,
+        "caught": 9
+      },
+      "wrong_doc_number": {
+        "applied": 12,
+        "caught": 12
+      },
+      "fabricated_quote": {
+        "applied": 16,
+        "caught": 16
+      },
+      "wrong_party": {
+        "applied": 16,
+        "caught": 16
+      },
+      "broken_iban": {
+        "applied": 2,
+        "caught": 2
+      }
+    },
+    "caught_total": "97/97"
+  },
+  "documents": [
+    {
+      "document": "bank_statement_2p_scan",
+      "doc_type": "bank_statement",
+      "uncited": [
+        "account_iban"
+      ],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: closing_balance — cited line '30.06.2026 Interest 3.15 10,851.50' states 30062026.00, 3.15, 10851.50, but closing_balance=40851.50",
+            "validation error: closing_balance — opening_balance (12450.00) + deposits (10553.15) - withdrawals (12151.65) = 10851.50, does not match closing_balance 40851.50 (diff: 30000.00)"
+          ]
+        },
+        "day_month_swap": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: statement_period_start — 2026-01-06 cites 'Period: 01.06.2026 - 30.06.2026', whose printed date cannot be read as that day"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: closing_balance — cited source region does not appear on page 1",
+            "validation error: closing_balance — cited source 'TOTAL DUE 10892.50' does not appear in the document — the value 10892.50 is not grounded in anything on the page",
+            "validation error: closing_balance — opening_balance (12450.00) + deposits (10553.15) - withdrawals (12151.65) = 10851.50, does not match closing_balance 10892.50 (diff: 41.00)"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: bank_name — 'Harbor View Trading Ltd' cites 'Alpine Cantonal Bank', which does not print it — the name was not read there"
+          ]
+        },
+        "broken_iban": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: account_iban — 'CH9300762011623852958' fails IBAN checksum or format"
+          ]
+        }
+      }
+    },
+    {
+      "document": "contract_scan",
+      "doc_type": "contract",
+      "uncited": [
+        "expiration_date"
+      ],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: contract_value — cited line '3. Fees. The Customer shall pay a total fee of EUR 96,000.00, invoiced in eig...' states 3.00, 96000.00, but contract_value=26000.00"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: contract_value — cited source 'TOTAL DUE 96041.00' does not appear in the document — the value 96041.00 is not grounded in anything on the page"
+          ]
+        }
+      }
+    },
+    {
+      "document": "contract_services",
+      "doc_type": "contract",
+      "uncited": [],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "day_month_swap": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: effective_date — 2026-01-03 cites 'This Services Agreement (\"Agreement\") is entered into as ...', whose printed date cannot be read as that day"
+          ]
+        }
+      }
+    },
+    {
+      "document": "credit_note_be_scan",
+      "doc_type": "credit_note",
+      "uncited": [],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 100.11, total_amount says 400.11",
+            "validation error: total_amount — cited line 'Exoneration du versement du PP 1 100.11 100.11' states 1.00, 100.11, 100.11, 1100.11, but total_amount=400.11"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: subtotal — cited line 'Exoneration du versement du PP 1 100.11 100.11' states 1.00, 100.11, 100.11, 1100.11, but subtotal=200.11",
+            "validation error: total_amount — cited line 'Exoneration du versement du PP 1 100.11 100.11' states 1.00, 100.11, 100.11, 1100.11, but total_amount=200.11"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 107.61, total_amount says 100.11",
+            "validation error: tax_amount — cited line 'VAT 0%: EUR 0.00' states 0.00, but tax_amount=7.50"
+          ]
+        },
+        "wrong_doc_number": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: credit_note_number — '018304 / 28866' cites 'Credit note no.: 018304 / 28865', which does not print it — the value was not read there"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 100.11, total_amount says 141.11",
+            "validation error: total_amount — cited source 'TOTAL DUE 141.11' does not appear in the document — the value 141.11 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: seller.name — 'Harbor View Trading Ltd' cites 'My Supplier Company N.V.', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "credit_note_de_scan",
+      "doc_type": "credit_note",
+      "uncited": [],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 392.70, total_amount says 692.70",
+            "validation error: total_amount — cited line 'Gesamtbetrag: 392,70 EUR' states 392.70, but total_amount=692.70"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: subtotal — cited line 'Nettobetrag: 330,00 EUR' states 330.00, but subtotal=430.00",
+            "validation error: total_amount — cited line 'Gesamtbetrag: 392,70 EUR' states 392.70, but total_amount=492.70"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 400.20, total_amount says 392.70",
+            "validation error: tax_amount — cited line 'USt. 19 %: 62,70 EUR' states 62.70, but tax_amount=70.20"
+          ]
+        },
+        "wrong_doc_number": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: credit_note_number — 'GS-2026-0413' cites 'Gutschrift-Nr.: GS-2026-0412', which does not print it — the value was not read there"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 392.70, total_amount says 433.70",
+            "validation error: total_amount — cited source 'TOTAL DUE 433.70' does not appear in the document — the value 433.70 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: seller.name — 'Harbor View Trading Ltd' cites 'Holzwerk Bayern GmbH', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "credit_note_es_scan",
+      "doc_type": "credit_note",
+      "uncited": [],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 243.21, total_amount says 543.21",
+            "validation error: total_amount — cited line 'Total: 243,21 EUR' states 243.21, but total_amount=543.21"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: subtotal — cited line 'Base imponible: 201,00 EUR' states 201.00, but subtotal=301.00",
+            "validation error: total_amount — cited line 'Total: 243,21 EUR' states 243.21, but total_amount=343.21"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 250.71, total_amount says 243.21",
+            "validation error: tax_amount — cited line 'IVA 21 %: 42,21 EUR' states 42.21, but tax_amount=49.71"
+          ]
+        },
+        "day_month_swap": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: issue_date — 2026-02-07 does not appear in the document under its dmy convention — the date may have been read with a mixed convention; check against the original page"
+          ]
+        },
+        "wrong_doc_number": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: credit_note_number — 'R-2026-0078' cites 'N.o rectificativa: R-2026-0077', which does not print it — the value was not read there"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 243.21, total_amount says 284.21",
+            "validation error: total_amount — cited source 'TOTAL DUE 284.21' does not appear in the document — the value 284.21 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: seller.name — 'Harbor View Trading Ltd' cites 'Suministros Levante SL', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "credit_note_fr_scan",
+      "doc_type": "credit_note",
+      "uncited": [],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 484.80, total_amount says 784.80",
+            "validation error: total_amount — cited line 'Total TTC : 484,80 €' states 484.80, but total_amount=784.80"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: subtotal — cited line 'Total HT : 404,00 €' states 404.00, but subtotal=504.00",
+            "validation error: total_amount — cited line 'Total TTC : 484,80 €' states 484.80, but total_amount=584.80"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 492.30, total_amount says 484.80",
+            "validation error: tax_amount — cited line 'TVA 20 % : 80,80 €' states 80.80, but tax_amount=88.30"
+          ]
+        },
+        "day_month_swap": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: issue_date — 2026-03-09 does not appear in the document under its dmy convention — the date may have been read with a mixed convention; check against the original page"
+          ]
+        },
+        "wrong_doc_number": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: credit_note_number — 'AV-2026-032' cites 'Avoir n° : AV-2026-031', which does not print it — the value was not read there"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 484.80, total_amount says 525.80",
+            "validation error: total_amount — cited source 'TOTAL DUE 525.80' does not appear in the document — the value 525.80 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: seller.name — 'Harbor View Trading Ltd' cites 'Atelier Lumière SARL', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "invoice_clean",
+      "doc_type": "invoice",
+      "uncited": [],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 864.00, total_amount says 164.00",
+            "validation error: total_amount — cited line 'Amount Due: 864.00' states 864.00, but total_amount=164.00"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: subtotal — cited line 'Subtotal: 800.00' states 800.00, but subtotal=900.00",
+            "validation error: total_amount — cited line 'Amount Due: 864.00' states 864.00, but total_amount=964.00"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 871.50, total_amount says 864.00",
+            "validation error: tax_amount — cited line 'Tax: 64.00' states 64.00, but tax_amount=71.50"
+          ]
+        },
+        "day_month_swap": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: issue_date — 2026-01-08 cites 'Issue Date: 2026-08-01', whose printed date cannot be read as that day"
+          ]
+        },
+        "wrong_doc_number": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: invoice_number — 'INV-2026-0732' cites 'Invoice #: INV-2026-0731', which does not print it — the value was not read there"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 864.00, total_amount says 905.00",
+            "validation error: total_amount — cited source 'TOTAL DUE 905.00' does not appear in the document — the value 905.00 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: seller.name — 'Harbor View Trading Ltd' cites 'Vendor: Acme Supply Co.', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "invoice_de_scan",
+      "doc_type": "invoice",
+      "uncited": [
+        "payment_account.iban"
+      ],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 734.23, total_amount says 134.23",
+            "validation error: total_amount — cited line 'Gesamtbetrag: 734,23 EUR' states 734.23, but total_amount=134.23"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: subtotal — cited line 'Zwischensumme: 617,00 EUR' states 617.00, but subtotal=717.00",
+            "validation error: total_amount — cited line 'Gesamtbetrag: 734,23 EUR' states 734.23, but total_amount=834.23"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 741.73, total_amount says 734.23",
+            "validation error: tax_amount — cited line 'USt. 19 %: 117,23 EUR' states 117.23, but tax_amount=124.73"
+          ]
+        },
+        "wrong_doc_number": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: invoice_number — 'RE-2026-1188' cites 'Rechnungsnummer: RE-2026-1187', which does not print it — the value was not read there"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 734.23, total_amount says 775.23",
+            "validation error: total_amount — cited source 'TOTAL DUE 775.23' does not appear in the document — the value 775.23 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: seller.name — 'Harbor View Trading Ltd' cites 'Nordlicht Bürobedarf GmbH', which does not print it — the name was not read there"
+          ]
+        },
+        "broken_iban": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: payment_account.iban — 'DE89370400440532013001' fails the IBAN mod-97 checksum"
+          ]
+        }
+      }
+    },
+    {
+      "document": "invoice_es_lowres_scan",
+      "doc_type": "invoice",
+      "uncited": [
+        "currency"
+      ],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 1546.38, total_amount says 4546.38",
+            "validation error: total_amount — cited line 'Total factura: 1.546,38 €' states 1546.38, but total_amount=4546.38"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: subtotal — cited line 'Base imponible: 1.278,00 €' states 1278.00, but subtotal=1378.00",
+            "validation error: total_amount — cited line 'Total factura: 1.546,38 €' states 1546.38, but total_amount=1646.38"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 1553.88, total_amount says 1546.38",
+            "validation error: tax_amount — cited line 'IVA 21 %: 268,38 €' states 268.38, but tax_amount=275.88"
+          ]
+        },
+        "day_month_swap": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: due_date — due_date is before issue_date",
+            "validation error: issue_date — 2026-09-05 does not appear in the document under its dmy convention — the date may have been read with a mixed convention; check against the original page"
+          ]
+        },
+        "wrong_doc_number": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: invoice_number — 'A-2026/0458' cites 'Factura n.º: A-2026/0457', which does not print it — the value was not read there"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 1546.38, total_amount says 1587.38",
+            "validation error: total_amount — cited source 'TOTAL DUE 1587.38' does not appear in the document — the value 1587.38 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: seller.name — 'Harbor View Trading Ltd' cites 'Distribuciones Albufera S.L.', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "invoice_rotated_scan",
+      "doc_type": "invoice",
+      "uncited": [
+        "currency"
+      ],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 5194.00, total_amount says 8194.00",
+            "validation error: total_amount — cited line 'Total Due: $5,194.00' states 5194.00, but total_amount=8194.00"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: subtotal — cited line 'Subtotal: $4,900.00' states 4900.00, but subtotal=5000.00",
+            "validation error: total_amount — cited line 'Total Due: $5,194.00' states 5194.00, but total_amount=5294.00"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 5201.50, total_amount says 5194.00",
+            "validation error: tax_amount — cited line 'Sales Tax (6%): $294.00' states 294.00, but tax_amount=301.50"
+          ]
+        },
+        "day_month_swap": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: issue_date — 2026-02-06 cites 'Invoice Date: June 2, 2026', whose printed date cannot be read as that day"
+          ]
+        },
+        "wrong_doc_number": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: invoice_number — 'INV-40913' cites 'Invoice No: INV-40912', which does not print it — the value was not read there"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 5194.00, total_amount says 5235.00",
+            "validation error: total_amount — cited source 'TOTAL DUE 5235.00' does not appear in the document — the value 5235.00 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: seller.name — 'Harbor View Trading Ltd' cites 'Summit Ridge Analytics LLC', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "invoice_spanish",
+      "doc_type": "invoice",
+      "uncited": [],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 1493.82, total_amount says 4493.82",
+            "validation error: total_amount — cited line 'Importe total:       1.493,82' states 1493.82, but total_amount=4493.82"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: subtotal — cited line 'Base imponible:      1.234,56' states 1234.56, but subtotal=1334.56",
+            "validation error: total_amount — cited line 'Importe total:       1.493,82' states 1493.82, but total_amount=1593.82"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 1501.32, total_amount says 1493.82",
+            "validation error: tax_amount — cited line 'IVA 21%:               259,26' states 259.26, but tax_amount=266.76"
+          ]
+        },
+        "wrong_doc_number": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: invoice_number — 'FAC-2026-0043' cites 'Número de factura: FAC-2026-0042', which does not print it — the value was not read there"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 1493.82, total_amount says 1534.82",
+            "validation error: total_amount — cited source 'TOTAL DUE 1534.82' does not appear in the document — the value 1534.82 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: seller.name — 'Harbor View Trading Ltd' cites 'Proveedor: Talleres Montjuïc S.A.', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "purchase_order_scan",
+      "doc_type": "purchase_order",
+      "uncited": [],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited line 'Order Total: EUR 1,082.95' states 1082.95, but total_amount=4082.95",
+            "validation error: total_amount — subtotal (895.00) + tax (187.95) = 1082.95, total_amount says 4082.95"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: subtotal — cited line 'Subtotal: 895.00' states 895.00, but subtotal=995.00",
+            "validation error: total_amount — cited line 'Order Total: EUR 1,082.95' states 1082.95, but total_amount=1182.95"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: tax_amount — cited line 'VAT 21%: 187.95' states 187.95, but tax_amount=195.45",
+            "validation error: total_amount — subtotal (895.00) + tax (195.45) = 1090.45, total_amount says 1082.95"
+          ]
+        },
+        "day_month_swap": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: po_date — 2026-11-04 cites 'Order Date: 11 April 2026', whose printed date cannot be read as that day"
+          ]
+        },
+        "wrong_doc_number": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: po_number — 'PO-7732' cites 'PO Number: PO-7731', which does not print it — the value was not read there"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — cited source 'TOTAL DUE 1123.95' does not appear in the document — the value 1123.95 is not grounded in anything on the page",
+            "validation error: total_amount — subtotal (895.00) + tax (187.95) = 1082.95, total_amount says 1123.95"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: supplier.name — 'Harbor View Trading Ltd' cites 'MedEquip Distribution BV', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "receipt_coffee",
+      "doc_type": "receipt",
+      "uncited": [],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited line 'Total: 7.75' states 7.75, but total_amount=1.75"
+          ]
+        },
+        "day_month_swap": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: transaction_date — 2026-10-09 cites 'Date: 2026-09-10', whose printed date cannot be read as that day"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — cited source 'TOTAL DUE 48.75' does not appear in the document — the value 48.75 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: merchant_name — 'Harbor View Trading Ltd' cites 'Corner Bean Coffee — Receipt', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "receipt_market_scan",
+      "doc_type": "receipt",
+      "uncited": [],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + tip - discount = 17.92 (or, with the discount already in the subtotal, 17.92), total_amount says 47.92",
+            "validation error: total_amount — cited line 'TOTAL     17.92' states 17.92, but total_amount=47.92"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited line 'TOTAL     17.92' states 17.92, but total_amount=117.92",
+            "validation error: subtotal — cited line 'SUBTOTAL  17.07' states 17.07, but subtotal=117.07"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + tip - discount = 25.42 (or, with the discount already in the subtotal, 25.42), total_amount says 17.92",
+            "validation error: tax_amount — cited line 'TAX 5%     0.85' states 0.85, but tax_amount=8.35"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — subtotal + tax + tip - discount = 17.92 (or, with the discount already in the subtotal, 17.92), total_amount says 58.92",
+            "validation error: total_amount — cited source 'TOTAL DUE 58.92' does not appear in the document — the value 58.92 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: merchant_name — 'Harbor View Trading Ltd' cites 'GREENLEAF MARKET', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "receipt_taxed",
+      "doc_type": "receipt",
+      "uncited": [],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + tip - discount = 32.70 (or, with the discount already in the subtotal, 32.70), total_amount says 62.70",
+            "validation error: total_amount — cited line 'TOTAL        32.70' states 32.70, but total_amount=62.70"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited line 'TOTAL        32.70' states 32.70, but total_amount=132.70",
+            "validation error: subtotal — cited line 'SUBTOTAL     30.49' states 30.49, but subtotal=130.49"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + tip - discount = 40.20 (or, with the discount already in the subtotal, 40.20), total_amount says 32.70",
+            "validation error: tax_amount — cited line 'TAX 7.250 %   2.21' states 2.21, but tax_amount=9.71"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — subtotal + tax + tip - discount = 32.70 (or, with the discount already in the subtotal, 32.70), total_amount says 73.70",
+            "validation error: total_amount — cited source 'TOTAL DUE 73.70' does not appear in the document — the value 73.70 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: merchant_name — 'Harbor View Trading Ltd' cites 'Northgate Hardware — Receipt', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "tax_invoice_scan",
+      "doc_type": "invoice",
+      "uncited": [],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "digit_in_total": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 1292.50, total_amount says 4292.50",
+            "validation error: total_amount — cited line 'Total (incl. GST): $1,292.50' states 1292.50, but total_amount=4292.50"
+          ]
+        },
+        "consistent_inflation": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: subtotal — cited line 'Subtotal (excl. GST): $1,175.00' states 1175.00, but subtotal=1275.00",
+            "validation error: total_amount — cited line 'Total (incl. GST): $1,292.50' states 1292.50, but total_amount=1392.50"
+          ]
+        },
+        "tax_off": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 1300.00, total_amount says 1292.50",
+            "validation error: tax_amount — cited line 'GST 10%: $117.50' states 117.50, but tax_amount=125.00"
+          ]
+        },
+        "wrong_doc_number": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: invoice_number — 'TI-88214' cites 'Tax Invoice No: TI-88213', which does not print it — the value was not read there"
+          ]
+        },
+        "fabricated_quote": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: total_amount — cited source region does not appear on page 1",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 1292.50, total_amount says 1333.50",
+            "validation error: total_amount — cited source 'TOTAL DUE 1333.50' does not appear in the document — the value 1333.50 is not grounded in anything on the page"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: seller.name — 'Harbor View Trading Ltd' cites 'Blue Gum Hardware Pty Ltd', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    },
+    {
+      "document": "waybill_scan",
+      "doc_type": "waybill",
+      "uncited": [
+        "total_gross_weight_kg"
+      ],
+      "clean_status": "succeeded",
+      "clean_reasons": [],
+      "mutations": {
+        "wrong_doc_number": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: waybill_number — 'CMR-558202' cites 'No. CMR-558201', which does not print it — the value was not read there"
+          ]
+        },
+        "wrong_party": {
+          "caught": true,
+          "status": "needs_review",
+          "reasons": [
+            "validation error: shipper_name — 'Harbor View Trading Ltd' cites 'Baltic Timber UAB', which does not print it — the name was not read there"
+          ]
+        }
+      }
+    }
+  ]
+}

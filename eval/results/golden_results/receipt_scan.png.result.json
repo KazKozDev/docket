@@ -1,0 +1,1212 @@
+{
+ "source": "eval/golden_dataset/receipt_scan.png",
+ "document_id": "doc_f3f1ded66b4b7d8b4e4d",
+ "status": "succeeded",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 1.0,
+  "method": "rules",
+  "scores": {
+   "invoice": 0.0,
+   "credit_note": 0.0,
+   "receipt": 9.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "en",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 1.0,
+      "reason": "escalated: kept only as an independent witness",
+      "seconds": 1.507
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 0.498
+     }
+    ],
+    "witness": {
+     "page_number": 1,
+     "width": 1800.0,
+     "height": 1200.0,
+     "unit": "px",
+     "rotation": 0,
+     "deskew_angle": 0.0,
+     "crop_quad": null,
+     "backend": "tesseract",
+     "confidence": 1.0,
+     "words": [
+      {
+       "id": "p1-w0",
+       "text": "Corner",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.03277777777777778,
+        "y0": 0.055,
+        "x1": 0.08777777777777777,
+        "y1": 0.07583333333333334
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w1",
+       "text": "Bean",
+       "confidence": 0.95,
+       "bbox": {
+        "x0": 0.09277777777777778,
+        "y0": 0.05416666666666667,
+        "x1": 0.13055555555555556,
+        "y1": 0.07583333333333334
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w2",
+       "text": "Coffee",
+       "confidence": 0.92,
+       "bbox": {
+        "x0": 0.13444444444444445,
+        "y0": 0.0525,
+        "x1": 0.18388888888888888,
+        "y1": 0.07583333333333334
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w3",
+       "text": "--",
+       "confidence": 0.92,
+       "bbox": {
+        "x0": 0.18833333333333332,
+        "y0": 0.065,
+        "x1": 0.19777777777777777,
+        "y1": 0.0675
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w4",
+       "text": "Receipt",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.20277777777777778,
+        "y0": 0.05416666666666667,
+        "x1": 0.26,
+        "y1": 0.08
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w5",
+       "text": "Cashier:",
+       "confidence": 0.8,
+       "bbox": {
+        "x0": 0.03277777777777778,
+        "y0": 0.1425,
+        "x1": 0.095,
+        "y1": 0.16333333333333333
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w6",
+       "text": "Priya",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.10111111111111111,
+        "y0": 0.14166666666666666,
+        "x1": 0.13722222222222222,
+        "y1": 0.1675
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w7",
+       "text": "Date:",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.034444444444444444,
+        "y0": 0.22916666666666666,
+        "x1": 0.07,
+        "y1": 0.25083333333333335
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w8",
+       "text": "2026-09-10",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.07555555555555556,
+        "y0": 0.22916666666666666,
+        "x1": 0.1638888888888889,
+        "y1": 0.25083333333333335
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w9",
+       "text": "Flatwhite",
+       "confidence": 0.91,
+       "bbox": {
+        "x0": 0.034444444444444444,
+        "y0": 0.31666666666666665,
+        "x1": 0.10888888888888888,
+        "y1": 0.3383333333333333
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w10",
+       "text": "450",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.1338888888888889,
+        "y0": 0.31666666666666665,
+        "x1": 0.16555555555555557,
+        "y1": 0.3375
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w11",
+       "text": "Almond",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.03333333333333333,
+        "y0": 0.4041666666666667,
+        "x1": 0.09222222222222222,
+        "y1": 0.42583333333333334
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w12",
+       "text": "croissant",
+       "confidence": 0.95,
+       "bbox": {
+        "x0": 0.0961111111111111,
+        "y0": 0.405,
+        "x1": 0.16333333333333333,
+        "y1": 0.42583333333333334
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w13",
+       "text": "3.25",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.17,
+        "y0": 0.4041666666666667,
+        "x1": 0.20222222222222222,
+        "y1": 0.425
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w14",
+       "text": "Tendered:",
+       "confidence": 0.92,
+       "bbox": {
+        "x0": 0.03388888888888889,
+        "y0": 0.4925,
+        "x1": 0.11333333333333333,
+        "y1": 0.5133333333333333
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w15",
+       "text": "10.00",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.12,
+        "y0": 0.4925,
+        "x1": 0.16055555555555556,
+        "y1": 0.5125
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w16",
+       "text": "Total",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.03388888888888889,
+        "y0": 0.58,
+        "x1": 0.07166666666666667,
+        "y1": 0.6008333333333333
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w17",
+       "text": "7.75",
+       "confidence": 0.89,
+       "bbox": {
+        "x0": 0.07666666666666666,
+        "y0": 0.5791666666666667,
+        "x1": 0.10888888888888888,
+        "y1": 0.6
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w18",
+       "text": "Change",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.03277777777777778,
+        "y0": 0.6675,
+        "x1": 0.09555555555555556,
+        "y1": 0.6925
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w19",
+       "text": "Due:",
+       "confidence": 0.95,
+       "bbox": {
+        "x0": 0.10111111111111111,
+        "y0": 0.6666666666666666,
+        "x1": 0.135,
+        "y1": 0.6883333333333334
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w20",
+       "text": "2.25",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.14055555555555554,
+        "y0": 0.6666666666666666,
+        "x1": 0.17222222222222222,
+        "y1": 0.6883333333333334
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w21",
+       "text": "Payment",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.034444444444444444,
+        "y0": 0.7541666666666667,
+        "x1": 0.10166666666666667,
+        "y1": 0.78
+       },
+       "page": 1,
+       "block_id": "p1-b8",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w22",
+       "text": "Method:",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.10611111111111111,
+        "y0": 0.755,
+        "x1": 0.16666666666666666,
+        "y1": 0.7758333333333334
+       },
+       "page": 1,
+       "block_id": "p1-b8",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w23",
+       "text": "Card",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.1711111111111111,
+        "y0": 0.755,
+        "x1": 0.20722222222222222,
+        "y1": 0.7758333333333334
+       },
+       "page": 1,
+       "block_id": "p1-b8",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w24",
+       "text": "Thank",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.03388888888888889,
+        "y0": 0.8425,
+        "x1": 0.08388888888888889,
+        "y1": 0.8633333333333333
+       },
+       "page": 1,
+       "block_id": "p1-b9",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w25",
+       "text": "you",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.08833333333333333,
+        "y0": 0.8475,
+        "x1": 0.11555555555555555,
+        "y1": 0.8675
+       },
+       "page": 1,
+       "block_id": "p1-b9",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w26",
+       "text": "for",
+       "confidence": 0.95,
+       "bbox": {
+        "x0": 0.12055555555555555,
+        "y0": 0.84,
+        "x1": 0.13944444444444445,
+        "y1": 0.8625
+       },
+       "page": 1,
+       "block_id": "p1-b9",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w27",
+       "text": "your",
+       "confidence": 0.95,
+       "bbox": {
+        "x0": 0.14333333333333334,
+        "y0": 0.8475,
+        "x1": 0.17777777777777778,
+        "y1": 0.8675
+       },
+       "page": 1,
+       "block_id": "p1-b9",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w28",
+       "text": "purchase!",
+       "confidence": 0.95,
+       "bbox": {
+        "x0": 0.1827777777777778,
+        "y0": 0.8425,
+        "x1": 0.2588888888888889,
+        "y1": 0.8675
+       },
+       "page": 1,
+       "block_id": "p1-b9",
+       "line_id": "p1-l9"
+      }
+     ],
+     "lines": [
+      {
+       "id": "p1-l0",
+       "text": "Corner Bean Coffee -- Receipt",
+       "bbox": {
+        "x0": 0.03277777777777778,
+        "y0": 0.0525,
+        "x1": 0.26,
+        "y1": 0.08
+       },
+       "word_ids": [
+        "p1-w0",
+        "p1-w1",
+        "p1-w2",
+        "p1-w3",
+        "p1-w4"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l1",
+       "text": "Cashier: Priya",
+       "bbox": {
+        "x0": 0.03277777777777778,
+        "y0": 0.14166666666666666,
+        "x1": 0.13722222222222222,
+        "y1": 0.1675
+       },
+       "word_ids": [
+        "p1-w5",
+        "p1-w6"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l2",
+       "text": "Date: 2026-09-10",
+       "bbox": {
+        "x0": 0.034444444444444444,
+        "y0": 0.22916666666666666,
+        "x1": 0.1638888888888889,
+        "y1": 0.25083333333333335
+       },
+       "word_ids": [
+        "p1-w7",
+        "p1-w8"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l3",
+       "text": "Flatwhite | 450",
+       "bbox": {
+        "x0": 0.034444444444444444,
+        "y0": 0.31666666666666665,
+        "x1": 0.16555555555555557,
+        "y1": 0.3383333333333333
+       },
+       "word_ids": [
+        "p1-w9",
+        "p1-w10"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l4",
+       "text": "Almond croissant 3.25",
+       "bbox": {
+        "x0": 0.03333333333333333,
+        "y0": 0.4041666666666667,
+        "x1": 0.20222222222222222,
+        "y1": 0.42583333333333334
+       },
+       "word_ids": [
+        "p1-w11",
+        "p1-w12",
+        "p1-w13"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l5",
+       "text": "Tendered: 10.00",
+       "bbox": {
+        "x0": 0.03388888888888889,
+        "y0": 0.4925,
+        "x1": 0.16055555555555556,
+        "y1": 0.5133333333333333
+       },
+       "word_ids": [
+        "p1-w14",
+        "p1-w15"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l6",
+       "text": "Total 7.75",
+       "bbox": {
+        "x0": 0.03388888888888889,
+        "y0": 0.5791666666666667,
+        "x1": 0.10888888888888888,
+        "y1": 0.6008333333333333
+       },
+       "word_ids": [
+        "p1-w16",
+        "p1-w17"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l7",
+       "text": "Change Due: 2.25",
+       "bbox": {
+        "x0": 0.03277777777777778,
+        "y0": 0.6666666666666666,
+        "x1": 0.17222222222222222,
+        "y1": 0.6925
+       },
+       "word_ids": [
+        "p1-w18",
+        "p1-w19",
+        "p1-w20"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l8",
+       "text": "Payment Method: Card",
+       "bbox": {
+        "x0": 0.034444444444444444,
+        "y0": 0.7541666666666667,
+        "x1": 0.20722222222222222,
+        "y1": 0.78
+       },
+       "word_ids": [
+        "p1-w21",
+        "p1-w22",
+        "p1-w23"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l9",
+       "text": "Thank you for your purchase!",
+       "bbox": {
+        "x0": 0.03388888888888889,
+        "y0": 0.84,
+        "x1": 0.2588888888888889,
+        "y1": 0.8675
+       },
+       "word_ids": [
+        "p1-w24",
+        "p1-w25",
+        "p1-w26",
+        "p1-w27",
+        "p1-w28"
+       ],
+       "column": null,
+       "table_id": null
+      }
+     ],
+     "blocks": [
+      {
+       "id": "p1-b0",
+       "bbox": {
+        "x0": 0.03277777777777778,
+        "y0": 0.0525,
+        "x1": 0.26,
+        "y1": 0.08
+       },
+       "line_ids": [
+        "p1-l0"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b1",
+       "bbox": {
+        "x0": 0.03277777777777778,
+        "y0": 0.14166666666666666,
+        "x1": 0.13722222222222222,
+        "y1": 0.1675
+       },
+       "line_ids": [
+        "p1-l1"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b2",
+       "bbox": {
+        "x0": 0.034444444444444444,
+        "y0": 0.22916666666666666,
+        "x1": 0.1638888888888889,
+        "y1": 0.25083333333333335
+       },
+       "line_ids": [
+        "p1-l2"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b3",
+       "bbox": {
+        "x0": 0.034444444444444444,
+        "y0": 0.31666666666666665,
+        "x1": 0.16555555555555557,
+        "y1": 0.3383333333333333
+       },
+       "line_ids": [
+        "p1-l3"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b4",
+       "bbox": {
+        "x0": 0.03333333333333333,
+        "y0": 0.4041666666666667,
+        "x1": 0.20222222222222222,
+        "y1": 0.42583333333333334
+       },
+       "line_ids": [
+        "p1-l4"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b5",
+       "bbox": {
+        "x0": 0.03388888888888889,
+        "y0": 0.4925,
+        "x1": 0.16055555555555556,
+        "y1": 0.5133333333333333
+       },
+       "line_ids": [
+        "p1-l5"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b6",
+       "bbox": {
+        "x0": 0.03388888888888889,
+        "y0": 0.5791666666666667,
+        "x1": 0.10888888888888888,
+        "y1": 0.6008333333333333
+       },
+       "line_ids": [
+        "p1-l6"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b7",
+       "bbox": {
+        "x0": 0.03277777777777778,
+        "y0": 0.6666666666666666,
+        "x1": 0.17222222222222222,
+        "y1": 0.6925
+       },
+       "line_ids": [
+        "p1-l7"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b8",
+       "bbox": {
+        "x0": 0.034444444444444444,
+        "y0": 0.7541666666666667,
+        "x1": 0.20722222222222222,
+        "y1": 0.78
+       },
+       "line_ids": [
+        "p1-l8"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b9",
+       "bbox": {
+        "x0": 0.03388888888888889,
+        "y0": 0.84,
+        "x1": 0.2588888888888889,
+        "y1": 0.8675
+       },
+       "line_ids": [
+        "p1-l9"
+       ],
+       "column": null
+      }
+     ],
+     "columns": [],
+     "tables": [],
+     "text": "Corner Bean Coffee -- Receipt\nCashier: Priya\nDate: 2026-09-10\nFlatwhite | 450\nAlmond croissant 3.25\nTendered: 10.00\nTotal 7.75\nChange Due: 2.25\nPayment Method: Card\nThank you for your purchase!"
+    }
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 600.0,
+    "height": 400.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "Corner Bean Coffee – Receipt\n\nCashier: Priya\n\nDate: 2026-09-10\n\n| Flat white | 4.50 |\n| --- | --- |\n| Almond croissant | 3.25 |\n\nTendered: 10.00\n\nTotal: 7.75\n\nChange Due: 2.25\n\nPayment Method: Card\n\nThank you for your purchase!"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "Corner Bean Coffee",
+  "merchant_tax_id": null,
+  "merchant_address": null,
+  "transaction_date": "2026-09-10",
+  "currency": "USD",
+  "receipt_number": null,
+  "items": [
+   {
+    "description": "Flat white",
+    "price": 4.5,
+    "quantity": 1.0,
+    "unit_price": null
+   },
+   {
+    "description": "Almond croissant",
+    "price": 3.25,
+    "quantity": 1.0,
+    "unit_price": null
+   }
+  ],
+  "subtotal": 0.0,
+  "tax_amount": 0.0,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 7.75,
+  "payment_method": "Card",
+  "amount_tendered": 10.0,
+  "change_given": 2.25,
+  "card_last_four": null,
+  "expense_category": null
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "Corner Bean Coffee – Receipt",
+   "status": "fuzzy",
+   "match": "fuzzy",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.03277777777777778,
+      "y0": 0.0525,
+      "x1": 0.26,
+      "y1": 0.08
+     },
+     "word_ids": [
+      "p1-w0",
+      "p1-w1",
+      "p1-w2",
+      "p1-w3",
+      "p1-w4"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.03277777777777778,
+    "y0": 0.0525,
+    "x1": 0.26,
+    "y1": 0.08
+   },
+   "word_ids": [
+    "p1-w0",
+    "p1-w1",
+    "p1-w2",
+    "p1-w3",
+    "p1-w4"
+   ],
+   "confidence": 0.8635,
+   "located_by": "tesseract"
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "Date: 2026-09-10",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.034444444444444444,
+      "y0": 0.22916666666666666,
+      "x1": 0.1638888888888889,
+      "y1": 0.25083333333333335
+     },
+     "word_ids": [
+      "p1-w7",
+      "p1-w8"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.034444444444444444,
+    "y0": 0.22916666666666666,
+    "x1": 0.1638888888888889,
+    "y1": 0.25083333333333335
+   },
+   "word_ids": [
+    "p1-w7",
+    "p1-w8"
+   ],
+   "confidence": 0.96,
+   "located_by": "tesseract"
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "| Flat white | 4.50 |",
+   "status": "fuzzy",
+   "match": "fuzzy",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.03333333333333333,
+      "y0": 0.31666666666666665,
+      "x1": 0.16555555555555557,
+      "y1": 0.42583333333333334
+     },
+     "word_ids": [
+      "p1-w9",
+      "p1-w10",
+      "p1-w11"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.03333333333333333,
+    "y0": 0.31666666666666665,
+    "x1": 0.16555555555555557,
+    "y1": 0.42583333333333334
+   },
+   "word_ids": [
+    "p1-w9",
+    "p1-w10",
+    "p1-w11"
+   ],
+   "confidence": 0.8708,
+   "located_by": "tesseract"
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "| Flat white | 4.50 |",
+   "status": "fuzzy",
+   "match": "fuzzy",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.03333333333333333,
+      "y0": 0.31666666666666665,
+      "x1": 0.16555555555555557,
+      "y1": 0.42583333333333334
+     },
+     "word_ids": [
+      "p1-w9",
+      "p1-w10",
+      "p1-w11"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.03333333333333333,
+    "y0": 0.31666666666666665,
+    "x1": 0.16555555555555557,
+    "y1": 0.42583333333333334
+   },
+   "word_ids": [
+    "p1-w9",
+    "p1-w10",
+    "p1-w11"
+   ],
+   "confidence": 0.8708,
+   "located_by": "tesseract"
+  },
+  "items[1].description": {
+   "page": 1,
+   "quote": "| Almond croissant | 3.25 |",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.03333333333333333,
+      "y0": 0.4041666666666667,
+      "x1": 0.20222222222222222,
+      "y1": 0.42583333333333334
+     },
+     "word_ids": [
+      "p1-w11",
+      "p1-w12",
+      "p1-w13"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.03333333333333333,
+    "y0": 0.4041666666666667,
+    "x1": 0.20222222222222222,
+    "y1": 0.42583333333333334
+   },
+   "word_ids": [
+    "p1-w11",
+    "p1-w12",
+    "p1-w13"
+   ],
+   "confidence": 0.9567,
+   "located_by": "tesseract"
+  },
+  "items[1].price": {
+   "page": 1,
+   "quote": "| Almond croissant | 3.25 |",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.03333333333333333,
+      "y0": 0.4041666666666667,
+      "x1": 0.20222222222222222,
+      "y1": 0.42583333333333334
+     },
+     "word_ids": [
+      "p1-w11",
+      "p1-w12",
+      "p1-w13"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.03333333333333333,
+    "y0": 0.4041666666666667,
+    "x1": 0.20222222222222222,
+    "y1": 0.42583333333333334
+   },
+   "word_ids": [
+    "p1-w11",
+    "p1-w12",
+    "p1-w13"
+   ],
+   "confidence": 0.9567,
+   "located_by": "tesseract"
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "Total: 7.75",
+   "status": "fuzzy",
+   "match": "fuzzy",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.03277777777777778,
+      "y0": 0.5791666666666667,
+      "x1": 0.10888888888888888,
+      "y1": 0.6925
+     },
+     "word_ids": [
+      "p1-w16",
+      "p1-w17",
+      "p1-w18"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.03277777777777778,
+    "y0": 0.5791666666666667,
+    "x1": 0.10888888888888888,
+    "y1": 0.6925
+   },
+   "word_ids": [
+    "p1-w16",
+    "p1-w17",
+    "p1-w18"
+   ],
+   "confidence": 0.819,
+   "located_by": "tesseract"
+  },
+  "payment_method": {
+   "page": 1,
+   "quote": "Payment Method: Card",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.034444444444444444,
+      "y0": 0.7541666666666667,
+      "x1": 0.20722222222222222,
+      "y1": 0.78
+     },
+     "word_ids": [
+      "p1-w21",
+      "p1-w22",
+      "p1-w23"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.034444444444444444,
+    "y0": 0.7541666666666667,
+    "x1": 0.20722222222222222,
+    "y1": 0.78
+   },
+   "word_ids": [
+    "p1-w21",
+    "p1-w22",
+    "p1-w23"
+   ],
+   "confidence": 0.96,
+   "located_by": "tesseract"
+  },
+  "amount_tendered": {
+   "page": 1,
+   "quote": "Tendered: 10.00",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.03388888888888889,
+      "y0": 0.4925,
+      "x1": 0.16055555555555556,
+      "y1": 0.5133333333333333
+     },
+     "word_ids": [
+      "p1-w14",
+      "p1-w15"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.03388888888888889,
+    "y0": 0.4925,
+    "x1": 0.16055555555555556,
+    "y1": 0.5133333333333333
+   },
+   "word_ids": [
+    "p1-w14",
+    "p1-w15"
+   ],
+   "confidence": 0.94,
+   "located_by": "tesseract"
+  },
+  "change_given": {
+   "page": 1,
+   "quote": "Change Due: 2.25",
+   "status": "verified",
+   "match": "exact",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.03277777777777778,
+      "y0": 0.6666666666666666,
+      "x1": 0.17222222222222222,
+      "y1": 0.6925
+     },
+     "word_ids": [
+      "p1-w18",
+      "p1-w19",
+      "p1-w20"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.03277777777777778,
+    "y0": 0.6666666666666666,
+    "x1": 0.17222222222222222,
+    "y1": 0.6925
+   },
+   "word_ids": [
+    "p1-w18",
+    "p1-w19",
+    "p1-w20"
+   ],
+   "confidence": 0.9567,
+   "located_by": "tesseract"
+  }
+ },
+ "validation_issues": [],
+ "corroborated": {},
+ "needs_review": false,
+ "review_reasons": [],
+ "metrics": {
+  "elapsed_seconds": 20.281,
+  "stage_seconds": {
+   "acquire": 3.569,
+   "classify": 0.001,
+   "extract": 16.254,
+   "validate": 0.003
+  },
+  "pages": 1,
+  "llm_calls": 4,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 3652,
+  "llm_output_tokens": 1343,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 4081,
+  "extract_attempts": 1,
+  "escalated_to_vlm": true,
+  "template_id": null
+ },
+ "error": null
+}

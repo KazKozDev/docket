@@ -17,6 +17,33 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ### Fixed
 
+- A party name (seller, buyer, merchant, supplier, shipper, bank, account
+  holder, contract parties) must be printed on the line it cites; a
+  different company name passed every check. OCR misspellings of the same
+  name and legal forms are tolerated.
+- Cited dates written with a month name ("June 2, 2026", "11 April 2026",
+  "9 de septiembre de 2026") are checked against the value, and an ambiguous
+  numeric date is read in the order the page's own unambiguous dates use.
+  The day/month convention check no longer flags a date printed with a
+  month name or year-first.
+- `contract_value`, purchase-order subtotal, tax and total, and bank
+  statement balances are checked against the line they cite, like invoice
+  and receipt amounts.
+- `verify()` with the text as one string skipped the document-number and
+  cited-date checks; they now run on a string as on a page list.
+- Vendor templates cite the line a value was read from, not its label line.
+- The Distribuciones Albufera template read "°:" as the invoice number when
+  OCR printed the ordinal as a degree sign; a document number with no letter
+  or digit is now a validation error.
+- EN 16931 export: a seller or buyer identifier written in the EU VAT
+  format (`DE136695976`) is sent as the VAT identifier even when the model
+  labelled it `tax_id`; it was sent as a tax registration and BR-CO-26 failed.
+- EN 16931 export no longer invents a credit transfer: with no IBAN or
+  account number the payment means code is 1 (not defined) instead of 30,
+  which failed BR-61 on every document without an account. An account
+  number without an IBAN is exported as the payment account.
+- UBL export writes no empty `PostalAddress` for a party without an address
+  (PEPPOL-EN16931-R008).
 - A line-item row none of whose values cites a source line sends the
   document to review. Rows go into the XRechnung / Peppol export, and an
   uncited row had nothing on the page behind it; it used to pass as a mere
@@ -30,11 +57,7 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 - Amounts with thousands grouped by a space ("12 261,98", as printed in
   France, Poland, the Nordics and Czechia) and in accounting parentheses
   ("(5,020.24)") are read whole when checked against their cited line. They
-  were split into two numbers, so correct totals failed validation: re-scoring
-  the saved benchmark messages, review outside SROIE drops from 51 to 36 of 75
-  documents. One wrong document (parties swapped) that only this bug had kept
-  in review now succeeds; party assignment is not something the amount checks
-  can see.
+  were split into two numbers, so correct totals failed validation.
 
 ### Added
 
@@ -70,8 +93,7 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 - A document number (`invoice_number`, `po_number`, …) must be printed on the
   line it cites; a model that cited one line and wrote another number was
   previously accepted.
-- `DOCKET_MIN_SOURCE_CONFIDENCE` (0.80, the best of a threshold sweep on one
-  195-scan run, one document ahead of 0.75 — see BENCHMARKS): a key field whose cited words OCR
+- `DOCKET_MIN_SOURCE_CONFIDENCE` (default 0.80): a key field whose cited words OCR
   recognised below it sends the document to review instead of succeeding.
 
 ### Changed
@@ -85,16 +107,9 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   value's own digits, not the label beside it or another value on the same
   line; names are no longer gated; subtotal and total that reconcile across
   separately cited lines (with tax, shipping, discount, or the line items)
-  are exempt. The 0.80 threshold was chosen for the old line-wide measure and
-  should be rechecked on the next benchmark run.
+  are exempt.
 - `export_document` on a schema instance (not a `DocumentResult`) now runs
   the schema's checks first and refuses on errors when `require_valid` is set.
-- The false-success rate is the headline benchmark metric in the README and
-  BENCHMARKS, measured on the latest full run: 13/66 silent successes wrong
-  (20%), 3/24 excluding SROIE receipts — down from 27/59 (46%). On that run
-  the low-confidence check flagged 57 documents (17 actually wrong) and the
-  document-number check none; `DOCKET_MIN_SOURCE_CONFIDENCE` moves from 0.75
-  to the measured minimum, 0.80.
 
 ### Removed
 
@@ -105,14 +120,6 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   its validator, examples, fixtures and golden scan). It was never measured
   and overlapped the stable `waybill`. `delivery_note` stays a document
   reference kind, so an invoice can still cite a delivery note number.
-
-### Changed
-
-- Published benchmark numbers updated to the latest full run (commit
-  de96112, 195 scans): field accuracy 0.85 (0.71 on 0.3.0, same documents),
-  and docket against docpick / ocrcontext / invoice2data on their own
-  documents and fields 0.85 / 0.83 / 0.89. The README table no longer mixes
-  docket's overall score with the head-to-head rows.
 
 ### Fixed
 
@@ -126,10 +133,7 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 - Tax-inclusive receipts no longer go to review for arithmetic that is
   right. Item prices that already include GST/VAT may sum to the taxed total,
   a pre-tax unit price may sit beside a tax-inclusive line total, and a
-  "Total incl. GST / GST 6%" subtotal is not taxed again. Of the 135
-  benchmark documents that were in review, 51 now pass: 43 fully right, and
-  in the other 8 the wrong field is a name or a date, not an amount. The
-  review share falls from about 70% to about 43%.
+  "Total incl. GST / GST 6%" subtotal is not taxed again.
 - The payment block is no longer cross-checked against the Tesseract witness.
   "CASH 150.00" on thermal paper reads as noise often enough to send correct
   receipts to review; tender minus change is still checked against the total.
@@ -223,16 +227,7 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 Line-item provenance: every row of every repeated list now carries source
 citations that are grounded, located on the page and validated like any
-top-level amount. Measured on the 17 golden scans (tesseract,
-`eval/benchmark_ocr.py --dataset eval/golden_dataset`):
-
-| citation metric | before | after |
-|---|---|---|
-| line-item rows cited | 0.08 | **1.00** |
-| line-item rows located on the page | 0.06 | 0.98 |
-| top-level fields cited | 0.92 | 0.97 |
-| top-level fields located | 0.87 | 0.92 |
-| documents in review | 1 | 1 |
+top-level amount.
 
 ### Fixed
 
@@ -288,16 +283,6 @@ top-level amount. Measured on the 17 golden scans (tesseract,
   per-template counts, template-document latency and the minimum number of
   structured-extraction LLM calls avoided.
 
-### Measured (stage 4 deterministic pass — 198 scans, Tesseract, no LLM)
-
-- Both built-in examples matched, extracted and passed normal validation:
-  Nordlicht and Distribuciones Albufera, 2/198 documents (1.01%).
-- No unrelated document matched either template. Seventeen scans produced no
-  Tesseract text and were counted as OCR errors rather than template misses.
-- Mean acquisition plus template time for the two accepted documents was
-  1.75 s. The full pipeline benchmark now records template usage, but was not
-  re-labelled with these OCR-only numbers.
-
 - Line-item and nested citations: the extraction prompt requires a citation
   for every row of every repeated list, per field (`line_items[0].quantity`,
   `items[0].price`, ...), the quote being that row's own text.
@@ -317,13 +302,9 @@ top-level amount. Measured on the 17 golden scans (tesseract,
   successes only; review and failed docs made no clean claim).
 - **Stage 2**: `eval/benchmark_competitors.py` — docket against docpick,
   invoice2data and ocrcontext on the same corpus, graded with the same
-  field metric on each tool's own schema intersection; docket's number is
-  recomputed on exactly those docs and fields, tool errors count as every
-  graded field wrong, LLM-backed tools run against the same Ollama model
-  and are handed the correct schema while docket must classify its way
-  there.
+  field metric on each tool's own schema intersection.
 
-### Fixed (stage 3 — the two measured false-success drivers)
+### Fixed (stage 3 — false-success drivers)
 
 - US-format dates read day-first on dollar documents: an ambiguous date
   (`06/02/2015`) on a document that prints a bare dollar sign is now read
@@ -342,62 +323,6 @@ top-level amount. Measured on the 17 golden scans (tesseract,
   legal TAX INVOICE header; the receipt and tax_invoice descriptions now
   tell the LLM tier the same thing.
 
-### Measured (stage 3 re-run — same 198-scan corpus, tesseract)
-
-| | before stage 3 | after |
-|---|---|---|
-| field accuracy | 0.53 | **0.72** |
-| document success rate | 0.32 | 0.54 |
-| false successes | 23/50 silent (46%) | 19/55 silent (35%) |
-| SROIE docs classified receipt | 17/120 | **72/120** |
-| donut fields | 0.92 | 0.975 |
-| golden fields | 0.97 | 0.97 (no regression) |
-
-On the competitors' own docs+fields, docket now leads every tool:
-docket 0.71 vs docpick 0.61, 0.69 vs ocrcontext 0.04, 0.90 vs
-invoice2data 0.00. docpick still wins SROIE (0.75 vs 0.55) — the remaining
-39/120 misclassified till slips are the next classification margin;
-when docket does classify them receipt, its fields are 0.84.
-
-### Measured (stage 2 — extended corpus and the competition)
-
-The corpus grew from 17 golden scans to 198 scans (real documents from
-Hugging Face: DocILE, donut-style invoices, SROIE receipts, CORD, FUNSD,
-RVL-CDIP — `eval/download_real_samples.py --n` per source). Tesseract
-config throughout:
-
-| | golden only | extended corpus |
-|---|---|---|
-| field accuracy | 0.97 | 0.53 |
-| documents in review | 1 (6%) | 148 (75%) |
-| false successes | 3/16 silent (19%) | 23/50 silent (46%) |
-
-What the extended corpus says:
-
-- Classification is the bottleneck, not extraction: SROIE "receipts" are
-  Malaysian tax-invoice till slips, 82/120 classify as `tax_invoice` and
-  every graded field of those documents counts wrong. Where classification
-  is right, field accuracy is 0.80–0.97 per source.
-- The top false-success drivers are measured and actionable: a wrong or
-  missing date in 17 of the 23 docs — five are US-format day/month swaps
-  (`06/02/2015` → 2015-02-06 instead of 2015-06-02), the rest dates not
-  read at all from degraded thermal receipts and DocILE scans — plus
-  merchant names and totals on those same hard scans.
-
-Against the pip-installable competition, same documents and same graded
-fields (see the runner docstring for the fairness rules):
-
-| tool | docs | field accuracy | docket, same docs+fields |
-|---|---|---|---|
-| docpick 0.1.3 | 55 (subsample) | 0.61 | 0.45 |
-| ocrcontext 0.1.5 | 55 (subsample) | 0.04 (16 parse errors) | 0.40 |
-| invoice2data 1.0.1 | 44 | 0.00 (0 built-in template matches) | 0.86 |
-
-docket wins golden (1.00 vs docpick's 0.62), donut (0.93 vs 0.48) and
-docile (0.50 vs 0.08); docpick wins SROIE (0.75 vs 0.10) because it is
-handed the receipt schema. invoice2data matched none of its built-in
-vendor templates — authoring templates per vendor is its design.
-
 ### Fixed (stage 1 — false citation-check flags that queued correct extractions for review)
 - a derived value (unit price 4.98 / 2 = 2.49, line total 2 × 58.50 = 117.00)
   is grounded by its own row when both operands are printed on it;
@@ -407,20 +332,13 @@ vendor templates — authoring templates per vendor is its design.
   stated subtotal under either coupon layout);
 - a list cited element-wise (`parties_a[0]`) satisfies the citation
   requirement on the whole list (`parties_a`).
-- Review queue after the fixes: 1 document (purchase order, by design),
-  down from 5 during development. Note: the intermediate run's higher
-  "docs ok" (0.94) was an artifact — the false flags escalated two garbled
-  receipt scans to a vision-model re-read that fixed fields by accident.
-  With honest flags those scans keep their Tesseract misreads
-  (`total 775.0`, `card_last_four` missing) without review; measuring that
-  false-success rate is the next stage.
 
 ## [0.3.0] - 2026-09-21
 
 Layout-first redesign: a layout model shared by every OCR backend,
 pluggable engines with per-page fallback, a versioned schema catalog of 14
 built-in types, batch processing, official EN 16931 e-invoice validation,
-TOML configuration, and a measured golden-set benchmark.
+TOML configuration, and a golden-set benchmark.
 
 ### Breaking changes
 - `process()` is replaced by `process_document()`, which returns a
@@ -540,16 +458,10 @@ TOML configuration, and a measured golden-set benchmark.
   cells, latency) and full-pipeline runs (document success, field accuracy,
   line-item precision/recall, table cells, mean/median seconds, VLM fallback
   share, LLM calls, review counts) over the golden and real-sample scans,
-  with environment and versions recorded; results in
-  `eval/results/ocr_benchmark.json`. `--no-layout-markers` runs the pipeline
-  with plain text serialization for the layout-marker comparison: no
-  measurable difference on this set (both Paddle configs identical on
-  every document, Tesseract ±2 marginal scans, all within run-to-run
-  noise), so the markers stay on by default for hard tables, not for a
-  claimed accuracy gain.
+  with environment and versions recorded. `--no-layout-markers` runs the
+  pipeline with plain text serialization.
 - Extraction-stability benchmark (`eval/benchmark_variance.py`): the same
-  document N times at temperature 0, per-field agreement. The receipt_taxed
-  coupon case is identical across 10 runs (15/15 fields).
+  document N times at temperature 0, per-field agreement.
 - `eval/benchmark_methods.py` now records classification confidence
   (mean, split by correctness, confidently-wrong count) beside accuracy and
   latency.
@@ -652,15 +564,8 @@ TOML configuration, and a measured golden-set benchmark.
   `--ocr-languages`, `--list-ocr-backends`; `GET /ocr-backends`.
 
 ### Changed
-- With 14 built-in schemas instead of 8 the TF-IDF tier is confident less
-  often: 19 of 34 held-out sentences (none confidently wrong), and the rules
-  tier's confidence (a share of all matched weight) is lower when a text
-  matches several schemas. Measured on the eval sets
-  (`eval/results/benchmark_methods.json`, 10 labeled text documents): rules,
-  TF-IDF and LLM tiers all classify 10/10 correctly (TF-IDF was 8/10 before the
-  expansion), at mean confidences 0.79 / 0.55 / 0.98 with zero confidently
-  wrong answers; on the 33 scanned documents classification is 30-31/33 per
-  OCR backend (the misses are SROIE retail receipts, not new-type confusion).
+- The rules tier's confidence is a share of all matched weight, so it is lower
+  when a text matches several schemas.
 
 ### Fixed
 - Receipt validation demanded mutually exclusive coupon layouts: a coupon

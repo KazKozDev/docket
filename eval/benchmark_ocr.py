@@ -206,7 +206,8 @@ def _load_checkpoint(checkpoint: Path | None, name: str) -> dict[str, dict]:
     return done
 
 
-def run_pipeline(name: str, docs: list[tuple[Path, dict]], checkpoint: Path | None = None) -> dict:
+def run_pipeline(name: str, docs: list[tuple[Path, dict]], checkpoint: Path | None = None,
+                 save_results: Path | None = None) -> dict:
     options = ProcessOptions(
         ocr=ocr_options(name).model_copy(update={"fallbacks": ["vlm"]}),
         include_layout=True,
@@ -223,6 +224,9 @@ def run_pipeline(name: str, docs: list[tuple[Path, dict]], checkpoint: Path | No
         started = time.perf_counter()
         result = process_document(path, options)
         seconds = time.perf_counter() - started
+        if save_results is not None:
+            save_results.mkdir(parents=True, exist_ok=True)
+            (save_results / f"{path.name}.result.json").write_text(result.model_dump_json(indent=1), encoding="utf-8")
         classified = result.document_type == expected.get("doc_type")
         correct, total, mismatches = field_accuracy(result.extracted if classified else None, expected)
         items = line_item_scores(canonical_items(result.extracted, result.schema_id) if classified else [],
@@ -253,6 +257,10 @@ def run_pipeline(name: str, docs: list[tuple[Path, dict]], checkpoint: Path | No
             "acquire_seconds": result.metrics.stage_seconds.get("acquire"),
             "pages": len(pages),
             "vlm_pages": vlm_pages,
+            # Which engine actually read each page: a fallback or a pre-flight
+            # re-read replaces the configured backend without setting
+            # escalated_to_vlm, which only marks the post-validation re-read.
+            "page_backends": [p.backend for p in pages],
             "escalated_to_vlm": result.metrics.escalated_to_vlm,
             "llm_calls": result.metrics.llm_calls,
             "template_id": result.metrics.template_id,
@@ -397,6 +405,8 @@ def main() -> None:
     parser.add_argument("--checkpoint", type=Path, metavar="JSONL",
                         help="append each finished pipeline document here and skip those already in it, "
                              "so an interrupted run resumes with the same command")
+    parser.add_argument("--save-results", type=Path, metavar="DIR",
+                        help="write every pipeline DocumentResult as <document>.result.json into DIR")
     args = parser.parse_args()
 
     if args.no_layout_markers:
@@ -413,7 +423,7 @@ def main() -> None:
             report["ocr_only"][name] = run_ocr_only(name, docs)
         if not args.ocr_only:
             print(f"pipeline: {name}", flush=True)
-            report["pipeline"][name] = run_pipeline(name, docs, args.checkpoint)
+            report["pipeline"][name] = run_pipeline(name, docs, args.checkpoint, args.save_results)
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print_summary(report)

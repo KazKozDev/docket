@@ -1,0 +1,534 @@
+{
+  "summary": {
+    "documents": 8,
+    "attempts": 48,
+    "outcomes": {
+      "valid": 12,
+      "invalid": 30,
+      "refused": 6
+    },
+    "by_format": {
+      "ubl": {
+        "valid": 4,
+        "invalid": 3,
+        "refused": 1
+      },
+      "peppol": {
+        "invalid": 7,
+        "refused": 1
+      },
+      "xrechnung-ubl": {
+        "invalid": 7,
+        "refused": 1
+      },
+      "xrechnung-cii": {
+        "invalid": 7,
+        "refused": 1
+      },
+      "factur-x-en16931": {
+        "valid": 4,
+        "invalid": 3,
+        "refused": 1
+      },
+      "factur-x-basic": {
+        "valid": 4,
+        "invalid": 3,
+        "refused": 1
+      }
+    }
+  },
+  "exports": [
+    {
+      "document": "credit_note_be_scan.jpg",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "credit_note_be_scan.jpg",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R003: A buyer reference or purchase order reference MUST be provided.",
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided"
+      ]
+    },
+    {
+      "document": "credit_note_be_scan.jpg",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "credit_note_be_scan.jpg",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "credit_note_be_scan.jpg",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "credit_note_be_scan.jpg",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "credit_note_de_scan.jpg",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "credit_note_de_scan.jpg",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R003: A buyer reference or purchase order reference MUST be provided.",
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided",
+        "DE-R-015: The element \"Buyer reference\" (BT-10) shall be provided.",
+        "DE-R-002: The group \"SELLER CONTACT\" (BG-6) shall be provided."
+      ]
+    },
+    {
+      "document": "credit_note_de_scan.jpg",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "credit_note_de_scan.jpg",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "credit_note_de_scan.jpg",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "credit_note_de_scan.jpg",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "credit_note_es_scan.jpg",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "credit_note_es_scan.jpg",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R003: A buyer reference or purchase order reference MUST be provided.",
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided"
+      ]
+    },
+    {
+      "document": "credit_note_es_scan.jpg",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "credit_note_es_scan.jpg",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "credit_note_es_scan.jpg",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "credit_note_es_scan.jpg",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "credit_note_fr_scan.jpg",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "credit_note_fr_scan.jpg",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R003: A buyer reference or purchase order reference MUST be provided.",
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided"
+      ]
+    },
+    {
+      "document": "credit_note_fr_scan.jpg",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "credit_note_fr_scan.jpg",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "credit_note_fr_scan.jpg",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "credit_note_fr_scan.jpg",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "invoice_de_scan.jpg",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-08: [BR-08]-An Invoice shall contain the Seller postal address.",
+        "BR-10: [BR-10]-An Invoice shall contain the Buyer postal address (BG-8)."
+      ]
+    },
+    {
+      "document": "invoice_de_scan.jpg",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-08: [BR-08]-An Invoice shall contain the Seller postal address.",
+        "BR-10: [BR-10]-An Invoice shall contain the Buyer postal address (BG-8).",
+        "PEPPOL-EN16931-R003: A buyer reference or purchase order reference MUST be provided.",
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided"
+      ]
+    },
+    {
+      "document": "invoice_de_scan.jpg",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-08: [BR-08]-An Invoice shall contain the Seller postal address.",
+        "BR-10: [BR-10]-An Invoice shall contain the Buyer postal address (BG-8).",
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "invoice_de_scan.jpg",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-08: [BR-08]-An Invoice shall contain the Seller postal address (BG-5).",
+        "BR-09: [BR-09]-The Seller postal address (BG-5) shall contain a Seller country code (BT-40).",
+        "BR-10: [BR-10]-An Invoice shall contain the Buyer postal address (BG-8).",
+        "BR-11: [BR-11]-The Buyer postal address shall contain a Buyer country code (BT-55).",
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "invoice_de_scan.jpg",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "FX-SCH-A-000017: [BR-08]-An Invoice shall contain the Seller postal address (BG-5).",
+        "FX-SCH-A-000018: [BR-09]-The Seller postal address (BG-5) shall contain a Seller country code (BT-40).",
+        "FX-SCH-A-000156: [BR-10]-An Invoice shall contain the Buyer postal address (BG-8).",
+        "FX-SCH-A-000157: [BR-11]-The Buyer postal address shall contain a Buyer country code (BT-55).",
+        "FX-SCH-A-000032: Element 'ram:PostalTradeAddress' must occur exactly 1 times.",
+        "FX-SCH-A-000032: Element 'ram:PostalTradeAddress' must occur exactly 1 times."
+      ]
+    },
+    {
+      "document": "invoice_de_scan.jpg",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "FX-SCH-A-000017: [BR-08]-An Invoice shall contain the Seller postal address (BG-5).",
+        "FX-SCH-A-000018: [BR-09]-The Seller postal address (BG-5) shall contain a Seller country code (BT-40).",
+        "FX-SCH-A-000156: [BR-10]-An Invoice shall contain the Buyer postal address (BG-8).",
+        "FX-SCH-A-000157: [BR-11]-The Buyer postal address shall contain a Buyer country code (BT-55).",
+        "FX-SCH-A-000032: Element 'ram:PostalTradeAddress' must occur exactly 1 times.",
+        "FX-SCH-A-000032: Element 'ram:PostalTradeAddress' must occur exactly 1 times."
+      ]
+    },
+    {
+      "document": "invoice_es_lowres_scan.jpg",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "refused",
+      "detail": "ubl: EN 16931 requires at least one invoice line (BR-16); the extraction found none"
+    },
+    {
+      "document": "invoice_es_lowres_scan.jpg",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "refused",
+      "detail": "peppol: EN 16931 requires at least one invoice line (BR-16); the extraction found none"
+    },
+    {
+      "document": "invoice_es_lowres_scan.jpg",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "refused",
+      "detail": "xrechnung-ubl: EN 16931 requires at least one invoice line (BR-16); the extraction found none"
+    },
+    {
+      "document": "invoice_es_lowres_scan.jpg",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "refused",
+      "detail": "xrechnung-cii: EN 16931 requires at least one invoice line (BR-16); the extraction found none"
+    },
+    {
+      "document": "invoice_es_lowres_scan.jpg",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "refused",
+      "detail": "factur-x-en16931: EN 16931 requires at least one invoice line (BR-16); the extraction found none"
+    },
+    {
+      "document": "invoice_es_lowres_scan.jpg",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "refused",
+      "detail": "factur-x-basic: EN 16931 requires at least one invoice line (BR-16); the extraction found none"
+    },
+    {
+      "document": "invoice_rotated_scan.jpg",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-S-02: [BR-S-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is \"Standard rated\" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).",
+        "BR-CO-26: [BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present."
+      ]
+    },
+    {
+      "document": "invoice_rotated_scan.jpg",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-S-02: [BR-S-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is \"Standard rated\" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).",
+        "BR-CO-26: [BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present.",
+        "PEPPOL-EN16931-R003: A buyer reference or purchase order reference MUST be provided.",
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided"
+      ]
+    },
+    {
+      "document": "invoice_rotated_scan.jpg",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-S-02: [BR-S-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is \"Standard rated\" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).",
+        "BR-CO-26: [BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present.",
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+        "BR-DE-16: [BR-DE-16] Wenn in einer Rechnung die Steuercodes S, Z, E, AE, K, G, L oder M verwendet werden, muss mindestens eines der Elemente \"Seller VAT identifier\" (BT-31), \"Seller tax registration identifier\" (BT-32) oder \"SELLER TAX REPRESENTATIVE PARTY\" (BG-11) übermittelt werden.",
+        "BR-DE-5: [BR-DE-5] Das Element \"Seller contact point\" (BT-41) muss übermittelt werden.",
+        "BR-DE-6: [BR-DE-6] Das Element \"Seller contact telephone number\" (BT-42) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "invoice_rotated_scan.jpg",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-S-02: [BR-S-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is \"Standard rated\" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).",
+        "BR-S-02: [BR-S-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is \"Standard rated\" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).",
+        "BR-S-02: [BR-S-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is \"Standard rated\" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).",
+        "BR-CO-26: [BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present.",
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+        "BR-DE-16: [BR-DE-16] Wenn in einer Rechnung die Steuercodes S, Z, E, AE, K, G, L oder M verwendet werden, muss mindestens eines der Elemente \"Seller VAT identifier\" (BT-31), \"Seller tax registration identifier\" (BT-32) oder \"SELLER TAX REPRESENTATIVE PARTY\" (BG-11) übermittelt werden.",
+        "BR-DE-5: [BR-DE-5] Das Element \"Seller contact point\" (BT-41) muss übermittelt werden.",
+        "BR-DE-6: [BR-DE-6] Das Element \"Seller contact telephone number\" (BT-42) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "invoice_rotated_scan.jpg",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "FX-SCH-A-000001: [BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present.",
+        "FX-SCH-A-000249: [BR-S-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is \"Standard rated\" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).",
+        "FX-SCH-A-000249: [BR-S-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is \"Standard rated\" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).",
+        "FX-SCH-A-000249: [BR-S-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is \"Standard rated\" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63)."
+      ]
+    },
+    {
+      "document": "invoice_rotated_scan.jpg",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "FX-SCH-A-000001: [BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present.",
+        "FX-SCH-A-000249: [BR-S-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is \"Standard rated\" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).",
+        "FX-SCH-A-000249: [BR-S-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is \"Standard rated\" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).",
+        "FX-SCH-A-000249: [BR-S-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is \"Standard rated\" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63)."
+      ]
+    },
+    {
+      "document": "tax_invoice_scan.jpg",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-CO-26: [BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present."
+      ]
+    },
+    {
+      "document": "tax_invoice_scan.jpg",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-CO-26: [BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present.",
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided"
+      ]
+    },
+    {
+      "document": "tax_invoice_scan.jpg",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-CO-26: [BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present.",
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "tax_invoice_scan.jpg",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-CO-26: [BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present.",
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "tax_invoice_scan.jpg",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "FX-SCH-A-000001: [BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present."
+      ]
+    },
+    {
+      "document": "tax_invoice_scan.jpg",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "FX-SCH-A-000001: [BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present."
+      ]
+    }
+  ]
+}
