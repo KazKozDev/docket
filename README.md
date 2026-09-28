@@ -1,6 +1,6 @@
 # docket — Python OCR and LLM for invoices, receipts and contracts
 
-Extract cited document data, check it, and export validated invoices.
+Extract data from invoices, receipts and contracts with a source line for every field, check it with plain code, and flag what a person must review.
 
 
 ![Docket Desktop showing a scanned receipt beside extracted fields](https://raw.githubusercontent.com/KazKozDev/docket/master/docs/assets/docket-desktop-promo.png)
