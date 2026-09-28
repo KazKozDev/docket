@@ -1,8 +1,11 @@
-"""Thin wrapper around the LLM backend: Ollama or any OpenAI-compatible API.
+"""The pipeline's one door to a language model.
 
-Kept deliberately small: one function for a plain text/JSON chat call, one
-for a vision call. `config.LLM_PROVIDER` picks the transport; nothing
-upstream depends on which one is in use.
+Two calls go through it: `chat_json` (classification, extraction, the OCR
+quality check) and `vision_transcribe` (the vlm OCR backend). Both hand the
+work to an `LLMBackend`: the one passed as `ProcessOptions(llm=...)`, else
+the built-in one `config.LLM_PROVIDER` names — `OllamaBackend` or
+`OpenAICompatibleBackend`, which also covers vLLM, llama.cpp's llama-server,
+LM Studio and hosted APIs. Nothing upstream depends on which one is in use.
 
 Two pieces of production plumbing live here rather than upstream, because
 every LLM call in the pipeline goes through this module:
@@ -19,16 +22,22 @@ from __future__ import annotations
 
 import base64
 import json
+import logging
 import random
 import re
 import time
+from collections.abc import Iterator
+from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass, field
 from email.utils import parsedate_to_datetime
+from typing import Protocol, runtime_checkable
 
 import httpx
 
 from . import config, limits
+
+log = logging.getLogger("docket")
 
 
 class LLMError(RuntimeError):
@@ -36,12 +45,42 @@ class LLMError(RuntimeError):
 
 
 @dataclass
-class _Reply:
+class LLMReply:
     """A model's answer and the token counts its provider reported, if any."""
 
     content: str
     input_tokens: int | None = None
     output_tokens: int | None = None
+
+
+@runtime_checkable
+class LLMBackend(Protocol):
+    """What the pipeline needs from a language model.
+
+    Implement it to route docket through your own client (an SDK, a gateway,
+    a model loaded in-process) and pass it as `ProcessOptions(llm=...)`.
+    `text_model` and `vision_model` name the models for usage metrics and
+    traces; an empty `vision_model` means the vlm OCR backend is unavailable.
+    Raise `LLMError` on failure — any other exception is wrapped into one.
+
+    `schema` is the JSON Schema the answer must match, when there is one:
+    pass it to constrained decoding if your runtime has it. The answer is
+    validated against it either way, so best-effort is fine.
+    """
+
+    @property
+    def text_model(self) -> str: ...
+
+    @property
+    def vision_model(self) -> str: ...
+
+    def generate_json(self, prompt: str, *, schema: dict | None, timeout: float) -> LLMReply:
+        """Answer `prompt` with one JSON object, as text."""
+        ...
+
+    def transcribe_image(self, image: bytes, *, mime: str, prompt: str, timeout: float) -> LLMReply:
+        """Answer `prompt` about the image, as plain text."""
+        ...
 
 
 @dataclass
@@ -53,7 +92,7 @@ class _Usage:
     unreported_calls: int = 0
     models: list[str] = field(default_factory=list)
 
-    def record(self, *texts: str, model: str | None = None, reply: _Reply | None = None) -> None:
+    def record(self, *texts: str, model: str | None = None, reply: LLMReply | None = None) -> None:
         self.calls += 1
         # Rough token estimate (chars/4), kept for providers that report
         # nothing; not meant to match a real tokenizer.
@@ -111,7 +150,7 @@ class _ContextUsage:
     def models(self) -> list[str]:
         return list(self._current().models)
 
-    def record(self, *texts: str, model: str | None = None, reply: _Reply | None = None) -> None:
+    def record(self, *texts: str, model: str | None = None, reply: LLMReply | None = None) -> None:
         self._current().record(*texts, model=model, reply=reply)
 
     def reset(self) -> None:
@@ -181,10 +220,9 @@ def list_models(*, vision_only: bool = False, timeout: float = 10.0) -> list[str
     """
     if config.LLM_PROVIDER == "openai":
         # /models reports no capabilities, so every model is offered as-is.
+        backend = OpenAICompatibleBackend()
         try:
-            resp = httpx.get(
-                f"{config.LLM_BASE_URL}/models", headers=_openai_headers(), timeout=timeout
-            )
+            resp = httpx.get(f"{backend.base_url}/models", headers=backend._headers(), timeout=timeout)
             resp.raise_for_status()
             return sorted(m["id"] for m in resp.json().get("data", []))
         except (httpx.HTTPError, ValueError, KeyError):
@@ -201,40 +239,64 @@ def list_models(*, vision_only: bool = False, timeout: float = 10.0) -> list[str
     return sorted(names)
 
 
-def chat_json(
-    prompt: str,
-    *,
-    model: str | None = None,
-    timeout: float = 120.0,
-    schema: dict | None = None,
-) -> dict:
+_VISION_PROMPT = (
+    "Transcribe every piece of text visible in this document image, "
+    "verbatim, preserving line order. Where the layout shows columns, "
+    "render them as markdown table rows so cell boundaries survive. "
+    "Copy every digit exactly as printed; never recalculate or tidy up "
+    "numbers. Output plain text only, no commentary."
+)
+
+
+_backend_var: ContextVar[LLMBackend | None] = ContextVar("docket_llm_backend", default=None)
+
+
+def default_backend() -> LLMBackend:
+    """The built-in backend `config.LLM_PROVIDER` names. It reads its host,
+    models and key from `config` at call time, so a UI that writes a picked
+    model to `config.TEXT_MODEL` changes the next call."""
+    return OpenAICompatibleBackend() if config.LLM_PROVIDER == "openai" else OllamaBackend()
+
+
+def current_backend() -> LLMBackend:
+    """The backend of the document being processed, else the default one."""
+    return _backend_var.get() or default_backend()
+
+
+@contextmanager
+def use_backend(backend: LLMBackend | None) -> Iterator[None]:
+    """Route this context's LLM calls to `backend`; None keeps the current one.
+    Context-local, so concurrent documents can use different backends."""
+    if backend is None:
+        yield
+        return
+    token = _backend_var.set(backend)
+    try:
+        yield
+    finally:
+        _backend_var.reset(token)
+
+
+def _call(fn, *args, **kwargs) -> LLMReply:
+    with limits.slot("llm"):
+        try:
+            return fn(*args, **kwargs)
+        except LLMError:
+            raise
+        except Exception as exc:  # a custom backend's own errors are model failures too
+            raise LLMError(f"{type(exc).__name__}: {exc}") from exc
+
+
+def chat_json(prompt: str, *, timeout: float = 120.0, schema: dict | None = None) -> dict:
     """Send a prompt, ask for a JSON object back, return it parsed.
 
-    Local models receive `schema` for constrained decoding. Cloud models
-    use JSON mode; callers must include the schema in the prompt and validate.
+    `schema` goes to the backend for constrained decoding where the runtime
+    has it; callers still include it in the prompt and validate the answer.
     """
-    model = model or config.TEXT_MODEL
+    backend = current_backend()
+    model = backend.text_model
     start = time.monotonic()
-    if config.LLM_PROVIDER == "openai":
-        reply = _openai_chat(
-            model,
-            [{"role": "user", "content": prompt}],
-            timeout=timeout,
-            json_mode=True,
-        )
-    else:
-        payload = {
-            "model": model,
-            "messages": [{"role": "user", "content": prompt}],
-            # Ollama cloud does not enforce JSON Schema decoding. Keep its
-            # supported JSON mode; extraction still includes and validates schema.
-            "format": schema if schema and not model.endswith(":cloud") else "json",
-            "stream": False,
-            "think": config.ENABLE_THINKING,
-            "options": {"temperature": 0},
-        }
-        reply = _ollama_chat(payload, timeout=timeout)
-
+    reply = _call(backend.generate_json, prompt, schema=schema, timeout=timeout)
     content = reply.content
     usage.record(prompt, content, model=model, reply=reply)
     _trace("chat_json", model, prompt, content, start)
@@ -252,53 +314,211 @@ def chat_json(
         raise LLMError(f"Model did not return valid JSON: {content[:200]!r}") from exc
 
 
-def vision_transcribe(
-    image: bytes,
-    *,
-    mime: str = "image/png",
-    model: str | None = None,
-    timeout: float | None = None,
-) -> str:
+def vision_transcribe(image: bytes, *, mime: str = "image/png", timeout: float | None = None) -> str:
     """Ask a vision model to transcribe all visible text in an image, verbatim.
 
     Takes encoded image bytes, not a path: callers render pages in memory, so
     no temporary file is ever written next to the user's document.
     """
-    model = model or config.VISION_MODEL
+    backend = current_backend()
+    model = backend.vision_model
+    if not model:
+        raise LLMError("no vision model is configured")
     timeout = config.VISION_TIMEOUT_S if timeout is None else timeout
-    b64 = base64.b64encode(image).decode()
-
-    prompt_text = (
-        "Transcribe every piece of text visible in this document image, "
-        "verbatim, preserving line order. Where the layout shows columns, "
-        "render them as markdown table rows so cell boundaries survive. "
-        "Copy every digit exactly as printed; never recalculate or tidy up "
-        "numbers. Output plain text only, no commentary."
-    )
     start = time.monotonic()
-    if config.LLM_PROVIDER == "openai":
+    reply = _call(backend.transcribe_image, image, mime=mime, prompt=_VISION_PROMPT, timeout=timeout)
+    text = reply.content.strip()
+    usage.record(_VISION_PROMPT, text, model=model, reply=reply)
+    _trace("vision_transcribe", model, "<image>", text, start)
+    return text
+
+
+class OllamaBackend:
+    """Ollama's native /api/chat, local or cloud. Every argument left None is
+    read from `config` (OLLAMA_HOST, DOCKET_TEXT_MODEL, DOCKET_VISION_MODEL,
+    DOCKET_ENABLE_THINKING) at call time."""
+
+    def __init__(
+        self,
+        *,
+        host: str | None = None,
+        text_model: str | None = None,
+        vision_model: str | None = None,
+        think: bool | None = None,
+    ) -> None:
+        self._host, self._text_model, self._vision_model, self._think = host, text_model, vision_model, think
+
+    @property
+    def host(self) -> str:
+        return (self._host or config.OLLAMA_HOST).rstrip("/")
+
+    @property
+    def text_model(self) -> str:
+        return config.TEXT_MODEL if self._text_model is None else self._text_model
+
+    @property
+    def vision_model(self) -> str:
+        return config.VISION_MODEL if self._vision_model is None else self._vision_model
+
+    @property
+    def think(self) -> bool:
+        return config.ENABLE_THINKING if self._think is None else self._think
+
+    def generate_json(self, prompt: str, *, schema: dict | None, timeout: float) -> LLMReply:
+        model = self.text_model
+        return self._chat({
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            # Ollama cloud does not enforce JSON Schema decoding. Keep its
+            # supported JSON mode; extraction still includes and validates schema.
+            "format": schema if schema and not _cloud_model(model) else "json",
+            "stream": False,
+            "think": self.think,
+            "options": {"temperature": 0},
+        }, timeout=timeout)
+
+    def transcribe_image(self, image: bytes, *, mime: str, prompt: str, timeout: float) -> LLMReply:
+        return self._chat({
+            "model": self.vision_model,
+            "messages": [{"role": "user", "content": prompt, "images": [base64.b64encode(image).decode()]}],
+            "stream": False,
+            "think": self.think,
+            "options": {"temperature": 0},
+        }, timeout=timeout)
+
+    def _chat(self, payload: dict, *, timeout: float) -> LLMReply:
+        model = payload["model"]
+        try:
+            resp = _post(f"{self.host}/api/chat", hosted=_cloud_model(model), json=payload, timeout=timeout)
+        except httpx.HTTPError as exc:
+            raise LLMError(f"Ollama request failed: {exc}") from exc
+        body = resp.json()
+        return LLMReply(body["message"]["content"], body.get("prompt_eval_count"), body.get("eval_count"))
+
+
+class _SchemaRejected(Exception):
+    """The server answered 400/422 to a json_schema response format."""
+
+
+# (base_url, model) pairs whose server refused json_schema but took
+# json_object: asked once per process, not on every call.
+_JSON_SCHEMA_REFUSED: set[tuple[str, str]] = set()
+
+
+class OpenAICompatibleBackend:
+    """Any OpenAI-compatible Chat Completions API: vLLM, llama.cpp's
+    llama-server, LM Studio, LocalAI, Ollama's /v1, or a hosted API.
+
+    With a schema it asks for `response_format: json_schema` (non-strict:
+    Pydantic schemas rarely meet strict mode's rules), which vLLM, llama.cpp
+    and LM Studio turn into constrained decoding; a server that refuses it
+    gets `json_object` instead, from then on. `structured_output="json_object"`
+    skips the attempt. Arguments left None come from `config`
+    (DOCKET_LLM_BASE_URL, DOCKET_LLM_API_KEY, DOCKET_TEXT_MODEL,
+    DOCKET_VISION_MODEL, DOCKET_LLM_STRUCTURED_OUTPUT) at call time.
+    """
+
+    def __init__(
+        self,
+        *,
+        base_url: str | None = None,
+        api_key: str | None = None,
+        text_model: str | None = None,
+        vision_model: str | None = None,
+        structured_output: str | None = None,
+    ) -> None:
+        if structured_output not in (None, "json_schema", "json_object"):
+            raise ValueError("structured_output must be 'json_schema' or 'json_object'")
+        self._base_url, self._api_key = base_url, api_key
+        self._text_model, self._vision_model = text_model, vision_model
+        self._structured_output = structured_output
+
+    @property
+    def base_url(self) -> str:
+        return (self._base_url or config.LLM_BASE_URL).rstrip("/")
+
+    @property
+    def api_key(self) -> str | None:
+        return self._api_key or config.LLM_API_KEY
+
+    @property
+    def text_model(self) -> str:
+        return config.TEXT_MODEL if self._text_model is None else self._text_model
+
+    @property
+    def vision_model(self) -> str:
+        return config.VISION_MODEL if self._vision_model is None else self._vision_model
+
+    @property
+    def structured_output(self) -> str:
+        return self._structured_output or config.LLM_STRUCTURED_OUTPUT
+
+    @property
+    def hosted(self) -> bool:
+        return _hosted_url(self.base_url)
+
+    def generate_json(self, prompt: str, *, schema: dict | None, timeout: float) -> LLMReply:
+        model = self.text_model
+        messages = [{"role": "user", "content": prompt}]
+        key = (self.base_url, model)
+        if schema and self.structured_output == "json_schema" and key not in _JSON_SCHEMA_REFUSED:
+            response_format = {
+                "type": "json_schema",
+                "json_schema": {"name": "docket_output", "schema": schema, "strict": False},
+            }
+            try:
+                return self._chat(model, messages, timeout=timeout, response_format=response_format)
+            except _SchemaRejected:
+                reply = self._chat(model, messages, timeout=timeout, response_format={"type": "json_object"})
+                _JSON_SCHEMA_REFUSED.add(key)
+                log.warning("server refused json_schema; using json_object",
+                            extra={"base_url": self.base_url, "model": model})
+                return reply
+        return self._chat(model, messages, timeout=timeout, response_format={"type": "json_object"})
+
+    def transcribe_image(self, image: bytes, *, mime: str, prompt: str, timeout: float) -> LLMReply:
+        b64 = base64.b64encode(image).decode()
         message = {
             "role": "user",
             "content": [
-                {"type": "text", "text": prompt_text},
+                {"type": "text", "text": prompt},
                 {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}},
             ],
         }
-        reply = _openai_chat(model, [message], timeout=timeout)
-    else:
-        payload = {
-            "model": model,
-            "messages": [{"role": "user", "content": prompt_text, "images": [b64]}],
-            "stream": False,
-            "think": config.ENABLE_THINKING,
-            "options": {"temperature": 0},
-        }
-        reply = _ollama_chat(payload, timeout=timeout)
+        return self._chat(self.vision_model, [message], timeout=timeout)
 
-    text = reply.content.strip()
-    usage.record(prompt_text, text, model=model, reply=reply)
-    _trace("vision_transcribe", model, "<image>", text, start)
-    return text
+    def _headers(self) -> dict:
+        return {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
+
+    def _chat(
+        self, model: str, messages: list[dict], *, timeout: float, response_format: dict | None = None
+    ) -> LLMReply:
+        payload: dict = {"model": model, "messages": messages, "temperature": 0}
+        if response_format is not None:
+            payload["response_format"] = response_format
+        try:
+            resp = _post(
+                f"{self.base_url}/chat/completions",
+                hosted=self.hosted,
+                json=payload,
+                headers=self._headers(),
+                timeout=timeout,
+            )
+            body = resp.json()
+            reported = body.get("usage") or {}
+            return LLMReply(
+                body["choices"][0]["message"]["content"] or "",
+                reported.get("prompt_tokens"),
+                reported.get("completion_tokens"),
+            )
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code in (400, 422) and (response_format or {}).get("type") == "json_schema":
+                raise _SchemaRejected from exc
+            raise LLMError(f"LLM request failed: {exc}") from exc
+        except httpx.HTTPError as exc:
+            raise LLMError(f"LLM request failed: {exc}") from exc
+        except (KeyError, IndexError, ValueError) as exc:
+            raise LLMError(f"Unexpected LLM response shape: {exc}") from exc
 
 
 # A hosted model answers in seconds (p99 ~40 s on the eval corpus), so one
@@ -334,20 +554,20 @@ def _retry_delay(attempt: int, resp: httpx.Response | None = None) -> float:
     return _BACKOFF_S * (2 ** attempt) * random.uniform(0.5, 1.5)
 
 
-def _hosted(model: str) -> bool:
-    """Ollama cloud models (`name:cloud`, `name:tag-cloud`) and any
-    OpenAI-compatible endpoint that is not on this machine."""
-    if config.LLM_PROVIDER == "openai":
-        host = httpx.URL(config.LLM_BASE_URL).host
-        return host not in ("localhost", "127.0.0.1", "::1")
+def _cloud_model(model: str) -> bool:
+    """Ollama cloud models: `name:cloud`, `name:tag-cloud`."""
     return model.endswith((":cloud", "-cloud"))
 
 
-def _post(url: str, *, model: str, json: dict, timeout: float, headers: dict | None = None) -> httpx.Response:
+def _hosted_url(base_url: str) -> bool:
+    """An OpenAI-compatible endpoint that is not on this machine."""
+    return httpx.URL(base_url).host not in ("localhost", "127.0.0.1", "::1")
+
+
+def _post(url: str, *, hosted: bool, json: dict, timeout: float, headers: dict | None = None) -> httpx.Response:
     """POST with the stall handling above: hosted models get a short timeout
     and retries on timeouts too; every model is retried on 429/5xx and
     connection errors."""
-    hosted = _hosted(model)
     if hosted:
         timeout = min(timeout, config.LLM_HOSTED_TIMEOUT_S)
     attempts = config.LLM_RETRIES + 1
@@ -368,57 +588,3 @@ def _post(url: str, *, model: str, json: dict, timeout: float, headers: dict | N
                 raise
         time.sleep(_retry_delay(attempt))
     raise AssertionError("unreachable")
-
-
-def _ollama_chat(payload: dict, *, timeout: float) -> _Reply:
-    with limits.slot("llm"):
-        return _ollama_request(payload, timeout=timeout)
-
-
-def _ollama_request(payload: dict, *, timeout: float) -> _Reply:
-    try:
-        resp = _post(f"{config.OLLAMA_HOST}/api/chat", model=payload["model"], json=payload, timeout=timeout)
-    except httpx.HTTPError as exc:
-        raise LLMError(f"Ollama request failed: {exc}") from exc
-    body = resp.json()
-    return _Reply(body["message"]["content"], body.get("prompt_eval_count"), body.get("eval_count"))
-
-
-def _openai_headers() -> dict:
-    return {"Authorization": f"Bearer {config.LLM_API_KEY}"} if config.LLM_API_KEY else {}
-
-
-def _openai_chat(
-    model: str, messages: list[dict], *, timeout: float, json_mode: bool = False
-) -> _Reply:
-    with limits.slot("llm"):
-        return _openai_request(model, messages, timeout=timeout, json_mode=json_mode)
-
-
-def _openai_request(
-    model: str, messages: list[dict], *, timeout: float, json_mode: bool = False
-) -> _Reply:
-    payload: dict = {"model": model, "messages": messages, "temperature": 0}
-    if json_mode:
-        # JSON mode rather than strict json_schema: Pydantic schemas rarely
-        # meet strict-mode rules, and extraction validates the result anyway.
-        payload["response_format"] = {"type": "json_object"}
-    try:
-        resp = _post(
-            f"{config.LLM_BASE_URL}/chat/completions",
-            model=model,
-            json=payload,
-            headers=_openai_headers(),
-            timeout=timeout,
-        )
-        body = resp.json()
-        reported = body.get("usage") or {}
-        return _Reply(
-            body["choices"][0]["message"]["content"] or "",
-            reported.get("prompt_tokens"),
-            reported.get("completion_tokens"),
-        )
-    except httpx.HTTPError as exc:
-        raise LLMError(f"LLM request failed: {exc}") from exc
-    except (KeyError, IndexError, ValueError) as exc:
-        raise LLMError(f"Unexpected LLM response shape: {exc}") from exc

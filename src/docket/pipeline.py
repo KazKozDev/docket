@@ -32,6 +32,7 @@ from .extract import extract_pages
 from .language import detect_language
 from .layout import locate_all
 from .llm_client import usage as llm_usage
+from .llm_client import use_backend
 from .logging_setup import get_logger, log_stage
 from .ocr import (
     Acquisition,
@@ -342,7 +343,11 @@ def process_document(
     known to be broken.
     """
     resolved = options if isinstance(options, ResolvedOptions) else resolve(options)
-    path = Path(source)
+    with use_backend(resolved.llm):
+        return _process(Path(source), resolved, on_stage)
+
+
+def _process(path: Path, resolved: ResolvedOptions, on_stage: StageCallback | None) -> DocumentResult:
     doc = {"document": path.name}
     stages = _Stages()
     started = time.monotonic()

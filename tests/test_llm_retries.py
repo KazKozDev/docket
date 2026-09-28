@@ -34,7 +34,8 @@ def server(monkeypatch):
     monkeypatch.setattr(config, "LLM_RETRIES", 2)
     monkeypatch.setattr(llm_client, "_BACKOFF_S", 0.0)
 
-    def install(*outcomes):
+    def install(*outcomes, model="qwen3:8b"):
+        monkeypatch.setattr(config, "TEXT_MODEL", model)
         fake = _Server(*outcomes)
         monkeypatch.setattr(llm_client.httpx, "post", fake)
         return fake
@@ -43,35 +44,35 @@ def server(monkeypatch):
 
 
 def test_a_stalled_cloud_model_is_cut_short_and_retried(server):
-    fake = server(httpx.ReadTimeout("stalled"), 200)
-    assert llm_client.chat_json("x", model="deepseek-v4.1-flash:cloud") == {"ok": True}
+    fake = server(httpx.ReadTimeout("stalled"), 200, model="deepseek-v4.1-flash:cloud")
+    assert llm_client.chat_json("x") == {"ok": True}
     assert fake.timeouts == [60.0, 60.0]
 
 
 def test_a_local_model_keeps_its_timeout_and_is_not_retried_after_one(server):
     fake = server(httpx.ReadTimeout("slow laptop"), 200)
     with pytest.raises(llm_client.LLMError):
-        llm_client.chat_json("x", model="qwen3:8b")
+        llm_client.chat_json("x")
     assert fake.timeouts == [120.0]
 
 
 def test_server_errors_are_retried_for_every_model(server):
     fake = server(502, 503, 200)
-    assert llm_client.chat_json("x", model="qwen3:8b") == {"ok": True}
+    assert llm_client.chat_json("x") == {"ok": True}
     assert len(fake.timeouts) == 3
 
 
 def test_retries_run_out(server):
-    fake = server(httpx.ReadTimeout("a"), httpx.ReadTimeout("b"), httpx.ReadTimeout("c"))
+    fake = server(httpx.ReadTimeout("a"), httpx.ReadTimeout("b"), httpx.ReadTimeout("c"), model="gemma4:31b-cloud")
     with pytest.raises(llm_client.LLMError):
-        llm_client.chat_json("x", model="gemma4:31b-cloud")
+        llm_client.chat_json("x")
     assert len(fake.timeouts) == 3
 
 
 def test_client_errors_are_not_retried(server):
-    fake = server(400, 200)
+    fake = server(400, 200, model="deepseek-v4.1-flash:cloud")
     with pytest.raises(llm_client.LLMError):
-        llm_client.chat_json("x", model="deepseek-v4.1-flash:cloud")
+        llm_client.chat_json("x")
     assert len(fake.timeouts) == 1
 
 
@@ -80,17 +81,15 @@ def test_client_errors_are_not_retried(server):
     ("http://localhost:8000/v1", False),
     ("http://127.0.0.1:8000/v1", False),
 ])
-def test_openai_compatible_endpoints_are_hosted_unless_local(monkeypatch, base_url, hosted):
-    monkeypatch.setattr(config, "LLM_PROVIDER", "openai")
-    monkeypatch.setattr(config, "LLM_BASE_URL", base_url)
-    assert llm_client._hosted("any-model") is hosted
+def test_openai_compatible_endpoints_are_hosted_unless_local(base_url, hosted):
+    assert llm_client.OpenAICompatibleBackend(base_url=base_url).hosted is hosted
 
 
 def test_retry_after_is_honoured_and_capped(monkeypatch, server):
     slept = []
     monkeypatch.setattr(llm_client.time, "sleep", slept.append)
     server((429, {"Retry-After": "7"}), (503, {"Retry-After": "3600"}), 200)
-    assert llm_client.chat_json("x", model="qwen3:8b") == {"ok": True}
+    assert llm_client.chat_json("x") == {"ok": True}
     assert slept == [7.0, llm_client._MAX_RETRY_AFTER_S]
 
 
@@ -114,7 +113,7 @@ def test_backoff_without_retry_after_grows_with_jitter(monkeypatch):
 def test_provider_token_counts_are_recorded(server):
     server(200)
     llm_client.usage.reset()
-    llm_client.chat_json("x", model="qwen3:8b")
+    llm_client.chat_json("x")
     assert (llm_client.usage.input_tokens, llm_client.usage.output_tokens) == (50, 5)
     assert llm_client.usage.models == ["qwen3:8b"]
 

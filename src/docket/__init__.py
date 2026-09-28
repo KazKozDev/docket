@@ -76,6 +76,13 @@ from .layout import (
     TextLine,
     WordToken,
 )
+from .llm_client import (
+    LLMBackend,
+    LLMError,
+    LLMReply,
+    OllamaBackend,
+    OpenAICompatibleBackend,
+)
 from .matching import (
     match_invoice_to_po,
     match_invoices_to_contract,
@@ -159,6 +166,9 @@ __all__ = [
     "FieldRule",
     "Invoice",
     "ItemsRule",
+    "LLMBackend",
+    "LLMError",
+    "LLMReply",
     "LineItem",
     "MatchResult",
     "MatchingStatus",
@@ -166,6 +176,8 @@ __all__ = [
     "OcrBackend",
     "OcrOptions",
     "OcrSettings",
+    "OllamaBackend",
+    "OpenAICompatibleBackend",
     "PageLayout",
     "Party",
     "PdfAValidationIssue",

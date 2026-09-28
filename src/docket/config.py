@@ -82,10 +82,17 @@ SETTINGS: tuple[Setting, ...] = (
             "Base URL of the OpenAI-compatible API."),
     Setting("LLM_API_KEY", "llm.api_key", "DOCKET_LLM_API_KEY", "secret", None,
             "API key for the OpenAI-compatible API.", optional=True),
-    Setting("TEXT_MODEL", "llm.text_model", "DOCKET_TEXT_MODEL", "str", "deepseek-v4.1-flash:cloud",
-            "Model for classification and extraction."),
-    Setting("VISION_MODEL", "llm.vision_model", "DOCKET_VISION_MODEL", "str", "deepseek-v4.1-flash:cloud",
-            "Model that reads page images (the vlm OCR backend)."),
+    # No default model: whichever one docket picked would be a download, or a
+    # hosted service the document goes to, that nobody chose.
+    Setting("TEXT_MODEL", "llm.text_model", "DOCKET_TEXT_MODEL", "str", "",
+            "Model for classification and extraction (required)."),
+    Setting("VISION_MODEL", "llm.vision_model", "DOCKET_VISION_MODEL", "str", "",
+            "Model that reads page images (the vlm OCR backend); empty makes vlm unavailable."),
+    Setting("LLM_STRUCTURED_OUTPUT", "llm.structured_output", "DOCKET_LLM_STRUCTURED_OUTPUT", "choice",
+            "json_schema",
+            "openai provider: 'json_schema' sends the extraction schema for constrained decoding "
+            "(falling back to 'json_object' where the server refuses it); 'json_object' never sends it.",
+            choices=("json_schema", "json_object"), lower=True),
     Setting("MAX_EXTRACT_RETRIES", "llm.max_extract_retries", "DOCKET_MAX_EXTRACT_RETRIES", "int", 2,
             "Extra attempts when the model's output fails the schema.", minimum=0, maximum=10),
     Setting("EXTRACT_CHUNK_CHARS", "llm.extract_chunk_chars", "DOCKET_EXTRACT_CHUNK_CHARS", "int", 12000,
@@ -410,6 +417,7 @@ LLM_BASE_URL: str
 LLM_API_KEY: str | None
 TEXT_MODEL: str
 VISION_MODEL: str
+LLM_STRUCTURED_OUTPUT: str
 MAX_EXTRACT_RETRIES: int
 EXTRACT_CHUNK_CHARS: int
 VISION_TIMEOUT_S: float

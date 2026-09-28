@@ -98,9 +98,10 @@ def test_openai_compatible_backend(monkeypatch):
     monkeypatch.setattr(config, "LLM_PROVIDER", "openai")
     monkeypatch.setattr(config, "LLM_BASE_URL", "https://api.mistral.ai/v1")
     monkeypatch.setattr(config, "LLM_API_KEY", "k")
+    monkeypatch.setattr(config, "TEXT_MODEL", "mistral-small-latest")
     monkeypatch.setattr(llm_client.httpx, "post", fake_post)
 
-    assert llm_client.chat_json("hi", model="mistral-small-latest") == {"ok": True}
+    assert llm_client.chat_json("hi") == {"ok": True}
     assert captured["url"] == "https://api.mistral.ai/v1/chat/completions"
     assert captured["headers"] == {"Authorization": "Bearer k"}
     assert captured["payload"]["response_format"] == {"type": "json_object"}
@@ -117,9 +118,10 @@ def test_openai_vision_sends_data_url(monkeypatch, tmp_path):
         return _Response({"choices": [{"message": {"content": " text "}}]})
 
     monkeypatch.setattr(config, "LLM_PROVIDER", "openai")
+    monkeypatch.setattr(config, "VISION_MODEL", "pixtral-12b")
     monkeypatch.setattr(llm_client.httpx, "post", fake_post)
 
-    assert llm_client.vision_transcribe(image.read_bytes(), model="pixtral-12b") == "text"
+    assert llm_client.vision_transcribe(image.read_bytes()) == "text"
     parts = captured["messages"][0]["content"]
     assert parts[1]["image_url"]["url"].startswith("data:image/png;base64,")
 

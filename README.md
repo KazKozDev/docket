@@ -10,7 +10,7 @@ Docket Desktop
 
 ## Quick start
 
-You need Python 3.10+, Tesseract for scans, and a reachable text model. Configure Ollama or an OpenAI-compatible API; a vision model is needed for the default OCR fallback. Check the active settings with `docket config show`.
+You need Python 3.10+, Tesseract for scans, and a text model you run or reach: Ollama, or any OpenAI-compatible server (vLLM, llama.cpp, LM Studio, a hosted API). Docket picks no model: set `DOCKET_TEXT_MODEL`, and `DOCKET_VISION_MODEL` for the default OCR fallback. [Language models](https://github.com/KazKozDev/docket/blob/master/docs/LLM.md) has local recipes. Check the active settings with `docket config show`.
 
 ```bash
 docket process invoice.pdf
@@ -76,7 +76,8 @@ The [architecture](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITEC
 | Environment variable | Default | Purpose |
 |---|---|---|
 | `DOCKET_LLM_PROVIDER` | `ollama` | `ollama` or `openai` for an OpenAI-compatible endpoint |
-| `DOCKET_TEXT_MODEL` / `DOCKET_VISION_MODEL` | `deepseek-v4.1-flash:cloud` | Extraction model / page-image model |
+| `DOCKET_TEXT_MODEL` / `DOCKET_VISION_MODEL` | unset | Extraction model (required) / page-image model |
+| `DOCKET_LLM_STRUCTURED_OUTPUT` | `json_schema` | Send the schema to OpenAI-compatible servers for constrained decoding, or `json_object` |
 | `OLLAMA_HOST` | `http://localhost:11434` | Ollama server URL |
 | `DOCKET_LLM_BASE_URL` | `https://api.openai.com/v1` | OpenAI-compatible API URL |
 | `DOCKET_LLM_API_KEY` | unset | Key for the OpenAI-compatible API |
@@ -114,11 +115,11 @@ From a checkout, install the separate package with `python -m pip install -e . -
 ### HTTP API and Docker
 
 ```bash
-docker run -p 8000:8000 -e DOCKET_API_KEY=secret ghcr.io/kazkozdev/docket
+docker run -p 8000:8000 -e DOCKET_API_KEY=secret -e DOCKET_TEXT_MODEL=<model> -e DOCKET_OCR_FALLBACKS= ghcr.io/kazkozdev/docket
 curl -H "Authorization: Bearer secret" -F file=@invoice.pdf localhost:8000/process
 ```
 
-See the [OpenAPI specification](https://github.com/KazKozDev/docket/blob/master/docs/openapi.json) for endpoints and responses.
+The image looks for Ollama at `host.docker.internal:11434`; on Linux add `--add-host=host.docker.internal:host-gateway`. See the [OpenAPI specification](https://github.com/KazKozDev/docket/blob/master/docs/openapi.json) for endpoints and responses.
 
 ### Development
 

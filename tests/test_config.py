@@ -70,7 +70,7 @@ def test_arguments_override_everything(tmp_path):
     from docket.options import resolve
 
     write(tmp_path / "docket.toml", '[ocr]\nlanguages = ["fr"]\nfallbacks = []\n[layout]\ninclude = false\n')
-    config.configure(environ={"DOCKET_OCR_LANGUAGES": "de"}, discover=True)
+    config.configure(environ={"DOCKET_OCR_LANGUAGES": "de", "DOCKET_TEXT_MODEL": "m"}, discover=True)
     assert config.OCR_LANGUAGES == ["de"]  # env beats the file
     assert resolve(ProcessOptions()).acquisition.settings.languages == ["de"]
     assert resolve(ProcessOptions()).include_layout is False  # from the file

@@ -210,15 +210,15 @@ def test_llm_calls_are_bounded_across_workers(options, invoices, monkeypatch):
     paths = invoices(10)
     monkeypatch.setattr(config, "LLM_CONCURRENCY", 2)
 
-    def slow_request(payload, *, timeout):
+    def slow_request(self, payload, *, timeout):
         time.sleep(0.03)
         prompt = payload["messages"][0]["content"]
         number = prompt.split("Invoice no: ")[1].split("\n")[0]
-        return llm_client._Reply(json.dumps(_payload(number)), input_tokens=100, output_tokens=20)
+        return llm_client.LLMReply(json.dumps(_payload(number)), input_tokens=100, output_tokens=20)
 
     monkeypatch.setattr(extract_module, "chat_json", llm_client.chat_json)
     monkeypatch.setattr(config, "LLM_PROVIDER", "ollama")
-    monkeypatch.setattr(llm_client, "_ollama_request", slow_request)
+    monkeypatch.setattr(llm_client.OllamaBackend, "_chat", slow_request)
     limits.reset_peaks()
     batch = process_batch(paths, options, BatchOptions(workers=8))
     assert batch.succeeded == 10

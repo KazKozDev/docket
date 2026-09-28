@@ -35,11 +35,12 @@ def test_config_model_is_resolved_at_call_time(monkeypatch):
     assert captured["model"] == "picked-in-the-ui:v9"
 
 
-def test_explicit_model_argument_wins_over_config(monkeypatch):
+def test_explicit_backend_model_wins_over_config(monkeypatch):
     captured = _capture_payload(monkeypatch)
     monkeypatch.setattr(config, "TEXT_MODEL", "from-config:v1")
 
-    llm_client.chat_json("hi", model="explicit:v2")
+    with llm_client.use_backend(llm_client.OllamaBackend(text_model="explicit:v2")):
+        llm_client.chat_json("hi")
     assert captured["model"] == "explicit:v2"
 
 
@@ -61,7 +62,8 @@ def test_json_schema_is_sent_to_ollama_when_provided(monkeypatch):
 
 def test_cloud_uses_json_mode_instead_of_unsupported_schema(monkeypatch):
     captured = _capture_payload(monkeypatch)
-    llm_client.chat_json("synthetic", model="example:cloud", schema={"type": "object"})
+    monkeypatch.setattr(config, "TEXT_MODEL", "example:cloud")
+    llm_client.chat_json("synthetic", schema={"type": "object"})
     assert captured["format"] == "json"
 
 
@@ -71,7 +73,8 @@ def test_cloud_fenced_json_is_parsed(monkeypatch):
             return {"message": {"content": '```json\n{"total_amount": 10}\n```'}}
 
     monkeypatch.setattr(llm_client.httpx, "post", lambda *args, **kwargs: Response())
-    assert llm_client.chat_json("synthetic", model="example:cloud") == {
+    monkeypatch.setattr(config, "TEXT_MODEL", "example:cloud")
+    assert llm_client.chat_json("synthetic") == {
         "total_amount": 10
     }
 

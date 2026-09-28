@@ -231,11 +231,16 @@ def test_multiframe_tiff_is_multipage(tmp_path):
 # ---- VLM availability ------------------------------------------------------------
 
 
-def test_vlm_needs_a_key_for_openai_compatible_providers(monkeypatch):
+def test_vlm_needs_a_vision_model(monkeypatch):
+    monkeypatch.setattr(config, "VISION_MODEL", "")
+    status = VlmBackend().availability()
+    assert not status.available and "DOCKET_VISION_MODEL" in status.reason
+
+
+def test_vlm_on_a_local_openai_compatible_server_needs_no_key(monkeypatch):
     monkeypatch.setattr(config, "LLM_PROVIDER", "openai")
     monkeypatch.setattr(config, "LLM_API_KEY", None)
-    status = VlmBackend().availability()
-    assert not status.available and "DOCKET_LLM_API_KEY" in status.reason
+    assert VlmBackend().availability().available
 
 
 def test_vlm_error_surfaces_as_ocr_error(tmp_path, monkeypatch):

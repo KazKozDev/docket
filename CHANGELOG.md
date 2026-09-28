@@ -15,8 +15,28 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   human correction and approval, approved-only CSV export, duplicate detection,
   revision history, local backup/restore, and a PyInstaller build script.
 
+### Added
+
+- Pluggable language models: `ProcessOptions(llm=...)` takes
+  `OllamaBackend`, `OpenAICompatibleBackend` or any object implementing
+  `LLMBackend`, so one process can run documents through different models.
+  See `docs/LLM.md` for local recipes (Ollama, vLLM, llama.cpp, LM Studio).
+- The OpenAI-compatible provider sends the extraction schema as
+  `response_format: json_schema` (constrained decoding on vLLM, llama.cpp and
+  LM Studio), falling back to `json_object` where the server refuses it.
+  `DOCKET_LLM_STRUCTURED_OUTPUT=json_object` turns it off.
+
 ### Changed
 
+- No default model: `DOCKET_TEXT_MODEL` and `DOCKET_VISION_MODEL` used to
+  default to the hosted `deepseek-v4.1-flash:cloud`. Without a text model,
+  processing is a configuration error (exit code 3); without a vision model,
+  the `vlm` fallback is unavailable (set `DOCKET_OCR_FALLBACKS=` to run
+  without it).
+- The `vlm` backend on an OpenAI-compatible server no longer requires
+  `DOCKET_LLM_API_KEY`: a local vLLM or llama.cpp server runs without one.
+- `llm_client.chat_json` and `vision_transcribe` lost their `model` argument;
+  the backend names its models.
 - Receipt schema 1.3: optional `merchant_country`, so a tax number printed
   without its country prefix can be checked.
 

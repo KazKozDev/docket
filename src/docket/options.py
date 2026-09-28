@@ -25,6 +25,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from . import config
 from .errors import ConfigurationError
+from .llm_client import LLMBackend, default_backend, use_backend
 from .ocr import (
     AcquisitionOptions,
     OcrBackend,
@@ -115,6 +116,11 @@ class ProcessOptions(BaseModel):
         description="Re-read with the last fallback backend when OCR text fails validation.",
     )
     review: ReviewOptions = Field(default_factory=ReviewOptions)
+    llm: LLMBackend | None = Field(
+        default=None,
+        description="The language model backend: docket.OllamaBackend, docket.OpenAICompatibleBackend or "
+        "your own LLMBackend. Env: DOCKET_LLM_PROVIDER and the model settings.",
+    )
 
 
 @dataclass(frozen=True)
@@ -136,6 +142,7 @@ class ResolvedOptions:
     include_layout: bool
     escalate: bool
     review: ResolvedReview
+    llm: LLMBackend
 
     @property
     def can_escalate(self) -> bool:
@@ -178,7 +185,14 @@ def resolve(options: ProcessOptions | None = None) -> ResolvedOptions:
         max_pages=config.MAX_PDF_PAGES,
         max_pixels=config.MAX_IMAGE_PIXELS,
     )
-    primary, fallbacks = resolve_chain(acquisition)
+    llm = options.llm or default_backend()
+    if not llm.text_model:
+        raise ConfigurationError(
+            "no text model: set DOCKET_TEXT_MODEL (with Ollama, a model you have pulled) "
+            "or pass ProcessOptions(llm=...)"
+        )
+    with use_backend(llm):  # the vlm backend checks the vision model of this one
+        primary, fallbacks = resolve_chain(acquisition)
     acquisition = acquisition.model_copy(
         update={"backend": primary if primary is not None else "auto", "fallbacks": fallbacks}
     )
@@ -203,6 +217,7 @@ def resolve(options: ProcessOptions | None = None) -> ResolvedOptions:
         classify=options.classify,
         include_layout=_pick(options.include_layout, config.INCLUDE_LAYOUT),
         escalate=options.escalate,
+        llm=llm,
         review=ResolvedReview(
             enqueue=enqueue,
             min_classification_confidence=_pick(

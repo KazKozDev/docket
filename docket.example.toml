@@ -14,10 +14,15 @@
 # base_url = "https://api.openai.com/v1"
 # API key for the OpenAI-compatible API. Env: DOCKET_LLM_API_KEY.
 # api_key = ""  # unset
-# Model for classification and extraction. Env: DOCKET_TEXT_MODEL.
-# text_model = "deepseek-v4.1-flash:cloud"
-# Model that reads page images (the vlm OCR backend). Env: DOCKET_VISION_MODEL.
-# vision_model = "deepseek-v4.1-flash:cloud"
+# Model for classification and extraction (required). Env: DOCKET_TEXT_MODEL.
+# text_model = ""
+# Model that reads page images (the vlm OCR backend); empty makes vlm unavailable.
+# Env: DOCKET_VISION_MODEL.
+# vision_model = ""
+# openai provider: 'json_schema' sends the extraction schema for constrained decoding
+# (falling back to 'json_object' where the server refuses it); 'json_object' never
+# sends it. Env: DOCKET_LLM_STRUCTURED_OUTPUT.
+# structured_output = "json_schema"
 # Extra attempts when the model's output fails the schema. Env:
 # DOCKET_MAX_EXTRACT_RETRIES.
 # max_extract_retries = 2

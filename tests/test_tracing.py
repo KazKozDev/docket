@@ -65,9 +65,9 @@ def test_usage_counter_accumulates_and_resets():
 
 def test_usage_sums_provider_reported_tokens_and_counts_the_rest():
     llm_client.usage.reset()
-    llm_client.usage.record("p", "c", model="m1", reply=llm_client._Reply("c", 120, 30))
-    llm_client.usage.record("p", "c", model="m2", reply=llm_client._Reply("c"))
-    llm_client.usage.record("p", "c", model="m1", reply=llm_client._Reply("c", 80, 10))
+    llm_client.usage.record("p", "c", model="m1", reply=llm_client.LLMReply("c", 120, 30))
+    llm_client.usage.record("p", "c", model="m2", reply=llm_client.LLMReply("c"))
+    llm_client.usage.record("p", "c", model="m1", reply=llm_client.LLMReply("c", 80, 10))
     snap = llm_client.usage.snapshot()
     assert (snap["input_tokens"], snap["output_tokens"], snap["unreported_calls"]) == (200, 40, 1)
     assert snap["models"] == ["m1", "m2"]
