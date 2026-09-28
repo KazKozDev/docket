@@ -59,11 +59,17 @@ Other built-in formats include UBL, Peppol, XRechnung CII, Factur-X and Facturae
 
 ## How it works
 
-Docket reads each page from a usable PDF text layer, an OCR backend, or a vision model when OCR is unusable. Rules, TF-IDF and then an LLM classify the document. Extraction fills a versioned Pydantic schema and cites source lines. Deterministic checks cover citations, amounts, dates and check digits; uncertain results go to review. The [architecture](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md) describes the stages and extension points.
-
 ```text
-document → PDF text / OCR / vision → classify → extract + cite → validate → JSON or review
+document → read text → classify → extract + cite → check → JSON, or review
 ```
+
+1. **Read the text.** A PDF with a usable text layer is read directly, with no OCR and no model. A scan or photo goes through OCR (Tesseract by default, or PaddleOCR or Docling). If OCR confidence is too low, or the text model judges the OCR text to be garbage, the vision model reads the page image instead.
+2. **Classify.** Keyword rules decide first, then a TF-IDF model. The text model is asked only when neither is confident.
+3. **Extract.** The text model fills the document's schema, such as number, dates, parties, amounts and line items. For every field it cites the line it read the value from. An invoice from a registered vendor template is read by that template, with no model call.
+4. **Check.** Plain code, with no model involved, compares each value with the line it cites. It also checks the arithmetic, dates, and IBAN and VAT check digits. If the checks fail, the page is read again by the vision model and the better result is kept. Anything still wrong or uncertain is marked `needs_review` instead of `succeeded`.
+5. **Output.** Every result comes out as JSON (`docket process`) or as CSV and JSONL rows (`docket batch`), with its status and review reasons. An e-invoice export (UBL, Peppol, XRechnung, Factur-X, Facturae) is refused unless the result passed its checks.
+
+The [architecture](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md) describes the stages and extension points.
 
 ## Configuration
 
