@@ -82,13 +82,17 @@ def is_scan(path: Path) -> bool:
         return not any(page.chars for page in pdf.pages)
 
 
-def documents(dirs: list[Path]) -> list[tuple[Path, dict]]:
+def documents(dirs: list[Path], text_pdfs: bool = False) -> list[tuple[Path, dict]]:
+    """(path, expected) for every labeled scan; with `text_pdfs`, PDFs with a
+    text layer too (the pipeline then reads the layer, not OCR)."""
     found = []
     for folder in dirs:
         for expected_path in sorted(folder.glob("*.expected.json")):
             stem = expected_path.name[: -len(".expected.json")]
             for candidate in sorted(folder.glob(f"{stem}.*")):
-                if candidate != expected_path and is_scan(candidate):
+                if candidate != expected_path and (
+                    is_scan(candidate) or (text_pdfs and candidate.suffix.lower() == ".pdf")
+                ):
                     found.append((candidate, json.loads(expected_path.read_text(encoding="utf-8"))))
     return found
 
@@ -399,6 +403,8 @@ def main() -> None:
     parser.add_argument("--pipeline-only", action="store_true", help="skip the OCR-only runs")
     parser.add_argument("--dataset", action="append", type=Path, help="directory to use (repeatable); default both eval sets")
     parser.add_argument("--limit", type=int, help="first N documents only (smoke test)")
+    parser.add_argument("--text-pdfs", action="store_true",
+                        help="also run PDFs that have a text layer (pipeline only; no OCR is involved)")
     parser.add_argument("--no-layout-markers", action="store_true",
                         help="give the LLM page text without [TABLE n] / [COLUMN n] markers (DOCKET_LAYOUT_MARKERS=false)")
     parser.add_argument("--out", type=Path, default=ROOT / "eval" / "results" / "ocr_benchmark.json")
@@ -412,7 +418,7 @@ def main() -> None:
     if args.no_layout_markers:
         config.LAYOUT_MARKERS = False
     config.check()
-    docs = documents(args.dataset or DATASETS)[: args.limit]
+    docs = documents(args.dataset or DATASETS, text_pdfs=args.text_pdfs)[: args.limit]
     print(f"{len(docs)} scanned documents")
     report: dict = {"environment": environment(args.configs), "documents": [p.name for p, _ in docs],
                     "warm_up_seconds": {}, "ocr_only": {}, "pipeline": {}}

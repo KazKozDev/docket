@@ -2,7 +2,7 @@
 
     python eval/benchmark_ocr.py --pipeline-only --dataset eval/golden_dataset \\
         --save-results eval/results/golden_results --out eval/results/golden_pipeline.json
-    python eval/benchmark_export.py eval/results/golden_results
+    python eval/benchmark_export.py eval/results/golden_results [OUT.json]
 
 Every saved `DocumentResult` of an invoice or credit note is exported to each
 built-in e-invoice format that accepts its type, and the output is checked
@@ -40,6 +40,7 @@ OUT = ROOT / "eval" / "results" / "benchmark_export.json"
 
 def main() -> None:
     folder = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "eval" / "results" / "golden_results"
+    out = Path(sys.argv[2]) if len(sys.argv) > 2 else OUT
     results = [DocumentResult.model_validate_json(p.read_text(encoding="utf-8"))
                for p in sorted(folder.glob("*.result.json"))]
     einvoice = [e for e in list_exporters() if e.einvoice_profile]
@@ -72,9 +73,9 @@ def main() -> None:
     print(f"\n{summary['documents']} documents, {summary['attempts']} exports: {summary['outcomes']}")
     for name, counts in by_format.items():
         print(f"  {name:18} {counts}")
-    OUT.parent.mkdir(exist_ok=True)
-    OUT.write_text(json.dumps({"summary": summary, "exports": rows}, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"\nWrote {OUT.relative_to(ROOT)}")
+    out.parent.mkdir(exist_ok=True)
+    out.write_text(json.dumps({"summary": summary, "exports": rows}, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"\nWrote {out}")
 
 
 if __name__ == "__main__":

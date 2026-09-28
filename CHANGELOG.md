@@ -44,6 +44,19 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   number without an IBAN is exported as the payment account.
 - UBL export writes no empty `PostalAddress` for a party without an address
   (PEPPOL-EN16931-R008).
+- A line's VAT rate is checked against the percentage printed on its row;
+  "19 %" was never read as 19, so every rated line failed its citation.
+- Row arithmetic accepts a line discount printed on the row, a gross line
+  total over a net price, negative credit lines, and a unit price rounded
+  to the cent; a quantity glued to its unit ("5Unit(s)", "-5 Stk") is read.
+- Dotted dates (06.12.2018) make a page day-first even when a stray "$" (a
+  rendered "§") would have marked it month-first.
+- German invoice titles written as compounds ("Handelsrechnung",
+  "Warenrechnung") score for invoice, as do the supply date and payment
+  terms; a self-billed "Gutschrift (selbst ausgestellte Rechnung)" is an
+  invoice, not a credit note.
+- Contact persons are not checked as party names.
+- CII export writes no region without a country (a schema error).
 - A line-item row none of whose values cites a source line sends the
   document to review. Rows go into the XRechnung / Peppol export, and an
   uncited row had nothing on the page behind it; it used to pass as a mere

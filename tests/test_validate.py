@@ -1371,3 +1371,70 @@ def test_space_grouped_totals_match_their_cited_line():
 
     wrong = invoice.model_copy(update={"total_amount": 12261.89})
     assert _check_cited_sources(wrong, text, {**fields, "total_amount": 12261.89})
+
+
+# ---- line rows as European invoices print them ------------------------------------------------
+
+
+def _row_invoice(item: LineItem, *, subtotal: float, tax: float, total: float, quotes: dict) -> Invoice:
+    return flat_invoice(
+        invoice_number="R-1", issue_date=date(2026, 6, 12), vendor_name="Lieferant GmbH",
+        customer_name="Kunde AG", subtotal=subtotal, tax_amount=tax, total_amount=total, currency="EUR",
+        line_items=[item],
+        field_locations={k: {"page": 1, "quote": q} for k, q in quotes.items()},
+    )
+
+
+def _line_errors(invoice: Invoice, page: str) -> list[str]:
+    return [f"{i.field}: {i.message}" for i in validate(invoice, pages=[page])
+            if i.severity == "error" and (i.field.startswith("line_items") or "line items sum" in i.message)]
+
+
+def test_a_tax_rate_is_read_from_the_percentage_on_its_line():
+    row = "1 | Hausbesuch | 2 | 12,00 | 24,00 | 0 %"
+    item = LineItem(description="Hausbesuch", quantity=2, unit_price=12.0, total=24.0, tax_rate_percent=0)
+    invoice = _row_invoice(item, subtotal=24.0, tax=0.0, total=24.0, quotes={
+        "line_items[0].total": row, "line_items[0].tax_rate_percent": row})
+    assert _line_errors(invoice, row) == []
+
+    wrong = item.model_copy(update={"tax_rate_percent": 19})
+    assert any("tax_rate_percent" in e for e in _line_errors(invoice.model_copy(update={"line_items": [wrong]}), row))
+
+
+def test_a_row_discount_printed_on_the_row_explains_its_total():
+    row = "Nougat 250g | 5Unit(s) | 4,55 € 10% | 20,48 €"
+    item = LineItem(description="Nougat 250g", quantity=5, unit_price=4.55, total=20.48)
+    invoice = _row_invoice(item, subtotal=20.48, tax=0.0, total=20.48, quotes={
+        "line_items[0].total": row, "line_items[0].quantity": row})
+    assert _line_errors(invoice, row) == []
+
+
+def test_a_gross_row_total_over_a_net_price_is_explained_by_the_documents_rate():
+    page = "Kfz-Haftpflicht | 1 | 67,2244 | 80,00\nVersicherungsteuer 19 %"
+    item = LineItem(description="Kfz-Haftpflicht", quantity=1, unit_price=67.2244, total=80.0)
+    invoice = _row_invoice(item, subtotal=80.0, tax=0.0, total=80.0, quotes={
+        "line_items[0].total": "Kfz-Haftpflicht | 1 | 67,2244 | 80,00"})
+    assert _line_errors(invoice, page) == []
+
+
+def test_credit_rows_printed_negative_match_a_positive_subtotal():
+    row = "1 | Artikel | 1,0000 | -5 Stk | 19 % | -5,00"
+    item = LineItem(description="Artikel", quantity=-5, unit_price=1.0, total=-5.0)
+    invoice = _row_invoice(item, subtotal=5.0, tax=0.95, total=5.95, quotes={
+        "line_items[0].total": row, "line_items[0].quantity": row})
+    assert _line_errors(invoice, row) == []
+
+
+def test_a_wrong_unit_price_is_still_caught():
+    row = "1 | Toolbox | 10 Stk | 100,00 | 1.000,00"
+    item = LineItem(description="Toolbox", quantity=10, unit_price=1000.0, total=1000.0)
+    invoice = _row_invoice(item, subtotal=1000.0, tax=0.0, total=1000.0, quotes={"line_items[0].total": row})
+    assert any("10 × 1000.00" in e for e in _line_errors(invoice, row))
+
+
+def test_dotted_dates_make_a_page_day_first_even_with_a_stray_dollar_sign():
+    """A text layer rendered "§4 UStG" as "$4"; 06.12.2018 is still 6 December."""
+    page = "Rechnung vom 06.12.2018\nsteuerfrei nach $4 Nr. 10a UStG\nSumme 59,50"
+    invoice = flat_invoice(invoice_number="R-1", issue_date=date(2018, 12, 6), vendor_name="V", customer_name="K",
+                           subtotal=59.5, tax_amount=0.0, total_amount=59.5, currency="EUR")
+    assert not [i for i in validate(invoice, pages=[page]) if "convention" in i.message]

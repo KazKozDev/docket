@@ -95,6 +95,30 @@ def _amounts_on_line(line: str) -> list[float]:
     return values
 
 
+_QUANTITY_RE = re.compile(r"(?<![\d.,])-?\d+(?:[.,]\d+)?(?![\d])")
+
+
+def _percents_on_line(line: str) -> list[float]:
+    """Every percentage printed on one line ("19 %", "7,5%")."""
+    return [float(m.group(0).rstrip("% ").replace(",", ".")) for m in _PERCENT_RE.finditer(line)]
+
+
+def _line_explained(quantity: float, unit_price: float, total: float,
+                    discounts: list[float], rates: list[float]) -> bool:
+    """Whether quantity × unit price accounts for a line total as printed.
+
+    Besides the plain product: a credit line printed negative, a discount
+    percentage printed on the row, a gross line total over a net price (the
+    document's own tax rates), and a unit price rounded to the cent on the
+    page ("2,77" for 2.773 — at most half a cent per unit)."""
+    base, target = abs(quantity * unit_price), abs(total)
+    if _isclose(base, target) or abs(base - target) <= abs(quantity) * 0.005 + 1e-9:
+        return True
+    if any(_isclose(base * (1 - d / 100), target) for d in discounts if 0 < d < 100):
+        return True
+    return any(_isclose(base * (1 + r / 100), target) for r in rates if r > 0)
+
+
 def _item_numeric_fields(document) -> dict[str, float]:
     """Every numeric value of every repeated-list row, keyed by its schema
     path (spec.line_items knows where each schema keeps them). Line items are
@@ -205,7 +229,23 @@ def _check_cited_sources(
             )
             continue
 
-        stated = _amounts_on_line(cited)
+        if field.endswith("tax_rate_percent"):
+            # A rate is printed as a percentage, which the amount reading
+            # skips on purpose ("19 %" is not an amount).
+            rates = _percents_on_line(cited)
+            if rates and not any(_isclose(r, value, tol=0.01) for r in rates):
+                issues.append(ValidationIssue(
+                    field=field,
+                    message=f"cited line {short_cited!r} states {', '.join(f'{r:g} %' for r in rates)}, "
+                            f"but {field}={value:g}",
+                ))
+            continue
+        if field.endswith(".quantity"):
+            # A quantity is a plain count, often glued to its unit ("5Unit(s)",
+            # "10Stk"), which the amount reading does not take for a number.
+            stated = [float(n.replace(",", ".")) for n in _QUANTITY_RE.findall(cited)]
+        else:
+            stated = _amounts_on_line(cited)
         if stated and not any(_isclose(s, value, tol=0.02) for s in stated):
             # Not printed — but the row can still ground the value: a derived
             # unit price (4.98 / 2 = 2.49), a line total (2 x 58.50 = 117.00).
@@ -601,7 +641,10 @@ def _check_cited_identifiers(document, raw_text: str) -> list[ValidationIssue]:
     return issues
 
 
+# Party names only: a contact person or a bank's branch is not who the
+# document is between, and a label-line citation there is no reason to review.
 _NAME_PATH_RE = re.compile(r"(?:^|[._])(?:name|account_holder|parties_[ab]\[\d+\])$")
+_NOT_A_PARTY_RE = re.compile(r"contact_name$")
 _NAME_MATCH = 0.8
 
 
@@ -628,7 +671,7 @@ def _check_cited_names(document, raw_text: str) -> list[ValidationIssue]:
     locations = getattr(document, "field_locations", None) or {}
     issues: list[ValidationIssue] = []
     for field, location in locations.items():
-        if not _NAME_PATH_RE.search(field) or not (location.quote or "").strip():
+        if not _NAME_PATH_RE.search(field) or _NOT_A_PARTY_RE.search(field) or not (location.quote or "").strip():
             continue
         value = value_at(document, field)
         if not isinstance(value, str) or not value.strip():
@@ -793,12 +836,17 @@ def validate_billing(inv, ctx: ValidationContext) -> list[ValidationIssue]:
                     )
                 )
 
+    locations = getattr(inv, "field_locations", None) or {}
+    page_rates = _percents_on_line(raw_text) if raw_text else []
     for n, li in enumerate(inv.line_items, start=1):
         # quantity × unit_price must equal the line total. Cheap, always true,
         # and the only check that catches a garbled *price* — a wrong unit
         # price leaves every other total intact, so the invoice-level
         # arithmetic still adds up and nothing else notices.
-        if not _isclose(li.quantity * li.unit_price, li.total):
+        row_quotes = " ".join(loc.quote for key, loc in locations.items()
+                              if key.startswith(f"line_items[{n - 1}].") and loc.quote)
+        rates = [r for r in (li.tax_rate_percent, inv.tax_rate_percent) if r] + page_rates
+        if not _line_explained(li.quantity, li.unit_price, li.total, _percents_on_line(row_quotes), rates):
             issues.append(
                 ValidationIssue(
                     field=f"line_items[{n - 1}]",
@@ -811,7 +859,11 @@ def validate_billing(inv, ctx: ValidationContext) -> list[ValidationIssue]:
 
     if inv.line_items:
         computed_subtotal = sum(li.total for li in inv.line_items)
-        if not _isclose(computed_subtotal, inv.subtotal):
+        # A credit or correction may print its lines negative and its totals
+        # positive; the amounts are the same.
+        if not _isclose(computed_subtotal, inv.subtotal) and not (
+            all(li.total <= 0 for li in inv.line_items) and _isclose(-computed_subtotal, inv.subtotal)
+        ):
             issues.append(
                 ValidationIssue(
                     field="subtotal",
@@ -1207,6 +1259,9 @@ def _document_date_convention(raw_text: str) -> str | None:
     )
 
 
+_DOTTED_DATE_RE = re.compile(r"(?<![\d.])\d{1,2}\.(\d{1,2})\.(?:\d{4}|\d{2})(?![\d.])")
+
+
 def _convention_from_dates(raw_text: str) -> str | None:
     day_first = month_first = False
     for first, second, _ in _NUMERIC_DATE_RE.findall(raw_text):
@@ -1214,6 +1269,10 @@ def _convention_from_dates(raw_text: str) -> str | None:
             month_first = True
         elif int(first) > 12:
             day_first = True
+    # Dates written with dots (06.12.2018) are day-first wherever they are
+    # used; month-first countries write slashes.
+    if any(int(month) <= 12 for month in _DOTTED_DATE_RE.findall(raw_text)):
+        day_first = True
     if day_first and not month_first:
         return "dmy"
     if month_first and not day_first:

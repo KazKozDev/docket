@@ -156,3 +156,11 @@ def test_a_party_without_an_address_gets_no_empty_address_element():
     customer = xml.split("<cac:AccountingCustomerParty>")[1].split("</cac:AccountingCustomerParty>")[0]
 
     assert "PostalAddress" not in customer
+
+
+def test_cii_writes_no_region_without_a_country():
+    invoice = exportable_invoice()
+    invoice.buyer.address = invoice.buyer.address.model_copy(update={"country_code": None, "region": "Martinique"})
+    xml = export_document(invoice, "factur-x-basic").content
+
+    assert "CountrySubDivisionName" not in xml

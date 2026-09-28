@@ -42,7 +42,7 @@ def field_accuracy(extracted: dict | None, expected: dict) -> tuple[int, int, li
     for key in graded_keys:
         exp_val = expected[key]
         got_val = value_at(extracted, key)
-        if _values_match(got_val, exp_val):
+        if _field_matches(key, got_val, exp_val):
             correct += 1
         else:
             mismatches.append(key)
@@ -59,6 +59,18 @@ def _canon(text: str) -> str:
     MARIA"). Applied to every tool alike."""
     text = text.lower().replace("'", "").replace("\u2019", "")
     return " ".join(_PUNCT_RE.sub(" ", text).split())
+
+
+def _field_matches(key: str, got, expected) -> bool:
+    """A value match, and for a party name also the same name without its
+    legal form: "Au bon moulin" is the "Au bon moulin SARL" the page prints."""
+    if _values_match(got, expected):
+        return True
+    if key.endswith("name") and isinstance(got, str) and isinstance(expected, str):
+        from docket.validate import _core_name
+
+        return bool(_core_name(got)) and _core_name(got) == _core_name(expected)
+    return False
 
 
 def _values_match(got, expected) -> bool:
@@ -100,7 +112,7 @@ def field_precision_recall_f1(rows: list[tuple[dict | None, dict]]) -> dict[str,
             got_val = value_at(extracted, key) if extracted is not None else None
             if got_val is None:
                 c["fn"] += 1
-            elif _values_match(got_val, exp_val):
+            elif _field_matches(key, got_val, exp_val):
                 c["tp"] += 1
             else:
                 c["fp"] += 1
@@ -331,7 +343,7 @@ def citation_coverage_summary(rows: list[dict]) -> dict:
 _SOURCES = (
     ("invoice_hf", "donut"), ("invoice_docile", "docile"), ("receipt_hf", "cord"),
     ("invoice_rvlcdip", "rvl-cdip"), ("other_rvlcdip", "rvl-cdip"), ("form_funsd", "funsd"),
-    ("contract_hf", "contract-hf"),
+    ("contract_hf", "contract-hf"), ("zf_", "zugferd"),
 )
 
 

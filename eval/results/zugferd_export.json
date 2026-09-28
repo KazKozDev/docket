@@ -1,0 +1,1304 @@
+{
+  "summary": {
+    "documents": 28,
+    "attempts": 168,
+    "outcomes": {
+      "refused": 126,
+      "valid": 18,
+      "invalid": 24
+    },
+    "by_format": {
+      "ubl": {
+        "refused": 21,
+        "valid": 6,
+        "invalid": 1
+      },
+      "peppol": {
+        "refused": 21,
+        "invalid": 7
+      },
+      "xrechnung-ubl": {
+        "refused": 21,
+        "invalid": 7
+      },
+      "xrechnung-cii": {
+        "refused": 21,
+        "invalid": 7
+      },
+      "factur-x-en16931": {
+        "refused": 21,
+        "valid": 6,
+        "invalid": 1
+      },
+      "factur-x-basic": {
+        "refused": 21,
+        "valid": 6,
+        "invalid": 1
+      }
+    }
+  },
+  "exports": [
+    {
+      "document": "zf_Avoir_FR_type381_BASIC.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_Avoir_FR_type381_BASIC.pdf: seller.contact_name: 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there; validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+    },
+    {
+      "document": "zf_Avoir_FR_type381_BASIC.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_Avoir_FR_type381_BASIC.pdf: seller.contact_name: 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there; validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+    },
+    {
+      "document": "zf_Avoir_FR_type381_BASIC.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_Avoir_FR_type381_BASIC.pdf: seller.contact_name: 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there; validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+    },
+    {
+      "document": "zf_Avoir_FR_type381_BASIC.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_Avoir_FR_type381_BASIC.pdf: seller.contact_name: 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there; validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+    },
+    {
+      "document": "zf_Avoir_FR_type381_BASIC.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_Avoir_FR_type381_BASIC.pdf: seller.contact_name: 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there; validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+    },
+    {
+      "document": "zf_Avoir_FR_type381_BASIC.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_Avoir_FR_type381_BASIC.pdf: seller.contact_name: 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there; validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+    },
+    {
+      "document": "zf_EN16931_1_Teilrechnung.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_1_Teilrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_1_Teilrechnung.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_1_Teilrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_1_Teilrechnung.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_1_Teilrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_1_Teilrechnung.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_1_Teilrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_1_Teilrechnung.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_1_Teilrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_1_Teilrechnung.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_1_Teilrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_2_Teilrechnung.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_2_Teilrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_2_Teilrechnung.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_2_Teilrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_2_Teilrechnung.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_2_Teilrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_2_Teilrechnung.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_2_Teilrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_2_Teilrechnung.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_2_Teilrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_2_Teilrechnung.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_2_Teilrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_AbweichenderZahlungsempf.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_AbweichenderZahlungsempf.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12123456781234567890' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12123456781234567890' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_AbweichenderZahlungsempf.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_AbweichenderZahlungsempf.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12123456781234567890' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12123456781234567890' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_AbweichenderZahlungsempf.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_AbweichenderZahlungsempf.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12123456781234567890' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12123456781234567890' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_AbweichenderZahlungsempf.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_AbweichenderZahlungsempf.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12123456781234567890' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12123456781234567890' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_AbweichenderZahlungsempf.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_AbweichenderZahlungsempf.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12123456781234567890' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12123456781234567890' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_AbweichenderZahlungsempf.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_AbweichenderZahlungsempf.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12123456781234567890' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12123456781234567890' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Betriebskostenabrechnung.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Betriebskostenabrechnung.pdf: total_amount: subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63; validation error: total_amount — subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63"
+    },
+    {
+      "document": "zf_EN16931_Betriebskostenabrechnung.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Betriebskostenabrechnung.pdf: total_amount: subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63; validation error: total_amount — subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63"
+    },
+    {
+      "document": "zf_EN16931_Betriebskostenabrechnung.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Betriebskostenabrechnung.pdf: total_amount: subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63; validation error: total_amount — subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63"
+    },
+    {
+      "document": "zf_EN16931_Betriebskostenabrechnung.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Betriebskostenabrechnung.pdf: total_amount: subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63; validation error: total_amount — subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63"
+    },
+    {
+      "document": "zf_EN16931_Betriebskostenabrechnung.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Betriebskostenabrechnung.pdf: total_amount: subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63; validation error: total_amount — subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63"
+    },
+    {
+      "document": "zf_EN16931_Betriebskostenabrechnung.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Betriebskostenabrechnung.pdf: total_amount: subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63; validation error: total_amount — subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63"
+    },
+    {
+      "document": "zf_EN16931_Elektron.pdf",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_EN16931_Elektron.pdf",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided",
+        "DE-R-002: The group \"SELLER CONTACT\" (BG-6) shall be provided."
+      ]
+    },
+    {
+      "document": "zf_EN16931_Elektron.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "zf_EN16931_Elektron.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-2: [BR-DE-2] Die Gruppe \"SELLER CONTACT\" (BG-6) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "zf_EN16931_Elektron.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_EN16931_Elektron.pdf",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_EN16931_ElektronischeAdresse.pdf",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_EN16931_ElektronischeAdresse.pdf",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided",
+        "DE-R-015: The element \"Buyer reference\" (BT-10) shall be provided."
+      ]
+    },
+    {
+      "document": "zf_EN16931_ElektronischeAdresse.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "zf_EN16931_ElektronischeAdresse.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "zf_EN16931_ElektronischeAdresse.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_EN16931_ElektronischeAdresse.pdf",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf: seller.tax_ids[0]: 'GB123456789' fails its country's VAT checksum; buyer.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; line_items[0].unit_price: cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00; line_items[0].total: cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00; line_items[1].unit_price: cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00; line_items[1].total: cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00; validation error: seller.tax_ids[0] — 'GB123456789' fails its country's VAT checksum; validation error: buyer.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; validation error: line_items[0].unit_price — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00; validation error: line_items[0].total — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00; validation error: line_items[1].unit_price — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00; validation error: line_items[1].total — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00"
+    },
+    {
+      "document": "zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf: seller.tax_ids[0]: 'GB123456789' fails its country's VAT checksum; buyer.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; line_items[0].unit_price: cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00; line_items[0].total: cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00; line_items[1].unit_price: cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00; line_items[1].total: cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00; validation error: seller.tax_ids[0] — 'GB123456789' fails its country's VAT checksum; validation error: buyer.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; validation error: line_items[0].unit_price — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00; validation error: line_items[0].total — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00; validation error: line_items[1].unit_price — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00; validation error: line_items[1].total — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00"
+    },
+    {
+      "document": "zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf: seller.tax_ids[0]: 'GB123456789' fails its country's VAT checksum; buyer.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; line_items[0].unit_price: cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00; line_items[0].total: cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00; line_items[1].unit_price: cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00; line_items[1].total: cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00; validation error: seller.tax_ids[0] — 'GB123456789' fails its country's VAT checksum; validation error: buyer.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; validation error: line_items[0].unit_price — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00; validation error: line_items[0].total — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00; validation error: line_items[1].unit_price — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00; validation error: line_items[1].total — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00"
+    },
+    {
+      "document": "zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf: seller.tax_ids[0]: 'GB123456789' fails its country's VAT checksum; buyer.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; line_items[0].unit_price: cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00; line_items[0].total: cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00; line_items[1].unit_price: cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00; line_items[1].total: cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00; validation error: seller.tax_ids[0] — 'GB123456789' fails its country's VAT checksum; validation error: buyer.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; validation error: line_items[0].unit_price — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00; validation error: line_items[0].total — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00; validation error: line_items[1].unit_price — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00; validation error: line_items[1].total — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00"
+    },
+    {
+      "document": "zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf: seller.tax_ids[0]: 'GB123456789' fails its country's VAT checksum; buyer.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; line_items[0].unit_price: cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00; line_items[0].total: cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00; line_items[1].unit_price: cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00; line_items[1].total: cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00; validation error: seller.tax_ids[0] — 'GB123456789' fails its country's VAT checksum; validation error: buyer.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; validation error: line_items[0].unit_price — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00; validation error: line_items[0].total — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00; validation error: line_items[1].unit_price — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00; validation error: line_items[1].total — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00"
+    },
+    {
+      "document": "zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf: seller.tax_ids[0]: 'GB123456789' fails its country's VAT checksum; buyer.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; line_items[0].unit_price: cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00; line_items[0].total: cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00; line_items[1].unit_price: cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00; line_items[1].total: cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00; validation error: seller.tax_ids[0] — 'GB123456789' fails its country's VAT checksum; validation error: buyer.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; validation error: line_items[0].unit_price — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00; validation error: line_items[0].total — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00; validation error: line_items[1].unit_price — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00; validation error: line_items[1].total — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00"
+    },
+    {
+      "document": "zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; total_amount: subtotal + tax + shipping - discount = 220.00, total_amount says 440.00; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: total_amount — subtotal + tax + shipping - discount = 220.00, total_amount says 440.00"
+    },
+    {
+      "document": "zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; total_amount: subtotal + tax + shipping - discount = 220.00, total_amount says 440.00; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: total_amount — subtotal + tax + shipping - discount = 220.00, total_amount says 440.00"
+    },
+    {
+      "document": "zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; total_amount: subtotal + tax + shipping - discount = 220.00, total_amount says 440.00; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: total_amount — subtotal + tax + shipping - discount = 220.00, total_amount says 440.00"
+    },
+    {
+      "document": "zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; total_amount: subtotal + tax + shipping - discount = 220.00, total_amount says 440.00; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: total_amount — subtotal + tax + shipping - discount = 220.00, total_amount says 440.00"
+    },
+    {
+      "document": "zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; total_amount: subtotal + tax + shipping - discount = 220.00, total_amount says 440.00; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: total_amount — subtotal + tax + shipping - discount = 220.00, total_amount says 440.00"
+    },
+    {
+      "document": "zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; total_amount: subtotal + tax + shipping - discount = 220.00, total_amount says 440.00; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: total_amount — subtotal + tax + shipping - discount = 220.00, total_amount says 440.00"
+    },
+    {
+      "document": "zf_EN16931_OEPNV.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_OEPNV.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_OEPNV.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_OEPNV.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_OEPNV.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_OEPNV.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_OEPNV.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_OEPNV.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_OEPNV.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_OEPNV.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_OEPNV.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_OEPNV.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Physiotherapeut.pdf",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_EN16931_Physiotherapeut.pdf",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R003: A buyer reference or purchase order reference MUST be provided.",
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided",
+        "DE-R-015: The element \"Buyer reference\" (BT-10) shall be provided."
+      ]
+    },
+    {
+      "document": "zf_EN16931_Physiotherapeut.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "zf_EN16931_Physiotherapeut.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-15: [BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "zf_EN16931_Physiotherapeut.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_EN16931_Physiotherapeut.pdf",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_EN16931_Rabatte.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Rabatte.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_Rabatte.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Rabatte.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_Rabatte.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Rabatte.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_Rabatte.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Rabatte.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_Rabatte.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Rabatte.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_Rabatte.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Rabatte.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_Rechnungskorrektur.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Rechnungskorrektur.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; subtotal: line items sum to -7.90, subtotal says 7.67; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: subtotal — line items sum to -7.90, subtotal says 7.67"
+    },
+    {
+      "document": "zf_EN16931_Rechnungskorrektur.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Rechnungskorrektur.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; subtotal: line items sum to -7.90, subtotal says 7.67; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: subtotal — line items sum to -7.90, subtotal says 7.67"
+    },
+    {
+      "document": "zf_EN16931_Rechnungskorrektur.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Rechnungskorrektur.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; subtotal: line items sum to -7.90, subtotal says 7.67; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: subtotal — line items sum to -7.90, subtotal says 7.67"
+    },
+    {
+      "document": "zf_EN16931_Rechnungskorrektur.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Rechnungskorrektur.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; subtotal: line items sum to -7.90, subtotal says 7.67; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: subtotal — line items sum to -7.90, subtotal says 7.67"
+    },
+    {
+      "document": "zf_EN16931_Rechnungskorrektur.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Rechnungskorrektur.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; subtotal: line items sum to -7.90, subtotal says 7.67; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: subtotal — line items sum to -7.90, subtotal says 7.67"
+    },
+    {
+      "document": "zf_EN16931_Rechnungskorrektur.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Rechnungskorrektur.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; subtotal: line items sum to -7.90, subtotal says 7.67; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: subtotal — line items sum to -7.90, subtotal says 7.67"
+    },
+    {
+      "document": "zf_EN16931_Reisekostenabrechnung.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Reisekostenabrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_Reisekostenabrechnung.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Reisekostenabrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_Reisekostenabrechnung.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Reisekostenabrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_Reisekostenabrechnung.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Reisekostenabrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_Reisekostenabrechnung.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Reisekostenabrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_Reisekostenabrechnung.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Reisekostenabrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_Facture_DOM_BASICWL.pdf",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-11: [BR-11]-The Buyer postal address shall contain a Buyer country code (BT-55)."
+      ]
+    },
+    {
+      "document": "zf_Facture_DOM_BASICWL.pdf",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-11: [BR-11]-The Buyer postal address shall contain a Buyer country code (BT-55).",
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided",
+        "PEPPOL-EN16931-R120: Invoice line net amount MUST equal (Invoiced quantity * (Item net price/item price base quantity) + Sum of invoice line charge amount - sum of invoice line allowance amount"
+      ]
+    },
+    {
+      "document": "zf_Facture_DOM_BASICWL.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-11: [BR-11]-The Buyer postal address shall contain a Buyer country code (BT-55).",
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided"
+      ]
+    },
+    {
+      "document": "zf_Facture_DOM_BASICWL.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "BR-11: [BR-11]-The Buyer postal address shall contain a Buyer country code (BT-55).",
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided"
+      ]
+    },
+    {
+      "document": "zf_Facture_DOM_BASICWL.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "XSD: Element '{urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100}PostalTradeAddress': Missing child element(s). Expected is ( {urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100}CountryID )."
+      ]
+    },
+    {
+      "document": "zf_Facture_DOM_BASICWL.pdf",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "XSD: Element '{urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100}PostalTradeAddress': Missing child element(s). Expected is ( {urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100}CountryID )."
+      ]
+    },
+    {
+      "document": "zf_Facture_FR_BASICWL.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_Facture_FR_BASICWL.pdf: seller.contact_name: 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there; validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+    },
+    {
+      "document": "zf_Facture_FR_BASICWL.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_Facture_FR_BASICWL.pdf: seller.contact_name: 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there; validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+    },
+    {
+      "document": "zf_Facture_FR_BASICWL.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_Facture_FR_BASICWL.pdf: seller.contact_name: 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there; validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+    },
+    {
+      "document": "zf_Facture_FR_BASICWL.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_Facture_FR_BASICWL.pdf: seller.contact_name: 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there; validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+    },
+    {
+      "document": "zf_Facture_FR_BASICWL.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_Facture_FR_BASICWL.pdf: seller.contact_name: 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there; validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+    },
+    {
+      "document": "zf_Facture_FR_BASICWL.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_Facture_FR_BASICWL.pdf: seller.contact_name: 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there; validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+    },
+    {
+      "document": "zf_Facture_UE_BASICWL.pdf",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_Facture_UE_BASICWL.pdf",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided",
+        "PEPPOL-EN16931-R120: Invoice line net amount MUST equal (Invoiced quantity * (Item net price/item price base quantity) + Sum of invoice line charge amount - sum of invoice line allowance amount"
+      ]
+    },
+    {
+      "document": "zf_Facture_UE_BASICWL.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided"
+      ]
+    },
+    {
+      "document": "zf_Facture_UE_BASICWL.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided"
+      ]
+    },
+    {
+      "document": "zf_Facture_UE_BASICWL.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_Facture_UE_BASICWL.pdf",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_MustangGnuaccountingBeispielRE-20190610_507.pdf",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_MustangGnuaccountingBeispielRE-20190610_507.pdf",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided",
+        "PEPPOL-EN16931-R120: Invoice line net amount MUST equal (Invoiced quantity * (Item net price/item price base quantity) + Sum of invoice line charge amount - sum of invoice line allowance amount"
+      ]
+    },
+    {
+      "document": "zf_MustangGnuaccountingBeispielRE-20190610_507.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided"
+      ]
+    },
+    {
+      "document": "zf_MustangGnuaccountingBeispielRE-20190610_507.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided"
+      ]
+    },
+    {
+      "document": "zf_MustangGnuaccountingBeispielRE-20190610_507.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_MustangGnuaccountingBeispielRE-20190610_507.pdf",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_MustangGnuaccountingBeispielRE-20201121_508.pdf",
+      "format": "ubl",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_MustangGnuaccountingBeispielRE-20201121_508.pdf",
+      "format": "peppol",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: Buyer electronic address MUST be provided",
+        "PEPPOL-EN16931-R120: Invoice line net amount MUST equal (Invoiced quantity * (Item net price/item price base quantity) + Sum of invoice line charge amount - sum of invoice line allowance amount",
+        "DE-R-005: The element \"Seller contact point\" (BT-41) shall be provided."
+      ]
+    },
+    {
+      "document": "zf_MustangGnuaccountingBeispielRE-20201121_508.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-5: [BR-DE-5] Das Element \"Seller contact point\" (BT-41) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "zf_MustangGnuaccountingBeispielRE-20201121_508.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "succeeded",
+      "outcome": "invalid",
+      "errors": [
+        "PEPPOL-EN16931-R020: [PEPPOL-EN16931-R020]-Seller electronic address MUST be provided",
+        "PEPPOL-EN16931-R010: [PEPPOL-EN16931-R010]-Buyer electronic address MUST be provided",
+        "BR-DE-5: [BR-DE-5] Das Element \"Seller contact point\" (BT-41) muss übermittelt werden."
+      ]
+    },
+    {
+      "document": "zf_MustangGnuaccountingBeispielRE-20201121_508.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_MustangGnuaccountingBeispielRE-20201121_508.pdf",
+      "format": "factur-x-basic",
+      "document_status": "succeeded",
+      "outcome": "valid",
+      "errors": []
+    },
+    {
+      "document": "zf_zugferd_2p0_BASIC_Einfach.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_BASIC_Einfach.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_BASIC_Einfach.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_BASIC_Einfach.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_BASIC_Einfach.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_BASIC_Einfach.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_BASIC_Einfach.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_BASIC_Einfach.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_BASIC_Einfach.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_BASIC_Einfach.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_BASIC_Einfach.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_BASIC_Einfach.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_BASIC_Taxifahrt.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_BASIC_Taxifahrt.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_BASIC_Taxifahrt.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_BASIC_Taxifahrt.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_BASIC_Taxifahrt.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_BASIC_Taxifahrt.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_BASIC_Taxifahrt.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_BASIC_Taxifahrt.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_BASIC_Taxifahrt.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_BASIC_Taxifahrt.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_BASIC_Taxifahrt.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_BASIC_Taxifahrt.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf: seller.tax_ids[0]: 'DE234567891' fails its country's VAT checksum; payment_account.iban: 'DE75123456780000001234' fails the IBAN mod-97 checksum; validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum; validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; line_items[0]: line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00; total_amount: subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; validation error: line_items[0] — line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00; validation error: total_amount — subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; line_items[0]: line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00; total_amount: subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; validation error: line_items[0] — line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00; validation error: total_amount — subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; line_items[0]: line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00; total_amount: subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; validation error: line_items[0] — line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00; validation error: total_amount — subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; line_items[0]: line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00; total_amount: subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; validation error: line_items[0] — line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00; validation error: total_amount — subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; line_items[0]: line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00; total_amount: subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; validation error: line_items[0] — line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00; validation error: total_amount — subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; line_items[0]: line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00; total_amount: subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum; validation error: line_items[0] — line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00; validation error: total_amount — subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; line_items[0]: line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00; line_items[1]: line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum; validation error: line_items[0] — line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00; validation error: line_items[1] — line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; line_items[0]: line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00; line_items[1]: line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum; validation error: line_items[0] — line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00; validation error: line_items[1] — line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; line_items[0]: line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00; line_items[1]: line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum; validation error: line_items[0] — line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00; validation error: line_items[1] — line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; line_items[0]: line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00; line_items[1]: line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum; validation error: line_items[0] — line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00; validation error: line_items[1] — line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; line_items[0]: line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00; line_items[1]: line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum; validation error: line_items[0] — line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00; validation error: line_items[1] — line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf: seller.tax_ids[1]: 'DE123456789' fails its country's VAT checksum; line_items[0]: line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00; line_items[1]: line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50; validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum; validation error: line_items[0] — line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00; validation error: line_items[1] — line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+    },
+    {
+      "document": "zf_zugferd_2p1_BASIC-WL_Einfach.pdf",
+      "format": "ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p1_BASIC-WL_Einfach.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE2012421242124212421242124' fails the IBAN mod-97 checksum; low classification confidence (0.45 < 0.55); validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE2012421242124212421242124' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_zugferd_2p1_BASIC-WL_Einfach.pdf",
+      "format": "peppol",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p1_BASIC-WL_Einfach.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE2012421242124212421242124' fails the IBAN mod-97 checksum; low classification confidence (0.45 < 0.55); validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE2012421242124212421242124' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_zugferd_2p1_BASIC-WL_Einfach.pdf",
+      "format": "xrechnung-ubl",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p1_BASIC-WL_Einfach.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE2012421242124212421242124' fails the IBAN mod-97 checksum; low classification confidence (0.45 < 0.55); validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE2012421242124212421242124' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_zugferd_2p1_BASIC-WL_Einfach.pdf",
+      "format": "xrechnung-cii",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p1_BASIC-WL_Einfach.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE2012421242124212421242124' fails the IBAN mod-97 checksum; low classification confidence (0.45 < 0.55); validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE2012421242124212421242124' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_zugferd_2p1_BASIC-WL_Einfach.pdf",
+      "format": "factur-x-en16931",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p1_BASIC-WL_Einfach.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE2012421242124212421242124' fails the IBAN mod-97 checksum; low classification confidence (0.45 < 0.55); validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE2012421242124212421242124' fails the IBAN mod-97 checksum"
+    },
+    {
+      "document": "zf_zugferd_2p1_BASIC-WL_Einfach.pdf",
+      "format": "factur-x-basic",
+      "document_status": "needs_review",
+      "outcome": "refused",
+      "detail": "not exporting eval/zugferd_samples/pdf/zf_zugferd_2p1_BASIC-WL_Einfach.pdf: seller.tax_ids[0]: 'DE123456789' fails its country's VAT checksum; payment_account.iban: 'DE2012421242124212421242124' fails the IBAN mod-97 checksum; low classification confidence (0.45 < 0.55); validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum; validation error: payment_account.iban — 'DE2012421242124212421242124' fails the IBAN mod-97 checksum"
+    }
+  ]
+}

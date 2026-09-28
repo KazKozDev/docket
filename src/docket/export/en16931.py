@@ -491,8 +491,10 @@ class _Cii:
                 ram(post, "CityName", address.city)
             if address.country_code:
                 ram(post, "CountryID", address.country_code)
-            if address.region:
-                ram(post, "CountrySubDivisionName", address.region)
+                # The CII schema only allows a subdivision after a country;
+                # without one it is a schema error on top of BR-9/BR-11.
+                if address.region:
+                    ram(post, "CountrySubDivisionName", address.region)
         if party.electronic_address:
             ram(ram(node, "URIUniversalCommunication"), "URIID", party.electronic_address,
                 schemeID=party.electronic_address_scheme or "EM")

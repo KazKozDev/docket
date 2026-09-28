@@ -1,0 +1,1792 @@
+{
+  "environment": {
+    "date": "2026-09-28T15:27:28+00:00",
+    "docket": "0.4.0",
+    "git_commit": "39d84bb",
+    "python": "3.12.8",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cpu_count": 10,
+    "tesseract": "tesseract 5.5.3",
+    "paddleocr": "3.7.0",
+    "paddlepaddle": "3.3.1",
+    "llm_provider": "ollama",
+    "text_model": "deepseek-v4.1-flash:cloud",
+    "vision_model": "deepseek-v4.1-flash:cloud",
+    "ocr_languages": [
+      "en",
+      "de",
+      "es",
+      "fr"
+    ],
+    "ocr_dpi": 200,
+    "layout_markers": true,
+    "configs": [
+      "tesseract"
+    ]
+  },
+  "documents": [
+    "zf_Avoir_FR_type381_BASIC.pdf",
+    "zf_EN16931_1_Teilrechnung.pdf",
+    "zf_EN16931_2_Teilrechnung.pdf",
+    "zf_EN16931_AbweichenderZahlungsempf.pdf",
+    "zf_EN16931_Betriebskostenabrechnung.pdf",
+    "zf_EN16931_Elektron.pdf",
+    "zf_EN16931_ElektronischeAdresse.pdf",
+    "zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+    "zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf",
+    "zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf",
+    "zf_EN16931_OEPNV.pdf",
+    "zf_EN16931_Physiotherapeut.pdf",
+    "zf_EN16931_Rabatte.pdf",
+    "zf_EN16931_Rechnungskorrektur.pdf",
+    "zf_EN16931_Reisekostenabrechnung.pdf",
+    "zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf",
+    "zf_Facture_DOM_BASICWL.pdf",
+    "zf_Facture_FR_BASICWL.pdf",
+    "zf_Facture_UE_BASICWL.pdf",
+    "zf_MustangGnuaccountingBeispielRE-20190610_507.pdf",
+    "zf_MustangGnuaccountingBeispielRE-20201121_508.pdf",
+    "zf_zugferd_2p0_BASIC_Einfach.pdf",
+    "zf_zugferd_2p0_BASIC_Taxifahrt.pdf",
+    "zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+    "zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf",
+    "zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf",
+    "zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf",
+    "zf_zugferd_2p1_BASIC-WL_Einfach.pdf"
+  ],
+  "warm_up_seconds": {
+    "tesseract": 1.02
+  },
+  "ocr_only": {},
+  "pipeline": {
+    "tesseract": {
+      "summary": {
+        "documents": 28,
+        "document_success_rate": 0.6786,
+        "field_accuracy": 0.948,
+        "fields_graded": 269,
+        "line_items": {
+          "precision": 0.8033,
+          "recall": 0.8033,
+          "f1": 0.8033,
+          "expected": 61,
+          "documents_graded": 24
+        },
+        "table_cell_accuracy": null,
+        "seconds_mean": 6.29,
+        "seconds_median": 5.36,
+        "acquire_seconds_mean": 0.09,
+        "vlm_page_share": 0.0,
+        "vlm_document_share": 0.0,
+        "llm_calls": 28,
+        "llm_calls_mean": 1.0,
+        "templates": {
+          "documents": 0,
+          "hit_rate": 0.0,
+          "seconds_mean": null,
+          "llm_extraction_calls_avoided_minimum": 0,
+          "by_id": {}
+        },
+        "citations": {
+          "field_citation_coverage": 0.9963,
+          "field_location_coverage": 0.9963,
+          "line_item_citation_coverage": 1.0,
+          "line_item_location_coverage": 1.0
+        },
+        "silent_successes": 7,
+        "false_successes": 3,
+        "false_success_rate": 0.4286,
+        "needs_review": 21,
+        "failed": 0
+      },
+      "documents": [
+        {
+          "document": "zf_Avoir_FR_type381_BASIC.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "credit_note",
+          "classified_as": "credit_note",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 10,
+            "total": 10,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 10,
+              "located": 10,
+              "total": 10
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+          ],
+          "key_source_confidence": {
+            "credit_note_number": 1.0,
+            "issue_date": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 5.34,
+          "acquire_seconds": 0.063,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_1_Teilrechnung.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 8,
+            "total": 8,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 4,
+            "extracted": 4,
+            "expected": 4
+          },
+          "citations": {
+            "fields": {
+              "cited": 8,
+              "located": 8,
+              "total": 8
+            },
+            "line_items": {
+              "cited": 12,
+              "located": 12,
+              "total": 12
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 7.69,
+          "acquire_seconds": 0.12,
+          "pages": 3,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_2_Teilrechnung.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 8,
+            "total": 8,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 1,
+            "extracted": 1,
+            "expected": 1
+          },
+          "citations": {
+            "fields": {
+              "cited": 8,
+              "located": 8,
+              "total": 8
+            },
+            "line_items": {
+              "cited": 3,
+              "located": 3,
+              "total": 3
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 4.51,
+          "acquire_seconds": 0.074,
+          "pages": 2,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_AbweichenderZahlungsempf.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 9,
+            "total": 9,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum",
+            "validation error: payment_account.iban — 'DE12123456781234567890' fails the IBAN mod-97 checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 5.37,
+          "acquire_seconds": 0.077,
+          "pages": 3,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_Betriebskostenabrechnung.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 8,
+            "total": 9,
+            "mismatches": [
+              "total_amount"
+            ],
+            "extracted": {
+              "total_amount": 502.63
+            }
+          },
+          "line_items": {
+            "correct": 1,
+            "extracted": 1,
+            "expected": 1
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 3,
+              "located": 3,
+              "total": 3
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 3.5,
+          "acquire_seconds": 0.112,
+          "pages": 2,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_Elektron.pdf",
+          "source": "zugferd",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 10,
+            "total": 10,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 10,
+              "located": 10,
+              "total": 10
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 4.4,
+          "acquire_seconds": 0.095,
+          "pages": 3,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_ElektronischeAdresse.pdf",
+          "source": "zugferd",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 9,
+            "total": 9,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 6,
+            "extracted": 6,
+            "expected": 6
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 18,
+              "located": 18,
+              "total": 18
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 7.23,
+          "acquire_seconds": 0.102,
+          "pages": 4,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 9,
+            "total": 9,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum",
+            "validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 4.49,
+          "acquire_seconds": 0.077,
+          "pages": 3,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 11,
+            "total": 11,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 11,
+              "located": 11,
+              "total": 11
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[0] — 'GB123456789' fails its country's VAT checksum",
+            "validation error: buyer.tax_ids[0] — 'DE123456789' fails its country's VAT checksum",
+            "validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum",
+            "validation error: line_items[0].unit_price — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00",
+            "validation error: line_items[0].total — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00",
+            "validation error: line_items[1].unit_price — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00",
+            "validation error: line_items[1].total — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 15.37,
+          "acquire_seconds": 0.128,
+          "pages": 3,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 8,
+            "total": 9,
+            "mismatches": [
+              "total_amount"
+            ],
+            "extracted": {
+              "total_amount": 440.0
+            }
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum",
+            "validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 220.00, total_amount says 440.00"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 6.74,
+          "acquire_seconds": 0.09,
+          "pages": 3,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_OEPNV.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 11,
+            "total": 11,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 1,
+            "extracted": 1,
+            "expected": 1
+          },
+          "citations": {
+            "fields": {
+              "cited": 11,
+              "located": 11,
+              "total": 11
+            },
+            "line_items": {
+              "cited": 3,
+              "located": 3,
+              "total": 3
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum",
+            "validation error: payment_account.iban — 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 4.82,
+          "acquire_seconds": 0.075,
+          "pages": 2,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_Physiotherapeut.pdf",
+          "source": "zugferd",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 11,
+            "total": 11,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 11,
+              "located": 11,
+              "total": 11
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 4.19,
+          "acquire_seconds": 0.068,
+          "pages": 2,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_Rabatte.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 8,
+            "total": 8,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 3,
+            "extracted": 4,
+            "expected": 4
+          },
+          "citations": {
+            "fields": {
+              "cited": 8,
+              "located": 8,
+              "total": 8
+            },
+            "line_items": {
+              "cited": 12,
+              "located": 12,
+              "total": 12
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 6.12,
+          "acquire_seconds": 0.132,
+          "pages": 3,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_Rechnungskorrektur.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "credit_note",
+          "classified_as": "credit_note",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 6,
+            "total": 9,
+            "mismatches": [
+              "subtotal",
+              "tax_amount",
+              "total_amount"
+            ],
+            "extracted": {
+              "subtotal": 7.67,
+              "tax_amount": 1.12,
+              "total_amount": 8.79
+            }
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum",
+            "validation error: subtotal — line items sum to -7.90, subtotal says 7.67"
+          ],
+          "key_source_confidence": {
+            "credit_note_number": 1.0,
+            "issue_date": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 4.04,
+          "acquire_seconds": 0.095,
+          "pages": 4,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_Reisekostenabrechnung.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 8,
+            "total": 8,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 4,
+            "extracted": 4,
+            "expected": 4
+          },
+          "citations": {
+            "fields": {
+              "cited": 8,
+              "located": 8,
+              "total": 8
+            },
+            "line_items": {
+              "cited": 12,
+              "located": 12,
+              "total": 12
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 4.4,
+          "acquire_seconds": 0.106,
+          "pages": 3,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 8,
+            "total": 9,
+            "mismatches": [
+              "seller.name"
+            ],
+            "extracted": {
+              "seller.name": "Versicherungsverein Musterstadt a.G."
+            }
+          },
+          "line_items": {
+            "correct": 1,
+            "extracted": 1,
+            "expected": 1
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 3,
+              "located": 3,
+              "total": 3
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum",
+            "validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 12.16,
+          "acquire_seconds": 0.113,
+          "pages": 3,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_Facture_DOM_BASICWL.pdf",
+          "source": "zugferd",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 11,
+            "total": 11,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 3,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 11,
+              "located": 11,
+              "total": 11
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 6.99,
+          "acquire_seconds": 0.072,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_Facture_FR_BASICWL.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 11,
+            "total": 11,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 3,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 11,
+              "located": 11,
+              "total": 11
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.contact_name — 'Tony Dubois' cites 'Contact commercial', which does not print it — the name was not read there"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 6.14,
+          "acquire_seconds": 0.071,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_Facture_UE_BASICWL.pdf",
+          "source": "zugferd",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "tfidf",
+          "fields": {
+            "correct": 10,
+            "total": 11,
+            "mismatches": [
+              "due_date"
+            ],
+            "extracted": {
+              "due_date": null
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 3,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 10,
+              "located": 10,
+              "total": 11
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 8.61,
+          "acquire_seconds": 0.07,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_MustangGnuaccountingBeispielRE-20190610_507.pdf",
+          "source": "zugferd",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 8,
+            "total": 10,
+            "mismatches": [
+              "buyer.name",
+              "payment_account.iban"
+            ],
+            "extracted": {
+              "buyer.name": "Ingmar N. Fo",
+              "payment_account.iban": "DE88200800000970375700"
+            }
+          },
+          "line_items": {
+            "correct": 3,
+            "extracted": 3,
+            "expected": 3
+          },
+          "citations": {
+            "fields": {
+              "cited": 10,
+              "located": 10,
+              "total": 10
+            },
+            "line_items": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 5.93,
+          "acquire_seconds": 0.086,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_MustangGnuaccountingBeispielRE-20201121_508.pdf",
+          "source": "zugferd",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 10,
+            "total": 11,
+            "mismatches": [
+              "buyer.name"
+            ],
+            "extracted": {
+              "buyer.name": "Ingmar N. Fo"
+            }
+          },
+          "line_items": {
+            "correct": 1,
+            "extracted": 3,
+            "expected": 3
+          },
+          "citations": {
+            "fields": {
+              "cited": 11,
+              "located": 11,
+              "total": 11
+            },
+            "line_items": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 7.41,
+          "acquire_seconds": 0.056,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_zugferd_2p0_BASIC_Einfach.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 9,
+            "total": 9,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 1
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 3,
+              "located": 3,
+              "total": 3
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 4.27,
+          "acquire_seconds": 0.052,
+          "pages": 2,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_zugferd_2p0_BASIC_Taxifahrt.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 10,
+            "total": 10,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 10,
+              "located": 10,
+              "total": 10
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 4.85,
+          "acquire_seconds": 0.06,
+          "pages": 2,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 9,
+            "total": 9,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 2,
+            "expected": 2
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum",
+            "validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 5.27,
+          "acquire_seconds": 0.07,
+          "pages": 2,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 10,
+            "total": 11,
+            "mismatches": [
+              "total_amount"
+            ],
+            "extracted": {
+              "total_amount": 521.91
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 1
+          },
+          "citations": {
+            "fields": {
+              "cited": 11,
+              "located": 11,
+              "total": 11
+            },
+            "line_items": {
+              "cited": 3,
+              "located": 3,
+              "total": 3
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum",
+            "validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum",
+            "validation error: line_items[0] — line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 4.47,
+          "acquire_seconds": 0.092,
+          "pages": 3,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 8,
+            "total": 8,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 2,
+            "extracted": 5,
+            "expected": 5
+          },
+          "citations": {
+            "fields": {
+              "cited": 8,
+              "located": 8,
+              "total": 8
+            },
+            "line_items": {
+              "cited": 15,
+              "located": 15,
+              "total": 15
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum",
+            "validation error: line_items[0] — line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00",
+            "validation error: line_items[1] — line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 9.08,
+          "acquire_seconds": 0.124,
+          "pages": 3,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 9,
+            "total": 9,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 6,
+            "extracted": 6,
+            "expected": 6
+          },
+          "citations": {
+            "fields": {
+              "cited": 9,
+              "located": 9,
+              "total": 9
+            },
+            "line_items": {
+              "cited": 18,
+              "located": 18,
+              "total": 18
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 9.3,
+          "acquire_seconds": 0.102,
+          "pages": 3,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        },
+        {
+          "document": "zf_zugferd_2p1_BASIC-WL_Einfach.pdf",
+          "source": "zugferd",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "invoice",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 8,
+            "total": 11,
+            "mismatches": [
+              "due_date",
+              "buyer.name",
+              "payment_account.iban"
+            ],
+            "extracted": {
+              "due_date": "2020-04-04",
+              "buyer.name": "Majolieboutique",
+              "payment_account.iban": "DE2012421242124212421242124"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 11,
+              "located": 11,
+              "total": 11
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "low classification confidence (0.45 < 0.55)",
+            "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum",
+            "validation error: payment_account.iban — 'DE2012421242124212421242124' fails the IBAN mod-97 checksum"
+          ],
+          "key_source_confidence": {
+            "invoice_number": 1.0,
+            "issue_date": 1.0,
+            "subtotal": 1.0,
+            "total_amount": 1.0
+          },
+          "seconds": 3.44,
+          "acquire_seconds": 0.075,
+          "pages": 2,
+          "vlm_pages": 0,
+          "page_backends": [
+            "pdf_text",
+            "pdf_text"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 1,
+          "template_id": null
+        }
+      ]
+    }
+  }
+}

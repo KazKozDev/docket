@@ -1,10 +1,16 @@
 # Benchmarks
 
 What docket's own evaluation shows, and where each number comes from.
-Everything below was measured on the golden set in `eval/golden_dataset`: 21
-labeled documents, 14 of them scans. The set is small and made for this
-project, so treat these numbers as regression checks, not accuracy
-claims about your documents. The raw results are committed in
+Two sets were measured:
+
+- **The golden set** (`eval/golden_dataset`): 21 labeled documents, 14 of
+  them scans. It is made for this project.
+- **European sample invoices from the ZUGFeRD corpus**: 28 German and
+  French invoices and credit notes. They are published samples with
+  invented parties, not real business mail.
+
+Both sets are small, so treat these numbers as regression checks, not
+accuracy claims about your documents. The raw results are committed in
 `eval/results/`.
 
 Setup: `deepseek-v4.1-flash:cloud` through Ollama for text and vision,
@@ -75,6 +81,82 @@ vision model as fallback.
 - **Vendor templates:** they read 2 of the 14 scans. On one of them,
   `invoice_es_lowres`, the template read no line items (0/3).
 
+## European sample invoices (ZUGFeRD corpus)
+
+`python eval/download_zugferd.py` fetches the valid ZUGFeRD 2 / Factur-X
+PDFs of [ZUGFeRD/corpus](https://github.com/ZUGFeRD/corpus) (Apache-2.0).
+Each PDF embeds its invoice as EN 16931 XML, and the expected values are
+read from that XML, not labelled by hand: the number, dates, parties,
+seller VAT ID, IBAN, net, tax and gross totals, and the line items. The
+corpus repeats the same samples across ZUGFeRD versions. After duplicates
+are removed, 28 documents remain.
+
+Labelling choices:
+
+- Salutation and identifier lines in the XML name elements are dropped:
+  "Herrn", "GLN 4333741000005", "Lief-Nr: …".
+- Party names are compared without their legal form: "Au bon moulin"
+  matches "Au bon moulin SARL".
+- A corrected invoice (type 384, "Rechnungskorrektur") is labelled
+  `credit_note`, which is where docket files corrections.
+
+Each document ran twice: as the PDF with its text layer (no OCR), and as
+the same pages rendered to 200 dpi images (Tesseract, vision fallback).
+The numbers below come from `eval/replay_checks.py`. It re-runs the
+deterministic checks and the grading over the saved extractions, without
+the model. That picked up two late changes: contact persons are no longer
+checked as party names, and IBANs are labelled without print spacing.
+
+| | PDF text layer | rendered scans |
+|---|---|---|
+| document type right | 28/28 | 28/28 |
+| every graded field right | 19/28 | 22/28 |
+| field accuracy | 0.952 | 0.967 |
+| sent to review | 19 | 20 |
+| of those, only for an invalid sample VAT ID or IBAN | 12 | 14 |
+| wrong but passed without review | 3 of 9 | 2 of 8 |
+| pages read by the vision model | 0 | 34 of 66 |
+| median seconds per document | 5.4 | 33.6 |
+
+- **Why so many go to review:** the samples use invented VAT IDs and
+  IBANs (`DE123456789`), which fail their checksums. docket is right to
+  send these to review, but it means the review rate here says little about
+  real invoices.
+- **Wrong but passed without review:**
+  - On two Mustang samples, the buyer was taken from the seller's contact
+    column ("Ingmar N. Fo" for "Theodor Est"). The name is printed on the
+    page, so no check can object.
+  - One French sample had its due date left out.
+- **The vision model on scans:** it read about half of the rendered pages,
+  because docket judged the Tesseract text unusable. That is why scans are
+  slower.
+
+The first run of this set found problems in docket, which were fixed
+before the numbers above:
+
+- A line's VAT rate was never matched against the percentage printed on
+  its row.
+- Rows with a line discount, a gross price, a negative credit line, or a
+  quantity glued to its unit ("5Unit(s)") failed the row arithmetic.
+- A "$" in a German text layer (a rendered "§") made dotted dates read
+  month-first.
+- German compounds ("Handelsrechnung", "Warenrechnung") scored nothing for
+  invoice, while the order they quote scored for purchase order.
+- A self-billed "Gutschrift" was taken for a credit note.
+
+On the first run, 5 of 29 documents had the wrong type.
+
+The export benchmark on the PDF run's results (`eval/benchmark_export.py
+eval/results/zugferd_pdf_results`):
+
+- **Refused:** the 21 documents in review. Export does not write
+  unchecked data.
+- **Valid:** 6 of the 7 others in UBL, Factur-X EN16931 and BASIC.
+- **Invalid in UBL and Factur-X:** a French overseas invoice with no buyer
+  country code (BR-11).
+- **Peppol and XRechnung:** all 7 are invalid, because they lack the
+  electronic addresses and buyer reference.
+
 ## Classification
 
 `python eval/benchmark_methods.py --dataset eval/golden_dataset` classifies
@@ -134,6 +216,8 @@ pay into.
 
 - The real-document sets from `eval/download_real_samples.py` (DocILE,
   donut invoices, CORD, FUNSD, RVL-CDIP, CUAD).
+- Real European invoices. The ZUGFeRD samples above are published examples,
+  not supplier mail.
 - The competitor comparison (`eval/benchmark_competitors.py`).
 - Run-to-run variance (`eval/benchmark_variance.py`).
 

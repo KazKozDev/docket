@@ -147,3 +147,12 @@ def test_a_document_number_of_punctuation_only_needs_review():
     result = verify(external_json(invoice_number="°:", field_locations=citations), [PAGE], document_type="invoice")
 
     assert any("invoice_number" in r for r in result.review_reasons)
+
+
+def test_a_contact_person_cited_by_its_label_is_not_a_party_mismatch():
+    data = external_json()
+    data["seller"]["contact_name"] = "Tony Dubois"
+    data["field_locations"] = {**CITATIONS, "seller.contact_name": {"page": 1, "quote": "Acme Solutions SL  NIF ESB12345674"}}
+    result = verify(data, [PAGE], document_type="invoice")
+
+    assert not any("contact_name" in r for r in result.review_reasons), result.review_reasons

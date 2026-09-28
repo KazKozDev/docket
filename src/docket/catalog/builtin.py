@@ -148,7 +148,10 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         version="2.0",
         display_name="Invoice",
         model=Invoice,
-        description="Invoice / factura / Rechnung requesting payment for goods or services",
+        description=(
+            "Invoice / factura / Rechnung requesting payment for goods or services, including a "
+            "self-billed invoice the buyer issues (German 'Gutschrift' in the Gutschriftsverfahren)"
+        ),
         keywords=(
             # A bare TAX INVOICE / factura fiscal header is not invoice evidence: in
             # GST countries every till receipt prints one. It scores nothing, so
@@ -160,8 +163,17 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             pattern(r"\bdue date\b|\bfecha de vencimiento\b|\bvencimiento\b", 1.0),
             pattern(r"\bpo number\b|\bpurchase order\b|\bpedido\b", 1.0),
             pattern(r"\bbase imponible\b|\bn[úu]mero de factura\b", 2.0),
+            # What a German invoice states and an order does not: the date of
+            # supply (UStG §14) and when payment falls due. An order references
+            # "Bestellung" too, but an invoice quotes the order it bills.
+            pattern(r"\bleistungsdatum\b|\brechnungsdatum\b|\bzahlbar\b|\bf[äa]lligkeit\b", 2.0),
+            # Self-billing: German VAT law calls the invoice a buyer issues for
+            # its supplier a "Gutschrift", the word for a credit note too.
+            pattern(r"\bselbst\s*ausgestellte\s+rechnung\b|\bgutschriftsverfahren\b|\bself-billed\b|"
+                    r"\bautofacturation\b|\bautofactura", 6.0),
         ) + _names(
-            r"rechnung|rechnungsnummer|facture(?!\s*fiscale)|fattura(?!\s*fiscale)|"
+            # German compounds end in -rechnung: Handels-, Waren-, Teil-, Schlussrechnung.
+            r"\w*rechnung|rechnungsnummer|facture(?!\s*fiscale)|fattura(?!\s*fiscale)|"
             r"factuur|fatura(?!\s*fiscal)|faktura(?!\s+vat\b)"
         ),
         summary={"document_number": "invoice_number", "document_date": "issue_date", "issuer": "seller.name", "recipient": "buyer.name", "currency": "currency", "subtotal": "subtotal", "tax_amount": "tax_amount", "total_amount": "total_amount"},
@@ -175,7 +187,10 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
         display_name="Credit note",
         status="experimental",
         model=CreditNote,
-        description="Credit note / Gutschrift / avoir crediting part or all of an earlier invoice",
+        description=(
+            "Credit note / Gutschrift / avoir crediting part or all of an earlier invoice "
+            "(not a self-billed invoice, which German also calls a Gutschrift)"
+        ),
         # Weighted above the invoice cues a credit note always repeats
         # ("original invoice INV-…").
         keywords=keywords(

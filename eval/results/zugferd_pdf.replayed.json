@@ -1,0 +1,486 @@
+{
+  "replayed_from": "zugferd_pdf.json",
+  "summary": {
+    "documents": 28,
+    "fully_right": 19,
+    "field_accuracy": 0.9517,
+    "needs_review": 19,
+    "silent_successes": 9,
+    "false_successes": 3
+  },
+  "documents": [
+    {
+      "config": "tesseract",
+      "document": "zf_Avoir_FR_type381_BASIC.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 10,
+        "total": 10,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_1_Teilrechnung.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 8,
+        "total": 8,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_2_Teilrechnung.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 8,
+        "total": 8,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_AbweichenderZahlungsempf.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 9,
+        "total": 9,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum",
+        "validation error: payment_account.iban — 'DE12123456781234567890' fails the IBAN mod-97 checksum"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_Betriebskostenabrechnung.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 8,
+        "total": 9,
+        "mismatches": [
+          "total_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: total_amount — subtotal + tax + shipping - discount = 18310.63, total_amount says 502.63"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_Elektron.pdf",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 10,
+        "total": 10,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_ElektronischeAdresse.pdf",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 9,
+        "total": 9,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 9,
+        "total": 9,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum",
+        "validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_Innergemeinschaftliche_Lieferungen.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 11,
+        "total": 11,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[0] — 'GB123456789' fails its country's VAT checksum",
+        "validation error: buyer.tax_ids[0] — 'DE123456789' fails its country's VAT checksum",
+        "validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum",
+        "validation error: line_items[0].unit_price — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].unit_price=100.00",
+        "validation error: line_items[0].total — cited line '1 | Toolbox 0815CO-123 Stahlcoil | 10 Stk | 0 %' states 1.00, 123.00, -123.00, 10.00, but line_items[0].total=1000.00",
+        "validation error: line_items[1].unit_price — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].unit_price=100.00",
+        "validation error: line_items[1].total — cited line '2 | BR-4529-ZFIM-712 Stoßfänger | 10 Stk | 0 %' states 2.00, 4529.00, -4529.00, 712.00, -712.00, 10.00, but line_items[1].total=1000.00"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_Kraftfahrversicherung_Bruttopreise.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 8,
+        "total": 9,
+        "mismatches": [
+          "total_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum",
+        "validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum",
+        "validation error: total_amount — subtotal + tax + shipping - discount = 220.00, total_amount says 440.00"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_OEPNV.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 11,
+        "total": 11,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum",
+        "validation error: payment_account.iban — 'DE12 1234 5678 9012 3456 78' fails the IBAN mod-97 checksum"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_Physiotherapeut.pdf",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 11,
+        "total": 11,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_Rabatte.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 8,
+        "total": 8,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_Rechnungskorrektur.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 6,
+        "total": 9,
+        "mismatches": [
+          "subtotal",
+          "tax_amount",
+          "total_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum",
+        "validation error: subtotal — line items sum to -7.90, subtotal says 7.67"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_Reisekostenabrechnung.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 8,
+        "total": 8,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_EN16931_Sachversicherung_berechneter_Steuersatz.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 8,
+        "total": 9,
+        "mismatches": [
+          "seller.name"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum",
+        "validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_Facture_DOM_BASICWL.pdf",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 11,
+        "total": 11,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_Facture_FR_BASICWL.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 11,
+        "total": 11,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_Facture_UE_BASICWL.pdf",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 10,
+        "total": 11,
+        "mismatches": [
+          "due_date"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_MustangGnuaccountingBeispielRE-20190610_507.pdf",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 9,
+        "total": 10,
+        "mismatches": [
+          "buyer.name"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_MustangGnuaccountingBeispielRE-20201121_508.pdf",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 10,
+        "total": 11,
+        "mismatches": [
+          "buyer.name"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_zugferd_2p0_BASIC_Einfach.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 9,
+        "total": 9,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_zugferd_2p0_BASIC_Taxifahrt.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 10,
+        "total": 10,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_zugferd_2p0_EN16931_Haftpflichtversicherung_Versicherungssteuer.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 9,
+        "total": 9,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[0] — 'DE234567891' fails its country's VAT checksum",
+        "validation error: payment_account.iban — 'DE75123456780000001234' fails the IBAN mod-97 checksum"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_zugferd_2p0_EXTENDED_Fremdwaehrung.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 10,
+        "total": 11,
+        "mismatches": [
+          "total_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum",
+        "validation error: payment_account.iban — 'DE12 1234 4321 9876 00' fails the IBAN mod-97 checksum",
+        "validation error: line_items[0] — line 1 ('Stahlcoil CO-123/V2A'): 10 × 100.00 = 1000.00, but the line total says 850.00",
+        "validation error: total_amount — subtotal + tax + shipping - discount = 1021.91, total_amount says 521.91"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_zugferd_2p0_EXTENDED_Kostenrechnung.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 8,
+        "total": 8,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[1] — 'DE123456789' fails its country's VAT checksum",
+        "validation error: line_items[0] — line 1 ('Wirkarbeit'): 10000 × 0.05 = 520.00, but the line total says 52.00",
+        "validation error: line_items[1] — line 2 ('Ökosteuer'): 10000 × 0.02 = 205.00, but the line total says 20.50"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_zugferd_2p0_EXTENDED_Warenrechnung.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 9,
+        "total": 9,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "zf_zugferd_2p1_BASIC-WL_Einfach.pdf",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 8,
+        "total": 11,
+        "mismatches": [
+          "due_date",
+          "buyer.name",
+          "payment_account.iban"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "low classification confidence (0.45 < 0.55)",
+        "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum",
+        "validation error: payment_account.iban — 'DE2012421242124212421242124' fails the IBAN mod-97 checksum"
+      ]
+    }
+  ]
+}

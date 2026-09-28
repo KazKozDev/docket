@@ -253,3 +253,25 @@ def test_waybill_classified_by_rules():
 def test_eu_document_names(text, expected):
     result = classify_rules(text)
     assert result is not None and result.doc_type == expected
+
+
+def test_german_invoice_compounds_are_invoices_not_orders():
+    """"Handelsrechnung" / "Warenrechnung" hold the word Rechnung; the order
+    they quote ("Bestellung: 2013-471331") made them purchase orders."""
+    text = ("Handelsrechnung Nr. 471102 vom 05.06.2018\nWährung: EUR\n"
+            "Liefer- und Leistungsdatum: 03.06.2018\nBestellung: 2013-471331\nName: Lieferant GmbH")
+    result = classify_rules(text)
+    assert result is not None and result.doc_type == "invoice"
+
+
+def test_a_self_billed_gutschrift_is_an_invoice():
+    """Under German VAT law a Gutschrift can be the invoice a buyer issues
+    for its supplier; the corpus labels it type 389, self-billed invoice."""
+    text = "Gutschrift (Selbst ausgestellte Rechnung) (389) Nr. 47110818 vom 31.10.2018\nWährung: EUR"
+    result = classify_rules(text)
+    assert result is not None and result.doc_type == "invoice"
+
+
+def test_a_plain_gutschrift_is_still_a_credit_note():
+    result = classify_rules("GUTSCHRIFT Nr. G-2026-004 zur Rechnung RE-2026-1187\nGutschriftsbetrag: 58,31 EUR")
+    assert result is not None and result.doc_type == "credit_note"

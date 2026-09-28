@@ -31,3 +31,4 @@ src/docket/einvoice/resources/peppol/
 src/docket/einvoice/resources/factur-x/
 src/docket/einvoice/resources/cii-d16b/
 tests/fixtures/einvoice/official/peppol/
+eval/zugferd_samples/
