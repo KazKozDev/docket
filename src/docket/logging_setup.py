@@ -3,8 +3,7 @@
 JSON lines rather than prose, because the consumer is a log aggregator, not
 a person scrolling a terminal. Each pipeline run logs one record per stage
 with its own latency, so a slow document can be diagnosed from the logs
-alone — which is the difference between "it was slow yesterday" and "the
-vision re-read took 12 seconds on that scan".
+alone.
 
 Configured once, from the app entry points. Importing `docket` never
 configures logging: a library that reconfigures the root logger on import

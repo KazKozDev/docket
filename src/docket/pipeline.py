@@ -180,8 +180,8 @@ def validate_extraction(
         return [ValidationIssue(field="*", message="extraction failed to produce valid structured output")]
     layout = acquisition.layout
     # A vision-model transcript no confident OCR reading backs is unconfirmed,
-    # even when self-consistent — the model has been observed inventing
-    # digits to force totals to reconcile.
+    # even when self-consistent — the model can invent digits to force
+    # totals to reconcile.
     unbacked = [p for p in layout.pages if not p.has_geometry and p.backend not in _NOT_OCR]
     return validate(
         instance,
@@ -337,10 +337,9 @@ def process_document(
     If an OCR reading passes its confidence gate but the extraction then
     fails validation, the document is re-read with the last backend in the
     chain (the vision model by default) and the better result wins. The
-    confidence score alone is a poor gate: Tesseract scored 77.5 on an
-    invoice where it read "$530.00" as "$830.00" and dropped the grand-total
-    line. Validation checks the meaning of the output, and the re-read is
-    only paid for on documents already known to be broken.
+    OCR confidence score alone is a poor gate; validation checks the meaning
+    of the output, and the re-read is only paid for on documents already
+    known to be broken.
     """
     resolved = options if isinstance(options, ResolvedOptions) else resolve(options)
     path = Path(source)
@@ -361,10 +360,9 @@ def process_document(
         with log_stage(log, "acquire", **doc):
             acquisition = _acquire(path, resolved.acquisition, stages)
             # Pre-flight: garbled text is the most expensive thing to hand a
-            # model — it reasons far longer trying to reconcile nonsense
-            # (measured on one scan: 117s against 52s on a clean transcription
-            # of the same page). Judging the text first turns a wasted
-            # extraction into a skipped one.
+            # model — it reasons far longer trying to reconcile nonsense.
+            # Judging the text first turns a wasted extraction into a
+            # skipped one.
             if resolved.can_escalate and _uses_ocr(acquisition) and looks_garbled(acquisition.text):
                 log.info("OCR judged unusable, re-reading with the last-resort backend", extra=doc)
                 acquisition = _acquire(path, _escalated(resolved.acquisition), stages)

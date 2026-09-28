@@ -3,9 +3,7 @@
 This is the one place in the pipeline where a model is allowed near a
 quality judgement, and the distinction matters. The rule this project
 argues for is that a validator must never be an LLM, because an LLM asked
-to check an LLM's output agrees with it — observed directly here, when a
-stronger model silently "repaired" a garbled unit price and erased the
-inconsistency the validator relied on.
+to check an LLM's output agrees with it.
 
 What happens here is a different question. There is no extraction yet for
 the model to agree with: it reads a Tesseract artifact and judges the
@@ -17,26 +15,11 @@ status quo. That is a safe place for a model.
 Why it exists at all: the free deterministic signal (an amount label with
 no readable amount behind it) only works on documents with money on them.
 A contract has no arithmetic to fail, so nothing triggered a re-read no
-matter how badly it was scanned. Two cheaper candidates were measured and
-rejected first:
-
-  - unknown-word ratio via `wordfreq`: 0.091 on one garbled scan but
-    0.000 on another, while a clean real contract scored 0.023 — no usable
-    threshold.
-  - language-detection confidence: 1.0 on garbled text, same as clean.
-
-Both failed for one reason: Tesseract's mistakes land on real words. "sus",
-"sea", "so", "ssm" and "qv" are all in the frequency lists; only "sistz"
-and "CChicage" are genuinely unknown. A dictionary sees words one at a
-time. "sus TOTAL $1250" is nonsense only in context, which is exactly what
-a language model reads and a word list cannot.
-
-Measured on six OCR outputs — three genuinely garbled (including a
-deliberately degraded contract scan Tesseract rated 24.7) and three clean
-(including two that extract perfectly today, and a contract scan rated 91.1
-with one stray quote mark): 6/6 correct at ~1.3s per call. It guards a path
-that costs ~117s when it goes wrong, and only runs on OCR-derived text
-after the free deterministic check has said nothing.
+matter how badly it was scanned. Word lists and language detection do not
+help: Tesseract's mistakes land on real words, and "sus TOTAL $1250" is
+nonsense only in context, which is what a language model reads. It only
+runs on OCR-derived text after the free deterministic check has said
+nothing.
 """
 from __future__ import annotations
 

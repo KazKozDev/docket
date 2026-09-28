@@ -102,8 +102,7 @@ SETTINGS: tuple[Setting, ...] = (
             "Retries after 429/5xx or a connection error, and after a timeout for hosted models.",
             minimum=0, maximum=10),
     # Reasoning models spend output tokens deliberating before a transcription
-    # that needs none: one invoice with deepseek-v4.1-flash:cloud took 11.9 s /
-    # 661 tokens with thinking, 5.1 s / 171 tokens without, same answer.
+    # that needs none.
     Setting("ENABLE_THINKING", "llm.enable_thinking", "DOCKET_ENABLE_THINKING", "bool", False,
             "Let reasoning models think before answering."),
     Setting("LLM_CONCURRENCY", "llm.concurrency", "DOCKET_LLM_CONCURRENCY", "int", 4,

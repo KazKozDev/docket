@@ -8,8 +8,7 @@ source citation, and its business rules.
 Versioning: invoice-family schemas are 2.0 — parties, addresses, tax
 identifiers and references became shared structured objects. The other
 original schemas are 1.1 — same layout as 1.0 minus the redundant `doc_type`
-field. Schemas added with the catalog start at 1.0 (experimental until
-measured on real documents). Every migration from 1.0 is automatic.
+field. Schemas added with the catalog start at 1.0. Every migration from 1.0 is automatic.
 """
 from __future__ import annotations
 
@@ -154,8 +153,7 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
             # A bare TAX INVOICE / factura fiscal header is not invoice evidence: in
             # GST countries every till receipt prints one. It scores nothing, so
             # such a document goes to the next tier, whose receipt description
-            # names that case (82/120 Malaysian SROIE receipts were misfiled
-            # before, first as invoices, then under a separate tax_invoice type).
+            # names that case.
             pattern(r"\b(?<!tax\s)invoice\b|\bfactura\b(?!\s*fiscal)", 3.0),
             pattern(r"\bbill to\b|\bfacturar a\b|\bcliente\b", 2.0),
             pattern(r"\bamount due\b|\bimporte total\b|\btotal a pagar\b", 2.0),

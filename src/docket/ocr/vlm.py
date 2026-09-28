@@ -1,8 +1,8 @@
 """The vision-language model as an OCR backend of last resort.
 
 It reads what Tesseract can't — faint scans, handwriting, odd fonts — but it
-returns text only: no boxes, no confidence, and it has been observed
-inventing digits to make totals add up. That is why it sits last in the
+returns text only: no boxes, no confidence, and it can invent digits to
+make totals add up. That is why it sits last in the
 fallback chain and why the acquisition keeps the OCR reading it overruled as
 an independent witness (see acquire.py and validate.py).
 """

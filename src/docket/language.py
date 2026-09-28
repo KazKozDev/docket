@@ -5,17 +5,6 @@ rules for, by counting function words. Function words are the right signal
 because they are frequent, short, and almost never appear in the other
 language — unlike content words, which a bilingual Barcelona invoice is
 full of. No dependency, no model, microseconds.
-
-A NEGATIVE RESULT, kept here because it's the useful part: a
-"gibberish ratio" was also implemented, to give contracts the OCR-quality
-signal that the amount-legibility check can only provide for documents with
-money on them. The idea was that OCR failures produce vowelless tokens
-("sistz", "sus TTA"). Measured against real Tesseract output from a badly
-read invoice, it scored 0.000 — identical to clean text, because Tesseract's
-failures are mostly pronounceable junk. The metric discriminated nothing and
-was removed rather than shipped as false reassurance. Detecting garbled
-prose still needs a real signal: a word list, character n-gram
-plausibility, or per-word OCR confidence used better than an average.
 """
 from __future__ import annotations
 

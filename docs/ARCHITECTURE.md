@@ -163,9 +163,7 @@ boxes. Pure geometry, no keywords:
 Serialization writes lines in reading order, with `[TABLE n: R rows x C
 columns]` and `[COLUMN n]` marker lines.
 
-Known limits — measured on the annotated golden scans (`eval/benchmark_ocr.py`:
-word F1 0.905 Tesseract / 0.994 Paddle mobile, table-cell accuracy 0.62 /
-0.90 on 242 expected cells), not on third-party benchmarks:
+Known limits:
 
 - A table cell that wraps onto a second line becomes its own row (or breaks
   the table run); it is not merged back into the cell above.
