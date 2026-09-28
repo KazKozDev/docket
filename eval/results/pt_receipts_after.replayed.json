@@ -1,0 +1,905 @@
+{
+  "replayed_from": "pt_receipts_after.json",
+  "summary": {
+    "documents": 50,
+    "fully_right": 11,
+    "field_accuracy": 0.7448,
+    "needs_review": 31,
+    "silent_successes": 19,
+    "false_successes": 14
+  },
+  "documents": [
+    {
+      "config": "tesseract",
+      "document": "pt_20210213_135622.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 6,
+        "mismatches": [
+          "merchant_name",
+          "merchant_tax_id"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210215_163346.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "tax_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "transaction_date was read from words OCR recognised with low confidence (0.52 < 0.80)",
+        "validation error: total_amount — amount tendered 0.00 - change 0.00 = 0.00, total_amount says 67.30"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210215_164850.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 6,
+        "total": 6,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210215_172440.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 6,
+        "total": 6,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "transaction_date was read from words OCR recognised with low confidence (0.77 < 0.80)",
+        "validation error: items — items sum to 18.78, but the amount they should match is 24.37 before tax or 28.92 with it",
+        "validation error: items[0].price — cited line 'REMOV GONDURA ORO FLEX 2.5MT' states 2.00, but items[0].price=0.00"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210215_172948.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 6,
+        "mismatches": [
+          "merchant_name",
+          "receipt_number"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210316_213616.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 6,
+        "mismatches": [
+          "merchant_name",
+          "transaction_date"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210318_114507.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 2,
+        "total": 3,
+        "mismatches": [
+          "receipt_number"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210318_172727.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 1,
+        "total": 4,
+        "mismatches": [
+          "merchant_name",
+          "receipt_number",
+          "total_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: total_amount — missing page and source-region citation"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210320_164226.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "merchant_name"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "total_amount was read from words OCR recognised with low confidence (0.76 < 0.80)",
+        "validation error: items[0].unit_price — cited line '1.589 EUR / L' states 1589.00, but items[0].unit_price=1.59"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210321_120551.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 6,
+        "total": 6,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items[0].unit_price — cited line '47,76 l * 1,609 € /l' states 47.76, 1609.00, but items[0].unit_price=1.61"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210322_164701.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 6,
+        "total": 6,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items[0].unit_price — cited line '1,459 EUR / L' states 1459.00, but items[0].unit_price=1.46"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210323_170326.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 6,
+        "total": 6,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210323_173858.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 6,
+        "mismatches": [
+          "merchant_name",
+          "receipt_number"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items[0].unit_price — cited line '1.494' states 1494.00, but items[0].unit_price=1.49"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210323_182632.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "merchant_name"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210323_185919.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 6,
+        "total": 6,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210324_190659.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 3,
+        "total": 5,
+        "mismatches": [
+          "merchant_name",
+          "receipt_number"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: merchant_name — 'Brisa »concessáo Rodovi: lária, S.A.' holds characters no name is written with — likely misread"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210427_162556.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 2,
+        "total": 5,
+        "mismatches": [
+          "merchant_name",
+          "merchant_tax_id",
+          "receipt_number"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210428_142429.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 2,
+        "total": 6,
+        "mismatches": [
+          "transaction_date",
+          "receipt_number",
+          "total_amount",
+          "tax_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items — items sum to 29.39, but the amount they should match is 74.38 before tax or 79.79 with it",
+        "validation error: total_amount — amount tendered 50.00 - change 20.91 = 29.09, total_amount says 79.79",
+        "validation error: amount_tendered — cited line '| | Numerário | 49,50' states 49.50, but amount_tendered=50.00"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210428_150208.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "merchant_tax_id"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210428_153535.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 6,
+        "mismatches": [
+          "merchant_name",
+          "receipt_number"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items[0] — quantity (2.0) * unit_price (10.00) = 20.00, does not match line price 18.00",
+        "validation error: items[1] — quantity (2.0) * unit_price (3.20) = 6.40, does not match line price 5.76"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210428_180758.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 6,
+        "mismatches": [
+          "merchant_tax_id",
+          "tax_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "transaction_date was read from words OCR recognised with low confidence (0.65 < 0.80)",
+        "validation error: items[0] — quantity (6.0) * unit_price (1.34) = 8.04, does not match line price 10.72",
+        "validation error: subtotal — cited line '| C 6% | 10,11 | 0,61 | 10,72 |\\n| E 23% | 0,08 | 0,02 | 0,10 |' states 10.11, 0.61, 10.72, 0.08, 0.02, 0.10, but subtotal=10.19"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210428_183255.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "merchant_name"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210428_191552.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 5,
+        "mismatches": [
+          "receipt_number"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items[0].unit_price — cited line 'GASOLINA EVOLOGIC 95 1.579 EUR/L' states 95.00, 1579.00, but items[0].unit_price=1.58"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210428_195539.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 6,
+        "total": 6,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "transaction_date was read from words OCR recognised with low confidence (0.72 < 0.80)"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210428_201521.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "merchant_name"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "total_amount was read from words OCR recognised with low confidence (0.77 < 0.80)",
+        "validation error: items[0].unit_price — cited line '1,654 EUR / L' states 1654.00, but items[0].unit_price=1.65"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210428_204723.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 6,
+        "mismatches": [
+          "merchant_name",
+          "merchant_tax_id"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210428_225451.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 1,
+        "total": 6,
+        "mismatches": [
+          "merchant_name",
+          "merchant_tax_id",
+          "transaction_date",
+          "receipt_number",
+          "tax_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items[0] — quantity (1.0) * unit_price (1.68) = 1.68, does not match line price 13.00",
+        "validation error: items[0].unit_price — cited line 'PA Lit | x | 1,679 EUR/LIt' states 1679.00, but items[0].unit_price=1.68"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210429_182800.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 5,
+        "mismatches": [
+          "tax_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: tax_amount — cited line '| 13,00 | 64,07 | 8,33 | 72,40 |\\n| 23,00 | 2,20 | 0,50 | 2,70 |' states 13.00, 64.07, 8.33, 72.40, 23.00, 2.20, 0.50, 2.70, but tax_amount=8.83"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210429_190827.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 6,
+        "mismatches": [
+          "merchant_name",
+          "merchant_tax_id"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "transaction_date was read from words OCR recognised with low confidence (0.78 < 0.80)"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210429_194756.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "receipt_number"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "transaction_date was read from words OCR recognised with low confidence (0.55 < 0.80)"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210429_201537.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "tax_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210429_204904.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "merchant_name"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items[0].unit_price — cited line '1.554 EUR / L' states 1554.00, but items[0].unit_price=1.55"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210429_210844.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "merchant_name"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210429_221438.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "tax_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items — items sum to 14.90, but the amount they should match is 12.11 before tax or 14.30 with it",
+        "validation error: total_amount — subtotal + tax + tip - discount = 14.30 (or, with the discount already in the subtotal, 14.30), total_amount says 14.90"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210507_170316.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 6,
+        "mismatches": [
+          "merchant_name",
+          "receipt_number"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210507_174713.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 5,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: total_amount — cited line 'Total: 18.50Euros' states 18.00, but total_amount=18.50"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210507_184346.jpg",
+      "status": "needs_review",
+      "classified": false,
+      "fields": {
+        "correct": 0,
+        "total": 5,
+        "mismatches": [
+          "merchant_tax_id",
+          "transaction_date",
+          "receipt_number",
+          "total_amount",
+          "tax_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: line_items[0] — line 1 ('GASOLEO'): 39 × 1.30 = 50.66, but the line total says 50.00",
+        "validation error: total_amount — subtotal + tax + shipping - discount = 59.35, total_amount says 50.00",
+        "validation error: line_items[0].unit_price — cited line '39 Litros | 1.299 Eur/Litros | GASOLEO |' states 39.00, 1299.00, but line_items[0].unit_price=1.30"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210507_202651.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 3,
+        "total": 6,
+        "mismatches": [
+          "merchant_name",
+          "merchant_tax_id",
+          "receipt_number"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items[0].price — cited line 'Informat ica: (C) 693535640712 RE200' states 693535640712.00, but items[0].price=29.99",
+        "validation error: items[0].unit_price — cited line 'Informat ica: (C) 693535640712 RE200' states 693535640712.00, but items[0].unit_price=29.99",
+        "validation error: subtotal — cited line '23,007 | 24, $8 | 5,61 | 29' states 23007.00, 24.00, 8.00, 5.61, 29.00, but subtotal=24.38"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210507_213627.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 6,
+        "total": 6,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210507_215847.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "merchant_name"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210508_151852.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 6,
+        "total": 6,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210508_170507.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 6,
+        "mismatches": [
+          "merchant_tax_id",
+          "tax_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items — items sum to 39.99, but the amount they should match is 32.51 before tax or 39.97 with it",
+        "validation error: total_amount — subtotal + tax + tip - discount = 39.97 (or, with the discount already in the subtotal, 39.97), total_amount says 39.99"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210508_175407.jpg",
+      "status": "succeeded",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 5,
+        "mismatches": [
+          "merchant_tax_id"
+        ]
+      },
+      "success": false,
+      "needs_review": false,
+      "review_reasons": []
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210508_202607.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 3,
+        "total": 6,
+        "mismatches": [
+          "merchant_name",
+          "merchant_tax_id",
+          "receipt_number"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items[1].quantity — cited source '5601966014895 SELADOR\\nSTAND BECKEN BSHD' does not appear in the document — the value 1.00 is not grounded in anything on the page"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210508_204509.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "merchant_name"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items[0].unit_price — cited line '1.318 Eur/L' states 1318.00, but items[0].unit_price=1.32"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210508_205716.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 5,
+        "mismatches": []
+      },
+      "success": true,
+      "needs_review": true,
+      "review_reasons": [
+        "transaction_date was read from words OCR recognised with low confidence (0.68 < 0.80)"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210508_211600.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 3,
+        "total": 5,
+        "mismatches": [
+          "merchant_name",
+          "receipt_number"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "transaction_date was read from words OCR recognised with low confidence (0.79 < 0.80)"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210509_000204.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 5,
+        "total": 6,
+        "mismatches": [
+          "merchant_name"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: items[0] — quantity (1.4) * unit_price (19.50) = 27.30, does not match line price 35.12",
+        "validation error: items[0].unit_price — cited line '1.400KG | 19,500' states 1.00, 19500.00, but items[0].unit_price=19.50"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210509_000657.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 3,
+        "total": 6,
+        "mismatches": [
+          "merchant_tax_id",
+          "receipt_number",
+          "tax_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "transaction_date was read from words OCR recognised with low confidence (0.65 < 0.80)"
+      ]
+    },
+    {
+      "config": "tesseract",
+      "document": "pt_20210509_002053.jpg",
+      "status": "needs_review",
+      "classified": true,
+      "fields": {
+        "correct": 4,
+        "total": 6,
+        "mismatches": [
+          "receipt_number",
+          "tax_amount"
+        ]
+      },
+      "success": false,
+      "needs_review": true,
+      "review_reasons": [
+        "validation error: tax_amount — cited line '| C 62 | 19,07 | 1,14 | 20,21 |\\n| D 132 | 1,19 | 0,16 | 1,35 |\\n| E 232 | 4,06...' states 62.00, 19.07, 1.14, 20.21, 132.00, 1.19, 0.16, 1.35, 232.00, 4.06, 0.93, 4.99, but tax_amount=2.23"
+      ]
+    }
+  ]
+}

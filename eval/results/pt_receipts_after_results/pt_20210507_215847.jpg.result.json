@@ -1,0 +1,420 @@
+{
+ "source": "eval/pt_receipts/pt_20210507_215847.jpg",
+ "document_id": "doc_28a018f7eef099cd4a84",
+ "status": "succeeded",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 0.95,
+  "method": "llm",
+  "scores": {
+   "invoice": 5.0,
+   "credit_note": 0.0,
+   "receipt": 3.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "en",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.0,
+      "reason": "no text recognized",
+      "seconds": 3.453
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 4.773
+     }
+    ],
+    "witness": null
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "... Restauracao, Lda.\n... Machado dos Santos, 1\n9500-010 Ponta Delgada\nTelefone: 966773226\nNo. Contribuinte: 513631496\nRegisto CRC. Ponta Delgada n.513631496\nCapital Social:\n\nCliente: FLH\nNIF: 510776914\nMorada:\n\nFatura-Recibo FT 101/13\nData: 2017-11-11 - Hora: 15:20\n... - Emp.: Hugo Sa\n\n| Qt | Artigo | IV | Total |\n| :--- | :--- | :--- | :--- |\n| 4 | Cafe | 9 | e 3.00 |\n| 3 | **Cheio | 9 | e 0.00 |\n| 2 | Cone 2 Bolas | 9 | e 6.40 |\n| 1 | Copo 1 Bola | 9 | e 1.80 |\n\nTotal: e 11.20\nPago: e 11.20\nTroco: e 0.00\n\nNumerario e 11.20\n\n| Taxa | Base | IVA | Total |\n| :--- | :--- | :--- | :--- |\n| 9.00 | e 10.28 | e 0.92 | e 11.20 |\n\n...A incluido as taxas em vigor\nInformatizado por 361.pt\nConsultas:\nObrigado e volte sempre\n\n...Processado por programa\ncertificado n. 0071/AT\n\nCopyright GrupoPIE, SA"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "Restauracao, Lda.",
+  "merchant_tax_id": "513631496",
+  "merchant_address": "Machado dos Santos, 1, 9500-010 Ponta Delgada",
+  "transaction_date": "2017-11-11",
+  "currency": "EUR",
+  "receipt_number": "FT 101/13",
+  "items": [
+   {
+    "description": "Cafe",
+    "price": 3.0,
+    "quantity": 4.0,
+    "unit_price": null
+   },
+   {
+    "description": "**Cheio",
+    "price": 0.0,
+    "quantity": 3.0,
+    "unit_price": null
+   },
+   {
+    "description": "Cone 2 Bolas",
+    "price": 6.4,
+    "quantity": 2.0,
+    "unit_price": null
+   },
+   {
+    "description": "Copo 1 Bola",
+    "price": 1.8,
+    "quantity": 1.0,
+    "unit_price": null
+   }
+  ],
+  "subtotal": 10.28,
+  "tax_amount": 0.92,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 11.2,
+  "payment_method": "Numerario",
+  "amount_tendered": 11.2,
+  "change_given": 0.0,
+  "card_last_four": null,
+  "expense_category": "meals"
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "... Restauracao, Lda.",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_tax_id": {
+   "page": 1,
+   "quote": "No. Contribuinte: 513631496",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "... Machado dos Santos, 1\n9500-010 Ponta Delgada",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "Data: 2017-11-11 - Hora: 15:20",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "Total: e 11.20",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "receipt_number": {
+   "page": 1,
+   "quote": "Fatura-Recibo FT 101/13",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "| 4 | Cafe | 9 | e 3.00 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "| 4 | Cafe | 9 | e 3.00 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].quantity": {
+   "page": 1,
+   "quote": "| 4 | Cafe | 9 | e 3.00 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].description": {
+   "page": 1,
+   "quote": "| 3 | **Cheio | 9 | e 0.00 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].price": {
+   "page": 1,
+   "quote": "| 3 | **Cheio | 9 | e 0.00 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].quantity": {
+   "page": 1,
+   "quote": "| 3 | **Cheio | 9 | e 0.00 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].description": {
+   "page": 1,
+   "quote": "| 2 | Cone 2 Bolas | 9 | e 6.40 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].price": {
+   "page": 1,
+   "quote": "| 2 | Cone 2 Bolas | 9 | e 6.40 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].quantity": {
+   "page": 1,
+   "quote": "| 2 | Cone 2 Bolas | 9 | e 6.40 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[3].description": {
+   "page": 1,
+   "quote": "| 1 | Copo 1 Bola | 9 | e 1.80 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[3].price": {
+   "page": 1,
+   "quote": "| 1 | Copo 1 Bola | 9 | e 1.80 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[3].quantity": {
+   "page": 1,
+   "quote": "| 1 | Copo 1 Bola | 9 | e 1.80 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "| 9.00 | e 10.28 | e 0.92 | e 11.20 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_amount": {
+   "page": 1,
+   "quote": "| 9.00 | e 10.28 | e 0.92 | e 11.20 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "Total: e 11.20",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "payment_method": {
+   "page": 1,
+   "quote": "Numerario e 11.20",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "amount_tendered": {
+   "page": 1,
+   "quote": "Pago: e 11.20",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "change_given": {
+   "page": 1,
+   "quote": "Troco: e 0.00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [
+  {
+   "field": "*",
+   "message": "VLM-transcribed values have no confident OCR support — verify key figures against the original page",
+   "severity": "warning"
+  }
+ ],
+ "corroborated": {},
+ "needs_review": false,
+ "review_reasons": [],
+ "metrics": {
+  "elapsed_seconds": 12.718,
+  "stage_seconds": {
+   "acquire": 8.253,
+   "classify": 0.873,
+   "extract": 3.588,
+   "validate": 0.002
+  },
+  "pages": 1,
+  "llm_calls": 3,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 3567,
+  "llm_output_tokens": 1626,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 3158,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

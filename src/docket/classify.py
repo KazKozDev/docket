@@ -9,6 +9,8 @@ all three the moment it is registered.
 """
 from __future__ import annotations
 
+import re
+
 from . import catalog, config
 from .classify_tfidf import classify_tfidf
 from .llm_client import LLMError, chat_json
@@ -30,6 +32,23 @@ Text:
 {text}
 ---
 """
+
+
+# What only a supplier invoice carries: an account to pay into, a date or
+# terms to pay by, a block naming who is billed, the date of supply. A till
+# slip prints "Invoice", "Fatura", "Factura simplificada" or "Rechnung" in its
+# header too, so the title alone decides nothing between the two.
+_INVOICE_STRUCTURE = re.compile(
+    r"\b[A-Z]{2}\d{2}(?: ?[A-Z0-9]{4}){3,7}(?: ?[A-Z0-9]{1,4})?\b"  # IBAN
+    r"|\b(?:due date|payment terms|payable (?:by|within)|pay by|net \d+ days?|bill to|invoice to|date of supply"
+    r"|selbst\s*ausgestellte\s+rechnung|gutschriftsverfahren|self-billed|autofacturation|autofactura"
+    r"|zahlbar|f[äa]llig|zahlungsziel|zahlungsbedingungen|rechnungsempf[äa]nger|rechnungsadresse|leistungsdatum"
+    r"|vencimiento|condiciones de pago|facturar a|facturado a"
+    r"|[ée]ch[ée]ance|conditions de paiement|destinataire|adresse de facturation"
+    r"|vencimento|condi[çc][õo]es de pagamento|faturar a"
+    r"|scadenza|termini di pagamento|vervaldatum|betalingstermijn|factuuradres|termin p[łl]atno[śs]ci)\b",
+    re.IGNORECASE,
+)
 
 
 def _llm_prompt(text: str) -> str:
@@ -55,6 +74,11 @@ def classify_rules(text: str) -> ClassificationResult | None:
     top_type, top_score = ranked[0]
     runner_up_score = ranked[1][1] if len(ranked) > 1 else 0.0
 
+    if top_type == "invoice" and not _INVOICE_STRUCTURE.search(text):
+        # Invoice words without anything only an invoice has: a till slip
+        # headed "Fatura" looks the same to keywords. Let a tier that reads
+        # the whole document decide.
+        return None
     if top_score > 0 and (top_score - runner_up_score) >= _CONFIDENCE_MARGIN:
         total = sum(scores.values()) or 1.0
         return ClassificationResult(

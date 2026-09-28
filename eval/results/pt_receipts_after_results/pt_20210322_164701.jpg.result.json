@@ -1,0 +1,1159 @@
+{
+ "source": "eval/pt_receipts/pt_20210322_164701.jpg",
+ "document_id": "doc_5ebaf2a719737ed1030b",
+ "status": "needs_review",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 0.95,
+  "method": "llm",
+  "scores": {
+   "invoice": 5.0,
+   "credit_note": 0.0,
+   "receipt": 3.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.9585062240663901,
+      "reason": "escalated: kept only as an independent witness",
+      "seconds": 4.429
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 5.648
+     }
+    ],
+    "witness": {
+     "page_number": 1,
+     "width": 3000.0,
+     "height": 4000.0,
+     "unit": "px",
+     "rotation": 0,
+     "deskew_angle": 0.0,
+     "crop_quad": null,
+     "backend": "tesseract",
+     "confidence": 0.9585062240663901,
+     "words": [
+      {
+       "id": "p1-w0",
+       "text": "il",
+       "confidence": 0.68,
+       "bbox": {
+        "x0": 0.934,
+        "y0": 0.393,
+        "x1": 0.9436666666666667,
+        "y1": 0.39525
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w1",
+       "text": "nn",
+       "confidence": 0.17,
+       "bbox": {
+        "x0": 0.9363333333333334,
+        "y0": 0.3985,
+        "x1": 0.9396666666666667,
+        "y1": 0.4065
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w2",
+       "text": "_",
+       "confidence": 0.02,
+       "bbox": {
+        "x0": 0.9386666666666666,
+        "y0": 0.40975,
+        "x1": 0.944,
+        "y1": 0.422
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w3",
+       "text": "D",
+       "confidence": 0.1,
+       "bbox": {
+        "x0": 0.9473333333333334,
+        "y0": 0.43625,
+        "x1": 0.9493333333333334,
+        "y1": 0.4405
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w4",
+       "text": "Terminal",
+       "confidence": 0.93,
+       "bbox": {
+        "x0": 0.3293333333333333,
+        "y0": 0.752,
+        "x1": 0.38766666666666666,
+        "y1": 0.7605
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w5",
+       "text": "Pagamento",
+       "confidence": 0.9,
+       "bbox": {
+        "x0": 0.4,
+        "y0": 0.751,
+        "x1": 0.4696666666666667,
+        "y1": 0.761
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w6",
+       "text": "Automatico:",
+       "confidence": 0.89,
+       "bbox": {
+        "x0": 0.47933333333333333,
+        "y0": 0.75025,
+        "x1": 0.5626666666666666,
+        "y1": 0.7585
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w7",
+       "text": "00669854",
+       "confidence": 0.95,
+       "bbox": {
+        "x0": 0.5746666666666667,
+        "y0": 0.748,
+        "x1": 0.636,
+        "y1": 0.75725
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w8",
+       "text": "Data:",
+       "confidence": 0.95,
+       "bbox": {
+        "x0": 0.3293333333333333,
+        "y0": 0.764,
+        "x1": 0.36466666666666664,
+        "y1": 0.77275
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w9",
+       "text": "2019-06-04",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.377,
+        "y0": 0.7625,
+        "x1": 0.454,
+        "y1": 0.772
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w10",
+       "text": "Hora:",
+       "confidence": 0.95,
+       "bbox": {
+        "x0": 0.535,
+        "y0": 0.76175,
+        "x1": 0.5706666666666667,
+        "y1": 0.77
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w11",
+       "text": "16:31:33",
+       "confidence": 0.89,
+       "bbox": {
+        "x0": 0.5833333333333334,
+        "y0": 0.76025,
+        "x1": 0.645,
+        "y1": 0.7695
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w12",
+       "text": "Pertodo.067",
+       "confidence": 0.91,
+       "bbox": {
+        "x0": 0.3293333333333333,
+        "y0": 0.775,
+        "x1": 0.4146666666666667,
+        "y1": 0.78475
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w13",
+       "text": "Transaccáo:003",
+       "confidence": 0.84,
+       "bbox": {
+        "x0": 0.42533333333333334,
+        "y0": 0.774,
+        "x1": 0.534,
+        "y1": 0.784
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w14",
+       "text": "Mensagem:",
+       "confidence": 0.87,
+       "bbox": {
+        "x0": 0.5513333333333333,
+        "y0": 0.77325,
+        "x1": 0.6136666666666667,
+        "y1": 0.78325
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w15",
+       "text": "3",
+       "confidence": 0.78,
+       "bbox": {
+        "x0": 0.6236666666666667,
+        "y0": 0.77875,
+        "x1": 0.635,
+        "y1": 0.781
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w16",
+       "text": "MILLENNIUM",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.409,
+        "y0": 0.786,
+        "x1": 0.4866666666666667,
+        "y1": 0.79575
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w17",
+       "text": "BCP",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.496,
+        "y0": 0.78575,
+        "x1": 0.5183333333333333,
+        "y1": 0.79475
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w18",
+       "text": "AMARAL",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.33,
+        "y0": 0.80025,
+        "x1": 0.38066666666666665,
+        "y1": 0.80875
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w19",
+       "text": "/SALVADOR",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.38566666666666666,
+        "y0": 0.799,
+        "x1": 0.447,
+        "y1": 0.808
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w20",
+       "text": "CARTAO:",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.4096666666666667,
+        "y0": 0.81075,
+        "x1": 0.461,
+        "y1": 0.81975
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w21",
+       "text": "xxxx1008/04",
+       "confidence": 0.76,
+       "bbox": {
+        "x0": 0.47333333333333333,
+        "y0": 0.80975,
+        "x1": 0.559,
+        "y1": 0.81875
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w22",
+       "text": "32010",
+       "confidence": 0.9,
+       "bbox": {
+        "x0": 0.4063333333333333,
+        "y0": 0.82375,
+        "x1": 0.44,
+        "y1": 0.832
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w23",
+       "text": "VISA",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.506,
+        "y0": 0.8225,
+        "x1": 0.5356666666666666,
+        "y1": 0.83075
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w24",
+       "text": "ELECTRON",
+       "confidence": 0.8,
+       "bbox": {
+        "x0": 0.545,
+        "y0": 0.82125,
+        "x1": 0.606,
+        "y1": 0.8305
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w25",
+       "text": "JOMPI",
+       "confidence": 0.33,
+       "bbox": {
+        "x0": 0.3343333333333333,
+        "y0": 0.8435,
+        "x1": 0.363,
+        "y1": 0.845
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w26",
+       "text": "20,00€",
+       "confidence": 0.91,
+       "bbox": {
+        "x0": 0.442,
+        "y0": 0.835,
+        "x1": 0.485,
+        "y1": 0.845
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w27",
+       "text": "VELC",
+       "confidence": 0.86,
+       "bbox": {
+        "x0": 0.506,
+        "y0": 0.83425,
+        "x1": 0.5356666666666666,
+        "y1": 0.84325
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w28",
+       "text": "PP",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.5453333333333333,
+        "y0": 0.834,
+        "x1": 0.5596666666666666,
+        "y1": 0.843
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w29",
+       "text": "N",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.5696666666666667,
+        "y0": 0.834,
+        "x1": 0.576,
+        "y1": 0.8425
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w30",
+       "text": "ID",
+       "confidence": 0.93,
+       "bbox": {
+        "x0": 0.3313333333333333,
+        "y0": 0.849,
+        "x1": 0.3443333333333333,
+        "y1": 0.857
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w31",
+       "text": "ESTAB.:0001104512",
+       "confidence": 0.86,
+       "bbox": {
+        "x0": 0.35433333333333333,
+        "y0": 0.84725,
+        "x1": 0.48833333333333334,
+        "y1": 0.8575
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w32",
+       "text": "AUT:9",
+       "confidence": 0.83,
+       "bbox": {
+        "x0": 0.506,
+        "y0": 0.8465,
+        "x1": 0.5443333333333333,
+        "y1": 0.85575
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w33",
+       "text": "Y",
+       "confidence": 0.77,
+       "bbox": {
+        "x0": 0.5756666666666667,
+        "y0": 0.846,
+        "x1": 0.584,
+        "y1": 0.852
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w34",
+       "text": "ig",
+       "confidence": 0.15,
+       "bbox": {
+        "x0": 0.3243333333333333,
+        "y0": 0.86825,
+        "x1": 0.5696666666666667,
+        "y1": 0.9235
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w35",
+       "text": "UE",
+       "confidence": 0.22,
+       "bbox": {
+        "x0": 0.5726666666666667,
+        "y0": 0.883,
+        "x1": 0.6263333333333333,
+        "y1": 0.91925
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w36",
+       "text": "3217020190604000000020.00",
+       "confidence": 0.78,
+       "bbox": {
+        "x0": 0.38266666666666665,
+        "y0": 0.91125,
+        "x1": 0.626,
+        "y1": 0.923
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w37",
+       "text": "0",
+       "confidence": 0.79,
+       "bbox": {
+        "x0": 0.618,
+        "y0": 0.91025,
+        "x1": 0.6273333333333333,
+        "y1": 0.924
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l12"
+      }
+     ],
+     "lines": [
+      {
+       "id": "p1-l0",
+       "text": "il nn _",
+       "bbox": {
+        "x0": 0.934,
+        "y0": 0.393,
+        "x1": 0.944,
+        "y1": 0.422
+       },
+       "word_ids": [
+        "p1-w0",
+        "p1-w1",
+        "p1-w2"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l1",
+       "text": "D",
+       "bbox": {
+        "x0": 0.9473333333333334,
+        "y0": 0.43625,
+        "x1": 0.9493333333333334,
+        "y1": 0.4405
+       },
+       "word_ids": [
+        "p1-w3"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l2",
+       "text": "Terminal Pagamento Automatico: 00669854",
+       "bbox": {
+        "x0": 0.3293333333333333,
+        "y0": 0.748,
+        "x1": 0.636,
+        "y1": 0.761
+       },
+       "word_ids": [
+        "p1-w4",
+        "p1-w5",
+        "p1-w6",
+        "p1-w7"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l3",
+       "text": "Data: 2019-06-04 | Hora: 16:31:33",
+       "bbox": {
+        "x0": 0.3293333333333333,
+        "y0": 0.76025,
+        "x1": 0.645,
+        "y1": 0.77275
+       },
+       "word_ids": [
+        "p1-w8",
+        "p1-w9",
+        "p1-w10",
+        "p1-w11"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l4",
+       "text": "Pertodo.067 Transaccáo:003 Mensagem: 3",
+       "bbox": {
+        "x0": 0.3293333333333333,
+        "y0": 0.77325,
+        "x1": 0.635,
+        "y1": 0.78475
+       },
+       "word_ids": [
+        "p1-w12",
+        "p1-w13",
+        "p1-w14",
+        "p1-w15"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l5",
+       "text": "MILLENNIUM BCP",
+       "bbox": {
+        "x0": 0.409,
+        "y0": 0.78575,
+        "x1": 0.5183333333333333,
+        "y1": 0.79575
+       },
+       "word_ids": [
+        "p1-w16",
+        "p1-w17"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l6",
+       "text": "AMARAL /SALVADOR",
+       "bbox": {
+        "x0": 0.33,
+        "y0": 0.799,
+        "x1": 0.447,
+        "y1": 0.80875
+       },
+       "word_ids": [
+        "p1-w18",
+        "p1-w19"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l7",
+       "text": "CARTAO: xxxx1008/04",
+       "bbox": {
+        "x0": 0.4096666666666667,
+        "y0": 0.80975,
+        "x1": 0.559,
+        "y1": 0.81975
+       },
+       "word_ids": [
+        "p1-w20",
+        "p1-w21"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l8",
+       "text": "32010 | VISA ELECTRON",
+       "bbox": {
+        "x0": 0.4063333333333333,
+        "y0": 0.82125,
+        "x1": 0.606,
+        "y1": 0.832
+       },
+       "word_ids": [
+        "p1-w22",
+        "p1-w23",
+        "p1-w24"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l9",
+       "text": "JOMPI | 20,00€ | VELC PP N",
+       "bbox": {
+        "x0": 0.3343333333333333,
+        "y0": 0.834,
+        "x1": 0.576,
+        "y1": 0.845
+       },
+       "word_ids": [
+        "p1-w25",
+        "p1-w26",
+        "p1-w27",
+        "p1-w28",
+        "p1-w29"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l10",
+       "text": "ID ESTAB.:0001104512 AUT:9 | Y",
+       "bbox": {
+        "x0": 0.3313333333333333,
+        "y0": 0.846,
+        "x1": 0.584,
+        "y1": 0.8575
+       },
+       "word_ids": [
+        "p1-w30",
+        "p1-w31",
+        "p1-w32",
+        "p1-w33"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l11",
+       "text": "ig UE",
+       "bbox": {
+        "x0": 0.3243333333333333,
+        "y0": 0.86825,
+        "x1": 0.6263333333333333,
+        "y1": 0.9235
+       },
+       "word_ids": [
+        "p1-w34",
+        "p1-w35"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l12",
+       "text": "3217020190604000000020.00 0",
+       "bbox": {
+        "x0": 0.38266666666666665,
+        "y0": 0.91025,
+        "x1": 0.6273333333333333,
+        "y1": 0.924
+       },
+       "word_ids": [
+        "p1-w36",
+        "p1-w37"
+       ],
+       "column": null,
+       "table_id": null
+      }
+     ],
+     "blocks": [
+      {
+       "id": "p1-b0",
+       "bbox": {
+        "x0": 0.934,
+        "y0": 0.393,
+        "x1": 0.944,
+        "y1": 0.422
+       },
+       "line_ids": [
+        "p1-l0"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b1",
+       "bbox": {
+        "x0": 0.9473333333333334,
+        "y0": 0.43625,
+        "x1": 0.9493333333333334,
+        "y1": 0.4405
+       },
+       "line_ids": [
+        "p1-l1"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b2",
+       "bbox": {
+        "x0": 0.3293333333333333,
+        "y0": 0.748,
+        "x1": 0.645,
+        "y1": 0.8575
+       },
+       "line_ids": [
+        "p1-l2",
+        "p1-l3",
+        "p1-l4",
+        "p1-l5",
+        "p1-l6",
+        "p1-l7",
+        "p1-l8",
+        "p1-l9",
+        "p1-l10"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b3",
+       "bbox": {
+        "x0": 0.3243333333333333,
+        "y0": 0.86825,
+        "x1": 0.6273333333333333,
+        "y1": 0.924
+       },
+       "line_ids": [
+        "p1-l11",
+        "p1-l12"
+       ],
+       "column": null
+      }
+     ],
+     "columns": [],
+     "tables": [],
+     "text": "il nn _\nD\nTerminal Pagamento Automatico: 00669854\nData: 2019-06-04 | Hora: 16:31:33\nPertodo.067 Transaccáo:003 Mensagem: 3\nMILLENNIUM BCP\nAMARAL /SALVADOR\nCARTAO: xxxx1008/04\n32010 | VISA ELECTRON\nJOMPI | 20,00€ | VELC PP N\nID ESTAB.:0001104512 AUT:9 | Y\nig UE\n3217020190604000000020.00 0"
+    }
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "galp\n>>>>>>>>>> PRE-PAGAMENTO <<<<<<<<<<\nA.S. LAGOS (FARO/SAGRES) - 11442\nGALPGESTE, S.A.\nRUA TOMAS DA FONSECA, TORRE C,2º .\n1600-209LISBOA Tel .:961232242\nNIF: PT503043745\nFatura/Recibo\n\n| Quantidade | | Preço |\n| :--- | :--- | :--- |\n| 13,71 L | Bomba 01 | |\n| GASOLEO SIMPLES | EUR | 20.00 A |\n| 1,459 EUR / L | | |\n| Total | EUR | 20.00 |\n\n23.00 % IVA A EUR 3.74\n\nCliente 1766\nNome: FLIKEHOME ALGARVE LDA\nMorada:\nCódigo Postal:\nLocalidade:\nNº Contribuinte: 514407395\nMatricula: 59-IV-86\nOperador: 11848590 CLAUDIO\nDoc. Nº.:\n012010004335FAAA00000114422019/000001545\n\nAXr1 - Processado por Programa\nCertificado n.º 1396/AT\n\nData Hora NºTr POS NºOp Turno\n04-06-19 16:31 69217 01 0008 059\nRegime IVA de Caixa nos casos em que tal\nseja aplicável ao cliente\nclientes@galp.com / Tel. 707 504 257\n\nA sua opinião é importante!\nPartilhe-a connosco em\nopiniao.galp.com/postos\n\n| Total | EUR | 20.00 |\n| :--- | :--- | :--- |\n| CARTAO DEBITO | EUR | 20.00 |\n\nTerminal Pagamento Automático: 00669854\nData: 2019-06-04 Hora: 16:31:33\nPeríodo:067 Transacção:003 Mensagem:351\nMILLENNIUM BCP\nAMARAL/SALVADOR\nCARTAO: ****1008/04\nA0000000032010 VISA ELECTRON\nCOMPRA 20,00€ VELC PP N\nID ESTAB.:0001104512 AUT:908457\nPROCESSADO POR SIBS\n\n9 90169217020190604000000020.00 0"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "galp",
+  "merchant_tax_id": "PT503043745",
+  "merchant_address": "RUA TOMAS DA FONSECA, TORRE C,2º . 1600-209LISBOA Tel .:961232242",
+  "transaction_date": "2019-06-04",
+  "currency": "EUR",
+  "receipt_number": "012010004335FAAA00000114422019/000001545",
+  "items": [
+   {
+    "description": "GASOLEO SIMPLES",
+    "price": 20.0,
+    "quantity": 13.71,
+    "unit_price": 1.459
+   }
+  ],
+  "subtotal": 20.0,
+  "tax_amount": 3.74,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 20.0,
+  "payment_method": "CARTAO DEBITO",
+  "amount_tendered": 20.0,
+  "change_given": null,
+  "card_last_four": "1008",
+  "expense_category": "fuel"
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "galp",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_tax_id": {
+   "page": 1,
+   "quote": "NIF: PT503043745",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "RUA TOMAS DA FONSECA, TORRE C,2º .\n1600-209LISBOA Tel .:961232242",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "04-06-19 16:31 69217 01 0008 059",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "Total | EUR | 20.00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "receipt_number": {
+   "page": 1,
+   "quote": "012010004335FAAA00000114422019/000001545",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "GASOLEO SIMPLES",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "GASOLEO SIMPLES | EUR | 20.00 A",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].quantity": {
+   "page": 1,
+   "quote": "13,71 L | Bomba 01 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].unit_price": {
+   "page": 1,
+   "quote": "1,459 EUR / L",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "Total | EUR | 20.00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_amount": {
+   "page": 1,
+   "quote": "23.00 % IVA A EUR 3.74",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "Total | EUR | 20.00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "payment_method": {
+   "page": 1,
+   "quote": "CARTAO DEBITO | EUR | 20.00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "amount_tendered": {
+   "page": 1,
+   "quote": "CARTAO DEBITO | EUR | 20.00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "card_last_four": {
+   "page": 1,
+   "quote": "CARTAO: ****1008/04",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "expense_category": {
+   "page": 1,
+   "quote": "GASOLEO SIMPLES",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [
+  {
+   "field": "items[0].unit_price",
+   "message": "cited line '1,459 EUR / L' states 1459.00, but items[0].unit_price=1.46",
+   "severity": "error"
+  }
+ ],
+ "corroborated": {},
+ "needs_review": true,
+ "review_reasons": [
+  "validation error: items[0].unit_price — cited line '1,459 EUR / L' states 1459.00, but items[0].unit_price=1.46"
+ ],
+ "metrics": {
+  "elapsed_seconds": 23.981,
+  "stage_seconds": {
+   "acquire": 14.571,
+   "classify": 1.485,
+   "extract": 7.184,
+   "validate": 0.003
+  },
+  "pages": 1,
+  "llm_calls": 6,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 6422,
+  "llm_output_tokens": 2065,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 5772,
+  "extract_attempts": 1,
+  "escalated_to_vlm": true,
+  "template_id": null
+ },
+ "error": null
+}

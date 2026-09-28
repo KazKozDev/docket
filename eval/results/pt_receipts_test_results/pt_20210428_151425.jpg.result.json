@@ -1,0 +1,292 @@
+{
+ "source": "eval/pt_receipts_test/pt_20210428_151425.jpg",
+ "document_id": "doc_38490a6ee65286da9887",
+ "status": "succeeded",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 0.95,
+  "method": "llm",
+  "scores": {
+   "invoice": 2.0,
+   "credit_note": 0.0,
+   "receipt": 3.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.0,
+      "reason": "no text recognized",
+      "seconds": 3.393
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 3.444
+     }
+    ],
+    "witness": null
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "26\nParque Chão do Loureiro\nEMEL - Emp. M. Estacionamento Lisb\nAvenida de Berna nº1\n1050 Lisboa\nNIF: 503311332\n21/02/2019 17:02 119/703/0008\nCaixa: 703\nNum Recibo: 19/703/000777\nCliente: Consumidor Final\nN.I.F.:\nEstadia\n** Cloureiro-Rot. **\nNúmero bilhete 02010078433\nTarifa: Parque\nEntrada: 21/02/2019 16:02\nPagamento: 21/02/2019 17:02\nDur. Estadia: 0d 01h 00m\nValor: 1,45 €\nBase incid.: 1,18 €\nI.V.A.(23%): 0,27 €\nT O T A L: 1,45 €\n*** ORIGINAL ***\nrIZ+-Processado por Programa\nCertificado n. 1250/AT\nObrigado pela sua visita\nData emissão: 21/02/2019 17:03\n7.50"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "EMEL - Emp. M. Estacionamento Lisb",
+  "merchant_tax_id": "503311332",
+  "merchant_address": "Avenida de Berna nº1, 1050 Lisboa",
+  "transaction_date": "2019-02-21",
+  "currency": "EUR",
+  "receipt_number": "19/703/000777",
+  "items": [
+   {
+    "description": "Estadia ** Cloureiro-Rot. **",
+    "price": 1.45,
+    "quantity": 1.0,
+    "unit_price": 1.45
+   }
+  ],
+  "subtotal": 1.18,
+  "tax_amount": 0.27,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 1.45,
+  "payment_method": null,
+  "amount_tendered": null,
+  "change_given": null,
+  "card_last_four": null,
+  "expense_category": "travel"
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "EMEL - Emp. M. Estacionamento Lisb",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_tax_id": {
+   "page": 1,
+   "quote": "NIF: 503311332",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "Avenida de Berna nº1\n1050 Lisboa",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "21/02/2019 17:02 119/703/0008",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "Valor: 1,45 €",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "receipt_number": {
+   "page": 1,
+   "quote": "Num Recibo: 19/703/000777",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "Estadia\n** Cloureiro-Rot. **",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "Valor: 1,45 €",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].quantity": {
+   "page": 1,
+   "quote": "Dur. Estadia: 0d 01h 00m",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].unit_price": {
+   "page": 1,
+   "quote": "Valor: 1,45 €",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "Base incid.: 1,18 €",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_amount": {
+   "page": 1,
+   "quote": "I.V.A.(23%): 0,27 €",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "T O T A L: 1,45 €",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "expense_category": {
+   "page": 1,
+   "quote": "Estadia",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [
+  {
+   "field": "*",
+   "message": "VLM-transcribed values have no confident OCR support — verify key figures against the original page",
+   "severity": "warning"
+  }
+ ],
+ "corroborated": {},
+ "needs_review": false,
+ "review_reasons": [],
+ "metrics": {
+  "elapsed_seconds": 10.879,
+  "stage_seconds": {
+   "acquire": 6.867,
+   "classify": 0.888,
+   "extract": 3.12,
+   "validate": 0.003
+  },
+  "pages": 1,
+  "llm_calls": 3,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 3442,
+  "llm_output_tokens": 978,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 2666,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

@@ -115,6 +115,7 @@ _FLAT_MIGRATION = (
 )
 _RECEIPT_MIGRATION = _FLAT_MIGRATION + (
     Migration("1.1", "1.2", "adds the optional amount_tendered and change_given fields", lambda data: dict(data)),
+    Migration("1.2", "1.3", "adds the optional merchant_country field", lambda data: dict(data)),
 )
 _INVOICE_MIGRATION = (
     Migration(
@@ -204,13 +205,14 @@ BUILTIN_SCHEMAS: tuple[SchemaSpec, ...] = (
     ),
     SchemaSpec(
         schema_id="receipt",
-        version="1.2",
+        version="1.3",
         display_name="Receipt",
         model=Receipt,
         description=(
-            "Receipt or till slip proving a payment was made — including point-of-sale "
-            "till receipts printed with a TAX INVOICE header (cashier, salesperson, "
-            "approval code, goods sold are not returnable)"
+            "Receipt or till slip proving a payment was made at the point of sale, whatever "
+            "its header calls it — TAX INVOICE, Fatura / Factura simplificada, Rechnung — "
+            "when it bills no named customer address and sets no payment terms (cashier, "
+            "salesperson, approval code, goods sold are not returnable)"
         ),
         keywords=(
             pattern(r"\breceipt\b|\brecibo\b|\btique\b|\bticket de compra\b", 3.0),

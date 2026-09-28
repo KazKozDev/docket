@@ -1,0 +1,350 @@
+{
+ "source": "eval/pt_receipts_test/pt_20210429_192628.jpg",
+ "document_id": "doc_a231bfe76c7f1891040c",
+ "status": "succeeded",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 1.0,
+  "method": "rules",
+  "scores": {
+   "invoice": 0.0,
+   "credit_note": 0.0,
+   "receipt": 3.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.0,
+      "reason": "confidence 0.00 < 0.60",
+      "seconds": 3.647
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 3.239
+     }
+    ],
+    "witness": {
+     "page_number": 1,
+     "width": 3000.0,
+     "height": 4000.0,
+     "unit": "px",
+     "rotation": 0,
+     "deskew_angle": 0.0,
+     "crop_quad": null,
+     "backend": "tesseract",
+     "confidence": 0.0,
+     "words": [
+      {
+       "id": "p1-w0",
+       "text": "NNAGAPAP",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.8183333333333334,
+        "y0": 0.0255,
+        "x1": 0.8786666666666667,
+        "y1": 0.03075
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w1",
+       "text": "ON",
+       "confidence": 0.36,
+       "bbox": {
+        "x0": 0.878,
+        "y0": 0.023,
+        "x1": 0.8853333333333333,
+        "y1": 0.03175
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w2",
+       "text": "te",
+       "confidence": 0.45,
+       "bbox": {
+        "x0": 0.885,
+        "y0": 0.0255,
+        "x1": 0.9013333333333333,
+        "y1": 0.02825
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      }
+     ],
+     "lines": [
+      {
+       "id": "p1-l0",
+       "text": "NNAGAPAP ON te",
+       "bbox": {
+        "x0": 0.8183333333333334,
+        "y0": 0.023,
+        "x1": 0.9013333333333333,
+        "y1": 0.03175
+       },
+       "word_ids": [
+        "p1-w0",
+        "p1-w1",
+        "p1-w2"
+       ],
+       "column": null,
+       "table_id": null
+      }
+     ],
+     "blocks": [
+      {
+       "id": "p1-b0",
+       "bbox": {
+        "x0": 0.8183333333333334,
+        "y0": 0.023,
+        "x1": 0.9013333333333333,
+        "y1": 0.03175
+       },
+       "line_ids": [
+        "p1-l0"
+       ],
+       "column": null
+      }
+     ],
+     "columns": [],
+     "tables": [],
+     "text": "NNAGAPAP ON te"
+    }
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "BRAGAPARQUES, S.A.\nCap.Soc.10.000.000\n4700 BRAGA\nNr.Contr.503208426\nPq.Estacionamento\nMartim Moniz\nLisboa\n\nRECIBO K2190105707\n\nCaixa      C2\nData: 24.09.19\n\nHORA DE ENTRADA:\n24.09.19       16:32\nHORA DE SAIDA:\n24.09.19       17:42\nTEMPO PARQ.HOR:MIN\n               0:01:10\nQUANTIA:\n               EUR 2.90\n\nTIPO DE PAGAMENTO\nA DINHEIRO\nIVA Incluido\nA Taxa Normal\nDocumento Conforme\nArt.40 n.5a) CIVA\n\nDocum. ao portador\nNome: ______________________\nN.Contr: ____________________\nMatricula __/__/__\n\nOBRIGADO PELA SUA\nVISITA"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "BRAGAPARQUES, S.A.",
+  "merchant_tax_id": null,
+  "merchant_address": "Pq.Estacionamento Martim Moniz Lisboa",
+  "transaction_date": "2019-09-24",
+  "currency": "EUR",
+  "receipt_number": "K2190105707",
+  "items": [
+   {
+    "description": "TEMPO PARQ.HOR:MIN 0:01:10",
+    "price": 2.9,
+    "quantity": 1.0,
+    "unit_price": null
+   }
+  ],
+  "subtotal": 0.0,
+  "tax_amount": 0.0,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 2.9,
+  "payment_method": "A DINHEIRO",
+  "amount_tendered": null,
+  "change_given": null,
+  "card_last_four": null,
+  "expense_category": "travel"
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "BRAGAPARQUES, S.A.",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "Pq.Estacionamento\nMartim Moniz\nLisboa",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "Data: 24.09.19",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "EUR 2.90",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "receipt_number": {
+   "page": 1,
+   "quote": "RECIBO K2190105707",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "TEMPO PARQ.HOR:MIN\n               0:01:10",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "QUANTIA:\n               EUR 2.90",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].quantity": {
+   "page": 1,
+   "quote": "TEMPO PARQ.HOR:MIN\n               0:01:10",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "QUANTIA:\n               EUR 2.90",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "payment_method": {
+   "page": 1,
+   "quote": "A DINHEIRO",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "expense_category": {
+   "page": 1,
+   "quote": "Pq.Estacionamento",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [
+  {
+   "field": "*",
+   "message": "VLM-transcribed values have no confident OCR support — verify key figures against the original page",
+   "severity": "warning"
+  }
+ ],
+ "corroborated": {},
+ "needs_review": false,
+ "review_reasons": [],
+ "metrics": {
+  "elapsed_seconds": 8.852,
+  "stage_seconds": {
+   "acquire": 6.914,
+   "classify": 0.002,
+   "extract": 1.933,
+   "validate": 0.001
+  },
+  "pages": 1,
+  "llm_calls": 2,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 2831,
+  "llm_output_tokens": 802,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 2144,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

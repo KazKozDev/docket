@@ -1438,3 +1438,44 @@ def test_dotted_dates_make_a_page_day_first_even_with_a_stray_dollar_sign():
     invoice = flat_invoice(invoice_number="R-1", issue_date=date(2018, 12, 6), vendor_name="V", customer_name="K",
                            subtotal=59.5, tax_amount=0.0, total_amount=59.5, currency="EUR")
     assert not [i for i in validate(invoice, pages=[page]) if "convention" in i.message]
+
+
+def test_a_bare_tax_number_is_checked_by_the_country_it_carries():
+    from docket.catalog.common import TaxIdentifier
+
+    def issues(value):
+        invoice = flat_invoice(invoice_number="F-1", issue_date=date(2026, 6, 12), vendor_name="Loja Lda",
+                               customer_name="Cliente SA", subtotal=10.0, tax_amount=2.3, total_amount=12.3,
+                               currency="EUR")
+        invoice.seller.tax_ids = [TaxIdentifier(value=value, scheme="tax_id", country_code="PT")]
+        return [i.message for i in validate(invoice) if i.field.startswith("seller.tax_ids")]
+
+    assert issues("503513709") == []
+    assert any("PT tax number checksum" in m for m in issues("503513708"))
+
+
+def _eu_receipt(**fields) -> Receipt:
+    base = dict(merchant_name="Loja Lda", transaction_date=date(2020, 11, 4), total_amount=12.2, currency="EUR")
+    return Receipt(**(base | fields))
+
+
+def test_a_receipt_nif_is_checked_by_the_merchant_country():
+    def errors(**fields):
+        return [i.message for i in validate(_eu_receipt(**fields)) if i.field == "merchant_tax_id" and i.severity == "error"]
+
+    assert errors(merchant_tax_id="503513709", merchant_country="PT") == []
+    assert errors(merchant_tax_id="500483910", merchant_country="PT")      # one digit misread
+    assert errors(merchant_tax_id="5033208426", merchant_country="PT")     # ten digits
+    assert errors(merchant_tax_id="500483910") == []                        # no country: nothing to check against
+
+
+def test_a_german_steuernummer_is_not_held_to_the_vat_format():
+    assert not [i for i in validate(_eu_receipt(merchant_tax_id="201/113/40209", merchant_country="DE"))
+                if i.field == "merchant_tax_id" and i.severity == "error"]
+
+
+def test_a_misread_merchant_name_goes_to_review():
+    issues = validate(_eu_receipt(merchant_name="Brisa »concessáo Rodovi: lária, S.A."))
+    assert any(i.field == "merchant_name" and i.severity == "error" for i in issues)
+    assert not [i for i in validate(_eu_receipt(merchant_name="Metallbau Leipzig GmbH & Co. KG"))
+                if i.field == "merchant_name" and i.severity == "error"]

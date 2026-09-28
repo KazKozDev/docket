@@ -685,6 +685,26 @@ def _check_cited_names(document, raw_text: str) -> list[ValidationIssue]:
     return issues
 
 
+_PARTY_NAME_PATHS = ("merchant_name", "seller.name", "buyer.name", "supplier.name", "shipper_name",
+                     "consignee_name", "carrier_name", "bank_name", "account_holder")
+# Characters no company name is written with, or a colon inside a word run:
+# what a misread photo leaves in a name ("Brisa »concessáo Rodovi: lária").
+_ILLEGIBLE_NAME_RE = re.compile(r"[»«¦|~^`¬°{}\[\]<>@#*=\\]|[^\W\d_]:\s*[^\W\d_]")
+
+
+def _check_name_legibility(document) -> list[ValidationIssue]:
+    """A party name carrying OCR debris. The name citation cannot see it —
+    the quote holds the same misreading — so the name itself is checked."""
+    issues: list[ValidationIssue] = []
+    for path in _PARTY_NAME_PATHS:
+        value = value_at(document, path)
+        if isinstance(value, str) and _ILLEGIBLE_NAME_RE.search(value):
+            issues.append(ValidationIssue(
+                field=path, message=f"{value!r} holds characters no name is written with — likely misread",
+            ))
+    return issues
+
+
 def _unconfirmed_vlm_issue() -> ValidationIssue:
     # The vision model can invent digits when reconciling. With no
     # confident OCR reading backing
@@ -702,6 +722,30 @@ def _unconfirmed_vlm_issue() -> ValidationIssue:
         # leaves the routing to checks that can point at something.
         severity="warning",
     )
+
+
+# Countries whose national tax number is the VAT number without its prefix.
+# Elsewhere they differ (a German Steuernummer is not the USt-IdNr), and a
+# bare number says nothing about the VAT format.
+_TAX_NUMBER_IS_VAT = frozenset({"PT", "BE", "DK", "ES", "IT", "PL"})
+_ONE_TAX_NUMBER_FORMAT = frozenset({"PT", "BE", "DK", "ES"})
+
+
+def _bare_tax_number_ok(value: str, country: str | None) -> bool | None:
+    """A tax number printed without its country prefix ("NIF: 503513709"),
+    checked as the VAT number it is with the prefix where the two are one
+    number. None when that can't be decided: no such country, or not a bare
+    number."""
+    bare = re.sub(r"[\s.\-/]", "", value)
+    if not country or country.upper() not in _TAX_NUMBER_IS_VAT or not bare.isalnum():
+        return None
+    prefixed = bare.upper() if bare.upper().startswith(country.upper()) else country.upper() + bare
+    if not checksums.vat_format_ok(prefixed):
+        # Only where one number format serves companies and people alike is
+        # another shape wrong; an Italian codice fiscale or a Polish PESEL is
+        # a valid tax number that is not a VAT number.
+        return False if country.upper() in _ONE_TAX_NUMBER_FORMAT else None
+    return checksums.validate_vat(prefixed)
 
 
 def _check_party_ids(party: Party | None, prefix: str) -> list[ValidationIssue]:
@@ -732,6 +776,12 @@ def _check_party_ids(party: Party | None, prefix: str) -> list[ValidationIssue]:
                         severity="warning",
                     )
                 )
+            continue
+        verdict = _bare_tax_number_ok(value, tax.country_code)
+        if verdict is not None:
+            if verdict is False:
+                issues.append(ValidationIssue(
+                    field=field, message=f"{value!r} fails the {tax.country_code.upper()} tax number checksum"))
             continue
         tax_ok, scheme = checksums.validate_tax_id(value)
         if tax_ok is False:
@@ -948,7 +998,13 @@ def validate_receipt(rec: Receipt, ctx: ValidationContext) -> list[ValidationIss
     if raw_text:
         issues.extend(_check_date_convention([("transaction_date", rec.transaction_date)], raw_text))
 
-    if rec.merchant_tax_id:
+    bare_verdict = _bare_tax_number_ok(rec.merchant_tax_id, rec.merchant_country) if rec.merchant_tax_id else None
+    if bare_verdict is False:
+        issues.append(ValidationIssue(
+            field="merchant_tax_id",
+            message=f"{rec.merchant_tax_id!r} fails the {rec.merchant_country} tax number checksum or format",
+        ))
+    elif rec.merchant_tax_id and bare_verdict is None:
         if checksums.is_vat_shaped(rec.merchant_tax_id):
             vat_ok = checksums.validate_vat(rec.merchant_tax_id)
             if vat_ok is False:
@@ -1922,6 +1978,7 @@ def validate(
         issues.extend(_check_cited_dates(document, raw_text))
         issues.extend(_check_cited_identifiers(document, raw_text))
         issues.extend(_check_cited_names(document, raw_text))
+    issues.extend(_check_name_legibility(document))
     for validator in spec.validators:
         issues.extend(validator(document, ctx) or [])
     return issues

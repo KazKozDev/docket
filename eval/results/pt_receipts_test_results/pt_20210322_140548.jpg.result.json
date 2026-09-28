@@ -1,0 +1,392 @@
+{
+ "source": "eval/pt_receipts_test/pt_20210322_140548.jpg",
+ "document_id": "doc_5de614a59c7a572d3b95",
+ "status": "succeeded",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 0.95,
+  "method": "llm",
+  "scores": {
+   "invoice": 3.0,
+   "credit_note": 0.0,
+   "receipt": 3.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.0,
+      "reason": "no text recognized",
+      "seconds": 3.603
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 5.072
+     }
+    ],
+    "witness": null
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "Flor de Val Equas\nAlexandra Cristina M. F. Libânio\nAlmancil\nN. Contrib. 199267464\n\nNIF: 514407395\nNome: FLIKEHOME ALGARVE\nMorada:\n\nFatura-recibo FR B19/43\n2019-06-03 13:37\n\n| Qt | Descrição | P.Unit. | Tx | Valor |\n| :--- | :--- | :--- | :--- | :--- |\n| 1.00 | Cafe | € 0.70 | 13 | € 0.70 |\n| 1.00 | Refrigerante Lat | € 1.30 | 23 | € 1.30 |\n| 1.00 | Pratos | € 6.50 | 13 | € 6.50 |\n\nTotal liq. € 8.50\n\n| Pagamento | Valor |\n| :--- | :--- |\n| Numerário | € 8.50 |\n\n| Taxa | Base | Valor | Total | |\n| :--- | :--- | :--- | :--- | :--- |\n| 23.00 | € 1.06 | € 0.24 | € 1.30 | NOR |\n| 13.00 | € 6.37 | € 0.83 | € 7.20 | INT |\n\nIVA Incluido\n\nSeEZ-Processado por programa\ncertificado nº2513/AT"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "Flor de Val Equas",
+  "merchant_tax_id": "199267464",
+  "merchant_address": "Almancil",
+  "transaction_date": "2019-06-03",
+  "currency": "EUR",
+  "receipt_number": "FR B19/43",
+  "items": [
+   {
+    "description": "Cafe",
+    "price": 0.7,
+    "quantity": 1.0,
+    "unit_price": 0.7
+   },
+   {
+    "description": "Refrigerante Lat",
+    "price": 1.3,
+    "quantity": 1.0,
+    "unit_price": 1.3
+   },
+   {
+    "description": "Pratos",
+    "price": 6.5,
+    "quantity": 1.0,
+    "unit_price": 6.5
+   }
+  ],
+  "subtotal": 8.5,
+  "tax_amount": 0.0,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 8.5,
+  "payment_method": "Numerário",
+  "amount_tendered": 8.5,
+  "change_given": null,
+  "card_last_four": null,
+  "expense_category": "meals"
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "Flor de Val Equas",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_tax_id": {
+   "page": 1,
+   "quote": "N. Contrib. 199267464",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "Almancil",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "2019-06-03 13:37",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "€ 0.70",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "receipt_number": {
+   "page": 1,
+   "quote": "Fatura-recibo FR B19/43",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "1.00 | Cafe | € 0.70 | 13 | € 0.70",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "1.00 | Cafe | € 0.70 | 13 | € 0.70",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].quantity": {
+   "page": 1,
+   "quote": "1.00 | Cafe | € 0.70 | 13 | € 0.70",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].unit_price": {
+   "page": 1,
+   "quote": "1.00 | Cafe | € 0.70 | 13 | € 0.70",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].description": {
+   "page": 1,
+   "quote": "1.00 | Refrigerante Lat | € 1.30 | 23 | € 1.30",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].price": {
+   "page": 1,
+   "quote": "1.00 | Refrigerante Lat | € 1.30 | 23 | € 1.30",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].quantity": {
+   "page": 1,
+   "quote": "1.00 | Refrigerante Lat | € 1.30 | 23 | € 1.30",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].unit_price": {
+   "page": 1,
+   "quote": "1.00 | Refrigerante Lat | € 1.30 | 23 | € 1.30",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].description": {
+   "page": 1,
+   "quote": "1.00 | Pratos | € 6.50 | 13 | € 6.50",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].price": {
+   "page": 1,
+   "quote": "1.00 | Pratos | € 6.50 | 13 | € 6.50",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].quantity": {
+   "page": 1,
+   "quote": "1.00 | Pratos | € 6.50 | 13 | € 6.50",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].unit_price": {
+   "page": 1,
+   "quote": "1.00 | Pratos | € 6.50 | 13 | € 6.50",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "Total liq. € 8.50",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "Total liq. € 8.50",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "payment_method": {
+   "page": 1,
+   "quote": "Numerário | € 8.50",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "amount_tendered": {
+   "page": 1,
+   "quote": "Numerário | € 8.50",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [
+  {
+   "field": "*",
+   "message": "VLM-transcribed values have no confident OCR support — verify key figures against the original page",
+   "severity": "warning"
+  }
+ ],
+ "corroborated": {},
+ "needs_review": false,
+ "review_reasons": [],
+ "metrics": {
+  "elapsed_seconds": 14.41,
+  "stage_seconds": {
+   "acquire": 8.701,
+   "classify": 0.895,
+   "extract": 4.809,
+   "validate": 0.003
+  },
+  "pages": 1,
+  "llm_calls": 3,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 3542,
+  "llm_output_tokens": 1475,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 3026,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

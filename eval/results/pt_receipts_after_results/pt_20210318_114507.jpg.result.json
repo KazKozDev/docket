@@ -1,0 +1,1126 @@
+{
+ "source": "eval/pt_receipts/pt_20210318_114507.jpg",
+ "document_id": "doc_73373947412beb273780",
+ "status": "succeeded",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 0.95,
+  "method": "llm",
+  "scores": {
+   "invoice": 0.0,
+   "credit_note": 0.0,
+   "receipt": 0.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.21739130434782608,
+      "reason": "confidence 0.22 < 0.60",
+      "seconds": 5.636
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 3.68
+     }
+    ],
+    "witness": {
+     "page_number": 1,
+     "width": 3000.0,
+     "height": 4000.0,
+     "unit": "px",
+     "rotation": 180,
+     "deskew_angle": 0.0,
+     "crop_quad": null,
+     "backend": "tesseract",
+     "confidence": 0.21739130434782608,
+     "words": [
+      {
+       "id": "p1-w0",
+       "text": "®",
+       "confidence": 0.09,
+       "bbox": {
+        "x0": 0.741,
+        "y0": 0.15,
+        "x1": 0.7516666666666667,
+        "y1": 0.15575
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w1",
+       "text": "33d",
+       "confidence": 0.86,
+       "bbox": {
+        "x0": 0.3546666666666667,
+        "y0": 0.1885,
+        "x1": 0.43833333333333335,
+        "y1": 0.21
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w2",
+       "text": "00ESSIIUYI",
+       "confidence": 0.41,
+       "bbox": {
+        "x0": 0.482,
+        "y0": 0.18525,
+        "x1": 0.808,
+        "y1": 0.20925
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w3",
+       "text": "’T4FWO,InD",
+       "confidence": 0.03,
+       "bbox": {
+        "x0": 0.23666666666666666,
+        "y0": 0.29025,
+        "x1": 0.5003333333333333,
+        "y1": 0.31325
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w4",
+       "text": "OCPUSWHEBKA",
+       "confidence": 0.13,
+       "bbox": {
+        "x0": 0.5436666666666666,
+        "y0": 0.289,
+        "x1": 0.8346666666666667,
+        "y1": 0.314
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w5",
+       "text": "I[dg",
+       "confidence": 0.35,
+       "bbox": {
+        "x0": 0.548,
+        "y0": 0.32275,
+        "x1": 0.6296666666666667,
+        "y1": 0.34625
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w6",
+       "text": "o>ueg",
+       "confidence": 0.79,
+       "bbox": {
+        "x0": 0.6736666666666666,
+        "y0": 0.32275,
+        "x1": 0.8323333333333334,
+        "y1": 0.34775
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w7",
+       "text": "SH",
+       "confidence": 0.82,
+       "bbox": {
+        "x0": 0.4156666666666667,
+        "y0": 0.356,
+        "x1": 0.466,
+        "y1": 0.37775
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w8",
+       "text": "¿08:¿81:1N8Y",
+       "confidence": 0.45,
+       "bbox": {
+        "x0": 0.5103333333333333,
+        "y0": 0.3575,
+        "x1": 0.8286666666666667,
+        "y1": 0.3815
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w9",
+       "text": "$",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.3243333333333333,
+        "y0": 0.3945,
+        "x1": 0.3403333333333333,
+        "y1": 0.413
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w10",
+       "text": "U",
+       "confidence": 0.81,
+       "bbox": {
+        "x0": 0.3913333333333333,
+        "y0": 0.39075,
+        "x1": 0.4036666666666667,
+        "y1": 0.41
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w11",
+       "text": "etl",
+       "confidence": 0.23,
+       "bbox": {
+        "x0": 0.416,
+        "y0": 0.38975,
+        "x1": 0.49333333333333335,
+        "y1": 0.41175
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w12",
+       "text": "YAYdNOD",
+       "confidence": 0.09,
+       "bbox": {
+        "x0": 0.703,
+        "y0": 0.39125,
+        "x1": 0.8943333333333333,
+        "y1": 0.417
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w13",
+       "text": "JOIN¥EBTL",
+       "confidence": 0.16,
+       "bbox": {
+        "x0": 0.45466666666666666,
+        "y0": 0.42225,
+        "x1": 0.6543333333333333,
+        "y1": 0.45075
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w14",
+       "text": "INN",
+       "confidence": 0.16,
+       "bbox": {
+        "x0": 0.678,
+        "y0": 0.4245,
+        "x1": 0.7563333333333333,
+        "y1": 0.44675
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w15",
+       "text": "027344691090",
+       "confidence": 0.15,
+       "bbox": {
+        "x0": 0.3546666666666667,
+        "y0": 0.45425,
+        "x1": 0.6553333333333333,
+        "y1": 0.479
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w16",
+       "text": "662",
+       "confidence": 0.31,
+       "bbox": {
+        "x0": 0.27266666666666667,
+        "y0": 0.485,
+        "x1": 0.552,
+        "y1": 0.50575
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w17",
+       "text": "Tr",
+       "confidence": 0.03,
+       "bbox": {
+        "x0": 0.42,
+        "y0": 0.4835,
+        "x1": 0.4666666666666667,
+        "y1": 0.51325
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w18",
+       "text": "Er",
+       "confidence": 0.03,
+       "bbox": {
+        "x0": 0.4826666666666667,
+        "y0": 0.4835,
+        "x1": 0.549,
+        "y1": 0.51325
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w19",
+       "text": "tOWlaur",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.6053333333333333,
+        "y0": 0.4895,
+        "x1": 0.818,
+        "y1": 0.51225
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w20",
+       "text": "3920",
+       "confidence": 0.31,
+       "bbox": {
+        "x0": 0.4766666666666667,
+        "y0": 0.55075,
+        "x1": 0.6086666666666667,
+        "y1": 0.57325
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w21",
+       "text": "4013174",
+       "confidence": 0.14,
+       "bbox": {
+        "x0": 0.653,
+        "y0": 0.55475,
+        "x1": 0.8806666666666667,
+        "y1": 0.578
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w22",
+       "text": "1338",
+       "confidence": 0.72,
+       "bbox": {
+        "x0": 0.3883333333333333,
+        "y0": 0.612,
+        "x1": 0.4613333333333333,
+        "y1": 0.6315
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w23",
+       "text": "WHINNSWIIW",
+       "confidence": 0.22,
+       "bbox": {
+        "x0": 0.5053333333333333,
+        "y0": 0.6155,
+        "x1": 0.8096666666666666,
+        "y1": 0.639
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w24",
+       "text": "610:",
+       "confidence": 0.24,
+       "bbox": {
+        "x0": 0.41333333333333333,
+        "y0": 0.67475,
+        "x1": 0.515,
+        "y1": 0.69525
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w25",
+       "text": "44",
+       "confidence": 0.24,
+       "bbox": {
+        "x0": 0.5373333333333333,
+        "y0": 0.6795,
+        "x1": 0.584,
+        "y1": 0.69775
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w26",
+       "text": "POO!",
+       "confidence": 0.68,
+       "bbox": {
+        "x0": 0.6596666666666666,
+        "y0": 0.6795,
+        "x1": 0.7663333333333333,
+        "y1": 0.69975
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w27",
+       "text": "344",
+       "confidence": 0.25,
+       "bbox": {
+        "x0": 0.7983333333333333,
+        "y0": 0.68275,
+        "x1": 0.871,
+        "y1": 0.70325
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w28",
+       "text": "6071076",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.5653333333333334,
+        "y0": 0.70875,
+        "x1": 0.7693333333333333,
+        "y1": 0.72975
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w29",
+       "text": "IN?",
+       "confidence": 0.34,
+       "bbox": {
+        "x0": 0.79,
+        "y0": 0.712,
+        "x1": 0.869,
+        "y1": 0.7335
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w30",
+       "text": ":¿Bdl",
+       "confidence": 0.42,
+       "bbox": {
+        "x0": 0.538,
+        "y0": 0.7385,
+        "x1": 0.645,
+        "y1": 0.75775
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w31",
+       "text": "'wapy",
+       "confidence": 0.03,
+       "bbox": {
+        "x0": 0.692,
+        "y0": 0.73825,
+        "x1": 0.862,
+        "y1": 0.76175
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w32",
+       "text": "u0s517",
+       "confidence": 0.56,
+       "bbox": {
+        "x0": 0.625,
+        "y0": 0.79575,
+        "x1": 0.799,
+        "y1": 0.81825
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w33",
+       "text": "a",
+       "confidence": 0.82,
+       "bbox": {
+        "x0": 0.3353333333333333,
+        "y0": 0.84475,
+        "x1": 0.3486666666666667,
+        "y1": 0.85025
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l15"
+      },
+      {
+       "id": "p1-w34",
+       "text": "407",
+       "confidence": 0.83,
+       "bbox": {
+        "x0": 0.388,
+        "y0": 0.81925,
+        "x1": 0.4643333333333333,
+        "y1": 0.8385
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l15"
+      },
+      {
+       "id": "p1-w35",
+       "text": "069399141193",
+       "confidence": 0.29,
+       "bbox": {
+        "x0": 0.5046666666666667,
+        "y0": 0.82225,
+        "x1": 0.7976666666666666,
+        "y1": 0.84775
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l15"
+      },
+      {
+       "id": "p1-w36",
+       "text": "SISNIS314U-7134W103",
+       "confidence": 0.12,
+       "bbox": {
+        "x0": 0.332,
+        "y0": 0.84475,
+        "x1": 0.7963333333333333,
+        "y1": 0.87475
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l16"
+      }
+     ],
+     "lines": [
+      {
+       "id": "p1-l0",
+       "text": "®",
+       "bbox": {
+        "x0": 0.741,
+        "y0": 0.15,
+        "x1": 0.7516666666666667,
+        "y1": 0.15575
+       },
+       "word_ids": [
+        "p1-w0"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l1",
+       "text": "33d 00ESSIIUYI",
+       "bbox": {
+        "x0": 0.3546666666666667,
+        "y0": 0.18525,
+        "x1": 0.808,
+        "y1": 0.21
+       },
+       "word_ids": [
+        "p1-w1",
+        "p1-w2"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l2",
+       "text": "’T4FWO,InD OCPUSWHEBKA",
+       "bbox": {
+        "x0": 0.23666666666666666,
+        "y0": 0.289,
+        "x1": 0.8346666666666667,
+        "y1": 0.314
+       },
+       "word_ids": [
+        "p1-w3",
+        "p1-w4"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l3",
+       "text": "I[dg o>ueg",
+       "bbox": {
+        "x0": 0.548,
+        "y0": 0.32275,
+        "x1": 0.8323333333333334,
+        "y1": 0.34775
+       },
+       "word_ids": [
+        "p1-w5",
+        "p1-w6"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l4",
+       "text": "SH ¿08:¿81:1N8Y",
+       "bbox": {
+        "x0": 0.4156666666666667,
+        "y0": 0.356,
+        "x1": 0.8286666666666667,
+        "y1": 0.3815
+       },
+       "word_ids": [
+        "p1-w7",
+        "p1-w8"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l5",
+       "text": "$ | U etl | YAYdNOD",
+       "bbox": {
+        "x0": 0.3243333333333333,
+        "y0": 0.38975,
+        "x1": 0.8943333333333333,
+        "y1": 0.417
+       },
+       "word_ids": [
+        "p1-w9",
+        "p1-w10",
+        "p1-w11",
+        "p1-w12"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l6",
+       "text": "JOIN¥EBTL INN",
+       "bbox": {
+        "x0": 0.45466666666666666,
+        "y0": 0.42225,
+        "x1": 0.7563333333333333,
+        "y1": 0.45075
+       },
+       "word_ids": [
+        "p1-w13",
+        "p1-w14"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l7",
+       "text": "027344691090",
+       "bbox": {
+        "x0": 0.3546666666666667,
+        "y0": 0.45425,
+        "x1": 0.6553333333333333,
+        "y1": 0.479
+       },
+       "word_ids": [
+        "p1-w15"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l8",
+       "text": "662 Tr Er | tOWlaur",
+       "bbox": {
+        "x0": 0.27266666666666667,
+        "y0": 0.4835,
+        "x1": 0.818,
+        "y1": 0.51325
+       },
+       "word_ids": [
+        "p1-w16",
+        "p1-w17",
+        "p1-w18",
+        "p1-w19"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l9",
+       "text": "3920 4013174",
+       "bbox": {
+        "x0": 0.4766666666666667,
+        "y0": 0.55075,
+        "x1": 0.8806666666666667,
+        "y1": 0.578
+       },
+       "word_ids": [
+        "p1-w20",
+        "p1-w21"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l10",
+       "text": "1338 WHINNSWIIW",
+       "bbox": {
+        "x0": 0.3883333333333333,
+        "y0": 0.612,
+        "x1": 0.8096666666666666,
+        "y1": 0.639
+       },
+       "word_ids": [
+        "p1-w22",
+        "p1-w23"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l11",
+       "text": "610: 44 | POO! 344",
+       "bbox": {
+        "x0": 0.41333333333333333,
+        "y0": 0.67475,
+        "x1": 0.871,
+        "y1": 0.70325
+       },
+       "word_ids": [
+        "p1-w24",
+        "p1-w25",
+        "p1-w26",
+        "p1-w27"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l12",
+       "text": "6071076 IN?",
+       "bbox": {
+        "x0": 0.5653333333333334,
+        "y0": 0.70875,
+        "x1": 0.869,
+        "y1": 0.7335
+       },
+       "word_ids": [
+        "p1-w28",
+        "p1-w29"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l13",
+       "text": ":¿Bdl | 'wapy",
+       "bbox": {
+        "x0": 0.538,
+        "y0": 0.73825,
+        "x1": 0.862,
+        "y1": 0.76175
+       },
+       "word_ids": [
+        "p1-w30",
+        "p1-w31"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l14",
+       "text": "u0s517",
+       "bbox": {
+        "x0": 0.625,
+        "y0": 0.79575,
+        "x1": 0.799,
+        "y1": 0.81825
+       },
+       "word_ids": [
+        "p1-w32"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l15",
+       "text": "a 407 069399141193",
+       "bbox": {
+        "x0": 0.3353333333333333,
+        "y0": 0.81925,
+        "x1": 0.7976666666666666,
+        "y1": 0.85025
+       },
+       "word_ids": [
+        "p1-w33",
+        "p1-w34",
+        "p1-w35"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l16",
+       "text": "SISNIS314U-7134W103",
+       "bbox": {
+        "x0": 0.332,
+        "y0": 0.84475,
+        "x1": 0.7963333333333333,
+        "y1": 0.87475
+       },
+       "word_ids": [
+        "p1-w36"
+       ],
+       "column": null,
+       "table_id": null
+      }
+     ],
+     "blocks": [
+      {
+       "id": "p1-b0",
+       "bbox": {
+        "x0": 0.741,
+        "y0": 0.15,
+        "x1": 0.7516666666666667,
+        "y1": 0.15575
+       },
+       "line_ids": [
+        "p1-l0"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b1",
+       "bbox": {
+        "x0": 0.3546666666666667,
+        "y0": 0.18525,
+        "x1": 0.808,
+        "y1": 0.21
+       },
+       "line_ids": [
+        "p1-l1"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b2",
+       "bbox": {
+        "x0": 0.23666666666666666,
+        "y0": 0.289,
+        "x1": 0.8943333333333333,
+        "y1": 0.51325
+       },
+       "line_ids": [
+        "p1-l2",
+        "p1-l3",
+        "p1-l4",
+        "p1-l5",
+        "p1-l6",
+        "p1-l7",
+        "p1-l8"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b3",
+       "bbox": {
+        "x0": 0.4766666666666667,
+        "y0": 0.55075,
+        "x1": 0.8806666666666667,
+        "y1": 0.578
+       },
+       "line_ids": [
+        "p1-l9"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b4",
+       "bbox": {
+        "x0": 0.3883333333333333,
+        "y0": 0.612,
+        "x1": 0.8096666666666666,
+        "y1": 0.639
+       },
+       "line_ids": [
+        "p1-l10"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b5",
+       "bbox": {
+        "x0": 0.41333333333333333,
+        "y0": 0.67475,
+        "x1": 0.871,
+        "y1": 0.76175
+       },
+       "line_ids": [
+        "p1-l11",
+        "p1-l12",
+        "p1-l13"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b6",
+       "bbox": {
+        "x0": 0.332,
+        "y0": 0.79575,
+        "x1": 0.799,
+        "y1": 0.87475
+       },
+       "line_ids": [
+        "p1-l14",
+        "p1-l15",
+        "p1-l16"
+       ],
+       "column": null
+      }
+     ],
+     "columns": [],
+     "tables": [],
+     "text": "®\n33d 00ESSIIUYI\n’T4FWO,InD OCPUSWHEBKA\nI[dg o>ueg\nSH ¿08:¿81:1N8Y\n$ | U etl | YAYdNOD\nJOIN¥EBTL INN\n027344691090\n662 Tr Er | tOWlaur\n3920 4013174\n1338 WHINNSWIIW\n610: 44 | POO! 344\n6071076 IN?\n:¿Bdl | 'wapy\nu0s517\na 407 069399141193\nSISNIS314U-7134W103"
+    }
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "EDIMEL-MATERIAIS\nEDIFICACAO LDA\nLISBOA\n\n| Ident. TPA: | 00484530 |\n| --- | --- |\n| 2019/01/09 | 10:45:37 |\n| Per:004 | Tr:019 | MS:754 |\n\nMILLENNIUM BCP\n\nALMEIDA/JORGE\n\nCARTAO: ****1299/53\n501649FF20\nMULTIBANCO\nCOMPRA 7,50 €\nAUT:187807 MB\nBanco BPI\nPagamento automatico\n\nPROCESSADO POR SIBS"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "EDIMEL-MATERIAIS EDIFICACAO LDA",
+  "merchant_tax_id": null,
+  "merchant_address": "LISBOA",
+  "transaction_date": "2019-01-09",
+  "currency": "EUR",
+  "receipt_number": null,
+  "items": [],
+  "subtotal": 0.0,
+  "tax_amount": 0.0,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 7.5,
+  "payment_method": "MULTIBANCO",
+  "amount_tendered": 7.5,
+  "change_given": null,
+  "card_last_four": "1299",
+  "expense_category": "other"
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "EDIMEL-MATERIAIS\nEDIFICACAO LDA",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "LISBOA",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "2019/01/09",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "COMPRA 7,50 €",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "COMPRA 7,50 €",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "payment_method": {
+   "page": 1,
+   "quote": "MULTIBANCO",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "amount_tendered": {
+   "page": 1,
+   "quote": "COMPRA 7,50 €",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "card_last_four": {
+   "page": 1,
+   "quote": "CARTAO: ****1299/53",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [],
+ "corroborated": {},
+ "needs_review": false,
+ "review_reasons": [],
+ "metrics": {
+  "elapsed_seconds": 11.879,
+  "stage_seconds": {
+   "acquire": 9.341,
+   "classify": 0.676,
+   "extract": 1.857,
+   "validate": 0.001
+  },
+  "pages": 1,
+  "llm_calls": 3,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 3188,
+  "llm_output_tokens": 569,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 2273,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

@@ -1,0 +1,3129 @@
+{
+  "environment": {
+    "date": "2026-09-28T17:25:19+00:00",
+    "docket": "0.4.0",
+    "git_commit": "b46a387",
+    "python": "3.12.8",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cpu_count": 10,
+    "tesseract": "tesseract 5.5.3",
+    "paddleocr": "3.7.0",
+    "paddlepaddle": "3.3.1",
+    "llm_provider": "ollama",
+    "text_model": "deepseek-v4.1-flash:cloud",
+    "vision_model": "deepseek-v4.1-flash:cloud",
+    "ocr_languages": [
+      "en",
+      "de",
+      "es",
+      "fr"
+    ],
+    "ocr_dpi": 200,
+    "layout_markers": true,
+    "configs": [
+      "tesseract"
+    ]
+  },
+  "documents": [
+    "pt_20210213_135622.jpg",
+    "pt_20210215_163346.jpg",
+    "pt_20210215_164850.jpg",
+    "pt_20210215_172440.jpg",
+    "pt_20210215_172948.jpg",
+    "pt_20210316_213616.jpg",
+    "pt_20210318_114507.jpg",
+    "pt_20210318_172727.jpg",
+    "pt_20210320_164226.jpg",
+    "pt_20210321_120551.jpg",
+    "pt_20210322_164701.jpg",
+    "pt_20210323_170326.jpg",
+    "pt_20210323_173858.jpg",
+    "pt_20210323_182632.jpg",
+    "pt_20210323_185919.jpg",
+    "pt_20210324_190659.jpg",
+    "pt_20210427_162556.jpg",
+    "pt_20210428_142429.jpg",
+    "pt_20210428_150208.jpg",
+    "pt_20210428_153535.jpg",
+    "pt_20210428_180758.jpg",
+    "pt_20210428_183255.jpg",
+    "pt_20210428_191552.jpg",
+    "pt_20210428_195539.jpg",
+    "pt_20210428_201521.jpg",
+    "pt_20210428_204723.jpg",
+    "pt_20210428_225451.jpg",
+    "pt_20210429_182800.jpg",
+    "pt_20210429_190827.jpg",
+    "pt_20210429_194756.jpg",
+    "pt_20210429_201537.jpg",
+    "pt_20210429_204904.jpg",
+    "pt_20210429_210844.jpg",
+    "pt_20210429_221438.jpg",
+    "pt_20210507_170316.jpg",
+    "pt_20210507_174713.jpg",
+    "pt_20210507_184346.jpg",
+    "pt_20210507_202651.jpg",
+    "pt_20210507_213627.jpg",
+    "pt_20210507_215847.jpg",
+    "pt_20210508_151852.jpg",
+    "pt_20210508_170507.jpg",
+    "pt_20210508_175407.jpg",
+    "pt_20210508_202607.jpg",
+    "pt_20210508_204509.jpg",
+    "pt_20210508_205716.jpg",
+    "pt_20210508_211600.jpg",
+    "pt_20210509_000204.jpg",
+    "pt_20210509_000657.jpg",
+    "pt_20210509_002053.jpg"
+  ],
+  "warm_up_seconds": {
+    "tesseract": 1.03
+  },
+  "ocr_only": {},
+  "pipeline": {
+    "tesseract": {
+      "summary": {
+        "documents": 50,
+        "document_success_rate": 0.16,
+        "field_accuracy": 0.6875,
+        "fields_graded": 288,
+        "line_items": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "expected": 0,
+          "documents_graded": 0
+        },
+        "table_cell_accuracy": null,
+        "seconds_mean": 22.74,
+        "seconds_median": 21.63,
+        "acquire_seconds_mean": 14.17,
+        "vlm_page_share": 0.8,
+        "vlm_document_share": 0.8,
+        "llm_calls": 225,
+        "llm_calls_mean": 4.5,
+        "templates": {
+          "documents": 0,
+          "hit_rate": 0.0,
+          "seconds_mean": null,
+          "llm_extraction_calls_avoided_minimum": 0,
+          "by_id": {}
+        },
+        "citations": {
+          "field_citation_coverage": 0.9688,
+          "field_location_coverage": 0.4236,
+          "line_item_citation_coverage": null,
+          "line_item_location_coverage": null
+        },
+        "silent_successes": 20,
+        "false_successes": 16,
+        "false_success_rate": 0.8,
+        "needs_review": 30,
+        "failed": 0
+      },
+      "documents": [
+        {
+          "document": "pt_20210213_135622.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id"
+            ],
+            "extracted": {
+              "merchant_name": "Maria da Gloria Cabeleireiros Lda",
+              "merchant_tax_id": "121653897"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 2,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": 0.95,
+            "total_amount": 0.95
+          },
+          "seconds": 9.22,
+          "acquire_seconds": 4.411,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210215_163346.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "transaction_date",
+              "tax_amount"
+            ],
+            "extracted": {
+              "transaction_date": "2020-10-08",
+              "tax_amount": 0.0
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 5,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 4,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — amount tendered 0.00 - change 0.00 = 0.00, total_amount says 67.30",
+            "validation error: total_amount — an independent OCR reading of 'total eur' gives 67.00, 30.00, but total_amount=67.30 — the transcripts disagree; check against the original page",
+            "transaction_date was read from words OCR recognised with low confidence (0.52 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.52,
+            "total_amount": 0.8325
+          },
+          "seconds": 26.42,
+          "acquire_seconds": 16.052,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210215_164850.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 6,
+            "total": 6,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": 0.96,
+            "total_amount": 0.915
+          },
+          "seconds": 9.81,
+          "acquire_seconds": 4.992,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210215_172440.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "transaction_date"
+            ],
+            "extracted": {
+              "transaction_date": "2020-10-14"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 3,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 3,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items — items sum to 18.78, but the amount they should match is 24.37 before tax or 28.92 with it",
+            "validation error: items[0].price — cited line 'REMOV GONDURA ORO FLEX 2.5MT' states 2.00, but items[0].price=0.00",
+            "transaction_date was read from words OCR recognised with low confidence (0.77 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.77,
+            "total_amount": null
+          },
+          "seconds": 25.07,
+          "acquire_seconds": 19.194,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210215_172948.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "transaction_date",
+              "receipt_number"
+            ],
+            "extracted": {
+              "merchant_name": "CASA PIOCHEUR PORTUGAL, LDA",
+              "transaction_date": "2020-11-05",
+              "receipt_number": "FS 102800120/012957"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 3,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 5,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": 0.95,
+            "total_amount": null
+          },
+          "seconds": 30.77,
+          "acquire_seconds": 18.755,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210316_213616.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "transaction_date"
+            ],
+            "extracted": {
+              "merchant_name": "Sáfil",
+              "transaction_date": "2020-10-01"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 20.31,
+          "acquire_seconds": 14.129,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 5,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210318_114507.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 4,
+            "mismatches": [
+              "receipt_number"
+            ],
+            "extracted": {
+              "receipt_number": null
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 3,
+              "located": 0,
+              "total": 4
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 11.92,
+          "acquire_seconds": 9.341,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210318_172727.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 1,
+            "total": 4,
+            "mismatches": [
+              "merchant_name",
+              "receipt_number",
+              "total_amount"
+            ],
+            "extracted": {
+              "merchant_name": "LEROY MERLIN",
+              "receipt_number": "005-000043-005 3375",
+              "total_amount": 0.0
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 3,
+              "located": 3,
+              "total": 4
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — missing page and source-region citation"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.96
+          },
+          "seconds": 26.75,
+          "acquire_seconds": 18.672,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210320_164226.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "transaction_date"
+            ],
+            "extracted": {
+              "merchant_name": "GALP GESTIE, S.A.",
+              "transaction_date": "2019-07-14"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 4,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0].unit_price — cited line '1.589 EUR / L' states 1589.00, but items[0].unit_price=1.59",
+            "validation error: total_amount — an independent OCR reading of 'total eur' gives 18.70, but total_amount=78.70 — the transcripts disagree; check against the original page",
+            "validation error: subtotal — an independent OCR reading of 'total eur' gives 18.70, but subtotal=78.70 — the transcripts disagree; check against the original page",
+            "total_amount was read from words OCR recognised with low confidence (0.76 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": 0.76
+          },
+          "seconds": 30.39,
+          "acquire_seconds": 20.731,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210321_120551.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 6,
+            "total": 6,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 2,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0].unit_price — cited line '47,76 l * 1,609 € /l' states 47.76, 1609.00, but items[0].unit_price=1.61"
+          ],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 29.31,
+          "acquire_seconds": 18.349,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210322_164701.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 6,
+            "total": 6,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0].unit_price — cited line '1,459 EUR / L' states 1459.00, but items[0].unit_price=1.46"
+          ],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 24.02,
+          "acquire_seconds": 14.571,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210323_170326.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 6,
+            "total": 6,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 4,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 3,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 29.26,
+          "acquire_seconds": 15.699,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210323_173858.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "transaction_date",
+              "receipt_number"
+            ],
+            "extracted": {
+              "merchant_name": "PROPEL,Produtos de Petroleo,Lda.",
+              "transaction_date": "2019-05-11",
+              "receipt_number": "0.2.0.61"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 5,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0].unit_price — cited line '1.494' states 1494.00, but items[0].unit_price=1.49"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.96,
+            "total_amount": null
+          },
+          "seconds": 31.99,
+          "acquire_seconds": 21.403,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210323_182632.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "transaction_date"
+            ],
+            "extracted": {
+              "merchant_name": "FARMACT A",
+              "transaction_date": "2019-03-17"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": 0.94,
+            "total_amount": 0.95
+          },
+          "seconds": 10.58,
+          "acquire_seconds": 5.584,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210323_185919.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 6,
+            "total": 6,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 5,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 15.2,
+          "acquire_seconds": 8.173,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210324_190659.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 5,
+            "mismatches": [
+              "merchant_name",
+              "receipt_number"
+            ],
+            "extracted": {
+              "merchant_name": "Brisa »concessáo Rodovi: lária, S.A.",
+              "receipt_number": "FS 05021061902/0044 774"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 5,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": 0.95,
+            "total_amount": 0.87
+          },
+          "seconds": 10.76,
+          "acquire_seconds": 5.647,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210427_162556.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 2,
+            "total": 5,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "receipt_number"
+            ],
+            "extracted": {
+              "merchant_name": "E.M. Parques de Estacionamento S.A.",
+              "merchant_tax_id": "503311685",
+              "receipt_number": "881168"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 0,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 13.88,
+          "acquire_seconds": 9.696,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_142429.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 2,
+            "total": 6,
+            "mismatches": [
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "transaction_date": "2019-02-15",
+              "receipt_number": "FS A6X603/301625",
+              "total_amount": 79.79,
+              "tax_amount": 5.41
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items — items sum to 29.39, but the amount they should match is 74.38 before tax or 79.79 with it",
+            "validation error: total_amount — amount tendered 50.00 - change 20.91 = 29.09, total_amount says 79.79",
+            "validation error: amount_tendered — cited line '| | Numerário | 49,50' states 49.50, but amount_tendered=50.00"
+          ],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 13.75,
+          "acquire_seconds": 8.464,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_150208.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "merchant_tax_id"
+            ],
+            "extracted": {
+              "merchant_tax_id": "500483910"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 18.08,
+          "acquire_seconds": 13.685,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_153535.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "receipt_number"
+            ],
+            "extracted": {
+              "merchant_name": "CHAVES DO AREEIRO - SOLUÇÕES E SISTEMAS DE SEGURANÇA S.A.",
+              "receipt_number": "FR 2019A145/1965"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 2,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0] — quantity (2.0) * unit_price (10.00) = 20.00, does not match line price 18.00",
+            "validation error: items[1] — quantity (2.0) * unit_price (3.20) = 6.40, does not match line price 5.76"
+          ],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 15.0,
+          "acquire_seconds": 9.174,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_180758.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 6,
+            "mismatches": [
+              "merchant_tax_id",
+              "transaction_date",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_tax_id": "500829933",
+              "transaction_date": "2019-03-11",
+              "tax_amount": 0.63
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 2,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 2,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0] — quantity (6.0) * unit_price (1.34) = 8.04, does not match line price 10.72",
+            "validation error: subtotal — cited line '| C 6% | 10,11 | 0,61 | 10,72 |\\n| E 23% | 0,08 | 0,02 | 0,10 |' states 10.11, 0.61, 10.72, 0.08, 0.02, 0.10, but subtotal=10.19",
+            "transaction_date was read from words OCR recognised with low confidence (0.65 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.6514,
+            "total_amount": null
+          },
+          "seconds": 32.93,
+          "acquire_seconds": 18.677,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 7,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_183255.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "merchant_name"
+            ],
+            "extracted": {
+              "merchant_name": "LELIMEL MATERIAIS DE CONSTRUÇÃO, LDA"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 21.88,
+          "acquire_seconds": 16.485,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_191552.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "receipt_number"
+            ],
+            "extracted": {
+              "receipt_number": "FR 111717520191F0x/224"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0].unit_price — cited line 'GASOLINA EVOLOGIC 95 1.579 EUR/L' states 95.00, 1579.00, but items[0].unit_price=1.58"
+          ],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 23.19,
+          "acquire_seconds": 14.302,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_195539.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "transaction_date"
+            ],
+            "extracted": {
+              "transaction_date": "2019-01-12"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 3,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — an independent OCR reading of 'total euros' gives 6.19, but total_amount=76.19 — the transcripts disagree; check against the original page",
+            "transaction_date was read from words OCR recognised with low confidence (0.72 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.72,
+            "total_amount": 0.8836
+          },
+          "seconds": 27.82,
+          "acquire_seconds": 15.27,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_201521.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "merchant_name"
+            ],
+            "extracted": {
+              "merchant_name": "GAR. RIBAMAR-F.CUNHA COSTA"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 5,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0].unit_price — cited line '1,654 EUR / L' states 1654.00, but items[0].unit_price=1.65",
+            "total_amount was read from words OCR recognised with low confidence (0.77 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.96,
+            "total_amount": 0.7731
+          },
+          "seconds": 31.79,
+          "acquire_seconds": 22.102,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_204723.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date"
+            ],
+            "extracted": {
+              "merchant_name": "JMTO FERRAGENS DO COMBRO LDA",
+              "merchant_tax_id": "513 360 535",
+              "transaction_date": "2019-05-22"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 16.04,
+          "acquire_seconds": 11.857,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210428_225451.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 1,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_name": "BP DOMINGOS SEQUEIRA",
+              "merchant_tax_id": "5003959333",
+              "transaction_date": "2019-05-17",
+              "receipt_number": "FR 270651001/03 1664",
+              "tax_amount": 0.0
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 5,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0] — quantity (1.0) * unit_price (1.68) = 1.68, does not match line price 13.00",
+            "validation error: items[0].unit_price — cited line 'PA Lit | x | 1,679 EUR/LIt' states 1679.00, but items[0].unit_price=1.68"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.95,
+            "total_amount": 0.94
+          },
+          "seconds": 29.77,
+          "acquire_seconds": 18.424,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 7,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_182800.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 5,
+            "mismatches": [
+              "tax_amount"
+            ],
+            "extracted": {
+              "tax_amount": 8.83
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 18,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 3,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: tax_amount — cited line '| 13,00 | 64,07 | 8,33 | 72,40 |\\n| 23,00 | 2,20 | 0,50 | 2,70 |' states 13.00, 64.07, 8.33, 72.40, 23.00, 2.20, 0.50, 2.70, but tax_amount=8.83",
+            "validation error: items[2].price — an independent OCR reading of 'hamburguer' gives 1.00, 3.00, 9.50, but items[2].price=8.50 — the transcripts disagree; check against the original page"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.9033,
+            "total_amount": null
+          },
+          "seconds": 46.01,
+          "acquire_seconds": 17.837,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_190827.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id"
+            ],
+            "extracted": {
+              "merchant_name": "Dia Portugal - Sup. Soc. Unipessoal",
+              "merchant_tax_id": "PT503003808"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "transaction_date was read from words OCR recognised with low confidence (0.78 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.7815,
+            "total_amount": null
+          },
+          "seconds": 31.3,
+          "acquire_seconds": 21.244,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_194756.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "transaction_date",
+              "receipt_number"
+            ],
+            "extracted": {
+              "transaction_date": "2019-10-01",
+              "receipt_number": "FT POS19V12/18629"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 3,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "transaction_date was read from words OCR recognised with low confidence (0.55 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.5494,
+            "total_amount": null
+          },
+          "seconds": 22.16,
+          "acquire_seconds": 15.266,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_201537.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "transaction_date",
+              "tax_amount"
+            ],
+            "extracted": {
+              "transaction_date": "2019-08-16",
+              "tax_amount": 0.67
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 3,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 18.68,
+          "acquire_seconds": 13.796,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_204904.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "transaction_date"
+            ],
+            "extracted": {
+              "merchant_name": "Petrosalsa,Lda.",
+              "transaction_date": "2019-11-19"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0].unit_price — cited line '1.554 EUR / L' states 1554.00, but items[0].unit_price=1.55"
+          ],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 19.09,
+          "acquire_seconds": 12.67,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_210844.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "merchant_name"
+            ],
+            "extracted": {
+              "merchant_name": "Dia Portugal - Sup. Soc. Unip., Lda"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 15.47,
+          "acquire_seconds": 10.836,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210429_221438.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "tax_amount"
+            ],
+            "extracted": {
+              "tax_amount": 2.19
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items — items sum to 14.90, but the amount they should match is 12.11 before tax or 14.30 with it",
+            "validation error: total_amount — subtotal + tax + tip - discount = 14.30 (or, with the discount already in the subtotal, 14.30), total_amount says 14.90"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.92,
+            "total_amount": 0.96
+          },
+          "seconds": 26.88,
+          "acquire_seconds": 18.308,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210507_170316.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "receipt_number"
+            ],
+            "extracted": {
+              "merchant_name": "Consertos Rapidos das Amoreiras, Consertos de Calçado e Cópias Chaves,Lda",
+              "receipt_number": "C 8/26181028"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 2,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 17.25,
+          "acquire_seconds": 10.685,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210507_174713.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 5,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 1,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: total_amount — cited line 'Total: 18.50Euros' states 18.00, but total_amount=18.50"
+          ],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 21.39,
+          "acquire_seconds": 13.305,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210507_184346.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "invoice",
+          "classification_method": "rules",
+          "fields": {
+            "correct": 0,
+            "total": 5,
+            "mismatches": [
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number",
+              "total_amount",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_tax_id": null,
+              "transaction_date": null,
+              "receipt_number": null,
+              "total_amount": 50.0,
+              "tax_amount": 9.35
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 0,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 2,
+              "located": 0,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: line_items[0] — line 1 ('GASOLEO'): 39 × 1.30 = 50.66, but the line total says 50.00",
+            "validation error: total_amount — subtotal + tax + shipping - discount = 59.35, total_amount says 50.00",
+            "validation error: line_items[0].unit_price — cited line '39 Litros | 1.299 Eur/Litros | GASOLEO |' states 39.00, 1299.00, but line_items[0].unit_price=1.30"
+          ],
+          "key_source_confidence": {
+            "invoice_number": null,
+            "issue_date": null,
+            "subtotal": null,
+            "total_amount": null
+          },
+          "seconds": 18.58,
+          "acquire_seconds": 11.415,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 2,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210507_202651.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "receipt_number"
+            ],
+            "extracted": {
+              "merchant_name": "WORTEN LOU",
+              "merchant_tax_id": "17100450101581",
+              "receipt_number": "17112801/81"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0].price — cited line 'Informat ica: (C) 693535640712 RE200' states 693535640712.00, but items[0].price=29.99",
+            "validation error: items[0].unit_price — cited line 'Informat ica: (C) 693535640712 RE200' states 693535640712.00, but items[0].unit_price=29.99",
+            "validation error: subtotal — cited line '23,007 | 24, $8 | 5,61 | 29' states 23007.00, 24.00, 8.00, 5.61, 29.00, but subtotal=24.38"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.93,
+            "total_amount": 0.94
+          },
+          "seconds": 37.28,
+          "acquire_seconds": 18.674,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210507_213627.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 6,
+            "total": 6,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 2,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 14.21,
+          "acquire_seconds": 9.729,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210507_215847.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "merchant_name"
+            ],
+            "extracted": {
+              "merchant_name": "Restauracao, Lda."
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 4,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 12.76,
+          "acquire_seconds": 8.253,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_151852.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 6,
+            "mismatches": [
+              "transaction_date"
+            ],
+            "extracted": {
+              "transaction_date": "2018-09-10"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": 0.9,
+            "total_amount": 0.925
+          },
+          "seconds": 27.22,
+          "acquire_seconds": 17.347,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_170507.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 6,
+            "mismatches": [
+              "merchant_tax_id",
+              "transaction_date",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_tax_id": "PT503630330",
+              "transaction_date": "2018-11-20",
+              "tax_amount": 7.46
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 0,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items — items sum to 39.99, but the amount they should match is 32.51 before tax or 39.97 with it",
+            "validation error: total_amount — subtotal + tax + tip - discount = 39.97 (or, with the discount already in the subtotal, 39.97), total_amount says 39.99"
+          ],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 16.93,
+          "acquire_seconds": 12.411,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_175407.jpg",
+          "source": "pt-receipts",
+          "status": "succeeded",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 5,
+            "mismatches": [
+              "merchant_tax_id"
+            ],
+            "extracted": {
+              "merchant_tax_id": "NIPC 302 790"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 5,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": false,
+          "review_reasons": [],
+          "key_source_confidence": {
+            "transaction_date": 0.94,
+            "total_amount": 0.95
+          },
+          "seconds": 10.56,
+          "acquire_seconds": 5.749,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_202607.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 2,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "merchant_tax_id",
+              "transaction_date",
+              "receipt_number"
+            ],
+            "extracted": {
+              "merchant_name": "WORTEN - Equipamentos para o Lar SA",
+              "merchant_tax_id": "500 000 000",
+              "transaction_date": "2018-08-07",
+              "receipt_number": "FS 2018/000/000684"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 2,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[1].quantity — cited source '5601966014895 SELADOR\\nSTAND BECKEN BSHD' does not appear in the document — the value 1.00 is not grounded in anything on the page"
+          ],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": 0.7435
+          },
+          "seconds": 16.82,
+          "acquire_seconds": 12.2,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_204509.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "transaction_date"
+            ],
+            "extracted": {
+              "merchant_name": "INTERMARCHE BUDENS",
+              "transaction_date": "2018-07-15"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 1,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0].unit_price — cited line '1.318 Eur/L' states 1318.00, but items[0].unit_price=1.32",
+            "validation error: tax_amount — an independent OCR reading of 'eur' gives 85.00, but tax_amount=15.89 — the transcripts disagree; check against the original page"
+          ],
+          "key_source_confidence": {
+            "transaction_date": null,
+            "total_amount": null
+          },
+          "seconds": 14.05,
+          "acquire_seconds": 9.401,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 3,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_205716.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 5,
+            "total": 5,
+            "mismatches": [],
+            "extracted": {}
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 3,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": true,
+          "needs_review": true,
+          "review_reasons": [
+            "transaction_date was read from words OCR recognised with low confidence (0.68 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.6767,
+            "total_amount": null
+          },
+          "seconds": 32.84,
+          "acquire_seconds": 22.368,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210508_211600.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 5,
+            "mismatches": [
+              "merchant_name",
+              "receipt_number"
+            ],
+            "extracted": {
+              "merchant_name": "INTERMARCHE MALVEIRA",
+              "receipt_number": null
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 4,
+              "located": 3,
+              "total": 5
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: tax_amount — an independent OCR reading of 'iva' gives 3.00, but tax_amount=3.74 — the transcripts disagree; check against the original page",
+            "transaction_date was read from words OCR recognised with low confidence (0.79 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.7945,
+            "total_amount": null
+          },
+          "seconds": 20.86,
+          "acquire_seconds": 15.425,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 4,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210509_000204.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "merchant_name",
+              "transaction_date"
+            ],
+            "extracted": {
+              "merchant_name": "Moinho Velho",
+              "transaction_date": "2020-12-24"
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 1,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 6,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: items[0] — quantity (1.4) * unit_price (19.50) = 27.30, does not match line price 35.12",
+            "validation error: items[0].unit_price — cited line '1.400KG | 19,500' states 1.00, 19500.00, but items[0].unit_price=19.50"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.92,
+            "total_amount": 0.92
+          },
+          "seconds": 28.49,
+          "acquire_seconds": 17.159,
+          "pages": 1,
+          "vlm_pages": 0,
+          "page_backends": [
+            "tesseract"
+          ],
+          "escalated_to_vlm": false,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210509_000657.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 3,
+            "total": 6,
+            "mismatches": [
+              "merchant_tax_id",
+              "receipt_number",
+              "tax_amount"
+            ],
+            "extracted": {
+              "merchant_tax_id": "501415926",
+              "receipt_number": "FS 805/232388",
+              "tax_amount": 0.0
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 3,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 5,
+              "located": 3,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "transaction_date was read from words OCR recognised with low confidence (0.65 < 0.80)"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.6481,
+            "total_amount": null
+          },
+          "seconds": 30.46,
+          "acquire_seconds": 17.977,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        },
+        {
+          "document": "pt_20210509_002053.jpg",
+          "source": "pt-receipts",
+          "status": "needs_review",
+          "error": null,
+          "expected_type": "receipt",
+          "classified_as": "receipt",
+          "classification_method": "llm",
+          "fields": {
+            "correct": 4,
+            "total": 6,
+            "mismatches": [
+              "receipt_number",
+              "tax_amount"
+            ],
+            "extracted": {
+              "receipt_number": "FS 033606521021006/026436",
+              "tax_amount": 2.23
+            }
+          },
+          "line_items": {
+            "correct": 0,
+            "extracted": 10,
+            "expected": 0
+          },
+          "citations": {
+            "fields": {
+              "cited": 6,
+              "located": 3,
+              "total": 6
+            },
+            "line_items": {
+              "cited": 0,
+              "located": 0,
+              "total": 0
+            }
+          },
+          "table_cells": {
+            "matched": 0,
+            "expected": 0
+          },
+          "success": false,
+          "needs_review": true,
+          "review_reasons": [
+            "validation error: tax_amount — cited line '| C 62 | 19,07 | 1,14 | 20,21 |\\n| D 132 | 1,19 | 0,16 | 1,35 |\\n| E 232 | 4,06...' states 62.00, 19.07, 1.14, 20.21, 132.00, 1.19, 0.16, 1.35, 232.00, 4.06, 0.93, 4.99, but tax_amount=2.23"
+          ],
+          "key_source_confidence": {
+            "transaction_date": 0.8227,
+            "total_amount": null
+          },
+          "seconds": 51.7,
+          "acquire_seconds": 22.528,
+          "pages": 1,
+          "vlm_pages": 1,
+          "page_backends": [
+            "vlm"
+          ],
+          "escalated_to_vlm": true,
+          "llm_calls": 6,
+          "template_id": null
+        }
+      ]
+    }
+  }
+}

@@ -311,7 +311,40 @@ def _no_vat_checksum(body: str) -> bool:
     return check == int(digits[-1])
 
 
+def _pt_vat_checksum(digits: str) -> bool:
+    """Portugal (NIF / NIPC): weights 9..2, mod 11; a remainder of 0 or 1 gives 0."""
+    if not re.fullmatch(r"\d{9}", digits):
+        return False
+    remainder = sum(int(d) * w for d, w in zip(digits[:8], range(9, 1, -1))) % 11
+    return int(digits[8]) == (0 if remainder < 2 else 11 - remainder)
+
+
+def _be_vat_checksum(digits: str) -> bool:
+    """Belgium: the last two digits are 97 minus the first eight mod 97."""
+    if not re.fullmatch(r"[01]\d{9}", digits):
+        return False
+    return 97 - int(digits[:8]) % 97 == int(digits[8:])
+
+
+def _dk_vat_checksum(digits: str) -> bool:
+    """Denmark: weights 2,7,6,5,4,3,2,1 sum to a multiple of 11."""
+    if not re.fullmatch(r"\d{8}", digits):
+        return False
+    return sum(int(d) * w for d, w in zip(digits, (2, 7, 6, 5, 4, 3, 2, 1))) % 11 == 0
+
+
+def _lu_vat_checksum(digits: str) -> bool:
+    """Luxembourg: the last two digits are the first six mod 89."""
+    if not re.fullmatch(r"\d{8}", digits):
+        return False
+    return int(digits[:6]) % 89 == int(digits[6:])
+
+
 _VAT_CHECKERS = {
+    "PT": _pt_vat_checksum,
+    "BE": _be_vat_checksum,
+    "DK": _dk_vat_checksum,
+    "LU": _lu_vat_checksum,
     "AT": _at_vat_checksum,
     "FR": _fr_vat_checksum,
     "IT": _it_vat_checksum,

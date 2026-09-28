@@ -194,11 +194,50 @@ docket does not handle these well:
   - The rest carry misread photo text into a field: a garbled merchant
     name, or a wrong or cut-off NIF ("NIPC 302 790"). The cited line holds
     the same misreading, so the checks agree with it.
-- **An idea, not implemented:** a Portuguese NIF has a check digit, which
-  would catch part of the wrong NIFs.
+- **A Portuguese NIF has a check digit**, which would catch part of the
+  wrong NIFs. See "After the fixes" below.
 - **Labels:** the labels name the shop sign ("Maria da Glória Cab."), where
   the slip also prints the legal name ("… Cabeleireiros Lda."). An
   extraction of the legal name counts as wrong.
+
+### After the fixes
+
+Changes made:
+
+- An invoice title alone ("Fatura", "Invoice", "Rechnung") no longer lets
+  the rules tier call a document an invoice. The rules also need something
+  only an invoice has: an IBAN, payment terms, a billed address or a date
+  of supply. Otherwise the decision goes to a tier that reads the whole
+  document.
+- Receipts gained an optional `merchant_country`. With it, a bare tax
+  number is checked against its country's check digit in countries where
+  the tax number is the VAT number (PT, BE, DK, ES, IT, PL).
+- A party name containing OCR debris ("»", "¦", a colon inside a word)
+  goes to review.
+
+The same 50 receipts were run once more. The grading was then replayed
+offline (`eval/replay_checks.py`) with the labels' dates normalised to ISO:
+the first run's labels kept the slips' own date formats.
+
+| | before | after |
+|---|---|---|
+| classified as receipt | 11/50 | 49/50 |
+| total right | 11/50 | 47/50 |
+| sent to review | 42 | 31 |
+| passed without review | 8, 7 wrong | 19, 14 wrong |
+
+Most of the 14 are merchant names, 10 of them. Many of those are the
+labels' shop sign against the legal name docket reads, so the count
+overstates the errors. The rest are wrong NIFs (5) and receipt numbers (4).
+
+The NIF check needs `merchant_country`, which these results predate: the
+model had no such field when they were extracted. How much it catches is
+therefore not measured yet.
+
+A held-out set of 50 other receipts (`--offset 10`) was stopped after 33
+documents to save model quota. Of those 33, 2 were classified as invoices,
+in line with the working set. That suggests the classification fix is not
+tuned to the first 50.
 
 ## Classification
 

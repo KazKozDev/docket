@@ -1,0 +1,580 @@
+{
+ "source": "eval/pt_receipts_test/pt_20210323_161714.jpg",
+ "document_id": "doc_e8fd8f3d7f1a0381f7dc",
+ "status": "needs_review",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 0.95,
+  "method": "llm",
+  "scores": {
+   "invoice": 5.0,
+   "credit_note": 0.0,
+   "receipt": 3.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.34375,
+      "reason": "confidence 0.34 < 0.60",
+      "seconds": 4.471
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 6.35
+     }
+    ],
+    "witness": {
+     "page_number": 1,
+     "width": 3000.0,
+     "height": 4000.0,
+     "unit": "px",
+     "rotation": 0,
+     "deskew_angle": 0.0,
+     "crop_quad": null,
+     "backend": "tesseract",
+     "confidence": 0.34375,
+     "words": [
+      {
+       "id": "p1-w0",
+       "text": "MILLEIN!",
+       "confidence": 0.07,
+       "bbox": {
+        "x0": 0.30666666666666664,
+        "y0": 0.78875,
+        "x1": 0.37766666666666665,
+        "y1": 0.797
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w1",
+       "text": "LIL",
+       "confidence": 0.35,
+       "bbox": {
+        "x0": 0.20366666666666666,
+        "y0": 0.9045,
+        "x1": 0.3363333333333333,
+        "y1": 0.94825
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w2",
+       "text": "A",
+       "confidence": 0.25,
+       "bbox": {
+        "x0": 0.35033333333333333,
+        "y0": 0.9415,
+        "x1": 0.3546666666666667,
+        "y1": 0.94925
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w3",
+       "text": "mme",
+       "confidence": 0.27,
+       "bbox": {
+        "x0": 0.35033333333333333,
+        "y0": 0.904,
+        "x1": 0.3546666666666667,
+        "y1": 0.93575
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w4",
+       "text": "TNT",
+       "confidence": 0.19,
+       "bbox": {
+        "x0": 0.36,
+        "y0": 0.90125,
+        "x1": 0.536,
+        "y1": 0.9455
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w5",
+       "text": "LJ",
+       "confidence": 0.17,
+       "bbox": {
+        "x0": 0.338,
+        "y0": 0.9465,
+        "x1": 0.345,
+        "y1": 0.94825
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w6",
+       "text": "~",
+       "confidence": 0.89,
+       "bbox": {
+        "x0": 0.39366666666666666,
+        "y0": 0.947,
+        "x1": 0.4003333333333333,
+        "y1": 0.94875
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w7",
+       "text": "000000)",
+       "confidence": 0.76,
+       "bbox": {
+        "x0": 0.43866666666666665,
+        "y0": 0.93675,
+        "x1": 0.5066666666666667,
+        "y1": 0.94775
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w8",
+       "text": "À",
+       "confidence": 0.77,
+       "bbox": {
+        "x0": 0.25066666666666665,
+        "y0": 0.9495,
+        "x1": 0.253,
+        "y1": 0.9505
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w9",
+       "text": "LEN",
+       "confidence": 0.48,
+       "bbox": {
+        "x0": 0.285,
+        "y0": 0.94825,
+        "x1": 0.30666666666666664,
+        "y1": 0.95025
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      }
+     ],
+     "lines": [
+      {
+       "id": "p1-l0",
+       "text": "MILLEIN!",
+       "bbox": {
+        "x0": 0.30666666666666664,
+        "y0": 0.78875,
+        "x1": 0.37766666666666665,
+        "y1": 0.797
+       },
+       "word_ids": [
+        "p1-w0"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l1",
+       "text": "LIL A mme TNT",
+       "bbox": {
+        "x0": 0.20366666666666666,
+        "y0": 0.90125,
+        "x1": 0.536,
+        "y1": 0.94925
+       },
+       "word_ids": [
+        "p1-w1",
+        "p1-w2",
+        "p1-w3",
+        "p1-w4"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l2",
+       "text": "LJ | ~ | 000000)",
+       "bbox": {
+        "x0": 0.338,
+        "y0": 0.93675,
+        "x1": 0.5066666666666667,
+        "y1": 0.94875
+       },
+       "word_ids": [
+        "p1-w5",
+        "p1-w6",
+        "p1-w7"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l3",
+       "text": "À | LEN",
+       "bbox": {
+        "x0": 0.25066666666666665,
+        "y0": 0.94825,
+        "x1": 0.30666666666666664,
+        "y1": 0.9505
+       },
+       "word_ids": [
+        "p1-w8",
+        "p1-w9"
+       ],
+       "column": null,
+       "table_id": null
+      }
+     ],
+     "blocks": [
+      {
+       "id": "p1-b0",
+       "bbox": {
+        "x0": 0.30666666666666664,
+        "y0": 0.78875,
+        "x1": 0.37766666666666665,
+        "y1": 0.797
+       },
+       "line_ids": [
+        "p1-l0"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b1",
+       "bbox": {
+        "x0": 0.20366666666666666,
+        "y0": 0.90125,
+        "x1": 0.536,
+        "y1": 0.9505
+       },
+       "line_ids": [
+        "p1-l1",
+        "p1-l2",
+        "p1-l3"
+       ],
+       "column": null
+      }
+     ],
+     "columns": [],
+     "tables": [],
+     "text": "MILLEIN!\nLIL A mme TNT\nLJ | ~ | 000000)\nÀ | LEN"
+    }
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "galp\n........... PRE PAGAMENTO ...........\nLUBRITAL BUFEIRA, LDA - 19107\nLUBRITAL BUFEIRA UNIPESSOAL, LDA\nEST MONTECHORO-TORRE MODOEIRA\n8200-387 ALBUFEIRA Tel:\nNIF: PT508668999\nFatura/Recibo\nQuantidade Preço\nPreço Unitário\n44,15 L BOMBA 06\nGASOLEO SIMPLES EUR 60,00 A\n1,359 EUR / L\nTotal EUR 60,00\n23,00 % IVA A EUR 11,22\nCliente: 19414\nNome: FLIKEHOME ALGARVE LDA\nMorada:\nCódigo Postal:\nLocalidade:\nNº Contribuinte: 514407395\nMatrícula: 59-IV-86\nOperador: Valentina Rubilova\nDoc. Nº.:\n012010002337FAAA00000191072019/000013670\nWBf1 - Processado por Programa\nCertificado n.º 1396/AT\nData Hora NºTr POS NºOp Turno\n20-06-19 11:30 56128 01 0002 810\nRegime IVA de Caixa nos casos em que tal\nseja aplicável ao cliente\nclientes@galp.com / Tel. 707 504 257\nA sua opinião é importante!\nPartilhe-a connosco em\nopiniao.galp.com/postos\nTotal EUR 60,00\nCARTAO DEBITO EUR 60,00\nTerminal Pagamento Automático: 00669589\nData: 2019-06-20 Hora: 11:31:17\nPeríodo:006 Transacção:058 Mensagem:091\nMILLENNIUM BCP\nAMARAL/SALVADOR\nCARTAO: ****1008/26\nA0000000032010 VISA ELECTRON\nCOMPRA 60,00€ VELC PP N\nID ESTAB. :0001214402 AUT.161540\nPROCESSADO POR SIBS\n9 90156128020190620000000060.00 0"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "galp",
+  "merchant_tax_id": "PT508668999",
+  "merchant_address": "EST MONTECHORO-TORRE MODOEIRA, 8200-387 ALBUFEIRA",
+  "transaction_date": "2019-06-20",
+  "currency": "EUR",
+  "receipt_number": "012010002337FAAA00000191072019/000013670",
+  "items": [
+   {
+    "description": "44,15 L BOMBA 06 GASOLEO SIMPLES EUR 60,00 A",
+    "price": 60.0,
+    "quantity": 44.15,
+    "unit_price": 1.359
+   }
+  ],
+  "subtotal": 60.0,
+  "tax_amount": 11.22,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 60.0,
+  "payment_method": "CARTAO DEBITO",
+  "amount_tendered": 60.0,
+  "change_given": null,
+  "card_last_four": "1008",
+  "expense_category": "fuel"
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "galp",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_tax_id": {
+   "page": 1,
+   "quote": "NIF: PT508668999",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "EST MONTECHORO-TORRE MODOEIRA\n8200-387 ALBUFEIRA Tel:",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "20-06-19 11:30 56128 01 0002 810",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "Total EUR 60,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "receipt_number": {
+   "page": 1,
+   "quote": "012010002337FAAA00000191072019/000013670",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "44,15 L BOMBA 06\nGASOLEO SIMPLES EUR 60,00 A",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "Total EUR 60,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].quantity": {
+   "page": 1,
+   "quote": "44,15 L BOMBA 06",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].unit_price": {
+   "page": 1,
+   "quote": "1,359 EUR / L",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "Total EUR 60,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_amount": {
+   "page": 1,
+   "quote": "23,00 % IVA A EUR 11,22",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "Total EUR 60,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "payment_method": {
+   "page": 1,
+   "quote": "CARTAO DEBITO EUR 60,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "amount_tendered": {
+   "page": 1,
+   "quote": "CARTAO DEBITO EUR 60,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "card_last_four": {
+   "page": 1,
+   "quote": "CARTAO: ****1008/26",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "expense_category": {
+   "page": 1,
+   "quote": "GASOLEO SIMPLES EUR 60,00 A",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [
+  {
+   "field": "items[0].unit_price",
+   "message": "cited line '1,359 EUR / L' states 1359.00, but items[0].unit_price=1.36",
+   "severity": "error"
+  }
+ ],
+ "corroborated": {},
+ "needs_review": true,
+ "review_reasons": [
+  "validation error: items[0].unit_price — cited line '1,359 EUR / L' states 1359.00, but items[0].unit_price=1.36"
+ ],
+ "metrics": {
+  "elapsed_seconds": 15.867,
+  "stage_seconds": {
+   "acquire": 10.847,
+   "classify": 0.765,
+   "extract": 4.25,
+   "validate": 0.003
+  },
+  "pages": 1,
+  "llm_calls": 3,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 3904,
+  "llm_output_tokens": 1354,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 3209,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

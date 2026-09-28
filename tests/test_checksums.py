@@ -238,3 +238,16 @@ def test_vat_formats_follow_the_country(value, ok):
     from docket.checksums import vat_format_ok
 
     assert vat_format_ok(value) is ok
+
+
+def test_pt_be_dk_lu_vat_checksums():
+    from docket import checksums
+
+    assert checksums.validate_vat("PT503513709") is True
+    assert checksums.validate_vat("PT503513708") is False
+    assert checksums.validate_vat("BE0000000196") is True
+    assert checksums.validate_vat("BE0000000195") is False
+    assert checksums.validate_vat("DK13585628") is True
+    assert checksums.validate_vat("DK13585627") is False
+    assert checksums.validate_vat("LU15027442") is True
+    assert checksums.validate_vat("LU15027443") is False

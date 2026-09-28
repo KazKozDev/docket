@@ -251,8 +251,15 @@ def test_waybill_classified_by_rules():
     ],
 )
 def test_eu_document_names(text, expected):
-    result = classify_rules(text)
-    assert result is not None and result.doc_type == expected
+    """Each name scores for its type. An invoice title alone does not decide
+    the rules tier (a till slip carries one too), so it is checked by score."""
+    from docket.classify import _score
+
+    scores = _score(text)
+    assert max(scores, key=scores.__getitem__) == expected
+    if expected != "invoice":
+        result = classify_rules(text)
+        assert result is not None and result.doc_type == expected
 
 
 def test_german_invoice_compounds_are_invoices_not_orders():
@@ -275,3 +282,17 @@ def test_a_self_billed_gutschrift_is_an_invoice():
 def test_a_plain_gutschrift_is_still_a_credit_note():
     result = classify_rules("GUTSCHRIFT Nr. G-2026-004 zur Rechnung RE-2026-1187\nGutschriftsbetrag: 58,31 EUR")
     assert result is not None and result.doc_type == "credit_note"
+
+
+def test_an_invoice_title_alone_does_not_make_a_till_slip_an_invoice():
+    """A Portuguese till slip heads itself "Fatura"; with nothing only an
+    invoice carries (IBAN, payment terms, a billed address) the rules
+    leave it to a tier that reads the whole document."""
+    slip = "Fatura Simplificada\nNIF: 503513709\nCliente: Consumidor final\nTotal 12,20 EUR\nIVA incluído 23%"
+    assert classify_rules(slip) is None
+
+
+def test_an_invoice_with_payment_terms_is_still_decided_by_the_rules():
+    text = "FACTURA N.º A-2026/045\nCliente: Hansa Logistik AG\nVencimiento: 15/10/2026\nTotal a pagar 1.815,00 €"
+    result = classify_rules(text)
+    assert result is not None and result.doc_type == "invoice"

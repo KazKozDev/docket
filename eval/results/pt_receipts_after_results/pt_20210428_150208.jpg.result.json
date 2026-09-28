@@ -1,0 +1,1611 @@
+{
+ "source": "eval/pt_receipts/pt_20210428_150208.jpg",
+ "document_id": "doc_facd819a9ad0d96bc1fb",
+ "status": "succeeded",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 0.9,
+  "method": "llm",
+  "scores": {
+   "invoice": 3.0,
+   "credit_note": 0.0,
+   "receipt": 2.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.7440944881889764,
+      "reason": "escalated: kept only as an independent witness",
+      "seconds": 4.651
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 4.342
+     }
+    ],
+    "witness": {
+     "page_number": 1,
+     "width": 3000.0,
+     "height": 4000.0,
+     "unit": "px",
+     "rotation": 0,
+     "deskew_angle": 0.0,
+     "crop_quad": null,
+     "backend": "tesseract",
+     "confidence": 0.7440944881889764,
+     "words": [
+      {
+       "id": "p1-w0",
+       "text": "*",
+       "confidence": 0.59,
+       "bbox": {
+        "x0": 0.24066666666666667,
+        "y0": 0.40775,
+        "x1": 0.25233333333333335,
+        "y1": 0.41175
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w1",
+       "text": "Drary",
+       "confidence": 0.51,
+       "bbox": {
+        "x0": 0.26666666666666666,
+        "y0": 0.42025,
+        "x1": 0.30866666666666664,
+        "y1": 0.43075
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w2",
+       "text": "IVA",
+       "confidence": 0.93,
+       "bbox": {
+        "x0": 0.36133333333333334,
+        "y0": 0.41975,
+        "x1": 0.389,
+        "y1": 0.43225
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w3",
+       "text": "Total",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.44466666666666665,
+        "y0": 0.41775,
+        "x1": 0.49233333333333335,
+        "y1": 0.432
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w4",
+       "text": "ir",
+       "confidence": 0.53,
+       "bbox": {
+        "x0": 0.28733333333333333,
+        "y0": 0.48225,
+        "x1": 0.30133333333333334,
+        "y1": 0.48525
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w5",
+       "text": "A\"",
+       "confidence": 0.26,
+       "bbox": {
+        "x0": 0.31933333333333336,
+        "y0": 0.48225,
+        "x1": 0.334,
+        "y1": 0.48475
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w6",
+       "text": "99",
+       "confidence": 0.51,
+       "bbox": {
+        "x0": 0.348,
+        "y0": 0.482,
+        "x1": 0.366,
+        "y1": 0.486
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w7",
+       "text": "M",
+       "confidence": 0.83,
+       "bbox": {
+        "x0": 0.381,
+        "y0": 0.4825,
+        "x1": 0.38766666666666666,
+        "y1": 0.48725
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w8",
+       "text": "C",
+       "confidence": 0.7,
+       "bbox": {
+        "x0": 0.4856666666666667,
+        "y0": 0.48225,
+        "x1": 0.49066666666666664,
+        "y1": 0.4895
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w9",
+       "text": "(",
+       "confidence": 0.89,
+       "bbox": {
+        "x0": 0.507,
+        "y0": 0.48225,
+        "x1": 0.511,
+        "y1": 0.48875
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w10",
+       "text": "19.00.2370",
+       "confidence": 0.56,
+       "bbox": {
+        "x0": 0.2886666666666667,
+        "y0": 0.4825,
+        "x1": 0.388,
+        "y1": 0.49625
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w11",
+       "text": "19,0",
+       "confidence": 0.83,
+       "bbox": {
+        "x0": 0.479,
+        "y0": 0.48275,
+        "x1": 0.5156666666666667,
+        "y1": 0.49725
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w12",
+       "text": "U,",
+       "confidence": 0.83,
+       "bbox": {
+        "x0": 0.442,
+        "y0": 0.52875,
+        "x1": 0.4583333333333333,
+        "y1": 0.53925
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w13",
+       "text": "U0",
+       "confidence": 0.74,
+       "bbox": {
+        "x0": 0.4633333333333333,
+        "y0": 0.5245,
+        "x1": 0.48233333333333334,
+        "y1": 0.53775
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w14",
+       "text": "dc",
+       "confidence": 0.89,
+       "bbox": {
+        "x0": 0.23133333333333334,
+        "y0": 0.5485,
+        "x1": 0.24733333333333332,
+        "y1": 0.55725
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w15",
+       "text": "15,45",
+       "confidence": 0.8,
+       "bbox": {
+        "x0": 0.43333333333333335,
+        "y0": 0.54575,
+        "x1": 0.482,
+        "y1": 0.561
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w16",
+       "text": "Y",
+       "confidence": 0.33,
+       "bbox": {
+        "x0": 0.233,
+        "y0": 0.57725,
+        "x1": 0.30666666666666664,
+        "y1": 0.59425
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w17",
+       "text": "3,55",
+       "confidence": 0.95,
+       "bbox": {
+        "x0": 0.441,
+        "y0": 0.5895,
+        "x1": 0.4816666666666667,
+        "y1": 0.6035
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w18",
+       "text": "19,00",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.43166666666666664,
+        "y0": 0.61125,
+        "x1": 0.48133333333333334,
+        "y1": 0.62675
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w19",
+       "text": "i",
+       "confidence": 0.31,
+       "bbox": {
+        "x0": 0.5156666666666667,
+        "y0": 0.635,
+        "x1": 0.5173333333333333,
+        "y1": 0.64025
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w20",
+       "text": "Alternativo",
+       "confidence": 0.9,
+       "bbox": {
+        "x0": 0.16466666666666666,
+        "y0": 0.63375,
+        "x1": 0.27566666666666667,
+        "y1": 0.6435
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w21",
+       "text": ":",
+       "confidence": 0.9,
+       "bbox": {
+        "x0": 0.303,
+        "y0": 0.6355,
+        "x1": 0.305,
+        "y1": 0.64425
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w22",
+       "text": "19,00",
+       "confidence": 0.94,
+       "bbox": {
+        "x0": 0.43266666666666664,
+        "y0": 0.63325,
+        "x1": 0.4806666666666667,
+        "y1": 0.64925
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w23",
+       "text": "EUR",
+       "confidence": 0.95,
+       "bbox": {
+        "x0": 0.49466666666666664,
+        "y0": 0.6345,
+        "x1": 0.5243333333333333,
+        "y1": 0.64825
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w24",
+       "text": "F",
+       "confidence": 0.67,
+       "bbox": {
+        "x0": 0.5156666666666667,
+        "y0": 0.64075,
+        "x1": 0.5193333333333333,
+        "y1": 0.648
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w25",
+       "text": "J",
+       "confidence": 0.9,
+       "bbox": {
+        "x0": 0.215,
+        "y0": 0.72625,
+        "x1": 0.219,
+        "y1": 0.73025
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w26",
+       "text": "id",
+       "confidence": 0.85,
+       "bbox": {
+        "x0": 0.25733333333333336,
+        "y0": 0.72175,
+        "x1": 0.2713333333333333,
+        "y1": 0.7315
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w27",
+       "text": "Yalor",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.3393333333333333,
+        "y0": 0.71975,
+        "x1": 0.39,
+        "y1": 0.7345
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w28",
+       "text": "Motive",
+       "confidence": 0.68,
+       "bbox": {
+        "x0": 0.43733333333333335,
+        "y0": 0.72225,
+        "x1": 0.5006666666666667,
+        "y1": 0.73875
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w29",
+       "text": "75%",
+       "confidence": 0.66,
+       "bbox": {
+        "x0": 0.10666666666666667,
+        "y0": 0.73625,
+        "x1": 0.124,
+        "y1": 0.742
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w30",
+       "text": "(if",
+       "confidence": 0.72,
+       "bbox": {
+        "x0": 0.13733333333333334,
+        "y0": 0.73725,
+        "x1": 0.15566666666666668,
+        "y1": 0.74225
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w31",
+       "text": "IE",
+       "confidence": 0.86,
+       "bbox": {
+        "x0": 0.22333333333333333,
+        "y0": 0.7395,
+        "x1": 0.23833333333333334,
+        "y1": 0.7465
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w32",
+       "text": "AG",
+       "confidence": 0.85,
+       "bbox": {
+        "x0": 0.264,
+        "y0": 0.74,
+        "x1": 0.27066666666666667,
+        "y1": 0.7475
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w33",
+       "text": "A",
+       "confidence": 0.3,
+       "bbox": {
+        "x0": 0.3496666666666667,
+        "y0": 0.743,
+        "x1": 0.358,
+        "y1": 0.74975
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w34",
+       "text": "E",
+       "confidence": 0.69,
+       "bbox": {
+        "x0": 0.372,
+        "y0": 0.74325,
+        "x1": 0.38566666666666666,
+        "y1": 0.751
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w35",
+       "text": "Ig",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.12166666666666667,
+        "y0": 0.7475,
+        "x1": 0.13166666666666665,
+        "y1": 0.75125
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w36",
+       "text": "7",
+       "confidence": 0.05,
+       "bbox": {
+        "x0": 0.141,
+        "y0": 0.7465,
+        "x1": 0.15533333333333332,
+        "y1": 0.75
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w37",
+       "text": "|",
+       "confidence": 0.81,
+       "bbox": {
+        "x0": 0.225,
+        "y0": 0.746,
+        "x1": 0.226,
+        "y1": 0.74875
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w38",
+       "text": "3,45",
+       "confidence": 0.4,
+       "bbox": {
+        "x0": 0.235,
+        "y0": 0.73975,
+        "x1": 0.2713333333333333,
+        "y1": 0.7545
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w39",
+       "text": "6%)",
+       "confidence": 0.16,
+       "bbox": {
+        "x0": 0.34933333333333333,
+        "y0": 0.75,
+        "x1": 0.358,
+        "y1": 0.756
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w40",
+       "text": "y",
+       "confidence": 0.65,
+       "bbox": {
+        "x0": 0.3636666666666667,
+        "y0": 0.7545,
+        "x1": 0.366,
+        "y1": 0.7585
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w41",
+       "text": "141)",
+       "confidence": 0.39,
+       "bbox": {
+        "x0": 0.37166666666666665,
+        "y0": 0.749,
+        "x1": 0.39066666666666666,
+        "y1": 0.7595
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w42",
+       "text": "MUITO",
+       "confidence": 0.66,
+       "bbox": {
+        "x0": 0.23833333333333334,
+        "y0": 0.806,
+        "x1": 0.2906666666666667,
+        "y1": 0.826
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w43",
+       "text": "OBRIGADO",
+       "confidence": 0.82,
+       "bbox": {
+        "x0": 0.30333333333333334,
+        "y0": 0.8085,
+        "x1": 0.3893333333333333,
+        "y1": 0.8255
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w44",
+       "text": "Visite-nos",
+       "confidence": 0.85,
+       "bbox": {
+        "x0": 0.23733333333333334,
+        "y0": 0.8515,
+        "x1": 0.343,
+        "y1": 0.86925
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w45",
+       "text": "em",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.3566666666666667,
+        "y0": 0.859,
+        "x1": 0.377,
+        "y1": 0.87075
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w46",
+       "text": "490",
+       "confidence": 0.38,
+       "bbox": {
+        "x0": 0.19333333333333333,
+        "y0": 0.87525,
+        "x1": 0.22333333333333333,
+        "y1": 0.8865
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l15"
+      },
+      {
+       "id": "p1-w47",
+       "text": ".autovidreira,",
+       "confidence": 0.29,
+       "bbox": {
+        "x0": 0.22866666666666666,
+        "y0": 0.87475,
+        "x1": 0.4096666666666667,
+        "y1": 0.89525
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l15"
+      },
+      {
+       "id": "p1-w48",
+       "text": "com",
+       "confidence": 0.44,
+       "bbox": {
+        "x0": 0.377,
+        "y0": 0.87375,
+        "x1": 0.4096666666666667,
+        "y1": 0.89625
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l15"
+      },
+      {
+       "id": "p1-w49",
+       "text": "“M.",
+       "confidence": 0.58,
+       "bbox": {
+        "x0": 0.15033333333333335,
+        "y0": 0.89575,
+        "x1": 0.18733333333333332,
+        "y1": 0.9075
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w50",
+       "text": "Facebook",
+       "confidence": 0.35,
+       "bbox": {
+        "x0": 0.19333333333333333,
+        "y0": 0.89275,
+        "x1": 0.27466666666666667,
+        "y1": 0.92325
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w51",
+       "text": ".com/autovidreira",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.282,
+        "y0": 0.89275,
+        "x1": 0.464,
+        "y1": 0.92325
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w52",
+       "text": "“itr-Processado",
+       "confidence": 0.2,
+       "bbox": {
+        "x0": 0.08666666666666667,
+        "y0": 0.934,
+        "x1": 0.24266666666666667,
+        "y1": 0.9555
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l17"
+      },
+      {
+       "id": "p1-w53",
+       "text": "por",
+       "confidence": 0.96,
+       "bbox": {
+        "x0": 0.255,
+        "y0": 0.946,
+        "x1": 0.286,
+        "y1": 0.95875
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l17"
+      },
+      {
+       "id": "p1-w54",
+       "text": "Programa",
+       "confidence": 0.95,
+       "bbox": {
+        "x0": 0.2986666666666667,
+        "y0": 0.94475,
+        "x1": 0.38466666666666666,
+        "y1": 0.96325
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l17"
+      },
+      {
+       "id": "p1-w55",
+       "text": "Certificado",
+       "confidence": 0.62,
+       "bbox": {
+        "x0": 0.3983333333333333,
+        "y0": 0.94925,
+        "x1": 0.52,
+        "y1": 0.97375
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l17"
+      },
+      {
+       "id": "p1-w56",
+       "text": "Mo.",
+       "confidence": 0.37,
+       "bbox": {
+        "x0": 0.084,
+        "y0": 0.965,
+        "x1": 0.11066666666666666,
+        "y1": 0.97075
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l18"
+      },
+      {
+       "id": "p1-w57",
+       "text": "DOSOJAT",
+       "confidence": 0.35,
+       "bbox": {
+        "x0": 0.12666666666666668,
+        "y0": 0.95875,
+        "x1": 0.199,
+        "y1": 0.97575
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l18"
+      },
+      {
+       "id": "p1-w58",
+       "text": "/",
+       "confidence": 0.78,
+       "bbox": {
+        "x0": 0.21133333333333335,
+        "y0": 0.964,
+        "x1": 0.21966666666666668,
+        "y1": 0.97825
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l18"
+      },
+      {
+       "id": "p1-w59",
+       "text": "FS",
+       "confidence": 0.74,
+       "bbox": {
+        "x0": 0.23366666666666666,
+        "y0": 0.964,
+        "x1": 0.253,
+        "y1": 0.97875
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l18"
+      },
+      {
+       "id": "p1-w60",
+       "text": "20198/121",
+       "confidence": 0.9,
+       "bbox": {
+        "x0": 0.26566666666666666,
+        "y0": 0.96575,
+        "x1": 0.36,
+        "y1": 0.985
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l18"
+      }
+     ],
+     "lines": [
+      {
+       "id": "p1-l0",
+       "text": "* Drary | IVA | Total",
+       "bbox": {
+        "x0": 0.24066666666666667,
+        "y0": 0.40775,
+        "x1": 0.49233333333333335,
+        "y1": 0.43225
+       },
+       "word_ids": [
+        "p1-w0",
+        "p1-w1",
+        "p1-w2",
+        "p1-w3"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l1",
+       "text": "ir A\" 99 M | C (",
+       "bbox": {
+        "x0": 0.28733333333333333,
+        "y0": 0.482,
+        "x1": 0.511,
+        "y1": 0.4895
+       },
+       "word_ids": [
+        "p1-w4",
+        "p1-w5",
+        "p1-w6",
+        "p1-w7",
+        "p1-w8",
+        "p1-w9"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l2",
+       "text": "19.00.2370 | 19,0",
+       "bbox": {
+        "x0": 0.2886666666666667,
+        "y0": 0.4825,
+        "x1": 0.5156666666666667,
+        "y1": 0.49725
+       },
+       "word_ids": [
+        "p1-w10",
+        "p1-w11"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l3",
+       "text": "U, U0",
+       "bbox": {
+        "x0": 0.442,
+        "y0": 0.5245,
+        "x1": 0.48233333333333334,
+        "y1": 0.53925
+       },
+       "word_ids": [
+        "p1-w12",
+        "p1-w13"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l4",
+       "text": "dc | 15,45",
+       "bbox": {
+        "x0": 0.23133333333333334,
+        "y0": 0.54575,
+        "x1": 0.482,
+        "y1": 0.561
+       },
+       "word_ids": [
+        "p1-w14",
+        "p1-w15"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l5",
+       "text": "Y | 3,55",
+       "bbox": {
+        "x0": 0.233,
+        "y0": 0.57725,
+        "x1": 0.4816666666666667,
+        "y1": 0.6035
+       },
+       "word_ids": [
+        "p1-w16",
+        "p1-w17"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l6",
+       "text": "19,00",
+       "bbox": {
+        "x0": 0.43166666666666664,
+        "y0": 0.61125,
+        "x1": 0.48133333333333334,
+        "y1": 0.62675
+       },
+       "word_ids": [
+        "p1-w18"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l7",
+       "text": "i",
+       "bbox": {
+        "x0": 0.5156666666666667,
+        "y0": 0.635,
+        "x1": 0.5173333333333333,
+        "y1": 0.64025
+       },
+       "word_ids": [
+        "p1-w19"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l8",
+       "text": "Alternativo | : | 19,00 EUR",
+       "bbox": {
+        "x0": 0.16466666666666666,
+        "y0": 0.63325,
+        "x1": 0.5243333333333333,
+        "y1": 0.64925
+       },
+       "word_ids": [
+        "p1-w20",
+        "p1-w21",
+        "p1-w22",
+        "p1-w23"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l9",
+       "text": "F",
+       "bbox": {
+        "x0": 0.5156666666666667,
+        "y0": 0.64075,
+        "x1": 0.5193333333333333,
+        "y1": 0.648
+       },
+       "word_ids": [
+        "p1-w24"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l10",
+       "text": "J | id | Yalor | Motive",
+       "bbox": {
+        "x0": 0.215,
+        "y0": 0.71975,
+        "x1": 0.5006666666666667,
+        "y1": 0.73875
+       },
+       "word_ids": [
+        "p1-w25",
+        "p1-w26",
+        "p1-w27",
+        "p1-w28"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l11",
+       "text": "75% (if | IE | AG | A E",
+       "bbox": {
+        "x0": 0.10666666666666667,
+        "y0": 0.73625,
+        "x1": 0.38566666666666666,
+        "y1": 0.751
+       },
+       "word_ids": [
+        "p1-w29",
+        "p1-w30",
+        "p1-w31",
+        "p1-w32",
+        "p1-w33",
+        "p1-w34"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l12",
+       "text": "Ig 7 | | 3,45 | 6%) y 141)",
+       "bbox": {
+        "x0": 0.12166666666666667,
+        "y0": 0.73975,
+        "x1": 0.39066666666666666,
+        "y1": 0.7595
+       },
+       "word_ids": [
+        "p1-w35",
+        "p1-w36",
+        "p1-w37",
+        "p1-w38",
+        "p1-w39",
+        "p1-w40",
+        "p1-w41"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l13",
+       "text": "MUITO OBRIGADO",
+       "bbox": {
+        "x0": 0.23833333333333334,
+        "y0": 0.806,
+        "x1": 0.3893333333333333,
+        "y1": 0.826
+       },
+       "word_ids": [
+        "p1-w42",
+        "p1-w43"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l14",
+       "text": "Visite-nos em",
+       "bbox": {
+        "x0": 0.23733333333333334,
+        "y0": 0.8515,
+        "x1": 0.377,
+        "y1": 0.87075
+       },
+       "word_ids": [
+        "p1-w44",
+        "p1-w45"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l15",
+       "text": "490 .autovidreira, com",
+       "bbox": {
+        "x0": 0.19333333333333333,
+        "y0": 0.87375,
+        "x1": 0.4096666666666667,
+        "y1": 0.89625
+       },
+       "word_ids": [
+        "p1-w46",
+        "p1-w47",
+        "p1-w48"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l16",
+       "text": "“M. Facebook .com/autovidreira",
+       "bbox": {
+        "x0": 0.15033333333333335,
+        "y0": 0.89275,
+        "x1": 0.464,
+        "y1": 0.92325
+       },
+       "word_ids": [
+        "p1-w49",
+        "p1-w50",
+        "p1-w51"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l17",
+       "text": "“itr-Processado por Programa Certificado",
+       "bbox": {
+        "x0": 0.08666666666666667,
+        "y0": 0.934,
+        "x1": 0.52,
+        "y1": 0.97375
+       },
+       "word_ids": [
+        "p1-w52",
+        "p1-w53",
+        "p1-w54",
+        "p1-w55"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l18",
+       "text": "Mo. DOSOJAT / FS 20198/121",
+       "bbox": {
+        "x0": 0.084,
+        "y0": 0.95875,
+        "x1": 0.36,
+        "y1": 0.985
+       },
+       "word_ids": [
+        "p1-w56",
+        "p1-w57",
+        "p1-w58",
+        "p1-w59",
+        "p1-w60"
+       ],
+       "column": null,
+       "table_id": null
+      }
+     ],
+     "blocks": [
+      {
+       "id": "p1-b0",
+       "bbox": {
+        "x0": 0.24066666666666667,
+        "y0": 0.40775,
+        "x1": 0.49233333333333335,
+        "y1": 0.43225
+       },
+       "line_ids": [
+        "p1-l0"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b1",
+       "bbox": {
+        "x0": 0.28733333333333333,
+        "y0": 0.482,
+        "x1": 0.5156666666666667,
+        "y1": 0.49725
+       },
+       "line_ids": [
+        "p1-l1",
+        "p1-l2"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b2",
+       "bbox": {
+        "x0": 0.23133333333333334,
+        "y0": 0.5245,
+        "x1": 0.48233333333333334,
+        "y1": 0.561
+       },
+       "line_ids": [
+        "p1-l3",
+        "p1-l4"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b3",
+       "bbox": {
+        "x0": 0.16466666666666666,
+        "y0": 0.57725,
+        "x1": 0.5243333333333333,
+        "y1": 0.64925
+       },
+       "line_ids": [
+        "p1-l5",
+        "p1-l6",
+        "p1-l7",
+        "p1-l8",
+        "p1-l9"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b4",
+       "bbox": {
+        "x0": 0.10666666666666667,
+        "y0": 0.71975,
+        "x1": 0.5006666666666667,
+        "y1": 0.7595
+       },
+       "line_ids": [
+        "p1-l10",
+        "p1-l11",
+        "p1-l12"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b5",
+       "bbox": {
+        "x0": 0.23833333333333334,
+        "y0": 0.806,
+        "x1": 0.3893333333333333,
+        "y1": 0.826
+       },
+       "line_ids": [
+        "p1-l13"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b6",
+       "bbox": {
+        "x0": 0.084,
+        "y0": 0.8515,
+        "x1": 0.52,
+        "y1": 0.985
+       },
+       "line_ids": [
+        "p1-l14",
+        "p1-l15",
+        "p1-l16",
+        "p1-l17",
+        "p1-l18"
+       ],
+       "column": null
+      }
+     ],
+     "columns": [],
+     "tables": [],
+     "text": "* Drary | IVA | Total\nir A\" 99 M | C (\n19.00.2370 | 19,0\nU, U0\ndc | 15,45\nY | 3,55\n19,00\ni\nAlternativo | : | 19,00 EUR\nF\nJ | id | Yalor | Motive\n75% (if | IE | AG | A E\nIg 7 | | 3,45 | 6%) y 141)\nMUITO OBRIGADO\nVisite-nos em\n490 .autovidreira, com\n“M. Facebook .com/autovidreira\n“itr-Processado por Programa Certificado\nMo. DOSOJAT / FS 20198/121"
+    }
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "Autovidreira, LDA\n500483910\nRua Fialho dos Negros\n1200-636 L - Lisboa\nTel: 213901409\nFax:\nC11.:510776914\nF1lkehome\n510776914\n\nFatura simplificada\nFS N.121        Data: 2019-03-18\nMoeda: EUR       Cambio: 1\n\nRec. por Multit                 19,00\n\nCod. do Artigo - Descricao\nQuant.  X  Preco   IVA   Total\n\n0003E          Espelho 3mm\n1,00 X         19,00 23,0    19,00\n\nVend. Devolucoes :            0,00\nTotal Iliquido :             15,45\nTotal Descontos :             0,00\nTotal de IVA :                3,55\nTotal Liquido :              19,00\nTotal Alternativo :   19,00 EUR\n\nIVA\n\n| Taxa | Incidencia | Valor | Motivo |\n|---|---|---|---|\n| 23,00 | 15,45 | 3,55 |  |\n\nMUITO OBRIGADO\n\nVisite-nos em\nwww.autovidreira.com\nwww.facebook.com/autovidreira\n\nSijtr-Processado por Programa Certificado\nn.. 0030/AT / FS 2019S/121"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "Autovidreira, LDA",
+  "merchant_tax_id": "500483910",
+  "merchant_address": "Rua Fialho dos Negros, 1200-636 L - Lisboa",
+  "transaction_date": "2019-03-18",
+  "currency": "EUR",
+  "receipt_number": "FS N.121",
+  "items": [
+   {
+    "description": "Espelho 3mm",
+    "price": 19.0,
+    "quantity": 1.0,
+    "unit_price": 19.0
+   }
+  ],
+  "subtotal": 15.45,
+  "tax_amount": 3.55,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 19.0,
+  "payment_method": null,
+  "amount_tendered": null,
+  "change_given": null,
+  "card_last_four": null,
+  "expense_category": null
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "Autovidreira, LDA",
+   "status": "fuzzy",
+   "match": "fuzzy",
+   "regions": [
+    {
+     "page": 1,
+     "bbox": {
+      "x0": 0.22866666666666666,
+      "y0": 0.87375,
+      "x1": 0.4096666666666667,
+      "y1": 0.89625
+     },
+     "word_ids": [
+      "p1-w47",
+      "p1-w48"
+     ]
+    }
+   ],
+   "bbox": {
+    "x0": 0.22866666666666666,
+    "y0": 0.87375,
+    "x1": 0.4096666666666667,
+    "y1": 0.89625
+   },
+   "word_ids": [
+    "p1-w47",
+    "p1-w48"
+   ],
+   "confidence": 0.2966,
+   "located_by": "tesseract"
+  },
+  "merchant_tax_id": {
+   "page": 1,
+   "quote": "500483910",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "Rua Fialho dos Negros\n1200-636 L - Lisboa",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "Data: 2019-03-18",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "Moeda: EUR",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "receipt_number": {
+   "page": 1,
+   "quote": "FS N.121",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "0003E          Espelho 3mm",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].quantity": {
+   "page": 1,
+   "quote": "1,00 X         19,00 23,0    19,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].unit_price": {
+   "page": 1,
+   "quote": "1,00 X         19,00 23,0    19,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "1,00 X         19,00 23,0    19,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "Total Iliquido :             15,45",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_amount": {
+   "page": 1,
+   "quote": "Total de IVA :                3,55",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "discount_amount": {
+   "page": 1,
+   "quote": "Total Descontos :             0,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "Total Liquido :              19,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [],
+ "corroborated": {},
+ "needs_review": false,
+ "review_reasons": [],
+ "metrics": {
+  "elapsed_seconds": 18.044,
+  "stage_seconds": {
+   "acquire": 13.685,
+   "classify": 0.788,
+   "extract": 2.583,
+   "validate": 0.002
+  },
+  "pages": 1,
+  "llm_calls": 4,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 3849,
+  "llm_output_tokens": 1045,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 3150,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

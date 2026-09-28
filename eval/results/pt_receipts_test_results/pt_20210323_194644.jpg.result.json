@@ -1,0 +1,1850 @@
+{
+ "source": "eval/pt_receipts_test/pt_20210323_194644.jpg",
+ "document_id": "doc_adc016980d7c0726bf63",
+ "status": "needs_review",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 0.85,
+  "method": "llm",
+  "scores": {
+   "invoice": 3.0,
+   "credit_note": 0.0,
+   "receipt": 0.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.2268041237113402,
+      "reason": "confidence 0.23 < 0.60",
+      "seconds": 4.833
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 5.876
+     }
+    ],
+    "witness": {
+     "page_number": 1,
+     "width": 3000.0,
+     "height": 4000.0,
+     "unit": "px",
+     "rotation": 0,
+     "deskew_angle": 0.0,
+     "crop_quad": null,
+     "backend": "tesseract",
+     "confidence": 0.2268041237113402,
+     "words": [
+      {
+       "id": "p1-w0",
+       "text": ".",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.195,
+        "y0": 0.3755,
+        "x1": 0.19566666666666666,
+        "y1": 0.376
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w1",
+       "text": "a",
+       "confidence": 0.29,
+       "bbox": {
+        "x0": 0.215,
+        "y0": 0.3735,
+        "x1": 0.21766666666666667,
+        "y1": 0.3745
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w2",
+       "text": "VS",
+       "confidence": 0.1,
+       "bbox": {
+        "x0": 0.20033333333333334,
+        "y0": 0.3735,
+        "x1": 0.222,
+        "y1": 0.3795
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w3",
+       "text": "ra",
+       "confidence": 0.51,
+       "bbox": {
+        "x0": 0.24766666666666667,
+        "y0": 0.387,
+        "x1": 0.25366666666666665,
+        "y1": 0.389
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w4",
+       "text": "4",
+       "confidence": 0.81,
+       "bbox": {
+        "x0": 0.483,
+        "y0": 0.44175,
+        "x1": 0.48733333333333334,
+        "y1": 0.44525
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w5",
+       "text": "‘",
+       "confidence": 0.69,
+       "bbox": {
+        "x0": 0.49366666666666664,
+        "y0": 0.44325,
+        "x1": 0.495,
+        "y1": 0.4455
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w6",
+       "text": "an",
+       "confidence": 0.76,
+       "bbox": {
+        "x0": 0.49533333333333335,
+        "y0": 0.4345,
+        "x1": 0.5313333333333333,
+        "y1": 0.45325
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w7",
+       "text": "0",
+       "confidence": 0.83,
+       "bbox": {
+        "x0": 0.5343333333333333,
+        "y0": 0.44025,
+        "x1": 0.5453333333333333,
+        "y1": 0.457
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w8",
+       "text": "Ls",
+       "confidence": 0.62,
+       "bbox": {
+        "x0": 0.494,
+        "y0": 0.452,
+        "x1": 0.5046666666666667,
+        "y1": 0.45775
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w9",
+       "text": "al",
+       "confidence": 0.35,
+       "bbox": {
+        "x0": 0.5223333333333333,
+        "y0": 0.45225,
+        "x1": 0.532,
+        "y1": 0.45725
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w10",
+       "text": "j",
+       "confidence": 0.7,
+       "bbox": {
+        "x0": 0.5126666666666667,
+        "y0": 0.457,
+        "x1": 0.5143333333333333,
+        "y1": 0.459
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w11",
+       "text": "1",
+       "confidence": 0.92,
+       "bbox": {
+        "x0": 0.4836666666666667,
+        "y0": 0.4915,
+        "x1": 0.48966666666666664,
+        "y1": 0.508
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w12",
+       "text": "00",
+       "confidence": 0.79,
+       "bbox": {
+        "x0": 0.5126666666666667,
+        "y0": 0.483,
+        "x1": 0.5473333333333333,
+        "y1": 0.5065
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w13",
+       "text": "dd",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.49566666666666664,
+        "y0": 0.50375,
+        "x1": 0.5063333333333333,
+        "y1": 0.508
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w14",
+       "text": "3%",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.514,
+        "y0": 0.50575,
+        "x1": 0.5313333333333333,
+        "y1": 0.509
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w15",
+       "text": "3",
+       "confidence": 0.51,
+       "bbox": {
+        "x0": 0.65,
+        "y0": 0.56325,
+        "x1": 0.6616666666666666,
+        "y1": 0.572
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w16",
+       "text": "zu",
+       "confidence": 0.67,
+       "bbox": {
+        "x0": 0.664,
+        "y0": 0.563,
+        "x1": 0.674,
+        "y1": 0.56475
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w17",
+       "text": "L",
+       "confidence": 0.82,
+       "bbox": {
+        "x0": 0.664,
+        "y0": 0.5645,
+        "x1": 0.6693333333333333,
+        "y1": 0.57125
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w18",
+       "text": "y",
+       "confidence": 0.09,
+       "bbox": {
+        "x0": 0.715,
+        "y0": 0.56675,
+        "x1": 0.7173333333333334,
+        "y1": 0.5705
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w19",
+       "text": "a",
+       "confidence": 0.85,
+       "bbox": {
+        "x0": 0.5883333333333334,
+        "y0": 0.5785,
+        "x1": 0.5896666666666667,
+        "y1": 0.58
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w20",
+       "text": "e",
+       "confidence": 0.26,
+       "bbox": {
+        "x0": 0.5996666666666667,
+        "y0": 0.57825,
+        "x1": 0.6033333333333334,
+        "y1": 0.5815
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w21",
+       "text": "1",
+       "confidence": 0.69,
+       "bbox": {
+        "x0": 0.6156666666666667,
+        "y0": 0.578,
+        "x1": 0.6173333333333333,
+        "y1": 0.58125
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w22",
+       "text": "Li",
+       "confidence": 0.35,
+       "bbox": {
+        "x0": 0.6276666666666667,
+        "y0": 0.57775,
+        "x1": 0.6316666666666667,
+        "y1": 0.58075
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w23",
+       "text": "ne",
+       "confidence": 0.16,
+       "bbox": {
+        "x0": 0.6513333333333333,
+        "y0": 0.5725,
+        "x1": 0.6626666666666666,
+        "y1": 0.5805
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w24",
+       "text": "J;",
+       "confidence": 0.73,
+       "bbox": {
+        "x0": 0.6643333333333333,
+        "y0": 0.56875,
+        "x1": 0.6866666666666666,
+        "y1": 0.582
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w25",
+       "text": ":",
+       "confidence": 0.32,
+       "bbox": {
+        "x0": 0.7153333333333334,
+        "y0": 0.57125,
+        "x1": 0.718,
+        "y1": 0.577
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w26",
+       "text": "0",
+       "confidence": 0.6,
+       "bbox": {
+        "x0": 0.34933333333333333,
+        "y0": 0.771,
+        "x1": 0.35833333333333334,
+        "y1": 0.781
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w27",
+       "text": "le",
+       "confidence": 0.37,
+       "bbox": {
+        "x0": 0.499,
+        "y0": 0.82125,
+        "x1": 0.504,
+        "y1": 0.8305
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w28",
+       "text": "3e",
+       "confidence": 0.69,
+       "bbox": {
+        "x0": 0.507,
+        "y0": 0.82125,
+        "x1": 0.5096666666666667,
+        "y1": 0.83525
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w29",
+       "text": ">»",
+       "confidence": 0.13,
+       "bbox": {
+        "x0": 0.5133333333333333,
+        "y0": 0.82,
+        "x1": 0.5156666666666667,
+        "y1": 0.82125
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w30",
+       "text": "=",
+       "confidence": 0.8,
+       "bbox": {
+        "x0": 0.514,
+        "y0": 0.854,
+        "x1": 0.5156666666666667,
+        "y1": 0.85725
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w31",
+       "text": "E",
+       "confidence": 0.2,
+       "bbox": {
+        "x0": 0.5153333333333333,
+        "y0": 0.8245,
+        "x1": 0.5183333333333333,
+        "y1": 0.8365
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w32",
+       "text": "mn",
+       "confidence": 0.4,
+       "bbox": {
+        "x0": 0.5393333333333333,
+        "y0": 0.82,
+        "x1": 0.5463333333333333,
+        "y1": 0.8365
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w33",
+       "text": "-",
+       "confidence": 0.8,
+       "bbox": {
+        "x0": 0.711,
+        "y0": 0.8245,
+        "x1": 0.7123333333333334,
+        "y1": 0.82875
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w34",
+       "text": "P",
+       "confidence": 0.21,
+       "bbox": {
+        "x0": 0.7133333333333334,
+        "y0": 0.8145,
+        "x1": 0.7156666666666667,
+        "y1": 0.81775
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w35",
+       "text": "=",
+       "confidence": 0.4,
+       "bbox": {
+        "x0": 0.37933333333333336,
+        "y0": 0.8245,
+        "x1": 0.38166666666666665,
+        "y1": 0.8365
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w36",
+       "text": "Rees",
+       "confidence": 0.41,
+       "bbox": {
+        "x0": 0.37966666666666665,
+        "y0": 0.85175,
+        "x1": 0.383,
+        "y1": 0.8635
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w37",
+       "text": "~",
+       "confidence": 0.9,
+       "bbox": {
+        "x0": 0.5266666666666666,
+        "y0": 0.83375,
+        "x1": 0.529,
+        "y1": 0.83925
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w38",
+       "text": "==",
+       "confidence": 0.15,
+       "bbox": {
+        "x0": 0.5366666666666666,
+        "y0": 0.8525,
+        "x1": 0.539,
+        "y1": 0.86075
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w39",
+       "text": ";",
+       "confidence": 0.53,
+       "bbox": {
+        "x0": 0.5373333333333333,
+        "y0": 0.81975,
+        "x1": 0.5386666666666666,
+        "y1": 0.8205
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w40",
+       "text": ",",
+       "confidence": 0.28,
+       "bbox": {
+        "x0": 0.5406666666666666,
+        "y0": 0.8195,
+        "x1": 0.5426666666666666,
+        "y1": 0.82075
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w41",
+       "text": "os",
+       "confidence": 0.46,
+       "bbox": {
+        "x0": 0.546,
+        "y0": 0.85025,
+        "x1": 0.548,
+        "y1": 0.86075
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w42",
+       "text": "ER",
+       "confidence": 0.38,
+       "bbox": {
+        "x0": 0.5573333333333333,
+        "y0": 0.828,
+        "x1": 0.562,
+        "y1": 0.86
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w43",
+       "text": "u",
+       "confidence": 0.33,
+       "bbox": {
+        "x0": 0.6853333333333333,
+        "y0": 0.816,
+        "x1": 0.6886666666666666,
+        "y1": 0.8285
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w44",
+       "text": "are",
+       "confidence": 0.18,
+       "bbox": {
+        "x0": 0.686,
+        "y0": 0.842,
+        "x1": 0.6896666666666667,
+        "y1": 0.8545
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w45",
+       "text": "a",
+       "confidence": 0.32,
+       "bbox": {
+        "x0": 0.698,
+        "y0": 0.829,
+        "x1": 0.6996666666666667,
+        "y1": 0.83225
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w46",
+       "text": "ei",
+       "confidence": 0.27,
+       "bbox": {
+        "x0": 0.6986666666666667,
+        "y0": 0.856,
+        "x1": 0.701,
+        "y1": 0.85925
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w47",
+       "text": "oe",
+       "confidence": 0.43,
+       "bbox": {
+        "x0": 0.3423333333333333,
+        "y0": 0.85075,
+        "x1": 0.34833333333333333,
+        "y1": 0.86625
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w48",
+       "text": ">",
+       "confidence": 0.53,
+       "bbox": {
+        "x0": 0.344,
+        "y0": 0.83525,
+        "x1": 0.3476666666666667,
+        "y1": 0.841
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w49",
+       "text": "my",
+       "confidence": 0.48,
+       "bbox": {
+        "x0": 0.387,
+        "y0": 0.8305,
+        "x1": 0.39,
+        "y1": 0.8395
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w50",
+       "text": "AE",
+       "confidence": 0.43,
+       "bbox": {
+        "x0": 0.388,
+        "y0": 0.8555,
+        "x1": 0.391,
+        "y1": 0.86625
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w51",
+       "text": "SF",
+       "confidence": 0.34,
+       "bbox": {
+        "x0": 0.5496666666666666,
+        "y0": 0.822,
+        "x1": 0.5533333333333333,
+        "y1": 0.836
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w52",
+       "text": "E",
+       "confidence": 0.38,
+       "bbox": {
+        "x0": 0.5513333333333333,
+        "y0": 0.8465,
+        "x1": 0.553,
+        "y1": 0.84925
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w53",
+       "text": "4",
+       "confidence": 0.44,
+       "bbox": {
+        "x0": 0.5516666666666666,
+        "y0": 0.85875,
+        "x1": 0.5533333333333333,
+        "y1": 0.8615
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w54",
+       "text": "i",
+       "confidence": 0.41,
+       "bbox": {
+        "x0": 0.356,
+        "y0": 0.8395,
+        "x1": 0.358,
+        "y1": 0.843
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l15"
+      },
+      {
+       "id": "p1-w55",
+       "text": "~",
+       "confidence": 0.72,
+       "bbox": {
+        "x0": 0.356,
+        "y0": 0.86425,
+        "x1": 0.359,
+        "y1": 0.871
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l15"
+      },
+      {
+       "id": "p1-w56",
+       "text": "$",
+       "confidence": 0.34,
+       "bbox": {
+        "x0": 0.20166666666666666,
+        "y0": 0.86475,
+        "x1": 0.20533333333333334,
+        "y1": 0.86925
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w57",
+       "text": "Er",
+       "confidence": 0.51,
+       "bbox": {
+        "x0": 0.3373333333333333,
+        "y0": 0.85225,
+        "x1": 0.3396666666666667,
+        "y1": 0.86675
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w58",
+       "text": "5",
+       "confidence": 0.33,
+       "bbox": {
+        "x0": 0.38333333333333336,
+        "y0": 0.8665,
+        "x1": 0.384,
+        "y1": 0.867
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w59",
+       "text": ".",
+       "confidence": 0.35,
+       "bbox": {
+        "x0": 0.384,
+        "y0": 0.84925,
+        "x1": 0.3863333333333333,
+        "y1": 0.851
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l16"
+      },
+      {
+       "id": "p1-w60",
+       "text": "ash",
+       "confidence": 0.26,
+       "bbox": {
+        "x0": 0.34833333333333333,
+        "y0": 0.8785,
+        "x1": 0.35733333333333334,
+        "y1": 0.88125
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l17"
+      },
+      {
+       "id": "p1-w61",
+       "text": "/",
+       "confidence": 0.92,
+       "bbox": {
+        "x0": 0.36633333333333334,
+        "y0": 0.878,
+        "x1": 0.3893333333333333,
+        "y1": 0.90625
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l17"
+      },
+      {
+       "id": "p1-w62",
+       "text": "Der",
+       "confidence": 0.3,
+       "bbox": {
+        "x0": 0.367,
+        "y0": 0.907,
+        "x1": 0.38966666666666666,
+        "y1": 0.9135
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l18"
+      }
+     ],
+     "lines": [
+      {
+       "id": "p1-l0",
+       "text": ". | a",
+       "bbox": {
+        "x0": 0.195,
+        "y0": 0.3735,
+        "x1": 0.21766666666666667,
+        "y1": 0.376
+       },
+       "word_ids": [
+        "p1-w0",
+        "p1-w1"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l1",
+       "text": "VS",
+       "bbox": {
+        "x0": 0.20033333333333334,
+        "y0": 0.3735,
+        "x1": 0.222,
+        "y1": 0.3795
+       },
+       "word_ids": [
+        "p1-w2"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l2",
+       "text": "ra",
+       "bbox": {
+        "x0": 0.24766666666666667,
+        "y0": 0.387,
+        "x1": 0.25366666666666665,
+        "y1": 0.389
+       },
+       "word_ids": [
+        "p1-w3"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l3",
+       "text": "4 ‘ an 0",
+       "bbox": {
+        "x0": 0.483,
+        "y0": 0.4345,
+        "x1": 0.5453333333333333,
+        "y1": 0.457
+       },
+       "word_ids": [
+        "p1-w4",
+        "p1-w5",
+        "p1-w6",
+        "p1-w7"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l4",
+       "text": "Ls | al",
+       "bbox": {
+        "x0": 0.494,
+        "y0": 0.452,
+        "x1": 0.532,
+        "y1": 0.45775
+       },
+       "word_ids": [
+        "p1-w8",
+        "p1-w9"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l5",
+       "text": "j",
+       "bbox": {
+        "x0": 0.5126666666666667,
+        "y0": 0.457,
+        "x1": 0.5143333333333333,
+        "y1": 0.459
+       },
+       "word_ids": [
+        "p1-w10"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l6",
+       "text": "1 | 00",
+       "bbox": {
+        "x0": 0.4836666666666667,
+        "y0": 0.483,
+        "x1": 0.5473333333333333,
+        "y1": 0.508
+       },
+       "word_ids": [
+        "p1-w11",
+        "p1-w12"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l7",
+       "text": "dd 3%",
+       "bbox": {
+        "x0": 0.49566666666666664,
+        "y0": 0.50375,
+        "x1": 0.5313333333333333,
+        "y1": 0.509
+       },
+       "word_ids": [
+        "p1-w13",
+        "p1-w14"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l8",
+       "text": "3 zu",
+       "bbox": {
+        "x0": 0.65,
+        "y0": 0.563,
+        "x1": 0.674,
+        "y1": 0.572
+       },
+       "word_ids": [
+        "p1-w15",
+        "p1-w16"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l9",
+       "text": "L | y",
+       "bbox": {
+        "x0": 0.664,
+        "y0": 0.5645,
+        "x1": 0.7173333333333334,
+        "y1": 0.57125
+       },
+       "word_ids": [
+        "p1-w17",
+        "p1-w18"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l10",
+       "text": "a e | 1 Li | ne J; | :",
+       "bbox": {
+        "x0": 0.5883333333333334,
+        "y0": 0.56875,
+        "x1": 0.718,
+        "y1": 0.582
+       },
+       "word_ids": [
+        "p1-w19",
+        "p1-w20",
+        "p1-w21",
+        "p1-w22",
+        "p1-w23",
+        "p1-w24",
+        "p1-w25"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l11",
+       "text": "0",
+       "bbox": {
+        "x0": 0.34933333333333333,
+        "y0": 0.771,
+        "x1": 0.35833333333333334,
+        "y1": 0.781
+       },
+       "word_ids": [
+        "p1-w26"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l12",
+       "text": "le 3e >» = E | mn | - P",
+       "bbox": {
+        "x0": 0.499,
+        "y0": 0.8145,
+        "x1": 0.7156666666666667,
+        "y1": 0.85725
+       },
+       "word_ids": [
+        "p1-w27",
+        "p1-w28",
+        "p1-w29",
+        "p1-w30",
+        "p1-w31",
+        "p1-w32",
+        "p1-w33",
+        "p1-w34"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l13",
+       "text": "= Rees | ~ == ; , os ER | u are a ei",
+       "bbox": {
+        "x0": 0.37933333333333336,
+        "y0": 0.816,
+        "x1": 0.701,
+        "y1": 0.8635
+       },
+       "word_ids": [
+        "p1-w35",
+        "p1-w36",
+        "p1-w37",
+        "p1-w38",
+        "p1-w39",
+        "p1-w40",
+        "p1-w41",
+        "p1-w42",
+        "p1-w43",
+        "p1-w44",
+        "p1-w45",
+        "p1-w46"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l14",
+       "text": "oe > | my AE | SF E 4",
+       "bbox": {
+        "x0": 0.3423333333333333,
+        "y0": 0.822,
+        "x1": 0.5533333333333333,
+        "y1": 0.86625
+       },
+       "word_ids": [
+        "p1-w47",
+        "p1-w48",
+        "p1-w49",
+        "p1-w50",
+        "p1-w51",
+        "p1-w52",
+        "p1-w53"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l15",
+       "text": "i ~",
+       "bbox": {
+        "x0": 0.356,
+        "y0": 0.8395,
+        "x1": 0.359,
+        "y1": 0.871
+       },
+       "word_ids": [
+        "p1-w54",
+        "p1-w55"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l16",
+       "text": "$ | Er | 5 .",
+       "bbox": {
+        "x0": 0.20166666666666666,
+        "y0": 0.84925,
+        "x1": 0.3863333333333333,
+        "y1": 0.86925
+       },
+       "word_ids": [
+        "p1-w56",
+        "p1-w57",
+        "p1-w58",
+        "p1-w59"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l17",
+       "text": "ash /",
+       "bbox": {
+        "x0": 0.34833333333333333,
+        "y0": 0.878,
+        "x1": 0.3893333333333333,
+        "y1": 0.90625
+       },
+       "word_ids": [
+        "p1-w60",
+        "p1-w61"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l18",
+       "text": "Der",
+       "bbox": {
+        "x0": 0.367,
+        "y0": 0.907,
+        "x1": 0.38966666666666666,
+        "y1": 0.9135
+       },
+       "word_ids": [
+        "p1-w62"
+       ],
+       "column": null,
+       "table_id": null
+      }
+     ],
+     "blocks": [
+      {
+       "id": "p1-b0",
+       "bbox": {
+        "x0": 0.195,
+        "y0": 0.3735,
+        "x1": 0.222,
+        "y1": 0.3795
+       },
+       "line_ids": [
+        "p1-l0",
+        "p1-l1"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b1",
+       "bbox": {
+        "x0": 0.24766666666666667,
+        "y0": 0.387,
+        "x1": 0.25366666666666665,
+        "y1": 0.389
+       },
+       "line_ids": [
+        "p1-l2"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b2",
+       "bbox": {
+        "x0": 0.483,
+        "y0": 0.4345,
+        "x1": 0.5453333333333333,
+        "y1": 0.459
+       },
+       "line_ids": [
+        "p1-l3",
+        "p1-l4",
+        "p1-l5"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b3",
+       "bbox": {
+        "x0": 0.4836666666666667,
+        "y0": 0.483,
+        "x1": 0.5473333333333333,
+        "y1": 0.509
+       },
+       "line_ids": [
+        "p1-l6",
+        "p1-l7"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b4",
+       "bbox": {
+        "x0": 0.5883333333333334,
+        "y0": 0.563,
+        "x1": 0.718,
+        "y1": 0.582
+       },
+       "line_ids": [
+        "p1-l8",
+        "p1-l9",
+        "p1-l10"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b5",
+       "bbox": {
+        "x0": 0.34933333333333333,
+        "y0": 0.771,
+        "x1": 0.35833333333333334,
+        "y1": 0.781
+       },
+       "line_ids": [
+        "p1-l11"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b6",
+       "bbox": {
+        "x0": 0.20166666666666666,
+        "y0": 0.8145,
+        "x1": 0.7156666666666667,
+        "y1": 0.871
+       },
+       "line_ids": [
+        "p1-l12",
+        "p1-l13",
+        "p1-l14",
+        "p1-l15",
+        "p1-l16"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b7",
+       "bbox": {
+        "x0": 0.34833333333333333,
+        "y0": 0.878,
+        "x1": 0.38966666666666666,
+        "y1": 0.9135
+       },
+       "line_ids": [
+        "p1-l17",
+        "p1-l18"
+       ],
+       "column": null
+      }
+     ],
+     "columns": [],
+     "tables": [],
+     "text": ". | a\nVS\nra\n4 ‘ an 0\nLs | al\nj\n1 | 00\ndd 3%\n3 zu\nL | y\na e | 1 Li | ne J; | :\n0\nle 3e >» = E | mn | - P\n= Rees | ~ == ; , os ER | u are a ei\noe > | my AE | SF E 4\ni ~\n$ | Er | 5 .\nash /\nDer"
+    }
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "MARINAGEL, Similares de Hotelaria, SA\nEdif. Marina Gaivota, Lj. 17\n8125 022 VILAMOURA Tel. 289302871\nC.R.C. LOULE\nC.S. 100 360 Euros NIPC.503673838\nProcessado por computador\n\nFatura\n2019/02/19 22:06                     FA T5/3121\n\nNome: FLIKEHOME ALGARVE\nMorada: ------------------------------\nContribuinte: 514407395\n    CuS7 - Processado por Programa\n    certificado n. 64/AT - Restus\n\n| QTD | DESIGNAÇÃO | %IVA | VALOR |\n|---|---|---|---|\n| 1 | P. Tropical | 13,00 | 12,90 |\n| 1 | Pizza Aveiro | 13,00 | 13,90 |\n| 1 | Imperial | 23,00 | 2,50 |\n| 1 | Agua 50 cl | 13,00 | 2,50 |\n| 2 | Bica | 13,00 | 3,20 |\n\nSUBTOTAL ..................... 35,00\n\nTOTAL EUR..... 35,00\n\nMultibanco EUR ............... 35,00\n\n| IMPOSTO | % | INCIDENCIA | VALOR |\n|---|---|---|---|\n| IVA | 13,00 | 28,76 | 3,74 |\n| IVA | 23,00 | 2,03 | 0,47 |\n\nMESA: 52\nID: Manager\n32,50\n2,50"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "MARINAGEL, Similares de Hotelaria, SA",
+  "merchant_tax_id": "503673838",
+  "merchant_address": "Edif. Marina Gaivota, Lj. 17, 8125 022 VILAMOURA",
+  "transaction_date": "2019-02-19",
+  "currency": "EUR",
+  "receipt_number": "FA T5/3121",
+  "items": [
+   {
+    "description": "P. Tropical",
+    "price": 12.9,
+    "quantity": 1.0,
+    "unit_price": 12.9
+   },
+   {
+    "description": "Pizza Aveiro",
+    "price": 13.9,
+    "quantity": 1.0,
+    "unit_price": 13.9
+   },
+   {
+    "description": "Imperial",
+    "price": 2.5,
+    "quantity": 1.0,
+    "unit_price": 2.5
+   },
+   {
+    "description": "Agua 50 cl",
+    "price": 2.5,
+    "quantity": 1.0,
+    "unit_price": 2.5
+   },
+   {
+    "description": "Bica",
+    "price": 3.2,
+    "quantity": 2.0,
+    "unit_price": 1.6
+   }
+  ],
+  "subtotal": 35.0,
+  "tax_amount": 4.21,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 35.0,
+  "payment_method": "Multibanco",
+  "amount_tendered": 35.0,
+  "change_given": null,
+  "card_last_four": null,
+  "expense_category": "meals"
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "MARINAGEL, Similares de Hotelaria, SA",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_tax_id": {
+   "page": 1,
+   "quote": "NIPC.503673838",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "Edif. Marina Gaivota, Lj. 17\n8125 022 VILAMOURA Tel. 289302871",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "2019/02/19 22:06",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "C.S. 100 360 Euros NIPC.503673838",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "receipt_number": {
+   "page": 1,
+   "quote": "FA T5/3121",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "| 1 | P. Tropical | 13,00 | 12,90 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "| 1 | P. Tropical | 13,00 | 12,90 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].quantity": {
+   "page": 1,
+   "quote": "| 1 | P. Tropical | 13,00 | 12,90 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].unit_price": {
+   "page": 1,
+   "quote": "| 1 | P. Tropical | 13,00 | 12,90 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].description": {
+   "page": 1,
+   "quote": "| 1 | Pizza Aveiro | 13,00 | 13,90 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].price": {
+   "page": 1,
+   "quote": "| 1 | Pizza Aveiro | 13,00 | 13,90 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].quantity": {
+   "page": 1,
+   "quote": "| 1 | Pizza Aveiro | 13,00 | 13,90 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].unit_price": {
+   "page": 1,
+   "quote": "| 1 | Pizza Aveiro | 13,00 | 13,90 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].description": {
+   "page": 1,
+   "quote": "| 1 | Imperial | 23,00 | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].price": {
+   "page": 1,
+   "quote": "| 1 | Imperial | 23,00 | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].quantity": {
+   "page": 1,
+   "quote": "| 1 | Imperial | 23,00 | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].unit_price": {
+   "page": 1,
+   "quote": "| 1 | Imperial | 23,00 | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[3].description": {
+   "page": 1,
+   "quote": "| 1 | Agua 50 cl | 13,00 | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[3].price": {
+   "page": 1,
+   "quote": "| 1 | Agua 50 cl | 13,00 | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[3].quantity": {
+   "page": 1,
+   "quote": "| 1 | Agua 50 cl | 13,00 | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[3].unit_price": {
+   "page": 1,
+   "quote": "| 1 | Agua 50 cl | 13,00 | 2,50 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[4].description": {
+   "page": 1,
+   "quote": "| 2 | Bica | 13,00 | 3,20 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[4].price": {
+   "page": 1,
+   "quote": "| 2 | Bica | 13,00 | 3,20 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[4].quantity": {
+   "page": 1,
+   "quote": "| 2 | Bica | 13,00 | 3,20 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[4].unit_price": {
+   "page": 1,
+   "quote": "| 2 | Bica | 13,00 | 3,20 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "SUBTOTAL ..................... 35,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_amount": {
+   "page": 1,
+   "quote": "| IVA | 13,00 | 28,76 | 3,74 |\n| IVA | 23,00 | 2,03 | 0,47 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "TOTAL EUR..... 35,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "payment_method": {
+   "page": 1,
+   "quote": "Multibanco EUR ............... 35,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "amount_tendered": {
+   "page": 1,
+   "quote": "Multibanco EUR ............... 35,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [
+  {
+   "field": "tax_amount",
+   "message": "cited line '| IVA | 13,00 | 28,76 | 3,74 |\\n| IVA | 23,00 | 2,03 | 0,47 |' states 13.00, 28.76, 3.74, 23.00, 2.03, 0.47, but tax_amount=4.21",
+   "severity": "error"
+  }
+ ],
+ "corroborated": {},
+ "needs_review": true,
+ "review_reasons": [
+  "validation error: tax_amount — cited line '| IVA | 13,00 | 28,76 | 3,74 |\\n| IVA | 23,00 | 2,03 | 0,47 |' states 13.00, 28.76, 3.74, 23.00, 2.03, 0.47, but tax_amount=4.21"
+ ],
+ "metrics": {
+  "elapsed_seconds": 18.539,
+  "stage_seconds": {
+   "acquire": 10.736,
+   "classify": 0.934,
+   "extract": 6.86,
+   "validate": 0.004
+  },
+  "pages": 1,
+  "llm_calls": 3,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 3624,
+  "llm_output_tokens": 2014,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 3478,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

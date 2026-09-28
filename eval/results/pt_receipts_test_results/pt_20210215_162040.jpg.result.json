@@ -1,0 +1,1165 @@
+{
+ "source": "eval/pt_receipts_test/pt_20210215_162040.jpg",
+ "document_id": "doc_05d618bea82c2b0db47f",
+ "status": "succeeded",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 0.95,
+  "method": "llm",
+  "scores": {
+   "invoice": 6.0,
+   "credit_note": 0.0,
+   "receipt": 0.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "en",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.12658227848101267,
+      "reason": "confidence 0.13 < 0.60",
+      "seconds": 4.41
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 3.745
+     }
+    ],
+    "witness": {
+     "page_number": 1,
+     "width": 3000.0,
+     "height": 4000.0,
+     "unit": "px",
+     "rotation": 180,
+     "deskew_angle": 0.0,
+     "crop_quad": null,
+     "backend": "tesseract",
+     "confidence": 0.12658227848101267,
+     "words": [
+      {
+       "id": "p1-w0",
+       "text": "VIS",
+       "confidence": 0.93,
+       "bbox": {
+        "x0": 0.303,
+        "y0": 0.21225,
+        "x1": 0.345,
+        "y1": 0.229
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w1",
+       "text": "u",
+       "confidence": 0.48,
+       "bbox": {
+        "x0": 0.385,
+        "y0": 0.212,
+        "x1": 0.4186666666666667,
+        "y1": 0.24625
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w2",
+       "text": "rm",
+       "confidence": 0.26,
+       "bbox": {
+        "x0": 0.43666666666666665,
+        "y0": 0.21125,
+        "x1": 0.5043333333333333,
+        "y1": 0.22875
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w3",
+       "text": "TANNUN",
+       "confidence": 0.53,
+       "bbox": {
+        "x0": 0.5243333333333333,
+        "y0": 0.21125,
+        "x1": 0.591,
+        "y1": 0.22875
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w4",
+       "text": "11NVONV1534",
+       "confidence": 0.08,
+       "bbox": {
+        "x0": 0.6076666666666667,
+        "y0": 0.21175,
+        "x1": 0.7386666666666667,
+        "y1": 0.246
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w5",
+       "text": "3H349",
+       "confidence": 0.52,
+       "bbox": {
+        "x0": 0.6426666666666667,
+        "y0": 0.54125,
+        "x1": 0.6976666666666667,
+        "y1": 0.55675
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w6",
+       "text": "31177",
+       "confidence": 0.81,
+       "bbox": {
+        "x0": 0.7126666666666667,
+        "y0": 0.54175,
+        "x1": 0.7673333333333333,
+        "y1": 0.55725
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w7",
+       "text": "2",
+       "confidence": 0.92,
+       "bbox": {
+        "x0": 0.782,
+        "y0": 0.54275,
+        "x1": 0.7903333333333333,
+        "y1": 0.55725
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w8",
+       "text": "2/1",
+       "confidence": 0.6,
+       "bbox": {
+        "x0": 0.5383333333333333,
+        "y0": 0.567,
+        "x1": 0.568,
+        "y1": 0.58275
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w9",
+       "text": "VUI3INI",
+       "confidence": 0.15,
+       "bbox": {
+        "x0": 0.584,
+        "y0": 0.5685,
+        "x1": 0.6603333333333333,
+        "y1": 0.58425
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w10",
+       "text": "WI3HdWH7",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.6763333333333333,
+        "y0": 0.5695,
+        "x1": 0.7653333333333333,
+        "y1": 0.585
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w11",
+       "text": "|",
+       "confidence": 0.87,
+       "bbox": {
+        "x0": 0.783,
+        "y0": 0.57225,
+        "x1": 0.7866666666666666,
+        "y1": 0.584
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w12",
+       "text": "30001NN",
+       "confidence": 0.28,
+       "bbox": {
+        "x0": 0.6303333333333333,
+        "y0": 0.59675,
+        "x1": 0.7056666666666667,
+        "y1": 0.612
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w13",
+       "text": "vous",
+       "confidence": 0.59,
+       "bbox": {
+        "x0": 0.7213333333333334,
+        "y0": 0.59825,
+        "x1": 0.7643333333333333,
+        "y1": 0.62775
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w14",
+       "text": "|",
+       "confidence": 0.8,
+       "bbox": {
+        "x0": 0.7813333333333333,
+        "y0": 0.6005,
+        "x1": 0.7843333333333333,
+        "y1": 0.6115
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w15",
+       "text": "0891",
+       "confidence": 0.8,
+       "bbox": {
+        "x0": 0.6616666666666666,
+        "y0": 0.6525,
+        "x1": 0.7013333333333334,
+        "y1": 0.663
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w16",
+       "text": "J9Saq",
+       "confidence": 0.59,
+       "bbox": {
+        "x0": 0.7113333333333334,
+        "y0": 0.653,
+        "x1": 0.7603333333333333,
+        "y1": 0.6675
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w17",
+       "text": "CHEN",
+       "confidence": 0.36,
+       "bbox": {
+        "x0": 0.19533333333333333,
+        "y0": 0.6985,
+        "x1": 0.263,
+        "y1": 0.71025
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w18",
+       "text": "PI",
+       "confidence": 0.08,
+       "bbox": {
+        "x0": 0.2796666666666667,
+        "y0": 0.701,
+        "x1": 0.2936666666666667,
+        "y1": 0.7105
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w19",
+       "text": "ZO-1Z0Z",
+       "confidence": 0.15,
+       "bbox": {
+        "x0": 0.32266666666666666,
+        "y0": 0.70125,
+        "x1": 0.38266666666666665,
+        "y1": 0.7115
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w20",
+       "text": "¿8180",
+       "confidence": 0.31,
+       "bbox": {
+        "x0": 0.41,
+        "y0": 0.70175,
+        "x1": 0.4503333333333333,
+        "y1": 0.712
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w21",
+       "text": "EQGEGZ",
+       "confidence": 0.32,
+       "bbox": {
+        "x0": 0.48933333333333334,
+        "y0": 0.70375,
+        "x1": 0.59,
+        "y1": 0.7175
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w22",
+       "text": "SSI",
+       "confidence": 0.16,
+       "bbox": {
+        "x0": 0.602,
+        "y0": 0.70475,
+        "x1": 0.6843333333333333,
+        "y1": 0.719
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w23",
+       "text": "eme;",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.71,
+        "y0": 0.7065,
+        "x1": 0.774,
+        "y1": 0.7185
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w24",
+       "text": "VUUIT",
+       "confidence": 0.41,
+       "bbox": {
+        "x0": 0.2673333333333333,
+        "y0": 0.749,
+        "x1": 0.36133333333333334,
+        "y1": 0.76275
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w25",
+       "text": "AT",
+       "confidence": 0.76,
+       "bbox": {
+        "x0": 0.385,
+        "y0": 0.75175,
+        "x1": 0.405,
+        "y1": 0.764
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w26",
+       "text": "1IdWIS",
+       "confidence": 0.4,
+       "bbox": {
+        "x0": 0.43,
+        "y0": 0.75275,
+        "x1": 0.52,
+        "y1": 0.76625
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w27",
+       "text": "VoL",
+       "confidence": 0.12,
+       "bbox": {
+        "x0": 0.5486666666666666,
+        "y0": 0.755,
+        "x1": 0.628,
+        "y1": 0.76925
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w28",
+       "text": "oO",
+       "confidence": 0.12,
+       "bbox": {
+        "x0": 0.6493333333333333,
+        "y0": 0.75725,
+        "x1": 0.698,
+        "y1": 0.771
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w29",
+       "text": "“ee",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.3566666666666667,
+        "y0": 0.875,
+        "x1": 0.38466666666666666,
+        "y1": 0.88325
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w30",
+       "text": "ı",
+       "confidence": 0.79,
+       "bbox": {
+        "x0": 0.4026666666666667,
+        "y0": 0.878,
+        "x1": 0.406,
+        "y1": 0.8875
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w31",
+       "text": "vıı",
+       "confidence": 0.02,
+       "bbox": {
+        "x0": 0.419,
+        "y0": 0.8775,
+        "x1": 0.44666666666666666,
+        "y1": 0.88525
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w32",
+       "text": "i",
+       "confidence": 0.89,
+       "bbox": {
+        "x0": 0.466,
+        "y0": 0.87925,
+        "x1": 0.4696666666666667,
+        "y1": 0.88975
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w33",
+       "text": "Sitio",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.489,
+        "y0": 0.88075,
+        "x1": 0.5833333333333334,
+        "y1": 0.89
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w34",
+       "text": "VIVIANA",
+       "confidence": 0.4,
+       "bbox": {
+        "x0": 0.6116666666666667,
+        "y0": 0.884,
+        "x1": 0.67,
+        "y1": 0.89475
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w35",
+       "text": "¡IIA",
+       "confidence": 0.3,
+       "bbox": {
+        "x0": 0.368,
+        "y0": 0.925,
+        "x1": 0.4756666666666667,
+        "y1": 0.93925
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w36",
+       "text": "IINUNIU",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.5136666666666667,
+        "y0": 0.931,
+        "x1": 0.6463333333333333,
+        "y1": 0.94625
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w37",
+       "text": "LS",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.6593333333333333,
+        "y0": 0.93675,
+        "x1": 0.6886666666666666,
+        "y1": 0.94775
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w38",
+       "text": "14",
+       "confidence": 0.91,
+       "bbox": {
+        "x0": 0.706,
+        "y0": 0.9375,
+        "x1": 0.7326666666666667,
+        "y1": 0.94975
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l8"
+      }
+     ],
+     "lines": [
+      {
+       "id": "p1-l0",
+       "text": "VIS | u rm TANNUN 11NVONV1534",
+       "bbox": {
+        "x0": 0.303,
+        "y0": 0.21125,
+        "x1": 0.7386666666666667,
+        "y1": 0.24625
+       },
+       "word_ids": [
+        "p1-w0",
+        "p1-w1",
+        "p1-w2",
+        "p1-w3",
+        "p1-w4"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l1",
+       "text": "3H349 31177 2",
+       "bbox": {
+        "x0": 0.6426666666666667,
+        "y0": 0.54125,
+        "x1": 0.7903333333333333,
+        "y1": 0.55725
+       },
+       "word_ids": [
+        "p1-w5",
+        "p1-w6",
+        "p1-w7"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l2",
+       "text": "2/1 VUI3INI WI3HdWH7 |",
+       "bbox": {
+        "x0": 0.5383333333333333,
+        "y0": 0.567,
+        "x1": 0.7866666666666666,
+        "y1": 0.585
+       },
+       "word_ids": [
+        "p1-w8",
+        "p1-w9",
+        "p1-w10",
+        "p1-w11"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l3",
+       "text": "30001NN vous |",
+       "bbox": {
+        "x0": 0.6303333333333333,
+        "y0": 0.59675,
+        "x1": 0.7843333333333333,
+        "y1": 0.62775
+       },
+       "word_ids": [
+        "p1-w12",
+        "p1-w13",
+        "p1-w14"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l4",
+       "text": "0891 J9Saq",
+       "bbox": {
+        "x0": 0.6616666666666666,
+        "y0": 0.6525,
+        "x1": 0.7603333333333333,
+        "y1": 0.6675
+       },
+       "word_ids": [
+        "p1-w15",
+        "p1-w16"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l5",
+       "text": "CHEN PI | ZO-1Z0Z ¿8180 | EQGEGZ SSI eme;",
+       "bbox": {
+        "x0": 0.19533333333333333,
+        "y0": 0.6985,
+        "x1": 0.774,
+        "y1": 0.719
+       },
+       "word_ids": [
+        "p1-w17",
+        "p1-w18",
+        "p1-w19",
+        "p1-w20",
+        "p1-w21",
+        "p1-w22",
+        "p1-w23"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l6",
+       "text": "VUUIT AT 1IdWIS | VoL oO",
+       "bbox": {
+        "x0": 0.2673333333333333,
+        "y0": 0.749,
+        "x1": 0.698,
+        "y1": 0.771
+       },
+       "word_ids": [
+        "p1-w24",
+        "p1-w25",
+        "p1-w26",
+        "p1-w27",
+        "p1-w28"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l7",
+       "text": "“ee ı vıı i Sitio | VIVIANA",
+       "bbox": {
+        "x0": 0.3566666666666667,
+        "y0": 0.875,
+        "x1": 0.67,
+        "y1": 0.89475
+       },
+       "word_ids": [
+        "p1-w29",
+        "p1-w30",
+        "p1-w31",
+        "p1-w32",
+        "p1-w33",
+        "p1-w34"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l8",
+       "text": "¡IIA | IINUNIU LS 14",
+       "bbox": {
+        "x0": 0.368,
+        "y0": 0.925,
+        "x1": 0.7326666666666667,
+        "y1": 0.94975
+       },
+       "word_ids": [
+        "p1-w35",
+        "p1-w36",
+        "p1-w37",
+        "p1-w38"
+       ],
+       "column": null,
+       "table_id": null
+      }
+     ],
+     "blocks": [
+      {
+       "id": "p1-b0",
+       "bbox": {
+        "x0": 0.303,
+        "y0": 0.21125,
+        "x1": 0.7386666666666667,
+        "y1": 0.24625
+       },
+       "line_ids": [
+        "p1-l0"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b1",
+       "bbox": {
+        "x0": 0.5383333333333333,
+        "y0": 0.54125,
+        "x1": 0.7903333333333333,
+        "y1": 0.62775
+       },
+       "line_ids": [
+        "p1-l1",
+        "p1-l2",
+        "p1-l3"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b2",
+       "bbox": {
+        "x0": 0.6616666666666666,
+        "y0": 0.6525,
+        "x1": 0.7603333333333333,
+        "y1": 0.6675
+       },
+       "line_ids": [
+        "p1-l4"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b3",
+       "bbox": {
+        "x0": 0.19533333333333333,
+        "y0": 0.6985,
+        "x1": 0.774,
+        "y1": 0.719
+       },
+       "line_ids": [
+        "p1-l5"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b4",
+       "bbox": {
+        "x0": 0.2673333333333333,
+        "y0": 0.749,
+        "x1": 0.698,
+        "y1": 0.771
+       },
+       "line_ids": [
+        "p1-l6"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b5",
+       "bbox": {
+        "x0": 0.3566666666666667,
+        "y0": 0.875,
+        "x1": 0.67,
+        "y1": 0.89475
+       },
+       "line_ids": [
+        "p1-l7"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b6",
+       "bbox": {
+        "x0": 0.368,
+        "y0": 0.925,
+        "x1": 0.7326666666666667,
+        "y1": 0.94975
+       },
+       "line_ids": [
+        "p1-l8"
+       ],
+       "column": null
+      }
+     ],
+     "columns": [],
+     "tables": [],
+     "text": "VIS | u rm TANNUN 11NVONV1534\n3H349 31177 2\n2/1 VUI3INI WI3HdWH7 |\n30001NN vous |\n0891 J9Saq\nCHEN PI | ZO-1Z0Z ¿8180 | EQGEGZ SSI eme;\nVUUIT AT 1IdWIS | VoL oO\n“ee ı vıı i Sitio | VIVIANA\n¡IIA | IINUNIU LS 14"
+    }
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "RESTAURANTE MANUEL JU\nwww.manueljulio.pt\nSTA. LUZIA, 3050-106 BARCOUCO - Telefone: 239.913.512\nNIF: 502657022 - CSoc 137.170 Eur - CRC Mealhada Nr 146\nFACTURA SIMPLIFICADA\nFatura: FTS/75363 Data: 2021-02-14 #112\n\n| Quant. | Descricao | tx | Total |\n| :--- | :--- | :--- | :--- |\n| 1 | BROA UNIDADE | 13 % | 1,00 |\n| 1 | LAMPREIA INTEIRA 1/2 | 13 % | 40,00 |\n| 2 | LEITE CREME | 13 % | 5,00 |\n\nTotal 46,00 EUR\n\n| TAXA | BASE | IVA | TOTAL |\n| :--- | :--- | :--- | :--- |\n| 13,00% | 40,71 | 5,29 | 46,00 |\n\nNIF : ---------\nNome : CONSUMIDOR FINAL\nRESTAURANTE MANUEL JULIO, LDA - STA. LUZIA\nISPs-Processado em Programa Certificado n.449/AT"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "RESTAURANTE MANUEL JU",
+  "merchant_tax_id": "502657022",
+  "merchant_address": "STA. LUZIA, 3050-106 BARCOUCO - Telefone: 239.913.512",
+  "transaction_date": "2021-02-14",
+  "currency": "EUR",
+  "receipt_number": "FTS/75363",
+  "items": [
+   {
+    "description": "BROA UNIDADE",
+    "price": 1.0,
+    "quantity": 1.0,
+    "unit_price": null
+   },
+   {
+    "description": "LAMPREIA INTEIRA 1/2",
+    "price": 40.0,
+    "quantity": 1.0,
+    "unit_price": null
+   },
+   {
+    "description": "LEITE CREME",
+    "price": 5.0,
+    "quantity": 2.0,
+    "unit_price": null
+   }
+  ],
+  "subtotal": 40.71,
+  "tax_amount": 5.29,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 46.0,
+  "payment_method": null,
+  "amount_tendered": null,
+  "change_given": null,
+  "card_last_four": null,
+  "expense_category": "meals"
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "RESTAURANTE MANUEL JU",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_tax_id": {
+   "page": 1,
+   "quote": "NIF: 502657022 - CSoc 137.170 Eur - CRC Mealhada Nr 146",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "STA. LUZIA, 3050-106 BARCOUCO - Telefone: 239.913.512",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "Fatura: FTS/75363 Data: 2021-02-14 #112",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "Total 46,00 EUR",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "receipt_number": {
+   "page": 1,
+   "quote": "Fatura: FTS/75363 Data: 2021-02-14 #112",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "1 | BROA UNIDADE | 13 % | 1,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "1 | BROA UNIDADE | 13 % | 1,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].quantity": {
+   "page": 1,
+   "quote": "1 | BROA UNIDADE | 13 % | 1,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].description": {
+   "page": 1,
+   "quote": "1 | LAMPREIA INTEIRA 1/2 | 13 % | 40,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].price": {
+   "page": 1,
+   "quote": "1 | LAMPREIA INTEIRA 1/2 | 13 % | 40,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].quantity": {
+   "page": 1,
+   "quote": "1 | LAMPREIA INTEIRA 1/2 | 13 % | 40,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].description": {
+   "page": 1,
+   "quote": "2 | LEITE CREME | 13 % | 5,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].price": {
+   "page": 1,
+   "quote": "2 | LEITE CREME | 13 % | 5,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[2].quantity": {
+   "page": 1,
+   "quote": "2 | LEITE CREME | 13 % | 5,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "13,00% | 40,71 | 5,29 | 46,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_amount": {
+   "page": 1,
+   "quote": "13,00% | 40,71 | 5,29 | 46,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "Total 46,00 EUR",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [],
+ "corroborated": {},
+ "needs_review": false,
+ "review_reasons": [],
+ "metrics": {
+  "elapsed_seconds": 14.132,
+  "stage_seconds": {
+   "acquire": 8.169,
+   "classify": 2.119,
+   "extract": 3.835,
+   "validate": 0.004
+  },
+  "pages": 1,
+  "llm_calls": 3,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 3500,
+  "llm_output_tokens": 1333,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 2904,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

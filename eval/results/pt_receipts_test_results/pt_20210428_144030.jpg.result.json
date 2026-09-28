@@ -1,0 +1,1158 @@
+{
+ "source": "eval/pt_receipts_test/pt_20210428_144030.jpg",
+ "document_id": "doc_49e86f0d34bf52bf7f89",
+ "status": "succeeded",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 0.95,
+  "method": "llm",
+  "scores": {
+   "invoice": 3.0,
+   "credit_note": 0.0,
+   "receipt": 0.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.5849056603773585,
+      "reason": "confidence 0.58 < 0.60",
+      "seconds": 3.993
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 5.091
+     }
+    ],
+    "witness": {
+     "page_number": 1,
+     "width": 3000.0,
+     "height": 4000.0,
+     "unit": "px",
+     "rotation": 0,
+     "deskew_angle": 0.0,
+     "crop_quad": null,
+     "backend": "tesseract",
+     "confidence": 0.5849056603773585,
+     "words": [
+      {
+       "id": "p1-w0",
+       "text": "1",
+       "confidence": 0.84,
+       "bbox": {
+        "x0": 0.6006666666666667,
+        "y0": 0.1515,
+        "x1": 0.6023333333333334,
+        "y1": 0.15625
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w1",
+       "text": "97",
+       "confidence": 0.32,
+       "bbox": {
+        "x0": 0.595,
+        "y0": 0.44625,
+        "x1": 0.641,
+        "y1": 0.456
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w2",
+       "text": "ARS",
+       "confidence": 0.37,
+       "bbox": {
+        "x0": 0.5706666666666667,
+        "y0": 0.45,
+        "x1": 0.605,
+        "y1": 0.457
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w3",
+       "text": "(",
+       "confidence": 0.67,
+       "bbox": {
+        "x0": 0.6286666666666667,
+        "y0": 0.60025,
+        "x1": 0.633,
+        "y1": 0.6075
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w4",
+       "text": "E",
+       "confidence": 0.64,
+       "bbox": {
+        "x0": 0.634,
+        "y0": 0.59975,
+        "x1": 0.6373333333333333,
+        "y1": 0.60175
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w5",
+       "text": "—_",
+       "confidence": 0.62,
+       "bbox": {
+        "x0": 0.637,
+        "y0": 0.60225,
+        "x1": 0.6393333333333333,
+        "y1": 0.611
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w6",
+       "text": "N",
+       "confidence": 0.37,
+       "bbox": {
+        "x0": 0.642,
+        "y0": 0.6045,
+        "x1": 0.6436666666666667,
+        "y1": 0.60875
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w7",
+       "text": "Ne!",
+       "confidence": 0.46,
+       "bbox": {
+        "x0": 0.643,
+        "y0": 0.6125,
+        "x1": 0.6496666666666666,
+        "y1": 0.61575
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w8",
+       "text": "j",
+       "confidence": 0.17,
+       "bbox": {
+        "x0": 0.65,
+        "y0": 0.61,
+        "x1": 0.652,
+        "y1": 0.6145
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w9",
+       "text": "£",
+       "confidence": 0.77,
+       "bbox": {
+        "x0": 0.6193333333333333,
+        "y0": 0.61725,
+        "x1": 0.621,
+        "y1": 0.61875
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w10",
+       "text": "~",
+       "confidence": 0.66,
+       "bbox": {
+        "x0": 0.6286666666666667,
+        "y0": 0.612,
+        "x1": 0.6383333333333333,
+        "y1": 0.616
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l6"
+      },
+      {
+       "id": "p1-w11",
+       "text": "a",
+       "confidence": 0.81,
+       "bbox": {
+        "x0": 0.19433333333333333,
+        "y0": 0.683,
+        "x1": 0.203,
+        "y1": 0.69525
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w12",
+       "text": "=",
+       "confidence": 0.76,
+       "bbox": {
+        "x0": 0.20666666666666667,
+        "y0": 0.68375,
+        "x1": 0.21566666666666667,
+        "y1": 0.692
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w13",
+       "text": "bi",
+       "confidence": 0.62,
+       "bbox": {
+        "x0": 0.246,
+        "y0": 0.68275,
+        "x1": 0.251,
+        "y1": 0.69425
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w14",
+       "text": "U",
+       "confidence": 0.66,
+       "bbox": {
+        "x0": 0.25666666666666665,
+        "y0": 0.68275,
+        "x1": 0.2653333333333333,
+        "y1": 0.69425
+       },
+       "page": 1,
+       "block_id": "p1-b3",
+       "line_id": "p1-l7"
+      },
+      {
+       "id": "p1-w15",
+       "text": "t",
+       "confidence": 0.68,
+       "bbox": {
+        "x0": 0.146,
+        "y0": 0.71175,
+        "x1": 0.15233333333333332,
+        "y1": 0.71325
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w16",
+       "text": "Li",
+       "confidence": 0.64,
+       "bbox": {
+        "x0": 0.16,
+        "y0": 0.71175,
+        "x1": 0.16433333333333333,
+        "y1": 0.71325
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w17",
+       "text": "L",
+       "confidence": 0.03,
+       "bbox": {
+        "x0": 0.172,
+        "y0": 0.71175,
+        "x1": 0.17666666666666667,
+        "y1": 0.71325
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w18",
+       "text": "\\",
+       "confidence": 0.79,
+       "bbox": {
+        "x0": 0.18533333333333332,
+        "y0": 0.7115,
+        "x1": 0.189,
+        "y1": 0.713
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w19",
+       "text": "à",
+       "confidence": 0.82,
+       "bbox": {
+        "x0": 0.19633333333333333,
+        "y0": 0.7115,
+        "x1": 0.20133333333333334,
+        "y1": 0.713
+       },
+       "page": 1,
+       "block_id": "p1-b4",
+       "line_id": "p1-l8"
+      },
+      {
+       "id": "p1-w20",
+       "text": "cado",
+       "confidence": 0.94,
+       "bbox": {
+        "x0": 0.14466666666666667,
+        "y0": 0.8245,
+        "x1": 0.19333333333333333,
+        "y1": 0.84225
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w21",
+       "text": "6",
+       "confidence": 0.71,
+       "bbox": {
+        "x0": 0.195,
+        "y0": 0.82925,
+        "x1": 0.20633333333333334,
+        "y1": 0.842
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w22",
+       "text": "à",
+       "confidence": 0.94,
+       "bbox": {
+        "x0": 0.22066666666666668,
+        "y0": 0.82975,
+        "x1": 0.231,
+        "y1": 0.84225
+       },
+       "page": 1,
+       "block_id": "p1-b5",
+       "line_id": "p1-l9"
+      },
+      {
+       "id": "p1-w23",
+       "text": ".",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.15,
+        "y0": 0.862,
+        "x1": 0.15366666666666667,
+        "y1": 0.86575
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w24",
+       "text": "36",
+       "confidence": 0.9,
+       "bbox": {
+        "x0": 0.17066666666666666,
+        "y0": 0.8495,
+        "x1": 0.194,
+        "y1": 0.8665
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w25",
+       "text": "Go",
+       "confidence": 0.63,
+       "bbox": {
+        "x0": 0.20833333333333334,
+        "y0": 0.849,
+        "x1": 0.232,
+        "y1": 0.8665
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w26",
+       "text": "|",
+       "confidence": 0.78,
+       "bbox": {
+        "x0": 0.24666666666666667,
+        "y0": 0.85025,
+        "x1": 0.25033333333333335,
+        "y1": 0.86425
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l10"
+      },
+      {
+       "id": "p1-w27",
+       "text": "of",
+       "confidence": 0.36,
+       "bbox": {
+        "x0": 0.24866666666666667,
+        "y0": 0.86275,
+        "x1": 0.25733333333333336,
+        "y1": 0.86625
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l11"
+      },
+      {
+       "id": "p1-w28",
+       "text": "/",
+       "confidence": 0.76,
+       "bbox": {
+        "x0": 0.30233333333333334,
+        "y0": 0.86675,
+        "x1": 0.30433333333333334,
+        "y1": 0.869
+       },
+       "page": 1,
+       "block_id": "p1-b6",
+       "line_id": "p1-l12"
+      },
+      {
+       "id": "p1-w29",
+       "text": "p",
+       "confidence": 0.2,
+       "bbox": {
+        "x0": 0.146,
+        "y0": 0.92325,
+        "x1": 0.15633333333333332,
+        "y1": 0.932
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w30",
+       "text": "ntriDu",
+       "confidence": 0.44,
+       "bbox": {
+        "x0": 0.167,
+        "y0": 0.925,
+        "x1": 0.24533333333333332,
+        "y1": 0.94175
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w31",
+       "text": "|",
+       "confidence": 0.39,
+       "bbox": {
+        "x0": 0.25033333333333335,
+        "y0": 0.92475,
+        "x1": 0.255,
+        "y1": 0.9415
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l13"
+      },
+      {
+       "id": "p1-w32",
+       "text": "u",
+       "confidence": 0.63,
+       "bbox": {
+        "x0": 0.146,
+        "y0": 0.9335,
+        "x1": 0.155,
+        "y1": 0.9405
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l14"
+      },
+      {
+       "id": "p1-w33",
+       "text": "0",
+       "confidence": 0.55,
+       "bbox": {
+        "x0": 0.15533333333333332,
+        "y0": 0.9275,
+        "x1": 0.16933333333333334,
+        "y1": 0.9405
+       },
+       "page": 1,
+       "block_id": "p1-b7",
+       "line_id": "p1-l14"
+      }
+     ],
+     "lines": [
+      {
+       "id": "p1-l0",
+       "text": "1",
+       "bbox": {
+        "x0": 0.6006666666666667,
+        "y0": 0.1515,
+        "x1": 0.6023333333333334,
+        "y1": 0.15625
+       },
+       "word_ids": [
+        "p1-w0"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l1",
+       "text": "97",
+       "bbox": {
+        "x0": 0.595,
+        "y0": 0.44625,
+        "x1": 0.641,
+        "y1": 0.456
+       },
+       "word_ids": [
+        "p1-w1"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l2",
+       "text": "ARS",
+       "bbox": {
+        "x0": 0.5706666666666667,
+        "y0": 0.45,
+        "x1": 0.605,
+        "y1": 0.457
+       },
+       "word_ids": [
+        "p1-w2"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l3",
+       "text": "( E",
+       "bbox": {
+        "x0": 0.6286666666666667,
+        "y0": 0.59975,
+        "x1": 0.6373333333333333,
+        "y1": 0.6075
+       },
+       "word_ids": [
+        "p1-w3",
+        "p1-w4"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l4",
+       "text": "—_ N",
+       "bbox": {
+        "x0": 0.637,
+        "y0": 0.60225,
+        "x1": 0.6436666666666667,
+        "y1": 0.611
+       },
+       "word_ids": [
+        "p1-w5",
+        "p1-w6"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l5",
+       "text": "Ne! j",
+       "bbox": {
+        "x0": 0.643,
+        "y0": 0.61,
+        "x1": 0.652,
+        "y1": 0.61575
+       },
+       "word_ids": [
+        "p1-w7",
+        "p1-w8"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l6",
+       "text": "£ ~",
+       "bbox": {
+        "x0": 0.6193333333333333,
+        "y0": 0.612,
+        "x1": 0.6383333333333333,
+        "y1": 0.61875
+       },
+       "word_ids": [
+        "p1-w9",
+        "p1-w10"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l7",
+       "text": "a = | bi U",
+       "bbox": {
+        "x0": 0.19433333333333333,
+        "y0": 0.68275,
+        "x1": 0.2653333333333333,
+        "y1": 0.69525
+       },
+       "word_ids": [
+        "p1-w11",
+        "p1-w12",
+        "p1-w13",
+        "p1-w14"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l8",
+       "text": "t Li L \\ à",
+       "bbox": {
+        "x0": 0.146,
+        "y0": 0.7115,
+        "x1": 0.20133333333333334,
+        "y1": 0.71325
+       },
+       "word_ids": [
+        "p1-w15",
+        "p1-w16",
+        "p1-w17",
+        "p1-w18",
+        "p1-w19"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l9",
+       "text": "cado 6 | à",
+       "bbox": {
+        "x0": 0.14466666666666667,
+        "y0": 0.8245,
+        "x1": 0.231,
+        "y1": 0.84225
+       },
+       "word_ids": [
+        "p1-w20",
+        "p1-w21",
+        "p1-w22"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l10",
+       "text": ". | 36 | Go | |",
+       "bbox": {
+        "x0": 0.15,
+        "y0": 0.849,
+        "x1": 0.25033333333333335,
+        "y1": 0.8665
+       },
+       "word_ids": [
+        "p1-w23",
+        "p1-w24",
+        "p1-w25",
+        "p1-w26"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l11",
+       "text": "of",
+       "bbox": {
+        "x0": 0.24866666666666667,
+        "y0": 0.86275,
+        "x1": 0.25733333333333336,
+        "y1": 0.86625
+       },
+       "word_ids": [
+        "p1-w27"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l12",
+       "text": "/",
+       "bbox": {
+        "x0": 0.30233333333333334,
+        "y0": 0.86675,
+        "x1": 0.30433333333333334,
+        "y1": 0.869
+       },
+       "word_ids": [
+        "p1-w28"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l13",
+       "text": "p ntriDu |",
+       "bbox": {
+        "x0": 0.146,
+        "y0": 0.92325,
+        "x1": 0.255,
+        "y1": 0.94175
+       },
+       "word_ids": [
+        "p1-w29",
+        "p1-w30",
+        "p1-w31"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l14",
+       "text": "u 0",
+       "bbox": {
+        "x0": 0.146,
+        "y0": 0.9275,
+        "x1": 0.16933333333333334,
+        "y1": 0.9405
+       },
+       "word_ids": [
+        "p1-w32",
+        "p1-w33"
+       ],
+       "column": null,
+       "table_id": null
+      }
+     ],
+     "blocks": [
+      {
+       "id": "p1-b0",
+       "bbox": {
+        "x0": 0.6006666666666667,
+        "y0": 0.1515,
+        "x1": 0.6023333333333334,
+        "y1": 0.15625
+       },
+       "line_ids": [
+        "p1-l0"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b1",
+       "bbox": {
+        "x0": 0.5706666666666667,
+        "y0": 0.44625,
+        "x1": 0.641,
+        "y1": 0.457
+       },
+       "line_ids": [
+        "p1-l1",
+        "p1-l2"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b2",
+       "bbox": {
+        "x0": 0.6193333333333333,
+        "y0": 0.59975,
+        "x1": 0.652,
+        "y1": 0.61875
+       },
+       "line_ids": [
+        "p1-l3",
+        "p1-l4",
+        "p1-l5",
+        "p1-l6"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b3",
+       "bbox": {
+        "x0": 0.19433333333333333,
+        "y0": 0.68275,
+        "x1": 0.2653333333333333,
+        "y1": 0.69525
+       },
+       "line_ids": [
+        "p1-l7"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b4",
+       "bbox": {
+        "x0": 0.146,
+        "y0": 0.7115,
+        "x1": 0.20133333333333334,
+        "y1": 0.71325
+       },
+       "line_ids": [
+        "p1-l8"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b5",
+       "bbox": {
+        "x0": 0.14466666666666667,
+        "y0": 0.8245,
+        "x1": 0.231,
+        "y1": 0.84225
+       },
+       "line_ids": [
+        "p1-l9"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b6",
+       "bbox": {
+        "x0": 0.15,
+        "y0": 0.849,
+        "x1": 0.30433333333333334,
+        "y1": 0.869
+       },
+       "line_ids": [
+        "p1-l10",
+        "p1-l11",
+        "p1-l12"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b7",
+       "bbox": {
+        "x0": 0.146,
+        "y0": 0.92325,
+        "x1": 0.255,
+        "y1": 0.94175
+       },
+       "line_ids": [
+        "p1-l13",
+        "p1-l14"
+       ],
+       "column": null
+      }
+     ],
+     "columns": [],
+     "tables": [],
+     "text": "1\n97\nARS\n( E\n—_ N\nNe! j\n£ ~\na = | bi U\nt Li L \\ à\ncado 6 | à\n. | 36 | Go | |\nof\n/\np ntriDu |\nu 0"
+    }
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "```\n301\nROGERIO PAIS, LDA\nFERRAGENS * FERRAMENTAS * MAQUINAS * UTILIDADES\nAVENIDA ALMIRANTE REIS, 9-E * 1150-007 LISBOA\nTel/Fax 218853901 Tel. 966008696\n* Sociedade por quotas * Capital Social\n5.012,92E REG.CRC. 34852\nNIB: 0033 0000 01280266463 52\n--------------------------------------------------\n2019-02-21          FATURA SIMPLIFICADA N:\nOriginal                   FS 1A1901/1568\n11:50 BALCAO 1\n--------------------------------------------------\nContribuinte: 510776914\n--------------------------------------------------\n| DESCRICAO                  | IVA  | VALOR |\n|----------------------------|------|-------|\n| 1 Boiador autoclismo univ  | 23%  | 13,00 |\n--------------------------------------------------\n| TAXA | IVA  | INCID. |\n|------|------|--------|\n| 23%  | 2,43 | 10,57  |\nTOTAL INCIDENCIAS:   2,43   10,57\nTOTAL:                      Eur 13,00\n--------------------------------------------------\nPago em Numerario\nValor entregue:                  13,00\nTroco:                            0,00\n--------------------------------------------------\nImplementado por www.licasgest.pt\n--------------------------------------------------\n    BgxM-Processado por programa\n      certificado n. 217/AT\n--------------------------------------------------\nOs servicos e/ou bens foram realizados e/ou colo\ncados a disposicao do adquirente nesta data (Art\n. 36 do CIVA, No5 alinea F)\nLicenca: ROGERIO PAIS, LDA\nContribuinte: 500544000\n```"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "ROGERIO PAIS, LDA",
+  "merchant_tax_id": "500544000",
+  "merchant_address": "AVENIDA ALMIRANTE REIS, 9-E * 1150-007 LISBOA",
+  "transaction_date": "2019-02-21",
+  "currency": "EUR",
+  "receipt_number": "FS 1A1901/1568",
+  "items": [
+   {
+    "description": "1 Boiador autoclismo univ",
+    "price": 13.0,
+    "quantity": 1.0,
+    "unit_price": 13.0
+   }
+  ],
+  "subtotal": 10.57,
+  "tax_amount": 2.43,
+  "tip_amount": 0.0,
+  "discount_amount": 0.0,
+  "total_amount": 13.0,
+  "payment_method": "Numerario",
+  "amount_tendered": 13.0,
+  "change_given": 0.0,
+  "card_last_four": null,
+  "expense_category": "office_supplies"
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "ROGERIO PAIS, LDA",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_tax_id": {
+   "page": 1,
+   "quote": "Contribuinte: 500544000",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "AVENIDA ALMIRANTE REIS, 9-E * 1150-007 LISBOA",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "2019-02-21",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "TOTAL:                      Eur 13,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "receipt_number": {
+   "page": 1,
+   "quote": "FATURA SIMPLIFICADA N:\nOriginal                   FS 1A1901/1568",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "1 Boiador autoclismo univ",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "1 Boiador autoclismo univ  | 23%  | 13,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].quantity": {
+   "page": 1,
+   "quote": "1 Boiador autoclismo univ",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].unit_price": {
+   "page": 1,
+   "quote": "1 Boiador autoclismo univ  | 23%  | 13,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "TOTAL INCIDENCIAS:   2,43   10,57",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_amount": {
+   "page": 1,
+   "quote": "TOTAL INCIDENCIAS:   2,43   10,57",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "TOTAL:                      Eur 13,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "payment_method": {
+   "page": 1,
+   "quote": "Pago em Numerario",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "amount_tendered": {
+   "page": 1,
+   "quote": "Valor entregue:                  13,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "change_given": {
+   "page": 1,
+   "quote": "Troco:                            0,00",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [],
+ "corroborated": {},
+ "needs_review": false,
+ "review_reasons": [],
+ "metrics": {
+  "elapsed_seconds": 13.401,
+  "stage_seconds": {
+   "acquire": 9.113,
+   "classify": 0.909,
+   "extract": 3.372,
+   "validate": 0.003
+  },
+  "pages": 1,
+  "llm_calls": 3,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 3728,
+  "llm_output_tokens": 1240,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 3417,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

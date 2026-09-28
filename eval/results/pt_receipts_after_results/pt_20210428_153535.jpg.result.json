@@ -1,0 +1,997 @@
+{
+ "source": "eval/pt_receipts/pt_20210428_153535.jpg",
+ "document_id": "doc_f60dc61e94559622fca8",
+ "status": "needs_review",
+ "document_type": "receipt",
+ "schema_id": "receipt",
+ "schema_version": "1.2",
+ "classification": {
+  "doc_type": "receipt",
+  "confidence": 0.85,
+  "method": "llm",
+  "scores": {
+   "invoice": 5.0,
+   "credit_note": 0.0,
+   "receipt": 3.0,
+   "contract": 0.0,
+   "purchase_order": 0.0,
+   "bank_statement": 0.0,
+   "waybill": 0.0
+  }
+ },
+ "language": "es",
+ "ocr": {
+  "primary_backend": "tesseract",
+  "fallback_backends": [
+   "vlm"
+  ],
+  "fallbacks_applied": [
+   "vlm"
+  ],
+  "pages": [
+   {
+    "page": 1,
+    "backend": "vlm",
+    "degraded": false,
+    "confidence": null,
+    "attempts": [
+     {
+      "backend": "tesseract",
+      "outcome": "rejected",
+      "confidence": 0.0,
+      "reason": "confidence 0.00 < 0.60",
+      "seconds": 4.072
+     },
+     {
+      "backend": "vlm",
+      "outcome": "accepted",
+      "confidence": null,
+      "reason": null,
+      "seconds": 5.075
+     }
+    ],
+    "witness": {
+     "page_number": 1,
+     "width": 3000.0,
+     "height": 4000.0,
+     "unit": "px",
+     "rotation": 180,
+     "deskew_angle": 0.0,
+     "crop_quad": null,
+     "backend": "tesseract",
+     "confidence": 0.0,
+     "words": [
+      {
+       "id": "p1-w0",
+       "text": "OCT",
+       "confidence": 0.37,
+       "bbox": {
+        "x0": 0.30933333333333335,
+        "y0": 0.498,
+        "x1": 0.359,
+        "y1": 0.50475
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w1",
+       "text": "(",
+       "confidence": 0.65,
+       "bbox": {
+        "x0": 0.39466666666666667,
+        "y0": 0.499,
+        "x1": 0.3963333333333333,
+        "y1": 0.503
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w2",
+       "text": "e»",
+       "confidence": 0.68,
+       "bbox": {
+        "x0": 0.445,
+        "y0": 0.49975,
+        "x1": 0.4643333333333333,
+        "y1": 0.50275
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w3",
+       "text": "Ar",
+       "confidence": 0.34,
+       "bbox": {
+        "x0": 0.5036666666666667,
+        "y0": 0.501,
+        "x1": 0.517,
+        "y1": 0.50375
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l0"
+      },
+      {
+       "id": "p1-w4",
+       "text": "ClO",
+       "confidence": 0.59,
+       "bbox": {
+        "x0": 0.30733333333333335,
+        "y0": 0.49875,
+        "x1": 0.33,
+        "y1": 0.509
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w5",
+       "text": "ET",
+       "confidence": 0.72,
+       "bbox": {
+        "x0": 0.3393333333333333,
+        "y0": 0.49825,
+        "x1": 0.35833333333333334,
+        "y1": 0.5085
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w6",
+       "text": "OO",
+       "confidence": 0.2,
+       "bbox": {
+        "x0": 0.39866666666666667,
+        "y0": 0.4995,
+        "x1": 0.43433333333333335,
+        "y1": 0.5105
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w7",
+       "text": "+4",
+       "confidence": 0.29,
+       "bbox": {
+        "x0": 0.44433333333333336,
+        "y0": 0.503,
+        "x1": 0.459,
+        "y1": 0.51025
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w8",
+       "text": "QO",
+       "confidence": 0.59,
+       "bbox": {
+        "x0": 0.5023333333333333,
+        "y0": 0.50075,
+        "x1": 0.524,
+        "y1": 0.512
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w9",
+       "text": "OT",
+       "confidence": 0.83,
+       "bbox": {
+        "x0": 0.5326666666666666,
+        "y0": 0.50125,
+        "x1": 0.5533333333333333,
+        "y1": 0.51225
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w10",
+       "text": "SIO)",
+       "confidence": 0.63,
+       "bbox": {
+        "x0": 0.6236666666666667,
+        "y0": 0.5025,
+        "x1": 0.6646666666666666,
+        "y1": 0.51375
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w11",
+       "text": "JEAN",
+       "confidence": 0.38,
+       "bbox": {
+        "x0": 0.6743333333333333,
+        "y0": 0.50325,
+        "x1": 0.71,
+        "y1": 0.512
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l1"
+      },
+      {
+       "id": "p1-w12",
+       "text": "IO",
+       "confidence": 0.38,
+       "bbox": {
+        "x0": 0.314,
+        "y0": 0.52475,
+        "x1": 0.3433333333333333,
+        "y1": 0.533
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w13",
+       "text": "|",
+       "confidence": 0.72,
+       "bbox": {
+        "x0": 0.35,
+        "y0": 0.525,
+        "x1": 0.3566666666666667,
+        "y1": 0.53475
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w14",
+       "text": "OG",
+       "confidence": 0.49,
+       "bbox": {
+        "x0": 0.398,
+        "y0": 0.526,
+        "x1": 0.407,
+        "y1": 0.5345
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w15",
+       "text": "FA!",
+       "confidence": 0.5,
+       "bbox": {
+        "x0": 0.42,
+        "y0": 0.5265,
+        "x1": 0.4493333333333333,
+        "y1": 0.53575
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w16",
+       "text": "A",
+       "confidence": 0.57,
+       "bbox": {
+        "x0": 0.5056666666666667,
+        "y0": 0.5275,
+        "x1": 0.5413333333333333,
+        "y1": 0.53875
+       },
+       "page": 1,
+       "block_id": "p1-b0",
+       "line_id": "p1-l2"
+      },
+      {
+       "id": "p1-w17",
+       "text": "JI",
+       "confidence": 0.71,
+       "bbox": {
+        "x0": 0.394,
+        "y0": 0.9135,
+        "x1": 0.4166666666666667,
+        "y1": 0.926
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w18",
+       "text": "SWINALSIS",
+       "confidence": 0.71,
+       "bbox": {
+        "x0": 0.427,
+        "y0": 0.912,
+        "x1": 0.5306666666666666,
+        "y1": 0.9255
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w19",
+       "text": "3",
+       "confidence": 0.88,
+       "bbox": {
+        "x0": 0.5403333333333333,
+        "y0": 0.91225,
+        "x1": 0.5476666666666666,
+        "y1": 0.92475
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w20",
+       "text": "SIQINIOS",
+       "confidence": 0.52,
+       "bbox": {
+        "x0": 0.5573333333333333,
+        "y0": 0.91225,
+        "x1": 0.6663333333333333,
+        "y1": 0.928
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w21",
+       "text": "O",
+       "confidence": 0.81,
+       "bbox": {
+        "x0": 0.7026666666666667,
+        "y0": 0.9165,
+        "x1": 0.7036666666666667,
+        "y1": 0.92075
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w22",
+       "text": "SIA",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.8166666666666667,
+        "y0": 0.9115,
+        "x1": 0.848,
+        "y1": 0.9165
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w23",
+       "text": "WA",
+       "confidence": 0.0,
+       "bbox": {
+        "x0": 0.8753333333333333,
+        "y0": 0.9115,
+        "x1": 0.8956666666666667,
+        "y1": 0.92225
+       },
+       "page": 1,
+       "block_id": "p1-b1",
+       "line_id": "p1-l3"
+      },
+      {
+       "id": "p1-w24",
+       "text": "CAE",
+       "confidence": 0.08,
+       "bbox": {
+        "x0": 0.449,
+        "y0": 0.9455,
+        "x1": 0.5163333333333333,
+        "y1": 0.96
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w25",
+       "text": "AAY",
+       "confidence": 0.1,
+       "bbox": {
+        "x0": 0.5253333333333333,
+        "y0": 0.94575,
+        "x1": 0.546,
+        "y1": 0.9635
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w26",
+       "text": "Sf)",
+       "confidence": 0.6,
+       "bbox": {
+        "x0": 0.554,
+        "y0": 0.948,
+        "x1": 0.5736666666666667,
+        "y1": 0.96275
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w27",
+       "text": "SERA",
+       "confidence": 0.13,
+       "bbox": {
+        "x0": 0.5806666666666667,
+        "y0": 0.94525,
+        "x1": 0.657,
+        "y1": 0.96075
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w28",
+       "text": "qu",
+       "confidence": 0.69,
+       "bbox": {
+        "x0": 0.703,
+        "y0": 0.94975,
+        "x1": 0.7156666666666667,
+        "y1": 0.957
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l4"
+      },
+      {
+       "id": "p1-w29",
+       "text": "01994",
+       "confidence": 0.26,
+       "bbox": {
+        "x0": 0.44766666666666666,
+        "y0": 0.97075,
+        "x1": 0.5773333333333334,
+        "y1": 0.998
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w30",
+       "text": "OP",
+       "confidence": 0.94,
+       "bbox": {
+        "x0": 0.5893333333333334,
+        "y0": 0.97075,
+        "x1": 0.629,
+        "y1": 0.99775
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      },
+      {
+       "id": "p1-w31",
+       "text": "SGAE",
+       "confidence": 0.17,
+       "bbox": {
+        "x0": 0.6433333333333333,
+        "y0": 0.97125,
+        "x1": 0.7703333333333333,
+        "y1": 0.9985
+       },
+       "page": 1,
+       "block_id": "p1-b2",
+       "line_id": "p1-l5"
+      }
+     ],
+     "lines": [
+      {
+       "id": "p1-l0",
+       "text": "OCT | ( | e» | Ar",
+       "bbox": {
+        "x0": 0.30933333333333335,
+        "y0": 0.498,
+        "x1": 0.517,
+        "y1": 0.50475
+       },
+       "word_ids": [
+        "p1-w0",
+        "p1-w1",
+        "p1-w2",
+        "p1-w3"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l1",
+       "text": "ClO ET | OO +4 | QO OT | SIO) JEAN",
+       "bbox": {
+        "x0": 0.30733333333333335,
+        "y0": 0.49825,
+        "x1": 0.71,
+        "y1": 0.51375
+       },
+       "word_ids": [
+        "p1-w4",
+        "p1-w5",
+        "p1-w6",
+        "p1-w7",
+        "p1-w8",
+        "p1-w9",
+        "p1-w10",
+        "p1-w11"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l2",
+       "text": "IO | | OG FA! | A",
+       "bbox": {
+        "x0": 0.314,
+        "y0": 0.52475,
+        "x1": 0.5413333333333333,
+        "y1": 0.53875
+       },
+       "word_ids": [
+        "p1-w12",
+        "p1-w13",
+        "p1-w14",
+        "p1-w15",
+        "p1-w16"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l3",
+       "text": "JI SWINALSIS 3 SIQINIOS | O | SIA | WA",
+       "bbox": {
+        "x0": 0.394,
+        "y0": 0.9115,
+        "x1": 0.8956666666666667,
+        "y1": 0.928
+       },
+       "word_ids": [
+        "p1-w17",
+        "p1-w18",
+        "p1-w19",
+        "p1-w20",
+        "p1-w21",
+        "p1-w22",
+        "p1-w23"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l4",
+       "text": "CAE AAY Sf) SERA | qu",
+       "bbox": {
+        "x0": 0.449,
+        "y0": 0.94525,
+        "x1": 0.7156666666666667,
+        "y1": 0.9635
+       },
+       "word_ids": [
+        "p1-w24",
+        "p1-w25",
+        "p1-w26",
+        "p1-w27",
+        "p1-w28"
+       ],
+       "column": null,
+       "table_id": null
+      },
+      {
+       "id": "p1-l5",
+       "text": "01994 OP SGAE",
+       "bbox": {
+        "x0": 0.44766666666666666,
+        "y0": 0.97075,
+        "x1": 0.7703333333333333,
+        "y1": 0.9985
+       },
+       "word_ids": [
+        "p1-w29",
+        "p1-w30",
+        "p1-w31"
+       ],
+       "column": null,
+       "table_id": null
+      }
+     ],
+     "blocks": [
+      {
+       "id": "p1-b0",
+       "bbox": {
+        "x0": 0.30733333333333335,
+        "y0": 0.498,
+        "x1": 0.71,
+        "y1": 0.53875
+       },
+       "line_ids": [
+        "p1-l0",
+        "p1-l1",
+        "p1-l2"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b1",
+       "bbox": {
+        "x0": 0.394,
+        "y0": 0.9115,
+        "x1": 0.8956666666666667,
+        "y1": 0.928
+       },
+       "line_ids": [
+        "p1-l3"
+       ],
+       "column": null
+      },
+      {
+       "id": "p1-b2",
+       "bbox": {
+        "x0": 0.44766666666666666,
+        "y0": 0.94525,
+        "x1": 0.7703333333333333,
+        "y1": 0.9985
+       },
+       "line_ids": [
+        "p1-l4",
+        "p1-l5"
+       ],
+       "column": null
+      }
+     ],
+     "columns": [],
+     "tables": [],
+     "text": "OCT | ( | e» | Ar\nClO ET | OO +4 | QO OT | SIO) JEAN\nIO | | OG FA! | A\nJI SWINALSIS 3 SIQINIOS | O | SIA | WA\nCAE AAY Sf) SERA | qu\n01994 OP SGAE"
+    }
+   }
+  ]
+ },
+ "layout": {
+  "pages": [
+   {
+    "page_number": 1,
+    "width": 3000.0,
+    "height": 4000.0,
+    "unit": "px",
+    "rotation": 0,
+    "deskew_angle": 0.0,
+    "crop_quad": null,
+    "backend": "vlm",
+    "confidence": null,
+    "words": [],
+    "lines": [],
+    "blocks": [],
+    "columns": [],
+    "tables": [],
+    "text": "Chaves do Areeiro\nSoluções e Sistemas de Segurança\n\nCHAVES DO AREEIRO - SOLUÇÕES E SISTEMAS DE\nSEGURANÇA S.A.\nSEDE: 21 845 30 10 - GERAL: 707 20 30 10\nLOJA - CP OURIQUE: 21 385 17 86\nPRAÇA FRANCISCO SÁ CARNEIRO, 10 LISBOA\n1000 160 LISBOA\nNº Contribuinte: 500601534\n\nFatura recibo      Nº FR 2019A145/1965 de 2019 03 11\nFLIKEHOME - MEDIAÇÃO IMOBILIARIA, LDA\n                                             LISBOA\nNº Contribuinte: 510776914          Nº Cliente:     3437\n\n| Qtt | Descrição | P. Unit. | IVA % | Total |\n| :--- | :--- | :--- | :--- | :--- |\n| 2 | CHAVE 2 PALHETOES | 10,00 | 23,00% | 18,00 |\n| 2 | CHAVE KABA PEXTRA | 3,20 | 23,00% | 5,76 |\n| | | 0,00 | 0,00% | |\n\nPágina 1 de 1          Serviço prestado em   11 03 2019\nSoftware PHC - AOMB Processado por programa certificado n\n0006/AT (20190112)\n\n| Taxa | Valor Base | Valor IVA |\n| :--- | :--- | :--- |\n| 23,00% | 19,32 | 4,44 |\n\nTotal ilíquido:                          19,32\nTotal de IVA:                             4,44\nTotal de Descontos:                       2,15\nTotal do Documento:                      23,76 €\n\nValor Liquidado em Dinheiro 23,76€\n\nTROCAS E DEVOLUÇÕES ATÉ 15 DIAS\nCOM A APRESENTAÇÃO DO DOC. ORIGINAL\n\nObrigado pela sua preferência\nwww.chavesareeiro.pt\nImplementado por Trasgest\nwww.trasgest.pt"
+   }
+  ]
+ },
+ "extracted": {
+  "merchant_name": "CHAVES DO AREEIRO - SOLUÇÕES E SISTEMAS DE SEGURANÇA S.A.",
+  "merchant_tax_id": "500601534",
+  "merchant_address": "PRAÇA FRANCISCO SÁ CARNEIRO, 10 LISBOA 1000 160 LISBOA",
+  "transaction_date": "2019-03-11",
+  "currency": "EUR",
+  "receipt_number": "FR 2019A145/1965",
+  "items": [
+   {
+    "description": "CHAVE 2 PALHETOES",
+    "price": 18.0,
+    "quantity": 2.0,
+    "unit_price": 10.0
+   },
+   {
+    "description": "CHAVE KABA PEXTRA",
+    "price": 5.76,
+    "quantity": 2.0,
+    "unit_price": 3.2
+   }
+  ],
+  "subtotal": 19.32,
+  "tax_amount": 4.44,
+  "tip_amount": 0.0,
+  "discount_amount": 2.15,
+  "total_amount": 23.76,
+  "payment_method": "Dinheiro",
+  "amount_tendered": 23.76,
+  "change_given": null,
+  "card_last_four": null,
+  "expense_category": "other"
+ },
+ "field_sources": {
+  "merchant_name": {
+   "page": 1,
+   "quote": "CHAVES DO AREEIRO - SOLUÇÕES E SISTEMAS DE\nSEGURANÇA S.A.",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_tax_id": {
+   "page": 1,
+   "quote": "Nº Contribuinte: 500601534",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "merchant_address": {
+   "page": 1,
+   "quote": "PRAÇA FRANCISCO SÁ CARNEIRO, 10 LISBOA\n1000 160 LISBOA",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "transaction_date": {
+   "page": 1,
+   "quote": "Fatura recibo      Nº FR 2019A145/1965 de 2019 03 11",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "currency": {
+   "page": 1,
+   "quote": "Total do Documento:                      23,76 €",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "receipt_number": {
+   "page": 1,
+   "quote": "Fatura recibo      Nº FR 2019A145/1965 de 2019 03 11",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].description": {
+   "page": 1,
+   "quote": "| 2 | CHAVE 2 PALHETOES | 10,00 | 23,00% | 18,00 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].price": {
+   "page": 1,
+   "quote": "| 2 | CHAVE 2 PALHETOES | 10,00 | 23,00% | 18,00 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].quantity": {
+   "page": 1,
+   "quote": "| 2 | CHAVE 2 PALHETOES | 10,00 | 23,00% | 18,00 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[0].unit_price": {
+   "page": 1,
+   "quote": "| 2 | CHAVE 2 PALHETOES | 10,00 | 23,00% | 18,00 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].description": {
+   "page": 1,
+   "quote": "| 2 | CHAVE KABA PEXTRA | 3,20 | 23,00% | 5,76 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].price": {
+   "page": 1,
+   "quote": "| 2 | CHAVE KABA PEXTRA | 3,20 | 23,00% | 5,76 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].quantity": {
+   "page": 1,
+   "quote": "| 2 | CHAVE KABA PEXTRA | 3,20 | 23,00% | 5,76 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "items[1].unit_price": {
+   "page": 1,
+   "quote": "| 2 | CHAVE KABA PEXTRA | 3,20 | 23,00% | 5,76 |",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "subtotal": {
+   "page": 1,
+   "quote": "Total ilíquido:                          19,32",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "tax_amount": {
+   "page": 1,
+   "quote": "Total de IVA:                             4,44",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "discount_amount": {
+   "page": 1,
+   "quote": "Total de Descontos:                       2,15",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "total_amount": {
+   "page": 1,
+   "quote": "Total do Documento:                      23,76 €",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "payment_method": {
+   "page": 1,
+   "quote": "Valor Liquidado em Dinheiro 23,76€",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  },
+  "amount_tendered": {
+   "page": 1,
+   "quote": "Valor Liquidado em Dinheiro 23,76€",
+   "status": "unlocated",
+   "match": null,
+   "regions": [],
+   "bbox": null,
+   "word_ids": [],
+   "confidence": null,
+   "located_by": null
+  }
+ },
+ "validation_issues": [
+  {
+   "field": "items[0]",
+   "message": "quantity (2.0) * unit_price (10.00) = 20.00, does not match line price 18.00",
+   "severity": "error"
+  },
+  {
+   "field": "items[1]",
+   "message": "quantity (2.0) * unit_price (3.20) = 6.40, does not match line price 5.76",
+   "severity": "error"
+  }
+ ],
+ "corroborated": {},
+ "needs_review": true,
+ "review_reasons": [
+  "validation error: items[0] — quantity (2.0) * unit_price (10.00) = 20.00, does not match line price 18.00",
+  "validation error: items[1] — quantity (2.0) * unit_price (3.20) = 6.40, does not match line price 5.76"
+ ],
+ "metrics": {
+  "elapsed_seconds": 14.954,
+  "stage_seconds": {
+   "acquire": 9.174,
+   "classify": 0.892,
+   "extract": 4.879,
+   "validate": 0.004
+  },
+  "pages": 1,
+  "llm_calls": 3,
+  "llm_models": [
+   "deepseek-v4.1-flash:cloud"
+  ],
+  "llm_input_tokens": 3936,
+  "llm_output_tokens": 1735,
+  "llm_unreported_calls": 0,
+  "llm_estimated_tokens": 3514,
+  "extract_attempts": 1,
+  "escalated_to_vlm": false,
+  "template_id": null
+ },
+ "error": null
+}

@@ -154,6 +154,11 @@ class Receipt(CitedDocument):
         default=None, description="Merchant store address or location, if printed.",
         json_schema_extra={"pii": "address"},
     )
+    merchant_country: str | None = Field(
+        default=None, min_length=2, max_length=2,
+        description="ISO 3166 two-letter country of the merchant (PT, DE, ES, ...), from its address or "
+        "tax ID if the receipt shows it; lets a tax ID printed without its country prefix be checked.",
+    )
     transaction_date: date
     currency: str = Field(
         default="USD",

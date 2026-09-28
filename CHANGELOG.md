@@ -15,6 +15,11 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   human correction and approval, approved-only CSV export, duplicate detection,
   revision history, local backup/restore, and a PyInstaller build script.
 
+### Changed
+
+- Receipt schema 1.3: optional `merchant_country`, so a tax number printed
+  without its country prefix can be checked.
+
 ### Fixed
 
 - A party name (seller, buyer, merchant, supplier, shipper, bank, account
@@ -44,6 +49,15 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   number without an IBAN is exported as the payment account.
 - UBL export writes no empty `PostalAddress` for a party without an address
   (PEPPOL-EN16931-R008).
+- An invoice title alone ("Fatura", "Invoice", "Rechnung") no longer makes
+  the rules tier call a document an invoice; it also needs something only an
+  invoice has (an IBAN, payment terms, a billed address, a date of supply).
+  Till slips headed "Fatura" were filed as invoices.
+- A bare tax number with a known country is checked against that country's
+  check digit where the tax number is the VAT number (PT, BE, DK, ES, IT,
+  PL); VAT checksums added for PT, BE, DK and LU.
+- A party name holding OCR debris ("»", "¦", a colon inside a word) goes to
+  review.
 - A line's VAT rate is checked against the percentage printed on its row;
   "19 %" was never read as 19, so every rated line failed its citation.
 - Row arithmetic accepts a line discount printed on the row, a gross line
