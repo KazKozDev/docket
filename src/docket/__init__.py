@@ -5,7 +5,7 @@ project's compatibility policy. Other modules, names, and implementation
 details are internal unless the documentation explicitly says otherwise.
 """
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 from .batch import BatchError, BatchMetrics, BatchOptions, BatchResult, process_batch
 from .catalog import (

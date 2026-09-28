@@ -8,6 +8,8 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-28
+
 ### Desktop
 
 - Added a separate native macOS invoice and receipt app package in
@@ -26,6 +28,41 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   LM Studio), falling back to `json_object` where the server refuses it.
   `DOCKET_LLM_STRUCTURED_OUTPUT=json_object` turns it off.
 
+- Phone photos: with the new `[photo]` extra (OpenCV), a photographed
+  receipt or invoice is cropped to the paper and flattened before OCR
+  (`DOCKET_OCR_CROP_PHOTOS`, on by default). Crops that would cut text — a
+  table frame on a scan, a page that already fills the frame — are refused.
+  `PageLayout.crop_quad` records where the page was in the original photo.
+- Small text: when Tesseract's typical word is shorter than
+  `DOCKET_OCR_MIN_TEXT_HEIGHT` (20 px), the page is re-read enlarged (up to
+  3×) and the enlarged reading is kept only if Tesseract is at least as sure
+  of it. On an 11 px synthetic invoice this turns 16/03/2028 and 316.00 back
+  into the printed 15/03/2026 and 315.00.
+- `OcrOptions(preprocess=fn)`: your own `(image, page_number) -> image` step
+  on every page image, after cropping and before OCR (Docling reads the
+  file itself and skips it).
+- Real LLM usage per document: `ProcessingMetrics.llm_input_tokens` /
+  `llm_output_tokens` from what the provider reports (Ollama
+  `prompt_eval_count`/`eval_count`, OpenAI `usage`), `llm_unreported_calls`
+  for calls that reported nothing, and `llm_models` for the models used.
+  `BatchMetrics` sums them. The chars/4 `llm_estimated_tokens` stays.
+- CI type-checks `src/docket` with mypy (pinned, like ruff, in the `dev`
+  extra); the codebase was brought to zero errors.
+- `corroborate(result, purchase_order=..., transactions=...)`: a purchase
+  order total, or a bank payment of the total in the same currency, confirms
+  that field; a payment whose text carries the invoice number confirms the
+  number too. Only low-OCR-confidence doubt about confirmed fields is
+  cleared, never a failed check. `DocumentResult.corroborated` records what
+  confirmed each field.
+- `verify(document, text, document_type=...)`: docket's deterministic checks
+  on an extraction made elsewhere (another LLM, a cloud OCR service), returning
+  a `DocumentResult` that `export_document` accepts or refuses like its own.
+- A document number (`invoice_number`, `po_number`, …) must be printed on the
+  line it cites; a model that cited one line and wrote another number was
+  previously accepted.
+- `DOCKET_MIN_SOURCE_CONFIDENCE` (default 0.80): a key field whose cited words OCR
+  recognised below it sends the document to review instead of succeeding.
+
 ### Changed
 
 - No default model: `DOCKET_TEXT_MODEL` and `DOCKET_VISION_MODEL` used to
@@ -39,6 +76,72 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   the backend names its models.
 - Receipt schema 1.3: optional `merchant_country`, so a tax number printed
   without its country prefix can be checked.
+
+- LLM retries honour `Retry-After` (seconds or an HTTP date, capped at
+  60 s) and otherwise back off exponentially with jitter, instead of a fixed
+  linear delay.
+- ruff moved to 0.16.8 and its wider default rule set; the codebase is clean
+  under it.
+- The low-OCR-confidence review rule looks only at the words holding the
+  value's own digits, not the label beside it or another value on the same
+  line; names are no longer gated; subtotal and total that reconcile across
+  separately cited lines (with tax, shipping, discount, or the line items)
+  are exempt.
+- `export_document` on a schema instance (not a `DocumentResult`) now runs
+  the schema's checks first and refuses on errors when `require_valid` is set.
+
+- Classification of till receipts: a TAX INVOICE header now counts as weak
+  receipt evidence and decides nothing on its own. On the 178 labelled
+  corpus scans (Tesseract text, full rules → TF-IDF → LLM cascade) correct
+  types went from 91 to 120, receipts from 43 to 73 of 122, other documents
+  unchanged within one.
+
+- Importing docket no longer reads `.env` or `./docket.toml` from the working
+  directory: the library takes its settings from the environment,
+  `DOCKET_CONFIG` and explicit arguments only. The `docket` CLI, `docket-api`
+  and the demo still read both, via `config.configure_app()`.
+- SQLAlchemy moved from the base install to the new `[review]` extra (pulled
+  in by `[api]` and `[postgres]`). `ReviewOptions(enqueue=True)` without it
+  is a `ConfigurationError` naming the extra.
+- The `docket` logger has a `NullHandler`, so library warnings no longer
+  reach the host's stderr unless the host configures logging.
+- CI tests Python 3.10, 3.11 and 3.12, the versions the classifiers promise;
+  the OS classifiers now say macOS and Linux instead of OS Independent.
+- Requests to hosted models (Ollama cloud, a remote OpenAI-compatible API)
+  time out after `DOCKET_LLM_HOSTED_TIMEOUT_S` (60 s) and are retried up to
+  `DOCKET_LLM_RETRIES` (2) times. Every model is retried on 429/5xx and
+  connection errors. Local models keep their long timeouts and are not
+  retried after one. A stalled Ollama cloud request used to hold a document
+  for five minutes and then fail it.
+
+### Removed
+
+- The `boarding_pass` and `acceptance_act` schemas (`BoardingPass`,
+  `AcceptanceAct`, `AcceptanceActItem`, their validators, examples, fixtures
+  and golden scans): docket covers accounts-payable documents.
+- The experimental `delivery_note` schema (`DeliveryNote`, `DeliveryNoteItem`,
+  its validator, examples, fixtures and golden scan). It was never measured
+  and overlapped the stable `waybill`. `delivery_note` stays a document
+  reference kind, so an invoice can still cite a delivery note number.
+
+- ERP and accounting exports: `sap-idoc`, `sap-csv`, `xero-csv`,
+  `xero-json`, `quickbooks-iif`, `quickbooks-json`, `1c-bank` and
+  `1c-enterprise`, with their `export_to_*` functions. None was checked
+  against the system it targets, and each depends on account and tax codes
+  only the importing application knows; register such formats with
+  `register_exporter()`. The e-invoice formats and Facturae remain.
+- Document forensics: `docket forensics`, `analyze_document_forensics()`,
+  `DocumentForensicReport` and its stamp, signature and annotation models,
+  `DocumentResult.forensic_report` and the forensic validation rules. It was
+  an uncalibrated pixel heuristic that the pipeline never ran.
+
+- The experimental `tax_invoice`, `utility_bill`, `certificate_of_origin`
+  and `id_document` schemas, with their models (`TaxInvoice`, `UtilityBill`,
+  `CertificateOfOrigin`, `IdDocument` and their item types), validators and
+  classifier examples. None was measured on real documents. `tax_invoice`
+  did harm: a GST/VAT tax invoice is an invoice, and the separate type drew
+  Malaysian till receipts (their TAX INVOICE header) from the rules tier and
+  VAT invoices from the LLM tier.
 
 ### Fixed
 
@@ -106,70 +209,6 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   ("(5,020.24)") are read whole when checked against their cited line. They
   were split into two numbers, so correct totals failed validation.
 
-### Added
-
-- Phone photos: with the new `[photo]` extra (OpenCV), a photographed
-  receipt or invoice is cropped to the paper and flattened before OCR
-  (`DOCKET_OCR_CROP_PHOTOS`, on by default). Crops that would cut text — a
-  table frame on a scan, a page that already fills the frame — are refused.
-  `PageLayout.crop_quad` records where the page was in the original photo.
-- Small text: when Tesseract's typical word is shorter than
-  `DOCKET_OCR_MIN_TEXT_HEIGHT` (20 px), the page is re-read enlarged (up to
-  3×) and the enlarged reading is kept only if Tesseract is at least as sure
-  of it. On an 11 px synthetic invoice this turns 16/03/2028 and 316.00 back
-  into the printed 15/03/2026 and 315.00.
-- `OcrOptions(preprocess=fn)`: your own `(image, page_number) -> image` step
-  on every page image, after cropping and before OCR (Docling reads the
-  file itself and skips it).
-- Real LLM usage per document: `ProcessingMetrics.llm_input_tokens` /
-  `llm_output_tokens` from what the provider reports (Ollama
-  `prompt_eval_count`/`eval_count`, OpenAI `usage`), `llm_unreported_calls`
-  for calls that reported nothing, and `llm_models` for the models used.
-  `BatchMetrics` sums them. The chars/4 `llm_estimated_tokens` stays.
-- CI type-checks `src/docket` with mypy (pinned, like ruff, in the `dev`
-  extra); the codebase was brought to zero errors.
-- `corroborate(result, purchase_order=..., transactions=...)`: a purchase
-  order total, or a bank payment of the total in the same currency, confirms
-  that field; a payment whose text carries the invoice number confirms the
-  number too. Only low-OCR-confidence doubt about confirmed fields is
-  cleared, never a failed check. `DocumentResult.corroborated` records what
-  confirmed each field.
-- `verify(document, text, document_type=...)`: docket's deterministic checks
-  on an extraction made elsewhere (another LLM, a cloud OCR service), returning
-  a `DocumentResult` that `export_document` accepts or refuses like its own.
-- A document number (`invoice_number`, `po_number`, …) must be printed on the
-  line it cites; a model that cited one line and wrote another number was
-  previously accepted.
-- `DOCKET_MIN_SOURCE_CONFIDENCE` (default 0.80): a key field whose cited words OCR
-  recognised below it sends the document to review instead of succeeding.
-
-### Changed
-
-- LLM retries honour `Retry-After` (seconds or an HTTP date, capped at
-  60 s) and otherwise back off exponentially with jitter, instead of a fixed
-  linear delay.
-- ruff moved to 0.16.8 and its wider default rule set; the codebase is clean
-  under it.
-- The low-OCR-confidence review rule looks only at the words holding the
-  value's own digits, not the label beside it or another value on the same
-  line; names are no longer gated; subtotal and total that reconcile across
-  separately cited lines (with tax, shipping, discount, or the line items)
-  are exempt.
-- `export_document` on a schema instance (not a `DocumentResult`) now runs
-  the schema's checks first and refuses on errors when `require_valid` is set.
-
-### Removed
-
-- The `boarding_pass` and `acceptance_act` schemas (`BoardingPass`,
-  `AcceptanceAct`, `AcceptanceActItem`, their validators, examples, fixtures
-  and golden scans): docket covers accounts-payable documents.
-- The experimental `delivery_note` schema (`DeliveryNote`, `DeliveryNoteItem`,
-  its validator, examples, fixtures and golden scan). It was never measured
-  and overlapped the stable `waybill`. `delivery_note` stays a document
-  reference kind, so an invoice can still cite a delivery note number.
-
-### Fixed
-
 - Receipts get the day/month order check invoices already had. A
   day-first currency on the page (EUR, GBP, INR, MYR/RM, SGD, and the €, £,
   ₹ signs) now counts as a weak cue, so a date the page shows written the
@@ -195,53 +234,6 @@ exported from `docket`, the `docket` / `docket-api` commands, the HTTP API in
   validation passed and the document came back as a silent success. A cited
   line with no digit, or whose numeric dates all mean another day, is now an
   error, which also triggers the vision-model re-read.
-
-### Removed
-
-- ERP and accounting exports: `sap-idoc`, `sap-csv`, `xero-csv`,
-  `xero-json`, `quickbooks-iif`, `quickbooks-json`, `1c-bank` and
-  `1c-enterprise`, with their `export_to_*` functions. None was checked
-  against the system it targets, and each depends on account and tax codes
-  only the importing application knows; register such formats with
-  `register_exporter()`. The e-invoice formats and Facturae remain.
-- Document forensics: `docket forensics`, `analyze_document_forensics()`,
-  `DocumentForensicReport` and its stamp, signature and annotation models,
-  `DocumentResult.forensic_report` and the forensic validation rules. It was
-  an uncalibrated pixel heuristic that the pipeline never ran.
-
-- The experimental `tax_invoice`, `utility_bill`, `certificate_of_origin`
-  and `id_document` schemas, with their models (`TaxInvoice`, `UtilityBill`,
-  `CertificateOfOrigin`, `IdDocument` and their item types), validators and
-  classifier examples. None was measured on real documents. `tax_invoice`
-  did harm: a GST/VAT tax invoice is an invoice, and the separate type drew
-  Malaysian till receipts (their TAX INVOICE header) from the rules tier and
-  VAT invoices from the LLM tier.
-
-### Changed
-
-- Classification of till receipts: a TAX INVOICE header now counts as weak
-  receipt evidence and decides nothing on its own. On the 178 labelled
-  corpus scans (Tesseract text, full rules → TF-IDF → LLM cascade) correct
-  types went from 91 to 120, receipts from 43 to 73 of 122, other documents
-  unchanged within one.
-
-- Importing docket no longer reads `.env` or `./docket.toml` from the working
-  directory: the library takes its settings from the environment,
-  `DOCKET_CONFIG` and explicit arguments only. The `docket` CLI, `docket-api`
-  and the demo still read both, via `config.configure_app()`.
-- SQLAlchemy moved from the base install to the new `[review]` extra (pulled
-  in by `[api]` and `[postgres]`). `ReviewOptions(enqueue=True)` without it
-  is a `ConfigurationError` naming the extra.
-- The `docket` logger has a `NullHandler`, so library warnings no longer
-  reach the host's stderr unless the host configures logging.
-- CI tests Python 3.10, 3.11 and 3.12, the versions the classifiers promise;
-  the OS classifiers now say macOS and Linux instead of OS Independent.
-- Requests to hosted models (Ollama cloud, a remote OpenAI-compatible API)
-  time out after `DOCKET_LLM_HOSTED_TIMEOUT_S` (60 s) and are retried up to
-  `DOCKET_LLM_RETRIES` (2) times. Every model is retried on 429/5xx and
-  connection errors. Local models keep their long timeouts and are not
-  retried after one. A stalled Ollama cloud request used to hold a document
-  for five minutes and then fail it.
 
 ## [0.4.0] - 2026-09-23
 
@@ -711,7 +703,8 @@ First packaged release.
   of the pipeline (a name collision introduced with `process_document`).
 - `docket <file> --export <format>` crashed because `PipelineResult` had no `document` attribute.
 
-[Unreleased]: https://github.com/KazKozDev/docket/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/KazKozDev/docket/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/KazKozDev/docket/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/KazKozDev/docket/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/KazKozDev/docket/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/KazKozDev/docket/compare/v0.1.0...v0.2.0
