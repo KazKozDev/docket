@@ -1,5 +1,7 @@
 # docket — Python library for invoice and receipt OCR with LLMs
 
+[![Tests](https://github.com/KazKozDev/docket/actions/workflows/ci.yml/badge.svg)](https://github.com/KazKozDev/docket/actions) [![Python](https://img.shields.io/badge/Python-3.10%2B-333?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/pyproject.toml) [![PyPI](https://img.shields.io/pypi/v/docket-idp?style=flat-square)](https://pypi.org/project/docket-idp/) [![License](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/LICENSE)
+
 Extract data from invoices, receipts and contracts with a source line for every field, check it with plain code, and flag what a person must review.
 
 
@@ -10,13 +12,37 @@ Docket Desktop
 
 ## Quick start
 
-You need Python 3.10+, Tesseract for scans, and a text model you run or reach: Ollama, or any OpenAI-compatible server (vLLM, llama.cpp, LM Studio, a hosted API). Docket picks no model: set `DOCKET_TEXT_MODEL`, and `DOCKET_VISION_MODEL` for the default OCR fallback. [Language models](https://github.com/KazKozDev/docket/blob/master/docs/LLM.md) has local recipes. Check the active settings with `docket config show`.
+You need Python 3.10+, Tesseract for scans, and a text model you run or reach: Ollama, or any OpenAI-compatible server (vLLM, llama.cpp, LM Studio, a hosted API). Docket ships no default model; [Language models](https://github.com/KazKozDev/docket/blob/master/docs/LLM.md) has local recipes.
 
 ```bash
+pip install docket-idp
+export DOCKET_TEXT_MODEL=<model>         # e.g. a model you have pulled in Ollama
+export DOCKET_VISION_MODEL=<vision-model>  # or DOCKET_OCR_FALLBACKS= to go without
 docket process invoice.pdf
 ```
 
-The command prints a JSON result with extracted fields, source citations, validation issues and review reasons. Its exit code is 0 for `succeeded`, 1 for `needs_review`, 2 for `failed`, or 3 for a configuration error.
+The command prints a JSON result. Its exit code is 0 for `succeeded`, 1 for `needs_review`, 2 for `failed`, or 3 for a configuration error; `docket config show` lists the active settings. An excerpt of a real result, for a published ZUGFeRD sample invoice whose seller VAT number is invented:
+
+```json
+{
+  "status": "needs_review",
+  "document_type": "invoice",
+  "extracted": {
+    "invoice_number": "TX-471102",
+    "issue_date": "2018-10-30",
+    "total_amount": 18.08,
+    "currency": "EUR"
+  },
+  "field_sources": {
+    "total_amount": {"page": 2, "quote": "Zahlbetrag | 18,08", "status": "verified", "match": "exact"}
+  },
+  "review_reasons": [
+    "validation error: seller.tax_ids[0] — 'DE123456789' fails its country's VAT checksum"
+  ]
+}
+```
+
+On the project's small test sets, the checks sent 97 of 97 planted mistakes to review, field accuracy was 0.95–1.00 on 21 labeled documents and 28 European sample invoices, and up to 3 documents per run still passed with a wrong field. [Benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md) has the details.
 
 ## Extract invoice, receipt and contract data in Python
 
@@ -134,8 +160,6 @@ pip install -e ".[dev]" && pytest
 ---
 
 <div align="center">
-
-[![Tests](https://github.com/KazKozDev/docket/actions/workflows/ci.yml/badge.svg)](https://github.com/KazKozDev/docket/actions) [![Python](https://img.shields.io/badge/Python-3.10%2B-333?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/pyproject.toml) [![PyPI](https://img.shields.io/pypi/v/docket-idp?style=flat-square)](https://pypi.org/project/docket-idp/) [![License](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/LICENSE)
 
 [Issues](https://github.com/KazKozDev/docket/issues) · [Contributing](https://github.com/KazKozDev/docket/blob/master/CONTRIBUTING.md) · [Security](https://github.com/KazKozDev/docket/blob/master/docs/SECURITY.md) · [License](https://github.com/KazKozDev/docket/blob/master/LICENSE) · [Architecture](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md) · [Benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md) · [Changelog](https://github.com/KazKozDev/docket/blob/master/CHANGELOG.md)
 

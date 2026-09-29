@@ -1,0 +1,2 @@
+# Official e-invoice validation rules (KoSIT, CEN) shipped as-is, not code of this project.
+src/docket/einvoice/resources/** linguist-vendored
