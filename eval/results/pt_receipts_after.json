@@ -2,7 +2,7 @@
   "environment": {
     "date": "2026-09-28T17:25:19+00:00",
     "docket": "0.4.0",
-    "git_commit": "b46a387",
+    "git_commit": "0661f56",
     "python": "3.12.8",
     "platform": "macOS-27.2-arm64-arm-64bit",
     "machine": "arm64",

@@ -18,7 +18,7 @@ accuracy claims about your documents. The raw results are committed in
 Setup: `deepseek-v4.1-flash:cloud` through Ollama for text and vision,
 Tesseract 5.5.3, PaddleOCR 3.7.0, `DOCKET_OCR_LANGUAGES=en,de,es,fr`,
 macOS arm64. The runs used the working tree of the commit that adds this
-file; the result files record its parent, `cd1bd0a`, as `git_commit`.
+file; the result files record its parent, `0a65928`, as `git_commit`.
 
 ## Do the checks catch a wrong value?
 
