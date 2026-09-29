@@ -1,4 +1,4 @@
-# docket — invoice and receipt OCR for Python with LLMs
+# docket — Python library for invoice and receipt OCR with LLMs
 
 Extract data from invoices, receipts and contracts with a source line for every field, check it with plain code, and flag what a person must review.
 
