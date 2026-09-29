@@ -1,7 +1,5 @@
 # docket — Python library for invoice and receipt OCR with LLMs
 
-[![Tests](https://github.com/KazKozDev/docket/actions/workflows/ci.yml/badge.svg)](https://github.com/KazKozDev/docket/actions) [![Python](https://img.shields.io/badge/Python-3.10%2B-333?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/pyproject.toml) [![PyPI](https://img.shields.io/pypi/v/docket-idp?style=flat-square)](https://pypi.org/project/docket-idp/) [![License](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/LICENSE)
-
 Extract data from invoices, receipts and contracts with a source line for every field, check it with plain code, and flag what a person must review.
 
 
@@ -160,6 +158,8 @@ pip install -e ".[dev]" && pytest
 ---
 
 <div align="center">
+
+[![Tests](https://github.com/KazKozDev/docket/actions/workflows/ci.yml/badge.svg)](https://github.com/KazKozDev/docket/actions) [![Python](https://img.shields.io/badge/Python-3.10%2B-333?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/pyproject.toml) [![PyPI](https://img.shields.io/pypi/v/docket-idp?style=flat-square)](https://pypi.org/project/docket-idp/) [![License](https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square)](https://github.com/KazKozDev/docket/blob/master/LICENSE)
 
 [Issues](https://github.com/KazKozDev/docket/issues) · [Contributing](https://github.com/KazKozDev/docket/blob/master/CONTRIBUTING.md) · [Security](https://github.com/KazKozDev/docket/blob/master/docs/SECURITY.md) · [License](https://github.com/KazKozDev/docket/blob/master/LICENSE) · [Architecture](https://github.com/KazKozDev/docket/blob/master/docs/ARCHITECTURE.md) · [Benchmarks](https://github.com/KazKozDev/docket/blob/master/docs/BENCHMARKS.md) · [Changelog](https://github.com/KazKozDev/docket/blob/master/CHANGELOG.md)
 
